@@ -3,14 +3,14 @@ import 'datatables.net-dt/css/dataTables.dataTables.min.css';
 import $ from 'jquery';
 import 'datatables.net';
 
-const DataTable: React.FC = () => {
+const DataTable = () => {
   useEffect(() => {
     $('#example').DataTable();
   }, []);
 
   return (
-    <div className="p-4">
-      <table id="example" className="display w-full text-center">
+    <div className="p-4 w-full">
+      <table id="example" className="display w-full">
         <thead>
           <tr>
             <th>Name</th>

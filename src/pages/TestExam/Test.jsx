@@ -45,36 +45,35 @@ import NavigationPart from "../../components/Test/NavigationPart";
 //   { id: "38", name: "DrD", subject: "Math", level: "Easy" },
 // ];
 
-const questions = [];
+const answers = [];
 
-const subjects = ['english', 'literature', 'math', 'physics', 'chemistry'];
-const types = ['reading', 'listening', 'writing', 'speaking'];
-const levels = ['primary', 'secondary', 'highschool', 'college'];
+const subjects = ["english", "literature", "math", "physics", "chemistry"];
+const types = ["reading", "listening", "writing", "speaking"];
+const levels = ["primary", "secondary", "highschool", "college"];
 
 for (let i = 1; i <= 60; i++) {
   const subject = subjects[Math.floor(Math.random() * subjects.length)];
   const type = types[Math.floor(Math.random() * types.length)];
   const level = levels[Math.floor(Math.random() * levels.length)];
-  
+
   questions.push({
     id: i,
     subject: subject,
     content: `Content of question ${i}`,
     image: `image${i}.jpg`,
     type: type,
-    level: level
+    level: level,
   });
 }
-// english 
-// literal 
-// other 
+// english
+// literal
+// other
 
-// if english 
+// if english
 // TestQuestion
-// id, name, type 
-// list answers ==  
-
-
+// id, name, type
+// list answers ==
+// list answers ==
 
 const Test = () => {
   const questionRef = useRef({});

@@ -1,14 +1,13 @@
-import Header from "../components/common/Header";
 import LiveStream from "../components/common/LiveStream";
 import IdolListCard from "../components/common/IdolListCard";
 import SubjectListCard from "../components/common/SubjectListCard";
 import idols from "../data/idols";
 import subjects from "../data/subjects";
+import MainLayout from "../layout/MainLayout";
 
 const Home = () => {
   return (
-    <div>
-      <Header />
+    <MainLayout>
       <div className="container-fluid flex justify-center bg-white mx-auto px-4 py-8">
         <LiveStream />
       </div>
@@ -54,7 +53,7 @@ const Home = () => {
           </div>
         </div>
       </div>
-    </div>
+    </MainLayout>
   );
 };
 

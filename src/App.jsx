@@ -1,11 +1,16 @@
 import Test from "./pages/TestExam/Test";
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import Home from "./pages/Home";
 
 const App = () => {
   return (
     <div className="flex items-center justify-center min-h-screen bg-gray-100">
-      <div className="bg-white rounded-lg shadow-lg w-full">
-        <Test />
-      </div>
+      <Router>
+        <Routes>
+          <Route path="/" element={<Home />} />
+          <Route path="/test-exam" element={<Test />} />
+        </Routes>
+      </Router>
     </div>
   );
 };

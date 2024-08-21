@@ -2,8 +2,8 @@ import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import Home from "./pages/Home";
 import NotFound from "./components/common/NotFound";
 import ClassesList from "./pages/classes/ClassList";
-import Test from "./pages/TestExam/TestView";
 import TestSetting from "./pages/TestExam/TestSetting";
+import TestView from "./pages/TestExam/TestView";
 
 const App = () => {
   return (
@@ -11,7 +11,7 @@ const App = () => {
       <Router>
         <Routes>
           <Route path="/" element={<Home />} />
-          <Route path="/test-exam" element={<Test />} />
+          <Route path="/test-exam" element={<TestView />} />
           <Route path="/test-setting" element={<TestSetting />} />
           <Route path="/classes" element={<ClassesList />} />
           <Route path="*" element={<NotFound />} />

@@ -1,8 +1,9 @@
 import React, { useState } from "react";
 import Breadcrumbs from "../../components/common/Breadcrumbs";
 import MainLayout from "../../layout/MainLayout";
-
+import { useNavigate } from "react-router-dom";
 const TestSetting = () => {
+  const navigate = useNavigate();
   const [timeLimit, setTimeLimit] = useState("60 mins");
   const [selectedParts, setSelectedParts] = useState({
     fullParts: true,
@@ -17,6 +18,11 @@ const TestSetting = () => {
       [part]: !prev[part],
     }));
   };
+
+  const handleStartTest = () => {
+    navigate("/test-exam", { state: 1 });
+  };
+
   return (
     <MainLayout>
       <Breadcrumbs />
@@ -96,7 +102,10 @@ const TestSetting = () => {
                 <option value="45 mins">45 mins</option>
                 <option value="30 mins">30 mins</option>
               </select>
-              <button className="mt-6 w-full bg-green-600 text-white font-medium py-2 rounded-lg hover:bg-green-700">
+              <button
+                onClick={() => handleStartTest()}
+                className="mt-6 w-full bg-green-600 text-white font-medium py-2 rounded-lg hover:bg-green-700"
+              >
                 Start Now
               </button>
             </div>
@@ -114,7 +123,10 @@ const TestSetting = () => {
               <p className="text-gray-500 mb-4">
                 Full parts (60 minutes - 3 parts - 40 questions)
               </p>
-              <button className="mt-6 w-full bg-green-600 text-white font-medium py-2 rounded-lg hover:bg-green-700">
+              <button
+                onClick={() => handleStartTest()}
+                className="mt-6 w-full bg-green-600 text-white font-medium py-2 rounded-lg hover:bg-green-700"
+              >
                 Start Now
               </button>
             </div>

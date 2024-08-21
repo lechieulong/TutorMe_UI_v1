@@ -68,3 +68,21 @@ button:focus-visible {
     background-color: #f9f9f9;
   }
 }
+
+.container-login {
+  .login-btn {
+    button {
+      background-color: #efede3;
+      color: #616161;
+      
+      &.active {
+        background-color: rgb(59 130 246 / var(--tw-bg-opacity));
+        color: white;
+      }
+    }
+
+    button[disabled], button:disabled{
+      cursor: not-allowed;
+    }
+  }
+}

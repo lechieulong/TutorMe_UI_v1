@@ -1,163 +1,67 @@
 import React from 'react';
+import Sidebar from './components/Sidebar';
+import { Link } from 'react-router-dom';
+import Header from '../../components/common/Header';
+import Logout from './components/Logout';
 
-function UserProfile() {
-  return (
-    <section className="bg-gray-100 py-8">
-      <div className="container mx-auto">
-        <nav aria-label="breadcrumb" className="bg-gray-200 rounded-md p-4 mb-6">
-          <ol className="flex space-x-2">
-            <li><a href="#" className="text-blue-500 hover:underline">Home</a></li>
-            <li><span>/</span></li>
-            <li><a href="#" className="text-blue-500 hover:underline">User</a></li>
-            <li><span>/</span></li>
-            <li className="text-gray-600">User Profile</li>
-          </ol>
-        </nav>
-
-        <div className="flex flex-wrap">
-          <div className="w-full lg:w-1/3 mb-6 lg:mb-0">
-            <div className="bg-white rounded-lg shadow-lg p-6 text-center">
-              <img src="https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-chat/ava3.webp" alt="avatar"
-                className="rounded-full mx-auto mb-4" style={{ width: '150px' }} />
-              <h5 className="text-xl font-semibold mb-2">John Smith</h5>
-              <p className="text-gray-500">DotNet</p>
-              <p className="text-gray-500 mb-4">1$/h</p>
-              <div className="flex justify-center space-x-2">
-                <button className="bg-blue-500 text-white py-2 px-4 rounded-lg">Follow</button>
-                <button className="border border-blue-500 text-blue-500 py-2 px-4 rounded-lg">Message</button>
-              </div>
+const UserDetail = () => {
+    return (
+        <div className="relative">
+            <Header />
+            <div className="flex h-screen bg-gray-100">
+                <Sidebar />
+                <main className="flex-1 p-6 flex flex-col">
+                    <div className="w-full max-w-full mx-auto bg-white p-6 rounded-lg shadow-lg flex-grow">
+                        <div className="flex flex-col lg:flex-row items-start">
+                            <div className="lg:w-1/4 flex flex-col items-center mb-6 lg:mb-0 lg:mr-6">
+                                <img
+                                    src="https://scontent.fsgn2-8.fna.fbcdn.net/v/t39.30808-6/428608379_1107729527084945_699601624333735778_n.jpg?_nc_cat=102&ccb=1-7&_nc_sid=6ee11a&_nc_eui2=AeGyVNuzP4Hc8Dbdt9fO1j7gqcEP5iSFCnKpwQ_mJIUKckbEXT7w3bFwY3fwedmZXiSmhLJmd69z1YqhZFIY0buO&_nc_ohc=t5-ILYynI4sQ7kNvgEVAn1R&_nc_ht=scontent.fsgn2-8.fna&oh=00_AYAdUovwGr0lybglbgHvhpqXWkxTQjvmgOKiciPetgkOqQ&oe=66C7DBB0"
+                                    alt="Profile"
+                                    className="w-36 h-36 rounded-full object-cover border-4 border-white mb-4"
+                                />
+                                <Link to="/profileedit" className="mt-2 bg-white text-black border border-black rounded-lg px-3 py-1 hover:bg-gray-100">Edit Profile</Link>
+                            </div>
+                            <div className="lg:w-3/4 flex flex-col">
+                                <div className="bg-black text-white p-4 rounded-t-lg flex flex-col lg:flex-row items-start">
+                                    <div className="flex-1 lg:ml-6">
+                                        <h5 className="text-2xl font-bold">Nguyen Van Sy</h5>
+                                        <p className="text-lg">Quang Binh</p>
+                                    </div>
+                                </div>
+                                <div className="p-4 bg-gray-100 text-black rounded-b-lg flex-grow">
+                                    <div className="mb-5">
+                                        <p className="text-lg font-semibold mb-2">About</p>
+                                        <div className="p-4 bg-gray-200 rounded-lg">
+                                            <p className="italic mb-2">Web Developer</p>
+                                            <p className="italic mb-2">Lives in Quang Binh</p>
+                                            <p className="italic">Programmer</p>
+                                        </div>
+                                    </div>
+                                    <div className="flex justify-between items-center mb-4">
+                                        <p className="text-lg font-semibold">Recent Courses</p>
+                                        <p className="text-sm text-gray-500 hover:underline cursor-pointer">Show All</p>
+                                    </div>
+                                    <div className="grid grid-cols-2 gap-2">
+                                        <img
+                                            src="https://mdbcdn.b-cdn.net/img/Photos/Lightbox/Original/img%20(112).webp"
+                                            alt="Recent photo 1"
+                                            className="w-full rounded-lg"
+                                        />
+                                        <img
+                                            src="https://mdbcdn.b-cdn.net/img/Photos/Lightbox/Original/img%20(107).webp"
+                                            alt="Recent photo 2"
+                                            className="w-full rounded-lg"
+                                        />
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </main>
+                <Logout />
             </div>
-            <div className="bg-white rounded-lg shadow-lg mt-6 p-4">
-              <ul className="space-y-3">
-                <li className="flex items-center space-x-3">
-                  <i className="fas fa-globe text-yellow-500"></i>
-                  <span>Các kỹ năng của teacher</span>
-                </li>
-                <li className="flex items-center space-x-3">
-                  <i className="fab fa-github text-gray-500"></i>
-                  <span>Được bằng giỏi đh....</span>
-                </li>
-                <li className="flex items-center space-x-3">
-                  <i className="fab fa-twitter text-blue-400"></i>
-                  <span>Chứng chỉ....</span>
-                </li>
-                <li className="flex items-center space-x-3">
-                  <i className="fab fa-instagram text-pink-500"></i>
-                  <span>Chứng chỉ....</span>
-                </li>
-                <li className="flex items-center space-x-3">
-                  <i className="fab fa-facebook-f text-blue-700"></i>
-                  <span>Chứng chỉ....</span>
-                </li>
-              </ul>
-            </div>
-          </div>
-          <div className="w-full lg:w-2/3">
-            <div className="bg-white rounded-lg shadow-lg p-6">
-              <div className="space-y-4">
-                <div className="flex">
-                  <div className="w-1/4">
-                    <p className="font-medium text-gray-700">Full Name</p>
-                  </div>
-                  <div className="w-3/4">
-                    <p className="text-gray-600">Nguyễn Thị Sỹ</p>
-                  </div>
-                </div>
-                <hr />
-                <div className="flex">
-                  <div className="w-1/4">
-                    <p className="font-medium text-gray-700">Email</p>
-                  </div>
-                  <div className="w-3/4">
-                    <p className="text-gray-600">example@example.com</p>
-                  </div>
-                </div>
-                <hr />
-                <div className="flex">
-                  <div className="w-1/4">
-                    <p className="font-medium text-gray-700">Phone</p>
-                  </div>
-                  <div className="w-3/4">
-                    <p className="text-gray-600">(097) 234-5678</p>
-                  </div>
-                </div>
-                <hr />
-                <div className="flex">
-                  <div className="w-1/4">
-                    <p className="font-medium text-gray-700">Role</p>
-                  </div>
-                  <div className="w-3/4">
-                    <p className="text-gray-600">Teacher</p>
-                  </div>
-                </div>
-                <hr />
-                <div className="flex">
-                  <div className="w-1/4">
-                    <p className="font-medium text-gray-700">Address</p>
-                  </div>
-                  <div className="w-3/4">
-                    <p className="text-gray-600">VN</p>
-                  </div>
-                </div>
-              </div>
-            </div>
-            <div className="flex flex-wrap mt-6">
-              <div className="w-full md:w-1/2 mb-4 md:mb-0">
-                <div className="bg-white rounded-lg shadow-lg p-4">
-                  <p className="text-sm font-medium text-blue-500 italic mb-3">assignment Project Status</p>
-                  <p className="text-xs text-gray-600 mb-1">Web Design</p>
-                  <div className="w-full bg-gray-200 rounded-full h-1 mb-2">
-                    <div className="bg-blue-500 h-1 rounded-full" style={{ width: '80%' }}></div>
-                  </div>
-                  <p className="text-xs text-gray-600 mb-1">Website Markup</p>
-                  <div className="w-full bg-gray-200 rounded-full h-1 mb-2">
-                    <div className="bg-blue-500 h-1 rounded-full" style={{ width: '72%' }}></div>
-                  </div>
-                  <p className="text-xs text-gray-600 mb-1">One Page</p>
-                  <div className="w-full bg-gray-200 rounded-full h-1 mb-2">
-                    <div className="bg-blue-500 h-1 rounded-full" style={{ width: '89%' }}></div>
-                  </div>
-                  <p className="text-xs text-gray-600 mb-1">Mobile Template</p>
-                  <div className="w-full bg-gray-200 rounded-full h-1 mb-2">
-                    <div className="bg-blue-500 h-1 rounded-full" style={{ width: '55%' }}></div>
-                  </div>
-                  <p className="text-xs text-gray-600 mb-1">Backend API</p>
-                  <div className="w-full bg-gray-200 rounded-full h-1">
-                    <div className="bg-blue-500 h-1 rounded-full" style={{ width: '66%' }}></div>
-                  </div>
-                </div>
-              </div>
-              <div className="w-full md:w-1/2">
-                <div className="bg-white rounded-lg shadow-lg p-4">
-                  <p className="text-sm font-medium text-blue-500 italic mb-3">assignment Project Status</p>
-                  <p className="text-xs text-gray-600 mb-1">Web Design</p>
-                  <div className="w-full bg-gray-200 rounded-full h-1 mb-2">
-                    <div className="bg-blue-500 h-1 rounded-full" style={{ width: '80%' }}></div>
-                  </div>
-                  <p className="text-xs text-gray-600 mb-1">Website Markup</p>
-                  <div className="w-full bg-gray-200 rounded-full h-1 mb-2">
-                    <div className="bg-blue-500 h-1 rounded-full" style={{ width: '72%' }}></div>
-                  </div>
-                  <p className="text-xs text-gray-600 mb-1">One Page</p>
-                  <div className="w-full bg-gray-200 rounded-full h-1 mb-2">
-                    <div className="bg-blue-500 h-1 rounded-full" style={{ width: '89%' }}></div>
-                  </div>
-                  <p className="text-xs text-gray-600 mb-1">Mobile Template</p>
-                  <div className="w-full bg-gray-200 rounded-full h-1 mb-2">
-                    <div className="bg-blue-500 h-1 rounded-full" style={{ width: '55%' }}></div>
-                  </div>
-                  <p className="text-xs text-gray-600 mb-1">Backend API</p>
-                  <div className="w-full bg-gray-200 rounded-full h-1">
-                    <div className="bg-blue-500 h-1 rounded-full" style={{ width: '66%' }}></div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
         </div>
-      </div>
-    </section>
-  );
-}
+    );
+};
 
-export default UserProfile;
+export default UserDetail;

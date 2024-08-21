@@ -96,10 +96,10 @@ const SignUp = () => {
                     </div>
                     <div className="mt-8 text-center">
                         <p className="text-xs">
-                            Already have an account? <Link to="/" className="underline">Login</Link>
+                            Already have an account? <Link to="/login" className="underline">Login</Link>
                         </p>
                         <p className="text-xs mt-2">
-                            Back to our <a href="#" className="underline">Home page</a> and continue.
+                            Back to our <Link to="/" className="underline">Home page</Link> and continue.
                         </p>
                     </div>
                 </div>

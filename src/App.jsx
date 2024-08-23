@@ -5,6 +5,7 @@ import ClassesList from "./pages/classes/ClassList";
 import TestSetting from "./pages/TestExam/TestSetting";
 import TestView from "./pages/TestExam/TestView";
 import SkillPart from "./pages/TestExam/SkillPart";
+import LiveStream from "./pages/LiveStream";
 
 const App = () => {
   return (
@@ -16,6 +17,7 @@ const App = () => {
           <Route path="*" element={<NotFound />} />
           {/* Test  exam*/}
           <Route path="/test-setting/test-exam" element={<TestView />} />
+          <Route path="/live-stream" element={<LiveStream />} />
           <Route path="/skill-part/test-setting" element={<TestSetting />} />
           <Route path="/skill-part" element={<SkillPart />} />
           {/* Test  class*/}

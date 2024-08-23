@@ -6,13 +6,14 @@ const Header = () => {
   const handleSearch = (query) => {
     // Thực hiện tìm kiếm hoặc xử lý kết quả tìm kiếm ở đây
   };
+
   return (
-    <header className="bg-white drop-shadow-lg ">
+    <header className="bg-white drop-shadow-lg sticky top-0 z-50">
       <div className="container mx-auto px-4 py-4 flex justify-between items-center">
         <div className="flex items-center">
           <img src={logo} alt="Logo" className="h-10 w-50 mr-3" />
           <nav className="flex space-x-10 ml-10">
-            <a href="/" className="text-gray-600 hover:text-gray-800">
+            <a href="/LiveStream" className="text-gray-600 hover:text-gray-800">
               Home
             </a>
             <a href="/about" className="text-gray-600 hover:text-gray-800">

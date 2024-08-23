@@ -1,4 +1,4 @@
-import LiveStream from "../components/common/LiveStream";
+import LiveStreamFrame from "../components/common/LiveStreamFrame";
 import IdolListCard from "../components/common/IdolListCard";
 import SubjectListCard from "../components/common/SubjectListCard";
 import idols from "../data/idols";
@@ -9,10 +9,10 @@ const Home = () => {
   return (
     <MainLayout>
       <div className="container-fluid flex justify-center bg-white mx-auto px-4 py-8">
-        <LiveStream />
+        <LiveStreamFrame width="800px" height="500px" />
       </div>
       <div className="bg-white">
-        <h1 className="ml-[200px] text-2xl font-bold">
+        <h1 className="ml-[40px] text-2xl font-bold">
           <a className="text-black" href="#">
             Hot Livestream{" "}
             <span className="font-normal text-xl opacity-40">more</span>
@@ -33,7 +33,7 @@ const Home = () => {
             </div>
           </div>
         </div>
-        <h1 className="ml-[200px] text-2xl font-bold">
+        <h1 className="ml-[40px] text-2xl font-bold">
           <a className="text-black" href="#">
             Subjects{" "}
             <span className="font-normal text-xl opacity-40">more</span>

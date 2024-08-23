@@ -1,14 +1,21 @@
-const MultipleChoice = ({ question, onAnswerChange }) => {
+const MultipleChoice = ({ order, question, onAnswerChange }) => {
   const handleOptionChange = (id) => {
     onAnswerChange(id);
   };
 
+  const optionLabels = ["A", "B", "C", "D", "E"];
+
   return (
     <div className="p-5">
-      <p className="font-semibold">{question.question}</p>
-      <div className="mt-2">
-        {question.answers.map((answer) => (
+      <p className="font-extrabold text-lg">
+        {order}. {question.question}
+      </p>
+      <div className="mt-2 flex flex-col gap-3">
+        {question.answers.map((answer, index) => (
           <div key={answer.id}>
+            <span className=" mr-2  p-[5px] rounded-full bg-gray-100">
+              {optionLabels[index]}{" "}
+            </span>
             <input
               type="radio"
               id={`option-${answer.id}`}

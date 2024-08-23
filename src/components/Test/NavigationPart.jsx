@@ -2,13 +2,13 @@
 import { useState } from "react";
 
 const NavigationPart = ({ partData, handlePartClick, handleQuestionClick }) => {
-  const [openPart, setOpenPart] = useState(null);
+  const [openPart, setOpenPart] = useState(0);
 
   const handleAccordionClick = (partNumber) => {
     if (openPart === partNumber) {
-      setOpenPart(null); // Close if clicked again
+      setOpenPart(null);
     } else {
-      setOpenPart(partNumber); // Open the clicked part
+      setOpenPart(partNumber);
       handlePartClick(partNumber);
     }
   };
@@ -30,14 +30,14 @@ const NavigationPart = ({ partData, handlePartClick, handleQuestionClick }) => {
               key={index}
               className={`${
                 openPart === index
-                  ? "active flex-[4_4_0%] border-2 border-green-300 "
-                  : "flex-1 "
-              } p-2 border-2 flex justify-between gap-2 cursor-pointer rounded-2xl`}
+                  ? "active flex-[4_4_0%]  border-green-700  p-2"
+                  : "flex-1 border-gray-300"
+              } p-2 border  flex justify-between gap-2 cursor-pointer rounded-2xl`}
               onClick={() => handleAccordionClick(index)}
             >
               <div
                 className={`${
-                  openPart === index ? "w-28" : ""
+                  openPart === index ? "w-40" : ""
                 } font-extrabold inline-flex items-center text-start text-gray-800 hover:text-gray-500 focus:outline-none focus:text-gray-500 rounded-lg`}
               >
                 {partName}
@@ -49,13 +49,13 @@ const NavigationPart = ({ partData, handlePartClick, handleQuestionClick }) => {
               >
                 {questions.map((questionId, questionIndex) => (
                   <li
-                    className="border-2 text-sm border-slate-200 w-7 text-black rounded-full cursor-pointer"
+                    className="border-2 text-sm border-slate-200 w-6 text-black rounded-full cursor-pointer"
                     key={questionId}
                     onClick={(event) =>
                       handleQuestionClickWrapper(event, questionId)
                     }
                   >
-                    {questionIndex + 1}
+                    {questionIndex}
                   </li>
                 ))}
               </ul>

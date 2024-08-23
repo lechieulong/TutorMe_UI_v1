@@ -4,7 +4,6 @@ import Search from "../common/Search";
 
 const Header = () => {
   const handleSearch = (query) => {
-    console.log("Search query:", query);
     // Thực hiện tìm kiếm hoặc xử lý kết quả tìm kiếm ở đây
   };
   return (

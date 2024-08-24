@@ -13,6 +13,7 @@ import ChangePassword from './pages/User/ChangePassword';
 import Calendar from './pages/Calendar/Calendar';
 import SkillPart from "./pages/TestExam/SkillPart";
 import LiveStream from "./pages/LiveStream";
+import "preline";
 
 const App = () => {
   return (

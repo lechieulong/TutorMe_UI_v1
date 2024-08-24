@@ -8,7 +8,7 @@ import MainLayout from "../layout/MainLayout";
 const Home = () => {
   return (
     <MainLayout>
-      <div className="container-fluid flex justify-center bg-white mx-auto px-4 py-8">
+      <div className="flex justify-center bg-white mx-auto px-4 py-8">
         <LiveStreamFrame width="800px" height="500px" />
       </div>
       <div className="bg-white">

@@ -3,9 +3,9 @@ import Header from "../components/common/Header";
 
 const MainLayout = ({ children }) => {
   return (
-    <div>
+    <div className="w-full">
       <Header />
-      <main>{children}</main>
+      <main className="container mx-auto">{children}</main>
     </div>
   );
 };

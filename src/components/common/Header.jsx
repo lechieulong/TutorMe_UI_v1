@@ -1,49 +1,55 @@
-import logo from "../../assets/images/logo.png";
-import Button from "../common/Button";
-import Search from "../common/Search";
-
 const Header = () => {
-  const handleSearch = (query) => {
-    console.log("Search query:", query);
-    // Thực hiện tìm kiếm hoặc xử lý kết quả tìm kiếm ở đây
-  };
-
   return (
-    <header className="bg-white drop-shadow-lg sticky top-0 z-50">
-      <div className="container mx-auto px-4 py-4 flex justify-between items-center">
-        <div className="flex items-center">
-          <img src={logo} alt="Logo" className="h-10 w-50 mr-3" />
-          <nav className="flex space-x-10 ml-10">
-            <a href="/LiveStream" className="text-gray-600 hover:text-gray-800">
+    <header className="flex flex-wrap sm:justify-start sm:flex-nowrap w-full bg-white text-sm pt-3">
+      <nav className="mx-auto pb-2 px-4 flex flex-wrap basis-full items-center shadow-lg justify-between ">
+        <a
+          className="sm:order-1 flex-none text-xl font-semibold  focus:outline-none focus:opacity-80"
+          href="#"
+        >
+          Brand
+        </a>
+        <div className="sm:order-3 flex items-center gap-x-2">
+          <button
+            type="button"
+            className="py-2 px-3 inline-flex items-center gap-x-2 text-sm font-medium rounded-lg border border-gray-200 bg-white text-gray-800 shadow-sm hover:bg-gray-50 focus:outline-none focus:bg-gray-50 disabled:opacity-50 disabled:pointer-events-none   dark:border-neutral-700 transition-hover transition-transform duration-500 dark:hover:scale-110"
+          >
+            Button
+          </button>
+          <img
+            className="inline-block size-[38px] rounded-full"
+            src="https://images.unsplash.com/photo-1568602471122-7832951cc4c5?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=facearea&facepad=2&w=300&h=300&q=80"
+            alt="Avatar"
+          />
+        </div>
+        <div
+          id="hs-navbar-alignment"
+          className="hs-collapse hidden overflow-hidden transition-all duration-300 basis-full grow sm:grow-0 sm:basis-auto sm:block sm:order-2"
+          aria-labelledby="hs-navbar-alignment-collapse"
+        >
+          <div className="flex flex-col gap-5 mt-5 sm:flex-row sm:items-center sm:mt-0 sm:ps-5">
+            <a
+              className="font-medium text-black focus:outline-none"
+              href="#"
+              aria-current="page"
+            >
+              <i className="fa-solid fa-house"></i>
               Home
             </a>
-            <a href="/about" className="text-gray-600 hover:text-gray-800">
-              Live Hot
+            <a className="font-medium text-black  focus:outline-none " href="#">
+              Account
             </a>
-            <a href="/contact" className="text-gray-600 hover:text-gray-800">
-              Hot Class
+            <a className="font-medium text-black focus:outline-none  " href="#">
+              Work
             </a>
-            <a href="/contact" className="text-gray-600 hover:text-gray-800">
-              Hot Mentor
+            <a
+              className="font-medium text-black  focus:outline-none  "
+              href="#"
+            >
+              Blog
             </a>
-          </nav>
+          </div>
         </div>
-        <nav className="flex space-x-4">
-          <Search onSearch={handleSearch} />
-          <Button
-            label="Đăng ký" //content btn
-            onClick={() => alert("Cái gì z?")} //sự kiện khi click
-            customClass="bg-green-500 text-white hover:bg-green-600" //CSS
-            size="small" //Size btn
-          />
-          <Button
-            label="Đăng nhập" //content btn
-            onClick={() => alert("Giỡn mặt à?")} //sự kiện khi click
-            customClass="bg-blue-500 text-white hover:bg-green-600" //CSS
-            size="small" //Size btn
-          />
-        </nav>
-      </div>
+      </nav>
     </header>
   );
 };

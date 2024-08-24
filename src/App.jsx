@@ -5,6 +5,7 @@ import ClassesList from "./pages/classes/ClassList";
 import TestSetting from "./pages/TestExam/TestSetting";
 import TestView from "./pages/TestExam/TestView";
 import LiveStream from "./pages/LiveStream";
+import "preline";
 
 const App = () => {
   return (

@@ -35,6 +35,7 @@ const App = () => {
           <Route path="/skill-part" element={<SkillPart />} />
           {/* Test  class*/}
           <Route path="/classes" element={<ClassesList />} />
+          <Route path="/calendar" element={<Calendar />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
       </Router>

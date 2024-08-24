@@ -6,11 +6,9 @@ const Button = ({
   customClass = "",
   size = "medium",
   icon: Icon,
+  modalTarget, // Thêm prop cho modal target
 }) => {
-  // Các lớp cơ bản cho nút
   const baseStyle = "font-bold rounded focus:outline-none focus:ring-2";
-
-  // Các kích thước khác nhau cho nút
   const sizeStyles = {
     small: "px-2 py-1 text-sm",
     medium: "px-4 py-2",
@@ -21,6 +19,7 @@ const Button = ({
     <button
       onClick={onClick}
       className={`${baseStyle} ${sizeStyles[size]} ${customClass}`}
+      data-hs-overlay={modalTarget ? `#${modalTarget}` : null} // Kích hoạt modal khi nút được nhấn
     >
       {Icon && <Icon className="mr-2" />}
       {label}
@@ -34,12 +33,14 @@ Button.propTypes = {
   customClass: PropTypes.string,
   size: PropTypes.oneOf(["small", "medium", "large"]),
   icon: PropTypes.elementType,
+  modalTarget: PropTypes.string, // Thêm prop types cho modal target
 };
 
 Button.defaultProps = {
   customClass: "",
   size: "medium",
   icon: null,
+  modalTarget: null, // Default không có modal
 };
 
 export default Button;

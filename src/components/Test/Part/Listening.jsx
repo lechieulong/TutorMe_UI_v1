@@ -17,7 +17,7 @@ const Listening = ({ partData, part, refs }) => {
   };
 
   return (
-    <div>
+    <div className="bg-red-100 h-screen">
       <h2 className="text-xl font-bold mb-4">{reading.name}</h2>
       {reading.questions.map((question) => {
         if (question.type === "enter-answer") {

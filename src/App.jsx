@@ -11,6 +11,8 @@ import UserDetail from './pages/User/UserDetail';
 import ProfileEdit from './pages/User/ProfileEdit';
 import ChangePassword from './pages/User/ChangePassword';
 import Calendar from './pages/Calendar/Calendar';
+import SkillPart from "./pages/TestExam/SkillPart";
+import LiveStream from "./pages/LiveStream";
 
 const App = () => {
   return (
@@ -23,11 +25,16 @@ const App = () => {
           <Route path="/userdetail" element={<UserDetail />} />
           <Route path="/profileedit" element={<ProfileEdit />} />
           <Route path="/changepassword" element={<ChangePassword />} />
+          {/* Test  common*/}
           <Route path="/" element={<Home />} />
-          <Route path="/test-exam" element={<TestView />} />
-          <Route path="/test-setting" element={<TestSetting />} />
+          <Route path="*" element={<NotFound />} />
+          {/* Test  exam*/}
+          <Route path="/test-setting/test-exam" element={<TestView />} />
+          <Route path="/live-stream" element={<LiveStream />} />
+          <Route path="/skill-part/test-setting" element={<TestSetting />} />
+          <Route path="/skill-part" element={<SkillPart />} />
+          {/* Test  class*/}
           <Route path="/classes" element={<ClassesList />} />
-          <Route path="/calendar" element={<Calendar />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
       </Router>

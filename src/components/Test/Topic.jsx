@@ -1,7 +1,7 @@
 import React from "react";
 
 const Topic = ({ partData, part }) => {
-  const reading = partData.find((_, index) => index === part);
+  const reading = partData[part];
 
   if (!reading) {
     return <p>Reading part not found.</p>;
@@ -9,7 +9,7 @@ const Topic = ({ partData, part }) => {
 
   return (
     <div className="p-5">
-      <h2 className="text-xl font-bold mb-4">{reading.name}</h2>
+      <h2 className="text-lg  mb-4">{reading.name}</h2>
       <p className="font-semibold">{reading.content}</p>
     </div>
   );

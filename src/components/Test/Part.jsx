@@ -1,16 +1,10 @@
-import React from 'react'
+import React from "react";
 
-const Part = ({questions , handlePartClick, handleQuestionClick}) => {
-  console.log("hlello")
-
+const Part = ({ questions, handlePartClick, handleQuestionClick }) => {
   return (
-    
     <div className="flex hs-accordion-group">
       {part1.length > 0 && (
-        <div
-          className="n"
-          id="hs-basic-heading-one"
-        >
+        <div className="n" id="hs-basic-heading-one">
           <button
             className="hs-accordion-toggle hs-accordion-active:text-blue-600 px-6 py-3
               inline-flex items-center gap-x-3 text-sm w-full font-semibold text-start text-gray-800 hover:text-gray-500 focus:outline-none focus:text-gray-500 rounded-lg disabled:opacity-50 disabled:pointer-events-none dark:hs-accordion-active:text-blue-500 dark:text-neutral-200 dark:hover:text-neutral-400 dark:focus:text-neutral-400"
@@ -112,9 +106,8 @@ const Part = ({questions , handlePartClick, handleQuestionClick}) => {
         </div>
       )}
       {/* Uncomment and complete Part 4 if needed */}
-   
-  </div>
-);
-}
+    </div>
+  );
+};
 
-export default Part
+export default Part;

@@ -1,9 +1,16 @@
 import React, { useState } from "react";
 import Breadcrumbs from "../../components/common/Breadcrumbs";
 import MainLayout from "../../layout/MainLayout";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faBolt } from "@fortawesome/free-solid-svg-icons";
+
 const TestSetting = () => {
   const navigate = useNavigate();
+  const location = useLocation();
+
+  const skillPart = location.state;
+
   const [timeLimit, setTimeLimit] = useState("60 mins");
   const [selectedParts, setSelectedParts] = useState({
     fullParts: true,
@@ -13,14 +20,44 @@ const TestSetting = () => {
   });
 
   const handlePartSelection = (part) => {
-    setSelectedParts((prev) => ({
-      ...prev,
-      [part]: !prev[part],
-    }));
+    setSelectedParts((prev) => {
+      const updatedParts = { ...prev };
+
+      if (part === "fullParts") {
+        const allPartsSelected = !updatedParts.fullParts;
+        updatedParts.fullParts = allPartsSelected;
+
+        updatedParts.part1 = allPartsSelected;
+        updatedParts.part2 = allPartsSelected;
+        updatedParts.part3 = allPartsSelected;
+      } else {
+        updatedParts[part] = !prev[part];
+        if (!updatedParts[part]) {
+          updatedParts.fullParts = false;
+        } else {
+          const allPartsSelected = Object.keys(updatedParts)
+            .filter((key) => key !== "fullParts")
+            .every((key) => updatedParts[key]);
+          updatedParts.fullParts = allPartsSelected;
+        }
+      }
+
+      return updatedParts;
+    });
   };
 
   const handleStartTest = () => {
-    navigate("/test-exam", { state: 1 });
+    const parts = Object.keys(selectedParts).filter(
+      (part) => selectedParts[part] && part !== "fullParts"
+    );
+    const duration = timeLimit;
+    const testData = {
+      duration,
+      selectedParts: parts.length ? parts : ["fullParts"],
+      skillPart,
+    };
+
+    navigate("/test-setting/test-exam", { state: testData });
   };
 
   return (
@@ -107,6 +144,9 @@ const TestSetting = () => {
                 className="mt-6 w-full bg-green-600 text-white font-medium py-2 rounded-lg hover:bg-green-700"
               >
                 Start Now
+                <span>
+                  <FontAwesomeIcon icon={faBolt} className="ml-2 " />
+                </span>
               </button>
             </div>
 
@@ -128,6 +168,9 @@ const TestSetting = () => {
                 className="mt-6 w-full bg-green-600 text-white font-medium py-2 rounded-lg hover:bg-green-700"
               >
                 Start Now
+                <span>
+                  <FontAwesomeIcon icon={faBolt} className="ml-2 " />
+                </span>
               </button>
             </div>
           </div>

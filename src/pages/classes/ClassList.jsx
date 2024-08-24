@@ -7,7 +7,6 @@ const ClassesList = () => {
   const dispatch = useDispatch();
   const { classes, status, error } = useSelector((state) => state.classes);
 
-  console.log(status);
   useEffect(() => {
     if (status === STATUS.SUCCESS) {
       dispatch(fetchClassesWithStudents());

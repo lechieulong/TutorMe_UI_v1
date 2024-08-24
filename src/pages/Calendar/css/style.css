@@ -1,0 +1,49 @@
+/* custom.css */
+.myCustomHeight {
+    height: calc(100vh - 80px);
+    padding: 20px;
+    background-color: #f9fafb;
+}
+
+.rbc-calendar {
+    background-color: #fff;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.rbc-toolbar {
+    background-color: #85aef2;
+    color: white;
+    border-radius: 8px 8px 0 0;
+    padding: 10px;
+}
+
+.rbc-toolbar button {
+    background-color: #60a5fa;
+    border: none;
+    border-radius: 4px;
+    color: white;
+    padding: 5px 10px;
+    margin: 0 5px;
+    transition: background-color 0.2s;
+}
+
+.rbc-toolbar button:hover {
+    background-color: #3b82f6;
+}
+
+.rbc-event {
+    background-color: #3b82f6;
+    color: white;
+    border-radius: 4px;
+}
+
+.rbc-day-bg, .rbc-slot-selection {
+    background-color: #f3f4f6;
+}
+
+.rbc-header {
+    background-color: #f1f5f9;
+    color: #111827;
+    padding: 10px 0;
+}

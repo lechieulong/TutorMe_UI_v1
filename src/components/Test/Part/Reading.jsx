@@ -1,25 +1,61 @@
-import React, { useState } from "react";
-import FillInTheBlankQuestion from "../FillInTheBlankQuestion"; // Import your component
-import MultipleChoiceQuestion from "../MutipleChoice"; // Import your component
-import SelectOptions from "../SelectOptions";
+import React, { useState, useEffect } from "react";
+import FillInTheBlankQuestion from "../FillInTheBlankQuestion";
+import RadioOption from "../AnswerType/RadioOption";
+import MatchingHeading from "../AnswerType/MatchingHeading";
 
 const Reading = ({ partData, part, refs }) => {
   const reading = partData[part];
-  const optionLabels = ["A", "B", "C", "D", "E", "F", "G", "H", "I"];
 
   if (!reading) {
     return <p>Reading part not found.</p>;
   }
 
   const [answers, setAnswers] = useState({});
+  const [questionsWithOrder, setQuestionsWithOrder] = useState([]);
 
-  const selectAnswerQuestions = reading.questions.filter(
-    (question) => question.type === "matching-heading"
-  );
+  useEffect(() => {
+    const generateOrderedQuestions = () => {
+      let currentOrder = 1;
+      const orderedQuestions = [];
 
-  const otherQuestions = reading.questions.filter(
-    (question) => question.type !== "matching-heading"
-  );
+      reading.questions.forEach((questionGroup) => {
+        Object.keys(questionGroup).forEach((questionType) => {
+          switch (questionType) {
+            case "multiple-choice":
+              questionGroup[questionType].forEach((question) => {
+                orderedQuestions.push({ ...question, order: currentOrder });
+                currentOrder++;
+              });
+              break;
+            case "enter-answer":
+              questionGroup[questionType].forEach((question, index) => {
+                orderedQuestions.push({
+                  ...question,
+                  order: currentOrder,
+                });
+                currentOrder += question.blanks.length;
+              });
+              break;
+            case "matching-heading":
+              questionGroup[questionType].forEach((question, index) => {
+                orderedQuestions.push({
+                  ...question,
+                  order: currentOrder + index,
+                });
+              });
+              currentOrder += questionGroup[questionType].length;
+              break;
+            default:
+              break;
+          }
+        });
+      });
+
+      setQuestionsWithOrder(orderedQuestions);
+    };
+
+    generateOrderedQuestions();
+  }, [reading.questions]);
 
   const handleAnswerChange = (id, value) => {
     setAnswers((prevAnswers) => ({
@@ -30,54 +66,42 @@ const Reading = ({ partData, part, refs }) => {
 
   return (
     <div className="bg-green-100 h-screen p-3">
-      {/* Render select-answer questions */}
-      {selectAnswerQuestions.length > 0 && (
-        <>
-          <ul>
-            {selectAnswerQuestions.map((q, index) => (
-              <li key={q.id}>
-                {optionLabels[index]} {q.question}
-              </li>
-            ))}
-          </ul>
-          {selectAnswerQuestions.map((q) => (
-            <SelectOptions
-              key={q.id}
-              question={q}
-              order={q.order}
-              ref={(el) => (refs.current[q.id] = el)}
-            />
-          ))}
-        </>
-      )}
-
-      {/* Render other questions */}
-      {otherQuestions.map((question) => {
-        if (question.type === "enter-answer") {
-          return (
-            <FillInTheBlankQuestion
-              key={question.id}
-              order={question.order}
-              ref={(el) => (refs.current[question.id] = el)}
-              text={question.question}
-              blanks={question.blanks}
-              onAnswerChange={handleAnswerChange}
-            />
-          );
-        } else if (question.type === "multiple-choice") {
-          return (
-            <MultipleChoiceQuestion
-              key={question.id}
-              order={question.order}
-              ref={(el) => (refs.current[question.id] = el)}
-              question={question}
-              onAnswerChange={(id) => handleAnswerChange(question.id, id)}
-            />
-          );
-        } else {
-          return <SelectOptions />;
+      {questionsWithOrder.map((question, index) => {
+        switch (question.type) {
+          case "multiple-choice":
+            return (
+              <RadioOption
+                key={index}
+                ref={(el) => (refs.current[question.id] = el)}
+                question={question}
+                order={question.order}
+                onAnswerChange={(id) => handleAnswerChange(question.id, id)}
+              />
+            );
+          case "enter-answer":
+            return (
+              <FillInTheBlankQuestion
+                key={index}
+                ref={(el) => (refs.current[question.id] = el)}
+                order={question.order}
+                text={question.question}
+                blanks={question.blanks}
+                onAnswerChange={handleAnswerChange}
+              />
+            );
+          case "matching-heading":
+            return (
+              <MatchingHeading
+                key={index}
+                ref={(el) => (refs.current[question.id] = el)}
+                order={question.order}
+                question={question}
+                onAnswerChange={handleAnswerChange}
+              />
+            );
+          default:
+            return null;
         }
-        return null;
       })}
     </div>
   );

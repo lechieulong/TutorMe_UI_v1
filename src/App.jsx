@@ -13,6 +13,8 @@ import ChangePassword from './pages/User/ChangePassword';
 import Calendar from './pages/Calendar/Calendar';
 import SkillPart from "./pages/TestExam/SkillPart";
 import LiveStream from "./pages/LiveStream";
+import MetorInfor from "./pages/Mentor/MentorInforTest";
+import Statistical from "./pages/Mentor/Statistical";
 import "preline";
 
 const App = () => {
@@ -36,7 +38,11 @@ const App = () => {
           <Route path="/skill-part" element={<SkillPart />} />
           {/* Test  class*/}
           <Route path="/classes" element={<ClassesList />} />
+          {/* Calender */}
           <Route path="/calendar" element={<Calendar />} />
+          {/* Mentor */}
+          <Route path="/metorinfor" element={<MetorInfor />} />
+          <Route path="/mentor/statistical" element={<Statistical />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
       </Router>

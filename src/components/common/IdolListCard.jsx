@@ -2,17 +2,17 @@ import PropTypes from "prop-types";
 
 const IdolListCard = ({ image, profileImage, title, description }) => {
   return (
-    <div className="bg-white border border-gray-200 rounded-lg w-[300px] shadow-md overflow-hidden">
+    <div className="bg-white border border-gray-200 rounded-lg w-full max-w-sm shadow-md overflow-hidden">
       <img src={image} alt={title} className="w-full h-48 object-cover" />
       <div className="p-4 flex items-center">
         <img
           src={profileImage}
           alt="Profile"
-          className="w-12 h-12 object-cover rounded-full mr-4 mb-8"
+          className="w-12 h-12 object-cover rounded-full mr-4"
         />
         <div>
           <h3 className="text-black text-xl font-semibold">{title}</h3>
-          <p className="text-gray-600 mb-4">{description}</p>
+          <p className="text-gray-600">{description}</p>
         </div>
       </div>
     </div>

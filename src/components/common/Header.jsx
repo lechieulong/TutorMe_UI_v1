@@ -1,6 +1,15 @@
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import {
+  faHouse,
+  faTv,
+  faBook,
+  faPenNib,
+  faUserGraduate,
+} from "@fortawesome/free-solid-svg-icons";
+
 const Header = () => {
   return (
-    <header className="flex flex-wrap sm:justify-start sm:flex-nowrap w-full bg-white text-sm pt-3">
+    <header className="fixed top-0 left-0 right-0 w-full bg-white text-sm pt-3 shadow-lg z-50">
       <nav className="mx-auto pb-2 px-4 flex flex-wrap basis-full items-center shadow-lg justify-between ">
         <a
           className="sm:order-1 flex-none text-xl font-semibold  focus:outline-none focus:opacity-80"
@@ -13,7 +22,7 @@ const Header = () => {
             type="button"
             className="py-2 px-3 inline-flex items-center gap-x-2 text-sm font-medium rounded-lg border border-gray-200 bg-white text-gray-800 shadow-sm hover:bg-gray-50 focus:outline-none focus:bg-gray-50 disabled:opacity-50 disabled:pointer-events-none   dark:border-neutral-700 transition-hover transition-transform duration-500 dark:hover:scale-110"
           >
-            Button
+            Đăng nhập
           </button>
           <img
             className="inline-block size-[38px] rounded-full"
@@ -29,23 +38,46 @@ const Header = () => {
           <div className="flex flex-col gap-5 mt-5 sm:flex-row sm:items-center sm:mt-0 sm:ps-5">
             <a
               className="font-medium text-black focus:outline-none"
-              href="#"
+              href="/"
               aria-current="page"
             >
-              <i className="fa-solid fa-house"></i>
+              <span className="mr-2">
+                <FontAwesomeIcon icon={faHouse} />
+              </span>
               Home
             </a>
-            <a className="font-medium text-black  focus:outline-none " href="#">
-              Account
+            <a
+              className="font-medium text-black  focus:outline-none "
+              href="live-stream"
+            >
+              <span className="mr-2">
+                <FontAwesomeIcon icon={faTv} />
+              </span>
+              Livestreams
             </a>
             <a className="font-medium text-black focus:outline-none  " href="#">
-              Work
+              <span className="mr-2">
+                <FontAwesomeIcon icon={faBook} />
+              </span>
+              Khoá học
             </a>
             <a
               className="font-medium text-black  focus:outline-none  "
               href="#"
             >
-              Blog
+              <span className="mr-2">
+                <FontAwesomeIcon icon={faPenNib} />
+              </span>
+              Kiểm tra
+            </a>
+            <a
+              className="font-medium text-black  focus:outline-none  "
+              href="#"
+            >
+              <span className="mr-2">
+                <FontAwesomeIcon icon={faUserGraduate} />
+              </span>
+              Đăng ký mentor
             </a>
           </div>
         </div>

@@ -6,7 +6,9 @@ import TestSetting from "./pages/TestExam/TestSetting";
 import TestView from "./pages/TestExam/TestView";
 import SkillPart from "./pages/TestExam/SkillPart";
 import LiveStream from "./pages/LiveStream";
-
+import Course from "./pages/Course";
+import Policy from "./pages/Policy";
+import CheckResult from "./pages/CheckResult";
 const App = () => {
   return (
     <div className="flex items-center justify-center min-h-screen bg-gray-100">
@@ -22,6 +24,9 @@ const App = () => {
           <Route path="/skill-part" element={<SkillPart />} />
           {/* Test  class*/}
           <Route path="/classes" element={<ClassesList />} />
+          <Route path="/Course" element={<Course />} />
+          <Route path="/Policy" element={<Policy />} />
+          <Route path="/CheckResult" element={<CheckResult />} />
         </Routes>
       </Router>
     </div>

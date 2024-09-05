@@ -41,7 +41,7 @@ const Home = () => {
         </h1>
         <div className="p-5">
           <div className="container mx-auto px-4">
-            <div className="grid grid-cols-2 sm:grid-cols-4 md:grid-cols-8 gap-20">
+            <div className="grid grid-cols-2 sm:grid-cols-4 md:grid-cols-8 gap-10">
               {subjects.map((subject, index) => (
                 <SubjectListCard
                   key={index}

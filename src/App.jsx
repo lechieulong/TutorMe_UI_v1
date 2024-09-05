@@ -4,17 +4,16 @@ import NotFound from "./components/common/NotFound";
 import ClassesList from "./pages/classes/ClassList";
 import TestSetting from "./pages/TestExam/TestSetting";
 import TestView from "./pages/TestExam/TestView";
-import Login from './pages/Authentication/Login';
-import Register from './pages/Authentication/Register';
-import ForgotPassword from './pages/Authentication/ForgotPassword';
-import UserDetail from './pages/User/UserDetail';
-import ProfileEdit from './pages/User/ProfileEdit';
-import ChangePassword from './pages/User/ChangePassword';
-import Calendar from './pages/Calendar/Calendar';
+import Login from "./pages/Authentication/Login";
+import Register from "./pages/Authentication/Register";
+import ForgotPassword from "./pages/Authentication/ForgotPassword";
+import UserDetail from "./pages/User/UserDetail";
+import ProfileEdit from "./pages/User/ProfileEdit";
+import ChangePassword from "./pages/User/ChangePassword";
+import Calendar from "./pages/Calendar/Calendar";
 import SkillPart from "./pages/TestExam/SkillPart";
 import LiveStream from "./pages/LiveStream";
-import "preline";
-
+ 
 const App = () => {
   return (
     <div className="flex items-center justify-center min-h-screen bg-gray-100">

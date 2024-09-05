@@ -61,69 +61,79 @@ const TestView = () => {
         "Tempora voluptatum expedita nesciunt. Ducimus optio modi nulla omnis eveniet officiis dolor cupiditate, inventore aperiam, totam minima? Iste amet delectus explicabo aperiam neque omnis accusamus molestiae eligendi quas non. Recusandae!",
       questions: [
         {
-          id: 1,
-          question: "What is abc?",
-          type: "multiple-choice",
-          answers: [
-            { id: 1, name: "Option 1", answer: "abc" },
-            { id: 2, name: "Option 2", answer: "def" },
-            { id: 3, name: "Option 3", answer: "ghi" },
-            { id: 4, name: "Option 4", answer: "jkl" },
+          "multiple-choice": [
+            {
+              id: 1,
+              question: "What is abc?",
+              type: "multiple-choice",
+              answers: [
+                { id: 1, name: "Option 1", answer: "abc" },
+                { id: 2, name: "Option 2", answer: "def" },
+                { id: 3, name: "Option 3", answer: "ghi" },
+                { id: 4, name: "Option 4", answer: "jkl" },
+              ],
+            },
           ],
-          order: 1,
         },
         {
-          id: 2,
-          question:
-            "Please enter the name [bl2] of the first planet [bl3] in our solar system.",
-          type: "enter-answer",
-          blanks: [{ id: 2, placeholder: "1" }],
-          blanks: [{ id: 3, placeholder: "Gion mat ha" }],
-          correctAnswer: "Mercury",
-          order: 2,
-        },
-        {
-          id: 3,
-          question: "PUPU NGU",
-          type: "matching-heading",
-          answers: [
-            { id: 1, name: "Option 1", answer: "abc" },
-            { id: 2, name: "Option 2", answer: "def" },
-            { id: 3, name: "Option 3", answer: "ghi" },
-            { id: 4, name: "Option 4", answer: "jkl" },
+          "enter-answer": [
+            {
+              id: 2,
+              question:
+                "Please enter the name [bl2] of the first planet [bl3] in our solar system.",
+              type: "enter-answer",
+              blanks: [
+                { id: 2, placeholder: "1" },
+                { id: 3, placeholder: "Gion mat ha" },
+              ],
+              correctAnswer: "Mercury",
+            },
+            {
+              id: 5,
+              question:
+                "Please enter the name [bl5] of the first planet [bl7] in our solar system.",
+              type: "enter-answer",
+              blanks: [
+                { id: 5, placeholder: "1" },
+                { id: 7, placeholder: "1kkk" },
+              ],
+              correctAnswer: "Mercury",
+            },
           ],
-          correctAnswer: "haha",
-          order: 3,
         },
         {
-          id: 4,
-          question: "Rambo",
-          type: "matching-heading",
-          answers: [
-            { id: 1, name: "Option 1", answer: "abc" },
-            { id: 2, name: "Option 2", answer: "def" },
-            { id: 3, name: "Option 3", answer: "ghi" },
-            { id: 4, name: "Option 4", answer: "jkl" },
+          "matching-heading": [
+            {
+              id: 1,
+              questionMatch: [
+                {
+                  id: "1",
+                  name: "the best choose",
+                },
+                {
+                  id: "2",
+                  name: "the best kkkkk",
+                },
+              ],
+              answers: [
+                {
+                  id: 1,
+                  name: "A",
+                },
+                {
+                  id: 2,
+                  name: "B",
+                },
+              ],
+              type: "matching-heading",
+            },
           ],
-          correctAnswer: "Mercury",
-          order: 4,
-        },
-        {
-          id: 5,
-          question:
-            "Please enter the name [bl2] of the first planet [bl7] in  our solar system.",
-          type: "enter-answer",
-          blanks: [{ id: 2, placeholder: "1" }],
-          blanks: [{ id: 7, placeholder: "1kkk" }],
-
-          correctAnswer: "Mercury",
-          order: 5,
         },
       ],
       navigations: [1, 2],
     },
     {
-      name: "reading 2",
+      name: "reading 1",
       content:
         "Eaque incidunt, consectetur illum cupiditate a eveniet. Fuga saepe minima iusto illum a deserunt iure, facilis reprehenderit facere consequatur voluptas doloremque magnam qui neque, praesentium quo eius tempora est aperiam " +
         "Tempora voluptatum expedita nesciunt. Ducimus optio modi nulla omnis eveniet officiis dolor cupiditate, inventore aperiam, totam minima? Iste amet delectus explicabo aperiam neque omnis accusamus molestiae eligendi quas non. Recusandae!" +
@@ -133,33 +143,81 @@ const TestView = () => {
         "Tempora voluptatum expedita nesciunt. Ducimus optio modi nulla omnis eveniet officiis dolor cupiditate, inventore aperiam, totam minima? Iste amet delectus explicabo aperiam neque omnis accusamus molestiae eligendi quas non. Recusandae!" +
         "Tempora voluptatum expedita nesciunt. Ducimus optio modi nulla omnis eveniet officiis dolor cupiditate, inventore aperiam, totam minima? Iste amet delectus explicabo aperiam neque omnis accusamus molestiae eligendi quas non. Recusandae!" +
         "Tempora voluptatum expedita nesciunt. Ducimus optio modi nulla omnis eveniet officiis dolor cupiditate, inventore aperiam, totam minima? Iste amet delectus explicabo aperiam neque omnis accusamus molestiae eligendi quas non. Recusandae!",
-
       questions: [
         {
-          id: 3,
-          question: "What is eme?",
-          type: "multiple-choice",
-          answers: [
-            { id: 9, name: "Option 1", answer: "eme" },
-            { id: 10, name: "Option 2", answer: "ene" },
-            { id: 11, name: "Option 3", answer: "one" },
-            { id: 12, name: "Option 4", answer: "ome" },
+          "multiple-choice": [
+            {
+              id: 1,
+              question: "What is abc?",
+              type: "multiple-choice",
+              answers: [
+                { id: 1, name: "Option 1", answer: "abc" },
+                { id: 2, name: "Option 2", answer: "def" },
+                { id: 3, name: "Option 3", answer: "ghi" },
+                { id: 4, name: "Option 4", answer: "jkl" },
+              ],
+            },
           ],
-          order: 1,
         },
         {
-          id: 4,
-          question: "Please enter the chemical [bl4] symbol for water.",
-          type: "enter-answer",
-          blanks: [{ id: 4, placeholder: "Chemical symbol" }],
-          correctAnswer: "H2O",
-          order: 2,
+          "enter-answer": [
+            {
+              id: 2,
+              question:
+                "Please enter the name [bl2] of the first planet [bl3] in our solar system.",
+              type: "enter-answer",
+              blanks: [
+                { id: 2, placeholder: "1" },
+                { id: 3, placeholder: "Gion mat ha" },
+              ],
+              correctAnswer: "Mercury",
+            },
+            {
+              id: 5,
+              question:
+                "Please enter the name [bl2] of the first planet [bl7] in our solar system.",
+              type: "enter-answer",
+              blanks: [
+                { id: 2, placeholder: "1" },
+                { id: 7, placeholder: "1kkk" },
+              ],
+              correctAnswer: "Mercury",
+            },
+          ],
+        },
+        {
+          "matching-heading": [
+            {
+              id: 1,
+              questionMatch: [
+                {
+                  id: "1",
+                  name: "the best choose",
+                },
+                {
+                  id: "2",
+                  name: "the best kkkkk",
+                },
+              ],
+              answers: [
+                {
+                  id: 1,
+                  name: "A",
+                },
+                {
+                  id: 2,
+                  name: "B",
+                },
+              ],
+              type: "matching-heading",
+            },
+          ],
         },
       ],
-      navigations: [3, 4],
+      navigations: [1, 2],
     },
     {
-      name: "reading 3",
+      name: "reading 1",
       content:
         "Eaque incidunt, consectetur illum cupiditate a eveniet. Fuga saepe minima iusto illum a deserunt iure, facilis reprehenderit facere consequatur voluptas doloremque magnam qui neque, praesentium quo eius tempora est aperiam " +
         "Tempora voluptatum expedita nesciunt. Ducimus optio modi nulla omnis eveniet officiis dolor cupiditate, inventore aperiam, totam minima? Iste amet delectus explicabo aperiam neque omnis accusamus molestiae eligendi quas non. Recusandae!" +
@@ -169,55 +227,78 @@ const TestView = () => {
         "Tempora voluptatum expedita nesciunt. Ducimus optio modi nulla omnis eveniet officiis dolor cupiditate, inventore aperiam, totam minima? Iste amet delectus explicabo aperiam neque omnis accusamus molestiae eligendi quas non. Recusandae!" +
         "Tempora voluptatum expedita nesciunt. Ducimus optio modi nulla omnis eveniet officiis dolor cupiditate, inventore aperiam, totam minima? Iste amet delectus explicabo aperiam neque omnis accusamus molestiae eligendi quas non. Recusandae!" +
         "Tempora voluptatum expedita nesciunt. Ducimus optio modi nulla omnis eveniet officiis dolor cupiditate, inventore aperiam, totam minima? Iste amet delectus explicabo aperiam neque omnis accusamus molestiae eligendi quas non. Recusandae!",
-
       questions: [
         {
-          id: 5,
-          question: "What is haha?",
-          type: "multiple-choice",
-          answers: [
-            { id: 17, name: "Option 1", answer: "haha" },
-            { id: 18, name: "Option 2", answer: "heehee" },
-            { id: 19, name: "Option 3", answer: "hoho" },
-            { id: 20, name: "Option 4", answer: "hihi" },
+          "multiple-choice": [
+            {
+              id: 1,
+              question: "What is abc?",
+              type: "multiple-choice",
+              answers: [
+                { id: 1, name: "Option 1", answer: "abc" },
+                { id: 2, name: "Option 2", answer: "def" },
+                { id: 3, name: "Option 3", answer: "ghi" },
+                { id: 4, name: "Option 4", answer: "jkl" },
+              ],
+            },
           ],
-          order: 1,
         },
         {
-          id: 6,
-          question: "What is the square [bl6] root of 16 ,[bl7] wtf is that ?",
-          type: "enter-answer",
-          blanks: [
-            { id: 6, placeholder: "hydra" },
-            { id: 7, placeholder: "wtf " },
+          "enter-answer": [
+            {
+              id: 2,
+              question:
+                "Please enter the name [bl2] of the first planet [bl3] in our solar system.",
+              type: "enter-answer",
+              blanks: [
+                { id: 2, placeholder: "1" },
+                { id: 3, placeholder: "Gion mat ha" },
+              ],
+              correctAnswer: "Mercury",
+            },
+            {
+              id: 5,
+              question:
+                "Please enter the name [bl2] of the first planet [bl7] in our solar system.",
+              type: "enter-answer",
+              blanks: [
+                { id: 2, placeholder: "1" },
+                { id: 7, placeholder: "1kkk" },
+              ],
+              correctAnswer: "Mercury",
+            },
           ],
-          order: 2,
-          correctAnswer: "4",
         },
-
         {
-          id: 7,
-          question: ". What is haha?",
-          type: "multiple-choice",
-          answers: [
-            { id: 17, name: "Option 1", answer: "haha" },
-            { id: 18, name: "Option 2", answer: "heehee" },
-            { id: 19, name: "Option 3", answer: "hoho" },
-            { id: 20, name: "Option 4", answer: "hihi" },
+          "matching-heading": [
+            {
+              id: 1,
+              questionMatch: [
+                {
+                  id: "1",
+                  name: "the best choose",
+                },
+                {
+                  id: "2",
+                  name: "the best kkkkk",
+                },
+              ],
+              answers: [
+                {
+                  id: 1,
+                  name: "Nothing imposible",
+                },
+                {
+                  id: 2,
+                  name: "enhance  the ielts test ",
+                },
+              ],
+              type: "matching-heading",
+            },
           ],
-          order: 3,
-        },
-        {
-          id: 8,
-          question: "[bl9] wtf is that ?",
-          type: "enter-answer",
-          blanks: [{ id: 9, placeholder: "wtf " }],
-          order: 4,
-          correctAnswer: "4",
         },
       ],
-      navigations: [5, 6],
-      blanks: [6, 7],
+      navigations: [1, 2],
     },
   ];
 

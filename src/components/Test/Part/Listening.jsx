@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import FillInTheBlankQuestion from "../FillInTheBlankQuestion";
-import MultipleChoiceQuestion from "../MutipleChoice";
+import RadioOption from "../AnswerType/RadioOption";
 
 const Listening = ({ partData, part, refs }) => {
   const reading = partData.find((_, index) => index === part);
@@ -32,7 +32,7 @@ const Listening = ({ partData, part, refs }) => {
           );
         } else if (question.type === "multiple-choice") {
           return (
-            <MultipleChoiceQuestion
+            <RadioOption
               ref={(el) => (refs.current[question.id] = el)}
               key={question.id}
               question={question}

@@ -13,7 +13,10 @@ import ChangePassword from "./pages/User/ChangePassword";
 import Calendar from "./pages/Calendar/Calendar";
 import SkillPart from "./pages/TestExam/SkillPart";
 import LiveStream from "./pages/LiveStream";
- 
+
+import "preline";
+import CourseDetail from "./pages/Mentor/CourseDetail";
+
 const App = () => {
   return (
     <div className="flex items-center justify-center min-h-screen bg-gray-100">
@@ -36,6 +39,8 @@ const App = () => {
           {/* Test  class*/}
           <Route path="/classes" element={<ClassesList />} />
           <Route path="/calendar" element={<Calendar />} />
+          {/* Test Mentor */}
+          <Route path="/courses" element={<CourseDetail />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
       </Router>

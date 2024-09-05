@@ -1,13 +1,7 @@
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import {
-  faHouse,
-  faTv,
-  faBook,
-  faPenNib,
-  faUserGraduate,
-} from "@fortawesome/free-solid-svg-icons";
+import { faHouse, faTv, faBook } from "@fortawesome/free-solid-svg-icons";
 
-const Header = () => {
+const MentorHeader = () => {
   return (
     <header className="fixed top-0 left-0 right-0 w-full bg-white text-sm pt-3 shadow-lg z-50">
       <nav className="mx-auto pb-2 px-4 flex flex-wrap basis-full items-center shadow-lg justify-between ">
@@ -61,24 +55,6 @@ const Header = () => {
               </span>
               Khoá học
             </a>
-            <a
-              className="font-medium text-black  focus:outline-none  "
-              href="#"
-            >
-              <span className="mr-2">
-                <FontAwesomeIcon icon={faPenNib} />
-              </span>
-              Kiểm tra
-            </a>
-            <a
-              className="font-medium text-black  focus:outline-none  "
-              href="#"
-            >
-              <span className="mr-2">
-                <FontAwesomeIcon icon={faUserGraduate} />
-              </span>
-              Đăng ký mentor
-            </a>
           </div>
         </div>
       </nav>
@@ -86,4 +62,4 @@ const Header = () => {
   );
 };
 
-export default Header;
+export default MentorHeader;

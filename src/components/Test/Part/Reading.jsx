@@ -65,7 +65,7 @@ const Reading = ({ partData, part, refs }) => {
   };
 
   return (
-    <div className="bg-green-100 h-screen p-3">
+    <div className="bg-green-50 h-screen p-3">
       {questionsWithOrder.map((question, index) => {
         switch (question.type) {
           case "multiple-choice":

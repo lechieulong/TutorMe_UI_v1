@@ -46,6 +46,23 @@ const TestSetting = () => {
     });
   };
 
+  const enterFullScreen = () => {
+    const elem = document.documentElement;
+
+    if (elem.requestFullscreen) {
+      elem.requestFullscreen();
+    } else if (elem.mozRequestFullScreen) {
+      // Firefox
+      elem.mozRequestFullScreen();
+    } else if (elem.webkitRequestFullscreen) {
+      // Chrome, Safari, and Opera
+      elem.webkitRequestFullscreen();
+    } else if (elem.msRequestFullscreen) {
+      // IE/Edge
+      elem.msRequestFullscreen();
+    }
+  };
+
   const handleStartTest = () => {
     const parts = Object.keys(selectedParts).filter(
       (part) => selectedParts[part] && part !== "fullParts"
@@ -56,7 +73,7 @@ const TestSetting = () => {
       selectedParts: parts.length ? parts : ["fullParts"],
       skillPart,
     };
-
+    enterFullScreen();
     navigate("/test-setting/test-exam", { state: testData });
   };
 

@@ -17,7 +17,12 @@ const Writing = ({ partData, part }) => {
   };
 
   return (
-    <div className="flex flex-col h-screen bg-yellow-50 h-creen">
+    <div
+      style={{
+        height: "calc(100vh - 112px)",
+      }}
+      className="flex flex-col  bg-yellow-50"
+    >
       <header className="flex justify-between items-center bg-gray-800 text-white p-4 shadow-md">
         <h1 className="text-xl font-semibold">Task 1</h1>
         <div className="text-sm">Word Count: {countWords(text)}</div>
@@ -26,7 +31,7 @@ const Writing = ({ partData, part }) => {
       <textarea
         value={text}
         onChange={handleChange}
-        className="flex-grow p-6 text-lg outline-none resize-none bg-gray-100 focus:bg-white"
+        className="flex-grow p-6 text-lg outline-none resize-none bg-gray-100"
         placeholder="Start writing your article here..."
       />
     </div>

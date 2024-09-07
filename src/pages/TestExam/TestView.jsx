@@ -1,17 +1,15 @@
-import React, { useState, useRef, useEffect } from "react";
+import React, { useState, useRef, useEffect, memo } from "react";
 import Answer from "../../components/Test/Answer";
 import Topic from "../../components/Test/Topic";
-import Header from "../../components/Test/Header";
 import NavigationPart from "../../components/Test/NavigationPart";
 import { useLocation } from "react-router-dom";
 
-const TestView = () => {
+const TestView = memo(({ isTimeOut, setDataSubmit }) => {
   const questionRef = useRef({});
   const [isOpenSideView, setOpenSideView] = useState(false);
   const [partData, setPartData] = useState([]);
   const [part, setPart] = useState(0);
   const [leftWidth, setLeftWidth] = useState(50);
-  const [timeLeft, setTimeLeft] = useState(60 * 60 * 1000);
 
   const location = useLocation();
   const receivedData = location.state;
@@ -49,7 +47,7 @@ const TestView = () => {
 
   const readingPart = [
     {
-      name: "reading 1",
+      name: "reading 2",
       content:
         "Eaque incidunt, consectetur illum cupiditate a eveniet. Fuga saepe minima iusto illum a deserunt iure, facilis reprehenderit facere consequatur voluptas doloremque magnam qui neque, praesentium quo eius tempora est aperiam " +
         "Tempora voluptatum expedita nesciunt. Ducimus optio modi nulla omnis eveniet officiis dolor cupiditate, inventore aperiam, totam minima? Iste amet delectus explicabo aperiam neque omnis accusamus molestiae eligendi quas non. Recusandae!" +
@@ -130,10 +128,10 @@ const TestView = () => {
           ],
         },
       ],
-      navigations: [1, 2],
+      navigations: [1, 2, 3, 5, 7, 8, 9],
     },
     {
-      name: "reading 1",
+      name: "reading 3",
       content:
         "Eaque incidunt, consectetur illum cupiditate a eveniet. Fuga saepe minima iusto illum a deserunt iure, facilis reprehenderit facere consequatur voluptas doloremque magnam qui neque, praesentium quo eius tempora est aperiam " +
         "Tempora voluptatum expedita nesciunt. Ducimus optio modi nulla omnis eveniet officiis dolor cupiditate, inventore aperiam, totam minima? Iste amet delectus explicabo aperiam neque omnis accusamus molestiae eligendi quas non. Recusandae!" +
@@ -214,7 +212,7 @@ const TestView = () => {
           ],
         },
       ],
-      navigations: [1, 2],
+      navigations: [1, 2, 3, 5, 7, 8, 9],
     },
     {
       name: "reading 1",
@@ -298,7 +296,7 @@ const TestView = () => {
           ],
         },
       ],
-      navigations: [1, 2],
+      navigations: [1, 2, 3, 5, 7, 8, 9],
     },
   ];
 
@@ -308,6 +306,7 @@ const TestView = () => {
     WRITING: 3,
     SPEAKING: 4,
   };
+  console.log("hello");
 
   useEffect(() => {
     if (receivedData.skillPart === englishPart.READING) {
@@ -329,19 +328,58 @@ const TestView = () => {
     }
   }, [receivedData]);
 
-  useEffect(() => {
-    const timerInterval = setInterval(() => {
-      setTimeLeft((prevTime) => {
-        if (prevTime <= 0) {
-          clearInterval(timerInterval);
-          return 0;
-        }
-        return prevTime - 1000; // Decrease by 1 second
-      });
-    }, 1000);
+  const exitFullScreen = () => {
+    if (document.exitFullscreen) {
+      document.exitFullscreen();
+    } else if (document.mozCancelFullScreen) {
+      // Firefox
+      document.mozCancelFullScreen();
+    } else if (document.webkitExitFullscreen) {
+      // Chrome, Safari, and Opera
+      document.webkitExitFullscreen();
+    } else if (document.msExitFullscreen) {
+      // IE/Edge
+      document.msExitFullscreen();
+    }
+  };
 
-    return () => clearInterval(timerInterval); // Clean up on component unmount
+  useEffect(() => {
+    const blockKeys = (e) => {
+      if (e.key === "F11" || e.key === "Escape") {
+        e.preventDefault();
+      }
+    };
+
+    const ensureFullScreen = () => {
+      if (!document.fullscreenElement) {
+        document.documentElement.requestFullscreen().catch((err) => {
+          console.log(
+            `Error attempting to enable full-screen mode: ${err.message}`
+          );
+        });
+      }
+    };
+
+    const onVisibilityChange = () => {
+      if (document.hidden) {
+        ensureFullScreen();
+      }
+    };
+
+    document.addEventListener("keydown", blockKeys);
+    document.addEventListener("fullscreenchange", ensureFullScreen);
+    document.addEventListener("visibilitychange", onVisibilityChange);
+
+    return () => {
+      document.removeEventListener("keydown", blockKeys);
+      document.removeEventListener("fullscreenchange", ensureFullScreen);
+      document.removeEventListener("visibilitychange", onVisibilityChange);
+    };
   }, []);
+
+  const hanldeTestSubmit = () => {
+    exitFullScreen();
+  };
 
   const startResizing = (e) => {
     document.addEventListener("mousemove", handleMouseMove);
@@ -373,7 +411,6 @@ const TestView = () => {
 
   return (
     <div className="relative ">
-      <Header timeLeft={timeLeft} />
       <div className="flex justify-between h-screen w-screen">
         {isOpenSideView && (
           <div
@@ -389,11 +426,11 @@ const TestView = () => {
         )}
         {isOpenSideView && (
           <div
-            className="cursor-ew-resize "
+            className="cursor-ew-resize w-2 bg-black "
             style={{
               width: "2px",
-              height: "calc(100% - 112px)",
-              marginTop: "60px",
+              height: "calc(100% - 117px)",
+              marginTop: "70px",
             }}
             onMouseDown={startResizing}
           />
@@ -402,8 +439,8 @@ const TestView = () => {
           className="overflow-auto flex-grow  "
           style={{
             width: `${100 - leftWidth}%`,
-            height: "calc(100% - 117px)",
-            marginTop: "65px",
+            height: "calc(100% - 112px)",
+            marginTop: "70px",
           }}
         >
           <Answer
@@ -421,6 +458,6 @@ const TestView = () => {
       />
     </div>
   );
-};
+});
 
 export default TestView;

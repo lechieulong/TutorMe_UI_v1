@@ -16,7 +16,7 @@ import "preline";
 import TestLayout from "./pages/TestExam/TestLayout";
 import Class from "./pages/Mentor/Class";
 import ClassDetail from "./pages/User/ClassDetail";
-
+import TestForm from "./pages/TestExam/TestForm";
 const App = () => {
   return (
     <div className="flex items-center justify-center min-h-screen bg-gray-100">
@@ -38,6 +38,7 @@ const App = () => {
           <Route path="/calendar" element={<Calendar />} />
           <Route path="/class" element={<Class />} />
           <Route path="/class-detail/:className" element={<ClassDetail />} />
+          <Route path="/test-form" element={<TestForm />} />
         </Routes>
       </Router>
     </div>

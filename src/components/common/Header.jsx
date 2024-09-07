@@ -5,6 +5,7 @@ import {
   faBook,
   faPenNib,
   faUserGraduate,
+  faHeadset,
 } from "@fortawesome/free-solid-svg-icons";
 
 const Header = () => {
@@ -22,7 +23,14 @@ const Header = () => {
             type="button"
             className="py-2 px-3 inline-flex items-center gap-x-2 text-sm font-medium rounded-lg border border-gray-200 bg-white text-gray-800 shadow-sm hover:bg-gray-50 focus:outline-none focus:bg-gray-50 disabled:opacity-50 disabled:pointer-events-none   dark:border-neutral-700 transition-hover transition-transform duration-500 dark:hover:scale-110"
           >
-            Đăng nhập
+            Stream now
+            <FontAwesomeIcon icon={faHeadset} />
+          </button>
+          <button
+            type="button"
+            className="py-2 px-3 inline-flex items-center gap-x-2 text-sm font-medium rounded-lg border border-gray-200 bg-white text-gray-800 shadow-sm hover:bg-gray-50 focus:outline-none focus:bg-gray-50 disabled:opacity-50 disabled:pointer-events-none   dark:border-neutral-700 transition-hover transition-transform duration-500 dark:hover:scale-110"
+          >
+            Log In
           </button>
           <img
             className="inline-block size-[38px] rounded-full"
@@ -59,7 +67,7 @@ const Header = () => {
               <span className="mr-2">
                 <FontAwesomeIcon icon={faBook} />
               </span>
-              Khoá học
+              Course
             </a>
             <a
               className="font-medium text-black  focus:outline-none  "
@@ -68,7 +76,7 @@ const Header = () => {
               <span className="mr-2">
                 <FontAwesomeIcon icon={faPenNib} />
               </span>
-              Kiểm tra
+              Test
             </a>
             <a
               className="font-medium text-black  focus:outline-none  "
@@ -77,7 +85,7 @@ const Header = () => {
               <span className="mr-2">
                 <FontAwesomeIcon icon={faUserGraduate} />
               </span>
-              Đăng ký mentor
+              Mentor register
             </a>
           </div>
         </div>

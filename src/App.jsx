@@ -3,7 +3,6 @@ import Home from "./pages/Home";
 import NotFound from "./components/common/NotFound";
 import ClassesList from "./pages/classes/ClassList";
 import TestSetting from "./pages/TestExam/TestSetting";
-import TestView from "./pages/TestExam/TestView";
 import Login from "./pages/Authentication/Login";
 import Register from "./pages/Authentication/Register";
 import ForgotPassword from "./pages/Authentication/ForgotPassword";
@@ -15,7 +14,8 @@ import SkillPart from "./pages/TestExam/SkillPart";
 import LiveStream from "./pages/LiveStream";
 import "preline";
 import TestLayout from "./pages/TestExam/TestLayout";
-import CourseDetail from "./pages/Mentor/CourseDetail";
+import Class from "./pages/Mentor/Class";
+import ClassDetail from "./pages/User/ClassDetail";
 
 const App = () => {
   return (
@@ -28,20 +28,16 @@ const App = () => {
           <Route path="/userdetail" element={<UserDetail />} />
           <Route path="/profileedit" element={<ProfileEdit />} />
           <Route path="/changepassword" element={<ChangePassword />} />
-          {/* Test  common*/}
           <Route path="/" element={<Home />} />
           <Route path="*" element={<NotFound />} />
-          {/* Test  exam*/}
           <Route path="/test-setting/test-exam" element={<TestLayout />} />
           <Route path="/live-stream" element={<LiveStream />} />
           <Route path="/skill-part/test-setting" element={<TestSetting />} />
           <Route path="/skill-part" element={<SkillPart />} />
-          {/* Test  class*/}
           <Route path="/classes" element={<ClassesList />} />
           <Route path="/calendar" element={<Calendar />} />
-          {/* Test Mentor */}
-          <Route path="/courses" element={<CourseDetail />} />
-          <Route path="*" element={<NotFound />} />
+          <Route path="/class" element={<Class />} />
+          <Route path="/class-detail/:className" element={<ClassDetail />} />
         </Routes>
       </Router>
     </div>

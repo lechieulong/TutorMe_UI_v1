@@ -1,10 +1,23 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faPhoenixFramework } from "@fortawesome/free-brands-svg-icons";
+import {
+  storage,
+  ref,
+  uploadBytes,
+  getDownloadURL,
+} from "../../../../firebaseConfig"; // Import Firebase
+console.log("Firebase Storage:", storage);
 
 const ReadingForm = () => {
   const [parts, setParts] = useState([
-    { title: "Part 1", readingText: "", image: null, questions: [] },
+    {
+      title: "Part 1",
+      readingText: "",
+      image: null,
+      imageUrl: "",
+      questions: [],
+    },
   ]);
 
   const handleAddPart = () => {
@@ -14,6 +27,7 @@ const ReadingForm = () => {
         title: `Part ${parts.length + 1}`,
         readingText: "",
         image: null,
+        imageUrl: "",
         questions: [],
       },
     ]);
@@ -79,8 +93,19 @@ const ReadingForm = () => {
 
   const handleImageChange = (partIndex, file) => {
     const updatedParts = [...parts];
-    updatedParts[partIndex].image = file;
-    setParts(updatedParts);
+    const imageRef = ref(storage, `uploads/${file.name}`);
+
+    uploadBytes(imageRef, file)
+      .then((snapshot) => {
+        getDownloadURL(snapshot.ref).then((url) => {
+          updatedParts[partIndex].image = file;
+          updatedParts[partIndex].imageUrl = url;
+          setParts(updatedParts);
+        });
+      })
+      .catch((error) => {
+        console.error("Error uploading image:", error);
+      });
   };
 
   return (
@@ -103,7 +128,16 @@ const ReadingForm = () => {
               className="w-full mb-4 text-gray-500"
             />
             {part.image && (
-              <p className="text-gray-700">Selected Image: {part.image.name}</p>
+              <div className="mb-4">
+                <img
+                  src={part.imageUrl}
+                  alt="Uploaded"
+                  className="w-full h-auto"
+                />
+                <p className="text-gray-700">
+                  Selected Image: {part.image.name}
+                </p>
+              </div>
             )}
             <h3 className="text-xl font-semibold mb-4">{part.title}</h3>
             <textarea
@@ -196,7 +230,7 @@ const ReadingForm = () => {
                                     e.target.value
                                   )
                                 }
-                                placeholder="mached heading"
+                                placeholder="Matched Heading"
                                 className="w-full p-2 border border-gray-300 rounded-lg mb-2"
                               />
                             </label>
@@ -243,7 +277,7 @@ const ReadingForm = () => {
                                 )
                               }
                               placeholder="Answer"
-                              className="w-full p-2 border border-gray-300 rounded-lg"
+                              className="w-full p-2 border border-gray-300 rounded-lg mb-2"
                             />
                           </label>
                         </div>
@@ -271,54 +305,27 @@ const ReadingForm = () => {
                               className="w-full p-2 border border-gray-300 rounded-lg mb-2"
                             />
                           </label>
-                          <div className="flex items-center mb-2">
-                            <input
-                              type="radio"
-                              id={`true-${contentIndex}`}
-                              name={`true-false-${contentIndex}`}
-                              value="true"
-                              checked={content.answer === "true"}
-                              onChange={() =>
+                          <label className="block mb-2">
+                            <span className="font-semibold text-gray-700">
+                              Answer
+                            </span>
+                            <select
+                              value={content.answer}
+                              onChange={(e) =>
                                 handleContentChange(
                                   partIndex,
                                   questionIndex,
                                   contentIndex,
                                   "answer",
-                                  "true"
+                                  e.target.value
                                 )
                               }
-                              className="mr-2"
-                            />
-                            <label
-                              htmlFor={`true-${contentIndex}`}
-                              className="mr-4 text-gray-700"
+                              className="w-full p-2 border border-gray-300 rounded-lg mb-2"
                             >
-                              True
-                            </label>
-                            <input
-                              type="radio"
-                              id={`false-${contentIndex}`}
-                              name={`true-false-${contentIndex}`}
-                              value="false"
-                              checked={content.answer === "false"}
-                              onChange={() =>
-                                handleContentChange(
-                                  partIndex,
-                                  questionIndex,
-                                  contentIndex,
-                                  "answer",
-                                  "false"
-                                )
-                              }
-                              className="mr-2"
-                            />
-                            <label
-                              htmlFor={`false-${contentIndex}`}
-                              className="text-gray-700"
-                            >
-                              False
-                            </label>
-                          </div>
+                              <option value="true">True</option>
+                              <option value="false">False</option>
+                            </select>
+                          </label>
                         </div>
                       )}
 
@@ -346,73 +353,67 @@ const ReadingForm = () => {
                           </label>
                           <label className="block mb-2">
                             <span className="font-semibold text-gray-700">
-                              Answer options (comma separated)
+                              Options
                             </span>
                             <input
                               type="text"
-                              value={content.options}
+                              value={content.options.join(", ")}
                               onChange={(e) =>
                                 handleContentChange(
                                   partIndex,
                                   questionIndex,
                                   contentIndex,
                                   "options",
-                                  e.target.value.split(",")
+                                  e.target.value.split(", ")
                                 )
                               }
-                              placeholder="Option 1, Option 2"
-                              className="w-full p-2 border border-gray-300 rounded-lg"
+                              placeholder="Options (comma separated)"
+                              className="w-full p-2 border border-gray-300 rounded-lg mb-2"
                             />
                           </label>
                         </div>
                       )}
                     </div>
                   ))}
+                  <button
+                    onClick={() => handleAddQuestion(partIndex, questionIndex)}
+                    className="mt-4 px-4 py-2 bg-blue-500 text-white rounded-lg"
+                  >
+                    Add Question
+                  </button>
                 </div>
-                <button
-                  className="bg-green-500 hover:bg-yellow-700 text-white py-2 px-4 rounded-lg mt-4"
-                  onClick={() => handleAddQuestion(partIndex, questionIndex)}
-                >
-                  Add Question
-                </button>
               </div>
             ))}
-            <div className="flex flex-wrap justify-between p-2">
-              <button
-                className="bg-green-500 hover:bg-green-700 text-white py-2 px-4 rounded-lg mt-4"
-                onClick={() => handleAddQuestionType(partIndex, "Matching")}
-              >
-                Add Matching Type
-              </button>
-
-              <button
-                className="bg-green-500 hover:bg-green-700 text-white py-2 px-4 rounded-lg mt-4"
-                onClick={() => handleAddQuestionType(partIndex, "Filling")}
-              >
-                Add Filling Type
-              </button>
-
-              <button
-                className="bg-green-500 hover:bg-green-700 text-white py-2 px-4 rounded-lg mt-4"
-                onClick={() => handleAddQuestionType(partIndex, "True-False")}
-              >
-                Add True/False Type
-              </button>
-
-              <button
-                className="bg-green-500 hover:bg-green-700 text-white py-2 px-4 rounded-lg mt-4"
-                onClick={() => handleAddQuestionType(partIndex, "Radio")}
-              >
-                Add Radio Type
-              </button>
-            </div>
+            <button
+              onClick={() => handleAddQuestionType(partIndex, "Matching")}
+              className="mt-4 px-4 py-2 bg-green-500 text-white rounded-lg mr-2"
+            >
+              Add Matching Question
+            </button>
+            <button
+              onClick={() => handleAddQuestionType(partIndex, "Filling")}
+              className="mt-4 px-4 py-2 bg-green-500 text-white rounded-lg mr-2"
+            >
+              Add Filling Question
+            </button>
+            <button
+              onClick={() => handleAddQuestionType(partIndex, "True-False")}
+              className="mt-4 px-4 py-2 bg-green-500 text-white rounded-lg mr-2"
+            >
+              Add True-False Question
+            </button>
+            <button
+              onClick={() => handleAddQuestionType(partIndex, "Radio")}
+              className="mt-4 px-4 py-2 bg-green-500 text-white rounded-lg"
+            >
+              Add Radio Question
+            </button>
           </div>
         </div>
       ))}
-
       <button
-        className="bg-green-500 hover:bg-green-700 text-white py-2 px-4 rounded-lg mt-4"
         onClick={handleAddPart}
+        className="mt-4 px-4 py-2 bg-blue-500 text-white rounded-lg"
       >
         Add Part
       </button>

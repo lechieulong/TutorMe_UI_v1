@@ -16,6 +16,7 @@ import LiveStream from "./pages/LiveStream";
 import "preline";
 import TestLayout from "./pages/TestExam/TestLayout";
 import CourseDetail from "./pages/Mentor/CourseDetail";
+import TestForm from "./pages/TestExam/TestForm";
 
 const App = () => {
   return (
@@ -36,6 +37,7 @@ const App = () => {
           <Route path="/live-stream" element={<LiveStream />} />
           <Route path="/skill-part/test-setting" element={<TestSetting />} />
           <Route path="/skill-part" element={<SkillPart />} />
+          <Route path="/create-test" element={<TestForm />} />
           {/* Test  class*/}
           <Route path="/classes" element={<ClassesList />} />
           <Route path="/calendar" element={<Calendar />} />

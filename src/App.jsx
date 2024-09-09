@@ -28,25 +28,29 @@ const App = () => {
           <Route path="/userdetail" element={<UserDetail />} />
           <Route path="/profileedit" element={<ProfileEdit />} />
           <Route path="/changepassword" element={<ChangePassword />} />
+
           {/* Test  common*/}
           <Route path="/" element={<Home />} />
           <Route path="*" element={<NotFound />} />
+
           {/* Test  exam*/}
           <Route path="/test-setting/test-exam" element={<TestView />} />
           <Route path="/live-stream" element={<LiveStream />} />
           <Route path="/skill-part/test-setting" element={<TestSetting />} />
           <Route path="/skill-part" element={<SkillPart />} />
+
           {/* Test  class*/}
           <Route path="/classes" element={<ClassesList />} />
+
           {/* Calender */}
           <Route path="/calendar" element={<Calendar />} />
+
           {/* Mentor */}
           <Route path="/metorinfor" element={<MetorInfor />} />
 
           {/* Course */}
           <Route path="/courselist" element={<CourseList />} />
 
-          <Route path="*" element={<NotFound />} />
         </Routes>
       </Router>
     </div>

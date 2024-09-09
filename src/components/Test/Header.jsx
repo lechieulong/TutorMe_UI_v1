@@ -1,11 +1,34 @@
+/* eslint-disable react/prop-types */
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faClock,
   faGears,
   faPaperPlane,
 } from "@fortawesome/free-solid-svg-icons";
+import { useEffect, useState } from "react";
 
-const Header = ({ timeLeft }) => {
+const Header = ({ setIsTimeOut, dataSubmit }) => {
+  const [timeLeft, setTimeLeft] = useState(60 * 60 * 1000);
+
+  const handleSubmitTest = () => {
+    // post
+  };
+
+  useEffect(() => {
+    const timerInterval = setInterval(() => {
+      setTimeLeft((prevTime) => {
+        if (prevTime <= 0) {
+          clearInterval(timerInterval);
+          setIsTimeOut(true);
+          return 0;
+        }
+        return prevTime - 1000; // Decrease by 1 second
+      });
+    }, 1000);
+
+    return () => clearInterval(timerInterval); // Clean up on component unmount
+  }, []);
+
   const formatTime = (milliseconds) => {
     const minutes = Math.floor(milliseconds / (60 * 1000));
     const seconds = Math.floor((milliseconds % (60 * 1000)) / 1000);
@@ -30,7 +53,10 @@ const Header = ({ timeLeft }) => {
         </p>
         <button
           type="button"
-          class="  inline-flex items-center gap-x-2 text-sm font-medium rounded-lg border border-transparent bg-green-500 text-white hover:bg-green-700 focus:outline-none focus:bg-green-700 disabled:opacity-50 disabled:pointer-events-none"
+          className="  inline-flex items-center gap-x-2 text-sm font-medium rounded-lg border border-transparent 
+          bg-green-500 text-white
+           hover:bg-green-700 focus:outline-none
+            focus:bg-green-700 disabled:opacity-50 disabled:pointer-events-none"
         >
           <span className="mr-2 text-sm">
             <FontAwesomeIcon icon={faPaperPlane} />

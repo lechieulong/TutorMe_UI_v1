@@ -3,21 +3,25 @@ import Home from "./pages/Home";
 import NotFound from "./components/common/NotFound";
 import ClassesList from "./pages/classes/ClassList";
 import TestSetting from "./pages/TestExam/TestSetting";
-import TestView from "./pages/TestExam/TestView";
-import Login from './pages/Authentication/Login';
-import Register from './pages/Authentication/Register';
-import ForgotPassword from './pages/Authentication/ForgotPassword';
-import UserDetail from './pages/User/UserDetail';
-import ProfileEdit from './pages/User/ProfileEdit';
-import ChangePassword from './pages/User/ChangePassword';
-import Calendar from './pages/Calendar/Calendar';
+import Login from "./pages/Authentication/Login";
+import Register from "./pages/Authentication/Register";
+import ForgotPassword from "./pages/Authentication/ForgotPassword";
+import UserDetail from "./pages/User/UserDetail";
+import ProfileEdit from "./pages/User/ProfileEdit";
+import ChangePassword from "./pages/User/ChangePassword";
+import Calendar from "./pages/Calendar/Calendar";
 import SkillPart from "./pages/TestExam/SkillPart";
 import LiveStream from "./pages/LiveStream";
 import MetorInfor from "./pages/Mentor/MentorInforTest";
 import CourseList from "./pages/Course/CourseList";
 import TestList from "./pages/User/TestList";
 // import CourseDetail from './CourseDetail';
+
 import "preline";
+import TestLayout from "./pages/TestExam/TestLayout";
+import CourseDetail from "./pages/Mentor/CourseDetail";
+import TestForm from "./pages/TestExam/TestForm";
+import ImageTest from "./components/ImageTest";
 
 const App = () => {
   return (
@@ -36,16 +40,19 @@ const App = () => {
           <Route path="*" element={<NotFound />} />
 
           {/* Test  exam*/}
-          <Route path="/test-setting/test-exam" element={<TestView />} />
+          <Route path="/test-setting/test-exam" element={<TestLayout />} />
           <Route path="/live-stream" element={<LiveStream />} />
           <Route path="/skill-part/test-setting" element={<TestSetting />} />
           <Route path="/skill-part" element={<SkillPart />} />
+          <Route path="/create-test" element={<TestForm />} />
 
           {/* Test  class*/}
           <Route path="/classes" element={<ClassesList />} />
 
           {/* Calender */}
           <Route path="/calendar" element={<Calendar />} />
+          {/* Test Mentor */}
+          <Route path="/courses" element={<CourseDetail />} />
 
           {/* Mentor */}
           <Route path="/metorinfor" element={<MetorInfor />} />
@@ -57,6 +64,7 @@ const App = () => {
           {/* List test that User did */}
           <Route path="/testlist" element={<TestList />} />
 
+          <Route path="/uploadImage" element={<ImageTest />} />
         </Routes>
       </Router>
     </div>

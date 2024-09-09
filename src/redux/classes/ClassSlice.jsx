@@ -13,7 +13,8 @@ export const fetchClassesWithStudents = createAsyncThunk(
 );
 
 const initialState = {
-  classes: [],
+  courses: [],
+  count: 0,
   status: STATUS.SUCCESS,
   error: null,
 };

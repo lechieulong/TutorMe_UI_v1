@@ -15,6 +15,8 @@ import SkillPart from "./pages/TestExam/SkillPart";
 import LiveStream from "./pages/LiveStream";
 import MetorInfor from "./pages/Mentor/MentorInforTest";
 import CourseList from "./pages/Course/CourseList";
+import TestList from "./pages/User/TestList";
+// import CourseDetail from './CourseDetail';
 import "preline";
 
 const App = () => {
@@ -50,6 +52,10 @@ const App = () => {
 
           {/* Course */}
           <Route path="/courselist" element={<CourseList />} />
+          {/* <Route path="/courses/:courseId" element={<CourseDetail />} /> */}
+          
+          {/* List test that User did */}
+          <Route path="/testlist" element={<TestList />} />
 
         </Routes>
       </Router>

@@ -1,8 +1,9 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 
-const CourseCard = ({ title, description, category, icon, teacher }) => {
+const CourseCard = ({ title, description, category, icon, teacher, courseId }) => {
     return (
-        <div className="bg-white shadow-md rounded-lg p-4 flex flex-col items-center">
+        <Link to={`/courses/${courseId}`} className="bg-white shadow-md rounded-lg p-4 flex flex-col items-center hover:bg-gray-100 transition-all">
             <div className="text-2xl mb-2">
                 {icon}
             </div>
@@ -12,7 +13,7 @@ const CourseCard = ({ title, description, category, icon, teacher }) => {
             <div className="text-sm text-gray-600">
                 <span className="font-semibold">Teacher: </span>{teacher}
             </div>
-        </div>
+        </Link>
     );
 };
 

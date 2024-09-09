@@ -1,5 +1,5 @@
 import React, { useState, useMemo } from 'react';
-import { FaBook, FaSurprise , FaGraduationCap, FaChalkboardTeacher, FaAssistiveListeningSystems, FaPenAlt, FaSearch } from 'react-icons/fa';
+import { FaBook, FaSurprise , FaAssistiveListeningSystems, FaPenAlt } from 'react-icons/fa';
 import MainLayout from '../../layout/MainLayout';
 import Filter from './components/Filter';
 import CourseCard from './components/CourseCard';

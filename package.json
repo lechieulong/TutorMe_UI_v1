@@ -19,6 +19,7 @@
     "@mui/material": "^5.16.7",
     "@preline/accordion": "^2.4.1",
     "@reduxjs/toolkit": "^2.2.7",
+    "@syncfusion/ej2-react-schedule": "^26.2.12",
     "@types/jquery": "^3.5.30",
     "axios": "^1.7.4",
     "chart.js": "^4.4.4",

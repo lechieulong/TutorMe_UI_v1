@@ -12,7 +12,7 @@ const UserInfo = () => {
                 {/* User Profile Section */}
                 <div className="bg-white rounded-lg shadow-lg p-12 lg:w-1/4 flex flex-col items-center border border-blue-200">
                     <img
-                        src="https://scontent.fsgn2-8.fna.fbcdn.net/v/t39.30808-6/428608379_1107729527084945_699601624333735778_n.jpg?_nc_cat=102&ccb=1-7&_nc_sid=6ee11a&_nc_eui2=AeGyVNuzP4Hc8Dbdt9fO1j7gqcEP5iSFCnKpwQ_mJIUKckbEXT7w3bFwY3fwedmZXiSmhLJmd69z1YqhZFIY0buO&_nc_ohc=t5-ILYynI4sQ7kNvgEVAn1R&_nc_ht=scontent.fsgn2-8.fna&oh=00_AYAdUovwGr0lybglbgHvhpqXWkxTQjvmgOKiciPetgkOqQ&oe=66C7DBB0"
+                        src="https://scontent.fhan20-1.fna.fbcdn.net/v/t39.30808-6/428608379_1107729527084945_699601624333735778_n.jpg?_nc_cat=102&ccb=1-7&_nc_sid=6ee11a&_nc_eui2=AeGyVNuzP4Hc8Dbdt9fO1j7gqcEP5iSFCnKpwQ_mJIUKckbEXT7w3bFwY3fwedmZXiSmhLJmd69z1YqhZFIY0buO&_nc_ohc=wm6OeX9ql34Q7kNvgHsTvJz&_nc_ht=scontent.fhan20-1.fna&_nc_gid=AQGdO7WmKUtsTwEVtkQRJ-Z&oh=00_AYC8qWbax88dXtVjKAxEhfTil54Au2-PaLTPdS-1qeKvzw&oe=66E158B0"
                         alt="Avatar"
                         className="w-32 h-32 rounded-full mb-4 border-4 border-blue-300"
                     />

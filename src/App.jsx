@@ -14,7 +14,7 @@ import Calendar from './pages/Calendar/Calendar';
 import SkillPart from "./pages/TestExam/SkillPart";
 import LiveStream from "./pages/LiveStream";
 import MetorInfor from "./pages/Mentor/MentorInforTest";
-import Statistical from "./pages/Mentor/Statistical";
+import CourseList from "./pages/Course/CourseList";
 import "preline";
 
 const App = () => {
@@ -42,7 +42,10 @@ const App = () => {
           <Route path="/calendar" element={<Calendar />} />
           {/* Mentor */}
           <Route path="/metorinfor" element={<MetorInfor />} />
-          <Route path="/mentor/statistical" element={<Statistical />} />
+
+          {/* Course */}
+          <Route path="/courselist" element={<CourseList />} />
+
           <Route path="*" element={<NotFound />} />
         </Routes>
       </Router>

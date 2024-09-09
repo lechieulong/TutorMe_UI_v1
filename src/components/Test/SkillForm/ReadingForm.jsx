@@ -1,11 +1,24 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faPhoenixFramework } from "@fortawesome/free-brands-svg-icons";
+import {
+  storage,
+  ref,
+  uploadBytes,
+  getDownloadURL,
+} from "../../../../firebaseConfig"; // Import Firebase
+console.log("Firebase Storage:", storage);
 import { faBook, faNairaSign, faPlus } from "@fortawesome/free-solid-svg-icons";
 
 const ReadingForm = () => {
   const [parts, setParts] = useState([
-    { title: "Part 1", readingText: "", image: null, questions: [] },
+    {
+      title: "Part 1",
+      readingText: "",
+      image: null,
+      imageUrl: "",
+      questions: [],
+    },
   ]);
   const [image, setImage] = useState(null); // State for the image
 
@@ -16,6 +29,7 @@ const ReadingForm = () => {
         title: `Part ${parts.length + 1}`,
         readingText: "",
         image: null,
+        imageUrl: "",
         questions: [],
       },
     ]);
@@ -83,8 +97,19 @@ const ReadingForm = () => {
     if (file) {
       const imageUrl = URL.createObjectURL(file);
       const updatedParts = [...parts];
-      updatedParts[partIndex].image = imageUrl;
-      setParts(updatedParts);
+    const imageRef = ref(storage, `uploads/${file.name}`);
+
+    uploadBytes(imageRef, file)
+      .then((snapshot) => {
+        getDownloadURL(snapshot.ref).then((url) => {
+            updatedParts[partIndex].image = imageUrl;
+          updatedParts[partIndex].imageUrl = url;
+            setParts(updatedParts);
+        });
+      })
+      .catch((error) => {
+        console.error("Error uploading image:", error);
+      });
       setImage(imageUrl); // Update the image state
     }
   };
@@ -123,12 +148,15 @@ const ReadingForm = () => {
             </div>
 
             {part.image && (
-              <div className="mt-2">
+              <div className="mb-4">
                 <img
-                  src={part.image}
-                  alt={`Uploaded Part ${partIndex + 1}`}
-                  className="max-w-[700px] max-h-96 object-contain rounded-lg"
+                  src={part.imageUrl}
+                  alt="Uploaded"
+                  className="w-full h-auto"
                 />
+                <p className="text-gray-700">
+                  Selected Image: {part.image.name}
+                </p>
               </div>
             )}
 
@@ -232,7 +260,7 @@ const ReadingForm = () => {
                                     e.target.value
                                   )
                                 }
-                                placeholder="Matched heading"
+                                placeholder="Matched Heading"
                                 className="w-full p-2 border border-gray-300 rounded-lg mb-2"
                               />
                             </label>
@@ -279,7 +307,7 @@ const ReadingForm = () => {
                                 )
                               }
                               placeholder="Answer"
-                              className="w-full p-2 border border-gray-300 rounded-lg"
+                              className="w-full p-2 border border-gray-300 rounded-lg mb-2"
                             />
                           </label>
                         </div>
@@ -320,9 +348,10 @@ const ReadingForm = () => {
                                   contentIndex,
                                   "answer",
                                   e.target.value
+                                  e.target.value
                                 )
                               }
-                              className="w-full p-2 border border-gray-300 rounded-lg"
+                              className="w-full p-2 border border-gray-300 rounded-lg mb-2"
                             >
                               <option value="true">True</option>
                               <option value="false">False</option>
@@ -356,12 +385,13 @@ const ReadingForm = () => {
                           <label className="block mb-2">
                             <span className="font-semibold text-gray-700">
                               Options
+                              Options
                             </span>
                             {content.options.map((option, optionIndex) => (
                               <div key={optionIndex} className=" mb-2">
                                 <input
                                   type="text"
-                                  value={option}
+                                  value={option.join(", ")}
                                   onChange={(e) =>
                                     handleContentChange(
                                       partIndex,
@@ -460,6 +490,7 @@ const ReadingForm = () => {
         type="button"
         onClick={handleAddPart}
         className="p-2 bg-green-500 text-white rounded-lg mt-4"
+        className="mt-4 px-4 py-2 bg-blue-500 text-white rounded-lg"
       >
         Add Part
       </button>

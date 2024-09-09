@@ -31,9 +31,10 @@ const TestSetting = () => {
         updatedParts.part2 = allPartsSelected;
         updatedParts.part3 = allPartsSelected;
       } else {
-        updatedParts[part] = !prev[part];
+        updatedParts[part] = !prev[part]; 
         if (!updatedParts[part]) {
-          updatedParts.fullParts = false;
+          updatedParts.fullParts = false; 
+
         } else {
           const allPartsSelected = Object.keys(updatedParts)
             .filter((key) => key !== "fullParts")

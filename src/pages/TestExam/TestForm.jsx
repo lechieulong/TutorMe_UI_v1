@@ -5,6 +5,8 @@ import WritingForm from "../../components/Test/SkillForm/WrittingForm";
 import SpeakingForm from "../../components/Test/SkillForm/SpeakingForm";
 import FilterForm from "../../components/Test/SkillForm/FilterForm";
 import Header from "../../components/common/Header";
+import { faStream } from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
 const TestForm = () => {
   const [selectedClasses, setSelectedClasses] = useState([]);
@@ -36,9 +38,15 @@ const TestForm = () => {
   };
 
   return (
-    <div className="min-h-screen container mt-20 bg-gray-100">
+    <div className="min-h-screen container mt-16 ">
       <Header />
-      <h3 className="mt-2 mb-8 text-2xl font-semibold">Form Create Test</h3>
+      <h3 className="mt-2 mb-4 text-2xl font-semibold text-gray-500">
+        {" "}
+        <span className="mr-2">
+          <FontAwesomeIcon icon={faStream} />
+        </span>
+        Form Create Test
+      </h3>
       <FilterForm
         onSelectClass={handleSelectClass}
         onSelectSkill={handleSelectSkill}

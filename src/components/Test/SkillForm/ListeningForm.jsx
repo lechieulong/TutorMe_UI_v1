@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faBook, faHeadphones } from "@fortawesome/free-solid-svg-icons";
 import { faPhoenixFramework } from "@fortawesome/free-brands-svg-icons";
 
 const ListeningForm = () => {
@@ -78,7 +79,12 @@ const ListeningForm = () => {
 
   return (
     <section className="bg-white shadow-lg rounded-lg p-6 mb-8 border border-gray-200">
-      <h2 className="text-2xl font-semibold mb-4 border-b pb-2">Listening</h2>
+      <h2 className="text-2xl font-semibold mb-4 border-b pb-2">
+        <span className="mr-2">
+          <FontAwesomeIcon icon={faHeadphones} />
+        </span>
+        Listening
+      </h2>
       {parts.map((part, partIndex) => (
         <div
           key={partIndex}
@@ -119,9 +125,7 @@ const ListeningForm = () => {
                   <span className="mr-4">{question.type}</span>
                 </h5>
                 <label className="block mb-2">
-                  <span className="font-semibold text-lg text-gray-700">
-                    Title Topic
-                  </span>
+                  <span className="  text-gray-700 mb-1">Title Topic</span>
                   <input
                     type="text"
                     value={question.titleTopic}
@@ -133,8 +137,8 @@ const ListeningForm = () => {
                         e.target.value
                       )
                     }
-                    placeholder="Title Topic"
-                    className="w-full p-2 border border-gray-300 rounded-lg mb-2"
+                    placeholder="enter heading topic "
+                    className="w-full p-1 border border-gray-300 rounded-lg mb-2"
                   />
                 </label>
                 <div>
@@ -356,7 +360,7 @@ const ListeningForm = () => {
                   ))}
                 </div>
                 <button
-                  className="bg-green-500 hover:bg-yellow-700 text-white py-2 px-4 rounded-lg mt-4"
+                  className="bg-green-500 hover:bg-green-700 text-white py-2 px-4 rounded-lg text-sm mt-4"
                   onClick={() => handleAddQuestion(partIndex, questionIndex)}
                 >
                   Add Question
@@ -368,35 +372,35 @@ const ListeningForm = () => {
                 className="bg-green-500 hover:bg-green-700 text-white py-2 px-4 rounded-lg mt-4"
                 onClick={() => handleAddQuestionType(partIndex, "Matching")}
               >
-                Add Matching Type
+                Matching Type
               </button>
 
               <button
                 className="bg-green-500 hover:bg-green-700 text-white py-2 px-4 rounded-lg mt-4"
                 onClick={() => handleAddQuestionType(partIndex, "Filling")}
               >
-                Add Filling Type
+                Filling Type
               </button>
 
               <button
                 className="bg-green-500 hover:bg-green-700 text-white py-2 px-4 rounded-lg mt-4"
                 onClick={() => handleAddQuestionType(partIndex, "True-False")}
               >
-                Add True-False Type
+                True-False Type
               </button>
 
               <button
                 className="bg-green-500 hover:bg-green-700 text-white py-2 px-4 rounded-lg mt-4"
                 onClick={() => handleAddQuestionType(partIndex, "Radio")}
               >
-                Add Radio Type
+                Radio Type
               </button>
             </div>
           </div>
         </div>
       ))}
       <button
-        className="bg-blue-500 hover:bg-blue-700 text-white py-2 px-4 rounded-lg"
+        className="bg-green-500 hover:bg-green-700 text-white py-2 px-4 rounded-lg"
         onClick={handleAddPart}
       >
         Add Part

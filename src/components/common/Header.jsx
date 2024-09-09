@@ -55,10 +55,7 @@ const Header = () => {
               </span>
               Livestreams
             </a>
-            <a
-              className="font-medium text-black focus:outline-none  "
-              href="skill-part"
-            >
+            <a className="font-medium text-black focus:outline-none  " href="">
               <span className="mr-2">
                 <FontAwesomeIcon icon={faBook} />
               </span>
@@ -66,7 +63,7 @@ const Header = () => {
             </a>
             <a
               className="font-medium text-black  focus:outline-none  "
-              href="#"
+              href="skill-part"
             >
               <span className="mr-2">
                 <FontAwesomeIcon icon={faPenNib} />

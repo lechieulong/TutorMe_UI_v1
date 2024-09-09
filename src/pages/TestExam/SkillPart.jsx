@@ -48,7 +48,7 @@ const SkillPart = () => {
   ];
 
   const handleTakeTest = () => {
-    navigate("/skill-part/test-setting", { state: 1 });
+    navigate("/skill-part/test-setting", { state: 3 });
   };
 
   return (

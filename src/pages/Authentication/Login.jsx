@@ -17,7 +17,7 @@ const SignIn = () => {
     let res = await loginApi(user, pwd);
 
     if (!res || !res.result || !res.result.token) {
-      toast.error(res?.message || "User or Password is incorrect!");
+      toast.error(res?.message || "Username or password is incorrect!");
       return;
     }
 

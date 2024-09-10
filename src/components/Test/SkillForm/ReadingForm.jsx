@@ -1,11 +1,27 @@
-import React, { useState } from "react";
+import { useState } from "react";
+import axios from "axios";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faPhoenixFramework } from "@fortawesome/free-brands-svg-icons";
+import {
+  storage,
+  ref,
+  uploadBytes,
+  getDownloadURL,
+} from "../../../../firebaseConfig"; // Import Firebase
+console.log("Firebase Storage:", storage);
+import { faBook, faNairaSign, faPlus } from "@fortawesome/free-solid-svg-icons";
 
 const ReadingForm = () => {
   const [parts, setParts] = useState([
-    { title: "Part 1", readingText: "", image: null, questions: [] },
+    {
+      title: "Part 1",
+      readingText: "",
+      image: null,
+      imageUrl: "",
+      questions: [],
+    },
   ]);
+  const [image, setImage] = useState(""); // State for the image
 
   const handleAddPart = () => {
     setParts([
@@ -14,6 +30,7 @@ const ReadingForm = () => {
         title: `Part ${parts.length + 1}`,
         readingText: "",
         image: null,
+        imageUrl: "",
         questions: [],
       },
     ]);
@@ -43,7 +60,7 @@ const ReadingForm = () => {
         question.content.push({ question: "", answer: "true" });
         break;
       case "Radio":
-        question.content.push({ question: "", options: [] });
+        question.content.push({ question: "", options: [""] }); // Initialize with one empty option
         break;
       default:
         break;
@@ -56,18 +73,17 @@ const ReadingForm = () => {
     questionIndex,
     contentIndex,
     field,
-    value
+    value,
+    optionIndex
   ) => {
     const updatedParts = [...parts];
-    updatedParts[partIndex].questions[questionIndex].content[contentIndex][
-      field
-    ] = value;
-    setParts(updatedParts);
-  };
-
-  const handleQuestionChange = (partIndex, questionIndex, field, value) => {
-    const updatedParts = [...parts];
-    updatedParts[partIndex].questions[questionIndex][field] = value;
+    const content =
+      updatedParts[partIndex].questions[questionIndex].content[contentIndex];
+    if (field === "options") {
+      content[field][optionIndex] = value;
+    } else {
+      content[field] = value;
+    }
     setParts(updatedParts);
   };
 
@@ -77,15 +93,61 @@ const ReadingForm = () => {
     setParts(updatedParts);
   };
 
-  const handleImageChange = (partIndex, file) => {
-    const updatedParts = [...parts];
-    updatedParts[partIndex].image = file;
-    setParts(updatedParts);
+  const handleImageChange = (event, partIndex) => {
+    const file = event.target.files[0];
+    if (file) {
+      const imageUrl = URL.createObjectURL(file);
+      const updatedParts = [...parts];
+      const imageRef = ref(storage, `uploads/${file.name}`);
+
+      uploadBytes(imageRef, file)
+        .then((snapshot) => {
+          getDownloadURL(snapshot.ref).then((url) => {
+            updatedParts[partIndex].image = imageUrl;
+            updatedParts[partIndex].imageUrl = url;
+            setParts(updatedParts);
+          });
+        })
+        .catch((error) => {
+          console.error("Error uploading image:", error);
+        });
+      setImage(imageUrl); // Update the image state
+    }
+  };
+
+  const generateImage = async (part) => {
+    try {
+      const response = await axios.post(
+        "https://api-inference.huggingface.co/models/black-forest-labs/FLUX.1-dev",
+        {
+          inputs: `generate a high-definition, ultra-detailed, and sharp image of random image `,
+          options: { wait_for_model: true, quality: "ultra", resolution: "4k" }, // Request ultra quality and 4K resolution
+        },
+        {
+          responseType: "blob",
+          headers: {
+            Authorization: `Bearer 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`,
+          },
+        }
+      );
+
+      const imageUrl = URL.createObjectURL(response.data);
+      part.image = imageUrl;
+      part.imageUrl = imageUrl;
+    } catch (error) {
+      console.error("Error generating image:", error);
+      setIsGeneratingImage(false);
+    }
   };
 
   return (
     <section className="bg-white shadow-lg rounded-lg p-6 mb-8 border border-gray-200">
-      <h2 className="text-2xl font-semibold mb-4 border-b pb-2">Reading</h2>
+      <h2 className="text-2xl font-semibold mb-4 border-b pb-2">
+        <span className="mr-2 ">
+          <FontAwesomeIcon icon={faBook} />
+        </span>
+        Reading
+      </h2>
       {parts.map((part, partIndex) => (
         <div
           key={partIndex}
@@ -94,26 +156,57 @@ const ReadingForm = () => {
           {/* Left side: Reading Text and Image */}
           <div
             style={{ height: "calc(100% - 200px)" }}
-            className="w-1/2  pr-4 border-r border-gray-300 overflow-auto"
+            className="w-1/2   border-r border-gray-300 overflow-auto"
           >
-            <input
-              type="file"
-              accept="image/*"
-              onChange={(e) => handleImageChange(partIndex, e.target.files[0])}
-              className="w-full mb-4 text-gray-500"
-            />
+            <div>
+              <input
+                type="file"
+                accept="image/*"
+                onChange={(e) => handleImageChange(e, partIndex)}
+                className="border border-gray-300 p-2 rounded-lg mb-4"
+              />
+              <button
+                className="bg-green-600 text-white ml-2"
+                onClick={generateImage(part)}
+              >
+                <span className="mr-2">
+                  <FontAwesomeIcon icon={faNairaSign} />
+                </span>
+                Generate image from AI
+              </button>
+            </div>
+
             {part.image && (
-              <p className="text-gray-700">Selected Image: {part.image.name}</p>
+              <div className="mb-4">
+                <img
+                  src={part.imageUrl}
+                  alt="Uploaded"
+                  className="w-full h-auto"
+                />
+                <p className="text-gray-700">
+                  Selected Image: {part.image.name}
+                </p>
+              </div>
             )}
+
             <h3 className="text-xl font-semibold mb-4">{part.title}</h3>
-            <textarea
-              className="w-full h-72 p-4 border border-gray-300 rounded-lg mb-4"
-              placeholder="Enter Reading Text"
-              value={part.readingText}
-              onChange={(e) =>
-                handleReadingTextChange(partIndex, e.target.value)
-              }
-            />
+            <div className="flex flex-col gap-2">
+              <p className="text-lg">Name of Reading</p>
+              <input
+                type="text"
+                placeholder="Name of reading"
+                className="w-full mb-2 p-2 border border-gray-300 rounded-lg focus:outline-none "
+              />
+              <p className="text-lg">Content of Reading</p>
+              <textarea
+                className="w-full h-72 p-4 border border-gray-300 rounded-lg mb-4"
+                placeholder="Enter Reading Text"
+                value={part.readingText}
+                onChange={(e) =>
+                  handleReadingTextChange(partIndex, e.target.value)
+                }
+              />
+            </div>
           </div>
 
           {/* Right side: Questions */}
@@ -196,7 +289,7 @@ const ReadingForm = () => {
                                     e.target.value
                                   )
                                 }
-                                placeholder="mached heading"
+                                placeholder="Matched Heading"
                                 className="w-full p-2 border border-gray-300 rounded-lg mb-2"
                               />
                             </label>
@@ -243,7 +336,7 @@ const ReadingForm = () => {
                                 )
                               }
                               placeholder="Answer"
-                              className="w-full p-2 border border-gray-300 rounded-lg"
+                              className="w-full p-2 border border-gray-300 rounded-lg mb-2"
                             />
                           </label>
                         </div>
@@ -271,54 +364,27 @@ const ReadingForm = () => {
                               className="w-full p-2 border border-gray-300 rounded-lg mb-2"
                             />
                           </label>
-                          <div className="flex items-center mb-2">
-                            <input
-                              type="radio"
-                              id={`true-${contentIndex}`}
-                              name={`true-false-${contentIndex}`}
-                              value="true"
-                              checked={content.answer === "true"}
-                              onChange={() =>
+                          <label className="block mb-2">
+                            <span className="font-semibold text-gray-700">
+                              Answer
+                            </span>
+                            <select
+                              value={content.answer}
+                              onChange={(e) =>
                                 handleContentChange(
                                   partIndex,
                                   questionIndex,
                                   contentIndex,
                                   "answer",
-                                  "true"
+                                  e.target.value
                                 )
                               }
-                              className="mr-2"
-                            />
-                            <label
-                              htmlFor={`true-${contentIndex}`}
-                              className="mr-4 text-gray-700"
+                              className="w-full p-2 border border-gray-300 rounded-lg mb-2"
                             >
-                              True
-                            </label>
-                            <input
-                              type="radio"
-                              id={`false-${contentIndex}`}
-                              name={`true-false-${contentIndex}`}
-                              value="false"
-                              checked={content.answer === "false"}
-                              onChange={() =>
-                                handleContentChange(
-                                  partIndex,
-                                  questionIndex,
-                                  contentIndex,
-                                  "answer",
-                                  "false"
-                                )
-                              }
-                              className="mr-2"
-                            />
-                            <label
-                              htmlFor={`false-${contentIndex}`}
-                              className="text-gray-700"
-                            >
-                              False
-                            </label>
-                          </div>
+                              <option value="true">True</option>
+                              <option value="false">False</option>
+                            </select>
+                          </label>
                         </div>
                       )}
 
@@ -346,23 +412,44 @@ const ReadingForm = () => {
                           </label>
                           <label className="block mb-2">
                             <span className="font-semibold text-gray-700">
-                              Answer options (comma separated)
+                              Options Options
                             </span>
-                            <input
-                              type="text"
-                              value={content.options}
-                              onChange={(e) =>
+                            {content.options.map((option, optionIndex) => (
+                              <div key={optionIndex} className=" mb-2">
+                                <input
+                                  type="text"
+                                  value={option.join(", ")}
+                                  onChange={(e) =>
+                                    handleContentChange(
+                                      partIndex,
+                                      questionIndex,
+                                      contentIndex,
+                                      "options",
+                                      e.target.value,
+                                      optionIndex
+                                    )
+                                  }
+                                  placeholder={`Option ${optionIndex + 1}`}
+                                  className="w-full p-1 border border-gray-300 rounded-lg"
+                                />
+                              </div>
+                            ))}
+                            <button
+                              type="button"
+                              onClick={() =>
                                 handleContentChange(
                                   partIndex,
                                   questionIndex,
                                   contentIndex,
                                   "options",
-                                  e.target.value.split(",")
+                                  "",
+                                  content.options.length
                                 )
                               }
-                              placeholder="Option 1, Option 2"
-                              className="w-full p-2 border border-gray-300 rounded-lg"
-                            />
+                              className="p-2 bg-green-500 text-white rounded-lg mt-2"
+                            >
+                              Add Option
+                            </button>
                           </label>
                         </div>
                       )}
@@ -370,49 +457,66 @@ const ReadingForm = () => {
                   ))}
                 </div>
                 <button
-                  className="bg-green-500 hover:bg-yellow-700 text-white py-2 px-4 rounded-lg mt-4"
+                  type="button"
                   onClick={() => handleAddQuestion(partIndex, questionIndex)}
+                  className="p-2 bg-green-500 text-white rounded-lg mt-2"
                 >
+                  <span className="mr-2 ">
+                    <FontAwesomeIcon icon={faPlus} />
+                  </span>
                   Add Question
                 </button>
               </div>
             ))}
-            <div className="flex flex-wrap justify-between p-2">
+            <div className="flex flex-col">
               <button
-                className="bg-green-500 hover:bg-green-700 text-white py-2 px-4 rounded-lg mt-4"
+                type="button"
                 onClick={() => handleAddQuestionType(partIndex, "Matching")}
+                className="p-2 bg-green-500 text-white rounded-lg mt-2"
               >
-                Add Matching Type
+                <span className="mr-2 ">
+                  <FontAwesomeIcon icon={faPlus} />
+                </span>
+                Matching Question
               </button>
-
               <button
-                className="bg-green-500 hover:bg-green-700 text-white py-2 px-4 rounded-lg mt-4"
+                type="button"
                 onClick={() => handleAddQuestionType(partIndex, "Filling")}
+                className="p-2 bg-green-500 text-white rounded-lg mt-2"
               >
-                Add Filling Type
+                <span className="mr-2 ">
+                  <FontAwesomeIcon icon={faPlus} />
+                </span>
+                Filling Question
               </button>
-
               <button
-                className="bg-green-500 hover:bg-green-700 text-white py-2 px-4 rounded-lg mt-4"
+                type="button"
                 onClick={() => handleAddQuestionType(partIndex, "True-False")}
+                className="p-2 bg-green-500 text-white rounded-lg mt-2"
               >
-                Add True/False Type
+                <span className="mr-2 ">
+                  <FontAwesomeIcon icon={faPlus} />
+                </span>
+                True-False Question
               </button>
-
               <button
-                className="bg-green-500 hover:bg-green-700 text-white py-2 px-4 rounded-lg mt-4"
+                type="button"
                 onClick={() => handleAddQuestionType(partIndex, "Radio")}
+                className="p-2 bg-green-500 text-white rounded-lg mt-2"
               >
-                Add Radio Type
+                <span className="mr-2 ">
+                  <FontAwesomeIcon icon={faPlus} />
+                </span>
+                Radio Question
               </button>
             </div>
           </div>
         </div>
       ))}
-
       <button
-        className="bg-green-500 hover:bg-green-700 text-white py-2 px-4 rounded-lg mt-4"
+        type="button"
         onClick={handleAddPart}
+        className="p-2 bg-green-500 text-white rounded-lg mt-4"
       >
         Add Part
       </button>

@@ -1,4 +1,4 @@
-import React, { useRef, useState, useEffect } from "react";
+import { useState } from "react";
 import { Link } from "react-router-dom";
 import { loginApi } from "../../service/AuthService";
 import { ToastContainer, toast } from "react-toastify";
@@ -17,7 +17,7 @@ const SignIn = () => {
     let res = await loginApi(user, pwd);
 
     if (!res || !res.result || !res.result.token) {
-      toast.error(res?.message || "User or Password is incorrect!");
+      toast.error(res?.message || "Username or password is incorrect!");
       return;
     }
 

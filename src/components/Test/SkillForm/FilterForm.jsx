@@ -1,5 +1,7 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import CustomSelect from "../../common/CustomSelect"; // Adjust the path as needed
+import { faThunderstorm, faLandmark } from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
 const FilterForm = ({ onSelectClass, onSelectSkill }) => {
   const [selectedClasses, setSelectedClasses] = useState([]);
@@ -10,6 +12,11 @@ const FilterForm = ({ onSelectClass, onSelectSkill }) => {
     { value: "class2", label: "Class 2" },
     { value: "class3", label: "Class 3" },
     { value: "class4", label: "Class 4" },
+    { value: "class4", label: "Class 4" },
+    { value: "class4", label: "Class 4" },
+    { value: "class4", label: "Class 4" },
+    { value: "class4", label: "Class 4" },
+    { value: "class4", label: "Class 4" },
   ];
 
   const skills = [
@@ -17,6 +24,7 @@ const FilterForm = ({ onSelectClass, onSelectSkill }) => {
     { id: "listening", name: "Listening" },
     { id: "writing", name: "Writing" },
     { id: "speaking", name: "Speaking" },
+    { id: "all", name: "All" },
   ];
 
   const handleClassChange = (selectedOptions) => {
@@ -25,47 +33,88 @@ const FilterForm = ({ onSelectClass, onSelectSkill }) => {
   };
 
   const handleSkillChange = (id) => {
-    const newSelectedSkills = selectedSkills.includes(id)
-      ? selectedSkills.filter((skill) => skill !== id)
-      : [...selectedSkills, id];
-    setSelectedSkills(newSelectedSkills);
-    onSelectSkill(newSelectedSkills);
+    let newSkills;
+
+    if (id === "all") {
+      // Toggle 'All' checkbox
+      if (selectedSkills.includes("all")) {
+        // Unchecking 'All', remove 'All' from selected skills
+        newSkills = selectedSkills.filter((skill) => skill !== "all");
+      } else {
+        // Checking 'All', add all individual skills to selected skills
+        newSkills = ["reading", "listening", "writing", "speaking", "all"];
+      }
+    } else {
+      // Toggle individual skills
+      newSkills = selectedSkills.includes(id)
+        ? selectedSkills.filter((skill) => skill !== id)
+        : [...selectedSkills, id];
+
+      // Manage 'All' checkbox based on individual skills
+      const allSkills = ["reading", "listening", "writing", "speaking"];
+      const allSelected = allSkills.every((skill) => newSkills.includes(skill));
+
+      if (allSelected) {
+        // Add 'All' if all individual skills are selected
+        if (!newSkills.includes("all")) {
+          newSkills.push("all");
+        }
+      } else {
+        // Remove 'All' if not all individual skills are selected
+        newSkills = newSkills.filter((skill) => skill !== "all");
+      }
+    }
+
+    setSelectedSkills(newSkills);
+    onSelectSkill(newSkills); // Notify parent component
   };
 
   return (
-    <div className="bg-green-500 text-white p-3 shadow-md rounded-b-lg">
-      <div className="container mx-auto flex flex-col md:flex-row justify-between items-start gap-6">
-        <div className="flex flex-col md:flex-row gap-8 w-full">
-          {/* Classes Section */}
-          <div className="flex-1">
-            <h2 className="text-xl font-semibold mb-2"> Classes</h2>
-            <CustomSelect
-              options={classes}
-              placeholder="Select multiple classes..."
-              onChange={handleClassChange}
-            />
-          </div>
+    <div className="bg-green-500 container  text-gray-100 p-4 shadow-md rounded-lg">
+      <div className="flex justify-between items-center gap-11">
+        {/* Classes Section */}
+        <div className="flex-1">
+          <h2 className="text-xl  mb-2">
+            {" "}
+            <span className="mr-4 ">
+              <FontAwesomeIcon icon={faLandmark} />
+            </span>
+            Classes
+          </h2>
+          <CustomSelect
+            options={classes}
+            placeholder="Select multiple classes..."
+            onChange={handleClassChange}
+          />
+        </div>
 
-          {/* Skills Section */}
-          <div className="">
-            <h2 className="text-xl font-semibold mb-2"> Skills</h2>
-            <div className="flex  gap-4">
-              {skills.map((skill) => (
-                <label
-                  key={skill.id}
-                  className="flex items-center gap-3 rounded-lg   transition duration-300 ease-in-out dark:border-neutral-700 dark:hover:border-blue-400"
-                >
-                  <input
-                    type="checkbox"
-                    id={skill.id}
-                    checked={selectedSkills.includes(skill.id)}
-                    onChange={() => handleSkillChange(skill.id)}
-                    className="form-checkbox  text-blue-500 dark:text-blue-400"
-                  />
-                  <span className="text-sm ">{skill.name}</span>
-                </label>
-              ))}
-            </div>
+        {/* Skills Section */}
+        <div className="">
+          <h2 className="text-xl font-semibold mb-2">
+            {" "}
+            <span className="mr-4">
+              <FontAwesomeIcon icon={faThunderstorm} />
+            </span>
+            Skills
+          </h2>
+          <div className="flex gap-4 items-center mt-4">
+            {skills.map((skill) => (
+              <label
+                key={skill.id}
+                className={`flex items-center gap-3 rounded-lg transition duration-300 ease-in-out ${
+                  skill.id === "all" ? "" : "cursor-pointer"
+                }`}
+              >
+                <input
+                  type="checkbox"
+                  id={skill.id}
+                  checked={selectedSkills.includes(skill.id)}
+                  onChange={() => handleSkillChange(skill.id)}
+                  className="form-checkbox text-blue-500 dark:text-blue-400"
+                />
+                <span className="">{skill.name}</span>
+              </label>
+            ))}
           </div>
         </div>
       </div>

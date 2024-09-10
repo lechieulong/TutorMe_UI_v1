@@ -97,19 +97,19 @@ const ReadingForm = () => {
     if (file) {
       const imageUrl = URL.createObjectURL(file);
       const updatedParts = [...parts];
-    const imageRef = ref(storage, `uploads/${file.name}`);
+      const imageRef = ref(storage, `uploads/${file.name}`);
 
-    uploadBytes(imageRef, file)
-      .then((snapshot) => {
-        getDownloadURL(snapshot.ref).then((url) => {
+      uploadBytes(imageRef, file)
+        .then((snapshot) => {
+          getDownloadURL(snapshot.ref).then((url) => {
             updatedParts[partIndex].image = imageUrl;
-          updatedParts[partIndex].imageUrl = url;
+            updatedParts[partIndex].imageUrl = url;
             setParts(updatedParts);
+          });
+        })
+        .catch((error) => {
+          console.error("Error uploading image:", error);
         });
-      })
-      .catch((error) => {
-        console.error("Error uploading image:", error);
-      });
       setImage(imageUrl); // Update the image state
     }
   };
@@ -348,7 +348,6 @@ const ReadingForm = () => {
                                   contentIndex,
                                   "answer",
                                   e.target.value
-                                  e.target.value
                                 )
                               }
                               className="w-full p-2 border border-gray-300 rounded-lg mb-2"
@@ -384,8 +383,7 @@ const ReadingForm = () => {
                           </label>
                           <label className="block mb-2">
                             <span className="font-semibold text-gray-700">
-                              Options
-                              Options
+                              Options Options
                             </span>
                             {content.options.map((option, optionIndex) => (
                               <div key={optionIndex} className=" mb-2">

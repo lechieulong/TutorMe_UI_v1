@@ -348,7 +348,6 @@ const ReadingForm = () => {
                                   contentIndex,
                                   "answer",
                                   e.target.value
-                                  e.target.value
                                 )
                               }
                               className="w-full p-2 border border-gray-300 rounded-lg mb-2"

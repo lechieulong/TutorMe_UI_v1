@@ -1,63 +1,83 @@
-import React, { useState } from "react";
-import { faPencilAlt } from "@fortawesome/free-solid-svg-icons";
+import React, { useState, useEffect } from "react";
+
+// Initialize GoogleGenerativeAI
+import { faTrashCan } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
-const WritingForm = () => {
-  const [image, setImage] = useState(null);
+const WritingForm = ({ skillData, onDataChange, onAddPart, onRemovePart }) => {
+  const [writingData, setWritingData] = useState(skillData);
 
-  const handleImageChange = (event) => {
+  useEffect(() => {
+    setWritingData(skillData); // Update local state when prop changes
+  }, [skillData]);
+
+  const handlePartChange = (index, field, value) => {
+    const updatedWritingData = [...writingData];
+    updatedWritingData[index] = {
+      ...updatedWritingData[index],
+      [field]: value,
+    };
+    setWritingData(updatedWritingData);
+    onDataChange(index, updatedWritingData[index]); // Notify parent about data change
+  };
+
+  const handleImageChange = (index, event) => {
     const file = event.target.files[0];
     if (file) {
-      setImage(URL.createObjectURL(file));
+      const updatedWritingData = [...writingData];
+      updatedWritingData[index] = {
+        ...updatedWritingData[index],
+        img: URL.createObjectURL(file),
+      };
+      setWritingData(updatedWritingData);
+      onDataChange(index, updatedWritingData[index]); // Notify parent about data change
     }
   };
 
   return (
-    <section className="bg-white shadow-lg rounded-lg p-6 mb-8">
-      <h2 className="text-2xl font-semibold mb-4 border-b pb-2">
-        <span className="mr-5">
-          <FontAwesomeIcon icon={faPencilAlt} />
-        </span>
-        Writing
-      </h2>
-      <div className="flex flex-col gap-6">
-        {/* Part 1 with image upload */}
-        <div className="flex flex-col gap-4">
-          <h3 className="text-xl font-semibold">Part 1</h3>
-
+    <div className="">
+      {writingData.map((part, index) => (
+        <div
+          key={part.part}
+          className="mb-4 flex flex-col gap-4 border shadow-lg p-3"
+        >
+          <div className="flex justify-between items-center">
+            <h4 className="text-lg font-semibold">Part {part.part}</h4>
+            {writingData.length > 1 && (
+              <button
+                type="button"
+                onClick={() => onRemovePart(index)}
+                className="mt-2 bg-red-500 text-white  text-[12px] rounded-lg hover:bg-red-600"
+              >
+                <FontAwesomeIcon icon={faTrashCan} />
+              </button>
+            )}
+          </div>
           <input
             type="file"
             accept="image/*"
-            onChange={handleImageChange}
-            className="border border-gray-300 p-2 rounded-lg"
+            onChange={(e) => handleImageChange(index, e)}
+            className="mb-2"
           />
-          {/* Display the uploaded image for Part 1 */}
-          {image && (
-            <div className="mt-2">
-              <img
-                src={image}
-                alt="Uploaded Part 1"
-                className="max-w-[700px] max-h-96 object-contain rounded-lg"
-              />
-            </div>
-          )}
-
           <textarea
-            className="w-full h-40 p-4 border border-gray-300 rounded-lg"
-            placeholder="enter a content .... "
+            value={part.content || ""}
+            onChange={(e) => handlePartChange(index, "content", e.target.value)}
+            rows="10"
+            placeholder="Enter contents"
+            className="w-full border border-gray-300 p-2 rounded"
           />
         </div>
-
-        {/* Part 2 without image upload */}
-        <div className="flex flex-col gap-4">
-          <h3 className="text-xl font-semibold">Part 2</h3>
-          <textarea
-            className="w-full h-40 p-4 border border-gray-300 rounded-lg"
-            placeholder="enter a content ..."
-          />
-        </div>
-      </div>
-    </section>
+      ))}
+      {writingData.length < 2 && (
+        <button
+          type="button"
+          onClick={onAddPart}
+          className="mt-4 bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600"
+        >
+          Add Part
+        </button>
+      )}
+    </div>
   );
 };
 

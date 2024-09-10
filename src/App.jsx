@@ -60,7 +60,7 @@ const App = () => {
           {/* Course */}
           <Route path="/courselist" element={<CourseList />} />
           {/* <Route path="/courses/:courseId" element={<CourseDetail />} /> */}
-          
+
           {/* List test that User did */}
           <Route path="/testlist" element={<TestList />} />
 

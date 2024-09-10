@@ -1,4 +1,5 @@
 import { useState } from "react";
+import axios from "axios";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faPhoenixFramework } from "@fortawesome/free-brands-svg-icons";
 import {
@@ -20,7 +21,7 @@ const ReadingForm = () => {
       questions: [],
     },
   ]);
-  const [image, setImage] = useState(null); // State for the image
+  const [image, setImage] = useState(""); // State for the image
 
   const handleAddPart = () => {
     setParts([
@@ -114,6 +115,31 @@ const ReadingForm = () => {
     }
   };
 
+  const generateImage = async (part) => {
+    try {
+      const response = await axios.post(
+        "https://api-inference.huggingface.co/models/black-forest-labs/FLUX.1-dev",
+        {
+          inputs: `generate a high-definition, ultra-detailed, and sharp image of random image `,
+          options: { wait_for_model: true, quality: "ultra", resolution: "4k" }, // Request ultra quality and 4K resolution
+        },
+        {
+          responseType: "blob",
+          headers: {
+            Authorization: `Bearer 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`,
+          },
+        }
+      );
+
+      const imageUrl = URL.createObjectURL(response.data);
+      part.image = imageUrl;
+      part.imageUrl = imageUrl;
+    } catch (error) {
+      console.error("Error generating image:", error);
+      setIsGeneratingImage(false);
+    }
+  };
+
   return (
     <section className="bg-white shadow-lg rounded-lg p-6 mb-8 border border-gray-200">
       <h2 className="text-2xl font-semibold mb-4 border-b pb-2">
@@ -139,7 +165,10 @@ const ReadingForm = () => {
                 onChange={(e) => handleImageChange(e, partIndex)}
                 className="border border-gray-300 p-2 rounded-lg mb-4"
               />
-              <button className="bg-green-600 text-white ml-2">
+              <button
+                className="bg-green-600 text-white ml-2"
+                onClick={generateImage(part)}
+              >
                 <span className="mr-2">
                   <FontAwesomeIcon icon={faNairaSign} />
                 </span>
@@ -488,7 +517,6 @@ const ReadingForm = () => {
         type="button"
         onClick={handleAddPart}
         className="p-2 bg-green-500 text-white rounded-lg mt-4"
-        className="mt-4 px-4 py-2 bg-blue-500 text-white rounded-lg"
       >
         Add Part
       </button>

@@ -70,50 +70,52 @@ const FilterForm = ({ onSelectClass, onSelectSkill }) => {
   };
 
   return (
-    <div className="bg-green-500 container mx-auto flex flex-col md:flex-row justify-between items-start gap-6 text-gray-100 p-4 shadow-md rounded-lg">
-      {/* Classes Section */}
-      <div className="flex-1">
-        <h2 className="text-xl  mb-2">
-          {" "}
-          <span className="mr-4 ">
-            <FontAwesomeIcon icon={faLandmark} />
-          </span>
-          Classes
-        </h2>
-        <CustomSelect
-          options={classes}
-          placeholder="Select multiple classes..."
-          onChange={handleClassChange}
-        />
-      </div>
+    <div className="bg-green-500 container  text-gray-100 p-4 shadow-md rounded-lg">
+      <div className="flex justify-between items-center gap-11">
+        {/* Classes Section */}
+        <div className="flex-1">
+          <h2 className="text-xl  mb-2">
+            {" "}
+            <span className="mr-4 ">
+              <FontAwesomeIcon icon={faLandmark} />
+            </span>
+            Classes
+          </h2>
+          <CustomSelect
+            options={classes}
+            placeholder="Select multiple classes..."
+            onChange={handleClassChange}
+          />
+        </div>
 
-      {/* Skills Section */}
-      <div className="">
-        <h2 className="text-xl font-semibold mb-2">
-          {" "}
-          <span className="mr-4">
-            <FontAwesomeIcon icon={faThunderstorm} />
-          </span>
-          Skills
-        </h2>
-        <div className="flex gap-4 items-center mt-4">
-          {skills.map((skill) => (
-            <label
-              key={skill.id}
-              className={`flex items-center gap-3 rounded-lg transition duration-300 ease-in-out ${
-                skill.id === "all" ? "" : "cursor-pointer"
-              }`}
-            >
-              <input
-                type="checkbox"
-                id={skill.id}
-                checked={selectedSkills.includes(skill.id)}
-                onChange={() => handleSkillChange(skill.id)}
-                className="form-checkbox text-blue-500 dark:text-blue-400"
-              />
-              <span className="">{skill.name}</span>
-            </label>
-          ))}
+        {/* Skills Section */}
+        <div className="">
+          <h2 className="text-xl font-semibold mb-2">
+            {" "}
+            <span className="mr-4">
+              <FontAwesomeIcon icon={faThunderstorm} />
+            </span>
+            Skills
+          </h2>
+          <div className="flex gap-4 items-center mt-4">
+            {skills.map((skill) => (
+              <label
+                key={skill.id}
+                className={`flex items-center gap-3 rounded-lg transition duration-300 ease-in-out ${
+                  skill.id === "all" ? "" : "cursor-pointer"
+                }`}
+              >
+                <input
+                  type="checkbox"
+                  id={skill.id}
+                  checked={selectedSkills.includes(skill.id)}
+                  onChange={() => handleSkillChange(skill.id)}
+                  className="form-checkbox text-blue-500 dark:text-blue-400"
+                />
+                <span className="">{skill.name}</span>
+              </label>
+            ))}
+          </div>
         </div>
       </div>
     </div>

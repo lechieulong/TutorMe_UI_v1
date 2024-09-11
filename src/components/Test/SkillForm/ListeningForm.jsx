@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faBook, faHeadphones } from "@fortawesome/free-solid-svg-icons";
+import { faHeadphones } from "@fortawesome/free-solid-svg-icons";
 import { faPhoenixFramework } from "@fortawesome/free-brands-svg-icons";
 
 const ListeningForm = () => {
@@ -125,7 +125,7 @@ const ListeningForm = () => {
                   <span className="mr-4">{question.type}</span>
                 </h5>
                 <label className="block mb-2">
-                  <span className="  text-gray-700 mb-1">Title Topic</span>
+                  <span className="text-gray-700 mb-1">Title Topic</span>
                   <input
                     type="text"
                     value={question.titleTopic}
@@ -137,7 +137,7 @@ const ListeningForm = () => {
                         e.target.value
                       )
                     }
-                    placeholder="enter heading topic "
+                    placeholder="Enter heading topic"
                     className="w-full p-1 border border-gray-300 rounded-lg mb-2"
                   />
                 </label>
@@ -151,7 +151,7 @@ const ListeningForm = () => {
                           </p>
                           <div className="flex justify-between gap-4">
                             <label className="block mb-2">
-                              <span className=" text-gray-700">
+                              <span className="text-gray-700">
                                 Heading title
                               </span>
                               <input
@@ -336,21 +336,23 @@ const ListeningForm = () => {
                           </label>
                           <label className="block mb-2">
                             <span className="font-semibold text-gray-700">
-                              Answer options (comma separated)
+                              Options (separated by commas)
                             </span>
                             <input
                               type="text"
-                              value={content.options}
+                              value={content.options.join(", ")}
                               onChange={(e) =>
                                 handleContentChange(
                                   partIndex,
                                   questionIndex,
                                   contentIndex,
                                   "options",
-                                  e.target.value.split(",")
+                                  e.target.value
+                                    .split(",")
+                                    .map((opt) => opt.trim())
                                 )
                               }
-                              placeholder="Option 1, Option 2"
+                              placeholder="Options"
                               className="w-full p-2 border border-gray-300 rounded-lg"
                             />
                           </label>
@@ -358,52 +360,53 @@ const ListeningForm = () => {
                       )}
                     </div>
                   ))}
+                  <button
+                    type="button"
+                    onClick={() => handleAddQuestion(partIndex, questionIndex)}
+                    className="mt-4 bg-blue-500 text-white py-2 px-4 rounded"
+                  >
+                    Add {question.type} Question
+                  </button>
                 </div>
-                <button
-                  className="bg-green-500 hover:bg-green-700 text-white py-2 px-4 rounded-lg text-sm mt-4"
-                  onClick={() => handleAddQuestion(partIndex, questionIndex)}
-                >
-                  Add Question
-                </button>
               </div>
             ))}
-            <div className="flex flex-wrap justify-between p-2">
-              <button
-                className="bg-green-500 hover:bg-green-700 text-white py-2 px-4 rounded-lg mt-4"
-                onClick={() => handleAddQuestionType(partIndex, "Matching")}
-              >
-                Matching Type
-              </button>
-
-              <button
-                className="bg-green-500 hover:bg-green-700 text-white py-2 px-4 rounded-lg mt-4"
-                onClick={() => handleAddQuestionType(partIndex, "Filling")}
-              >
-                Filling Type
-              </button>
-
-              <button
-                className="bg-green-500 hover:bg-green-700 text-white py-2 px-4 rounded-lg mt-4"
-                onClick={() => handleAddQuestionType(partIndex, "True-False")}
-              >
-                True-False Type
-              </button>
-
-              <button
-                className="bg-green-500 hover:bg-green-700 text-white py-2 px-4 rounded-lg mt-4"
-                onClick={() => handleAddQuestionType(partIndex, "Radio")}
-              >
-                Radio Type
-              </button>
-            </div>
+            <button
+              type="button"
+              onClick={() => handleAddQuestionType(partIndex, "Matching")}
+              className="mt-4 bg-green-500 text-white py-2 px-4 rounded"
+            >
+              Add Matching Question
+            </button>
+            <button
+              type="button"
+              onClick={() => handleAddQuestionType(partIndex, "Filling")}
+              className="mt-4 bg-yellow-500 text-white py-2 px-4 rounded"
+            >
+              Add Filling Question
+            </button>
+            <button
+              type="button"
+              onClick={() => handleAddQuestionType(partIndex, "True-False")}
+              className="mt-4 bg-red-500 text-white py-2 px-4 rounded"
+            >
+              Add True-False Question
+            </button>
+            <button
+              type="button"
+              onClick={() => handleAddQuestionType(partIndex, "Radio")}
+              className="mt-4 bg-purple-500 text-white py-2 px-4 rounded"
+            >
+              Add Radio Question
+            </button>
           </div>
         </div>
       ))}
       <button
-        className="bg-green-500 hover:bg-green-700 text-white py-2 px-4 rounded-lg"
+        type="button"
         onClick={handleAddPart}
+        className="mt-4 bg-teal-500 text-white py-2 px-4 rounded"
       >
-        Add Part
+        Add Listening Part
       </button>
     </section>
   );

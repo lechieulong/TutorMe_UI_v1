@@ -70,11 +70,11 @@ const FilterForm = ({ onSelectClass, onSelectSkill }) => {
   };
 
   return (
-    <div className="bg-green-500 container  text-gray-100 p-4 shadow-md rounded-lg">
+    <div className="bg-green-500 h-40 container  text-gray-100 p-4 shadow-md rounded-lg">
       <div className="flex justify-between items-center gap-11">
         {/* Classes Section */}
         <div className="flex-1">
-          <h2 className="text-xl  mb-2">
+          <h2 className="text-xl  mb-2 font-thin">
             {" "}
             <span className="mr-4 ">
               <FontAwesomeIcon icon={faLandmark} />
@@ -90,7 +90,7 @@ const FilterForm = ({ onSelectClass, onSelectSkill }) => {
 
         {/* Skills Section */}
         <div className="">
-          <h2 className="text-xl font-semibold mb-2">
+          <h2 className="text-xl font-thin mb-2">
             {" "}
             <span className="mr-4">
               <FontAwesomeIcon icon={faThunderstorm} />

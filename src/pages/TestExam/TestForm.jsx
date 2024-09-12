@@ -14,7 +14,6 @@ const TestForm = () => {
     classIds: [],
     duration: 40,
     startTime: "",
-    createDate: "",
     endTime: "",
     parts: [
       {
@@ -30,7 +29,6 @@ const TestForm = () => {
   });
 
   const handleSelectClass = (classes) => {
-    setSelectedClasses(classes);
     setFormData((prevData) => ({
       ...prevData,
       classIds: classes,

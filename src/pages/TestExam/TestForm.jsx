@@ -1,12 +1,10 @@
 import React, { useState } from "react";
-import ReadingForm from "../../components/Test/SkillForm/ReadingForm";
-import ListeningForm from "../../components/Test/SkillForm/ListeningForm";
-import WritingForm from "../../components/Test/SkillForm/WrittingForm"; // Fixed typo
-import SpeakingForm from "../../components/Test/SkillForm/SpeakingForm";
+import FormSkill from "../../components/Test/SkillForm/FormSkill";
 import FilterForm from "../../components/Test/SkillForm/FilterForm";
 import Header from "../../components/common/Header";
 import { faStream } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import Calendar from "../../components/common/Calendar";
 
 const TestForm = () => {
   const [selectedClasses, setSelectedClasses] = useState([]);
@@ -14,7 +12,7 @@ const TestForm = () => {
   const [formData, setFormData] = useState({
     Id: "",
     testName: "",
-    classId: "",
+    classIds: [],
     duration: 40,
     startTime: "",
     createDate: "",
@@ -34,82 +32,30 @@ const TestForm = () => {
 
   const handleSelectClass = (classes) => {
     setSelectedClasses(classes);
-  };
-
-  const handleSelectSkill = (skills) => {
-    setSelectedSkills(skills);
-  };
-
-  const handleDataChange = (updatedData) => {
     setFormData((prevData) => ({
       ...prevData,
-      ...updatedData,
+      classIds: classes,
     }));
   };
 
-  const handleWritingDataChange = (index, newData) => {
-    setFormData((prevData) => {
-      let updatedWriting = [...prevData.writing];
-      updatedWriting[index] = { ...updatedWriting[index], ...newData };
-      return {
-        ...prevData,
-        writing: updatedWriting,
-      };
-    });
-  };
+  const handleSelectSkill = (skills) => setSelectedSkills(skills);
 
-  const handleAddPart = () => {
-    if (formData.writing.length < 2) {
-      setFormData((prevData) => {
-        const newPart = {
-          img: null,
-          content: "",
-          part: prevData.writing.length
-            ? prevData.writing[prevData.writing.length - 1].part + 1
-            : 1,
-        };
-        return {
-          ...prevData,
-          writing: [...prevData.writing, newPart],
-        };
-      });
-    } else {
-      alert("You can only add up to 2 parts.");
-    }
-  };
-
-  const handleRemovePart = (index) => {
-    if (formData.writing.length > 1) {
-      setFormData((prevData) => {
-        const updatedWriting = prevData.writing.filter((_, i) => i !== index);
-        return {
-          ...prevData,
-          writing: updatedWriting,
-        };
-      });
-    } else {
-      alert("You must have at least 1 part.");
-    }
-  };
+  const handleDataChange = (updatedData) =>
+    setFormData((prevData) => ({ ...prevData, ...updatedData }));
 
   const handleSubmit = async () => {
     try {
-      console.log("Data ne ", formData);
+      console.log("Data: ", formData);
       // Uncomment and replace with your API endpoint
       // const response = await fetch("https://your-api-endpoint.com/submit", {
       //   method: "POST",
       //   headers: {
       //     "Content-Type": "application/json",
       //   },
-      //   body: JSON.stringify({
-      //     selectedClasses,
-      //     formData,
-      //   }),
+      //   body: JSON.stringify({ selectedClasses, formData }),
       // });
 
-      // if (!response.ok) {
-      //   throw new Error("Network response was not ok");
-      // }
+      // if (!response.ok) throw new Error("Network response was not ok");
 
       alert("Submission successful!");
     } catch (error) {
@@ -118,39 +64,18 @@ const TestForm = () => {
     }
   };
 
-  const renderSkillForms = () => {
-    return selectedSkills.map((skill) => {
-      switch (skill) {
-        case "reading":
-          return (
-            <ReadingForm
-              key={skill}
-              formData={formData}
-              handleDataChange={handleDataChange}
-            />
-          );
-        case "listening":
-          return <ListeningForm key={skill} />;
-        case "writing":
-          return (
-            <WritingForm
-              key={skill}
-              formData={formData}
-              handleWritingDataChange={handleWritingDataChange}
-              handleAddPart={handleAddPart}
-              handleRemovePart={handleRemovePart}
-            />
-          );
-        case "speaking":
-          return <SpeakingForm key={skill} />;
-        default:
-          return null;
-      }
-    });
-  };
+  const renderSkillForms = () =>
+    selectedSkills.map((skill) => (
+      <FormSkill
+        skill={skill}
+        key={skill}
+        formData={formData}
+        handleDataChange={handleDataChange}
+      />
+    ));
 
   return (
-    <div className="container mt-14 p-3">
+    <div className="container mt-14 p-3 bg-green-50">
       <Header />
       <h3 className="mt-2 mb-4 text-2xl font-semibold text-gray-500">
         <span className="mr-2">
@@ -158,16 +83,86 @@ const TestForm = () => {
         </span>
         Form Create Test
       </h3>
+
+      <div className="p-6 bg-white shadow-lg rounded-lg border border-gray-200">
+        <div className="mb-6">
+          <label
+            htmlFor="testName"
+            className="block font-semibold text-gray-800"
+          >
+            Test Name
+          </label>
+          <input
+            id="testName"
+            type="text"
+            value={formData.testName}
+            onChange={(e) => handleDataChange({ testName: e.target.value })}
+            className="mt-2 block w-full px-2 py-1 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+            placeholder="Enter test name"
+          />
+        </div>
+
+        <div className="mb-6">
+          <label
+            htmlFor="duration"
+            className="block font-semibold text-gray-800"
+          >
+            Duration (minutes)
+          </label>
+          <input
+            id="duration"
+            type="number"
+            value={formData.duration}
+            onChange={(e) => handleDataChange({ duration: e.target.value })}
+            className="mt-2 block w-full px-2 py-1 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+            placeholder="Enter duration"
+          />
+        </div>
+
+        <div className="mb-6">
+          <label
+            htmlFor="startTime"
+            className="block font-semibold text-gray-800"
+          >
+            Start Time
+          </label>
+          <input
+            id="startTime"
+            type="date"
+            value={formData.startTime}
+            onChange={(e) => handleDataChange({ startTime: e.target.value })}
+            className="mt-2 block w-full px-2 py-1 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+          />
+        </div>
+
+        <div className="mb-6">
+          <label
+            htmlFor="endTime"
+            className="block font-semibold text-gray-800"
+          >
+            End Time
+          </label>
+          <input
+            id="endTime"
+            type="date"
+            value={formData.endTime}
+            onChange={(e) => handleDataChange({ endTime: e.target.value })}
+            className="mt-2 block w-full px-2 py-1 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+          />
+        </div>
+      </div>
+
       <FilterForm
         onSelectClass={handleSelectClass}
         onSelectSkill={handleSelectSkill}
       />
-      <main className="container mx-auto">
+
+      <main className="container mx-auto mt-8">
         {renderSkillForms()}
 
         {selectedSkills.length > 0 && (
           <button
-            className="mt-4 w-28 bg-green-500 text-white px-4 py-2 rounded-lg hover:bg-green-600"
+            className="w-28 bg-green-500 text-white px-4 py-2 rounded-lg hover:bg-green-600"
             onClick={handleSubmit}
           >
             Submit

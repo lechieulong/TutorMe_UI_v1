@@ -11,12 +11,12 @@ const FilterForm = ({ onSelectClass, onSelectSkill }) => {
     { value: "class1", label: "Class 1" },
     { value: "class2", label: "Class 2" },
     { value: "class3", label: "Class 3" },
-    { value: "class4", label: "Class 4" },
-    { value: "class4", label: "Class 4" },
-    { value: "class4", label: "Class 4" },
-    { value: "class4", label: "Class 4" },
-    { value: "class4", label: "Class 4" },
-    { value: "class4", label: "Class 4" },
+    { value: "class5", label: "Class 4" },
+    { value: "class6", label: "Class 5" },
+    { value: "class7", label: "Class 6" },
+    { value: "class8", label: "Class 7" },
+    { value: "class9", label: "Class 8" },
+    { value: "class10", label: "Class9" },
   ];
 
   const skills = [

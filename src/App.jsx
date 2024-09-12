@@ -19,7 +19,6 @@ import TestList from "./pages/User/TestList";
 
 import "preline";
 import TestLayout from "./pages/TestExam/TestLayout";
-import Class from "./pages/Mentor/Class";
 import ClassDetail from "./pages/User/ClassDetail";
 import TestForm from "./pages/TestExam/TestForm";
 import ImageTest from "./components/ImageTest";
@@ -53,7 +52,7 @@ const App = () => {
           {/* Calender */}
           <Route path="/calendar" element={<Calendar />} />
           {/* Test Mentor */}
-          <Route path="/courses" element={<CourseDetail />} />
+          <Route path="/class-detail" element={<ClassDetail />} />
 
           {/* Mentor */}
           <Route path="/metorinfor" element={<MetorInfor />} />

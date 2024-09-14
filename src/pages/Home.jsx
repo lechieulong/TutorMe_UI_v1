@@ -9,7 +9,7 @@ const Home = () => {
   return (
     <MainLayout>
       <div className="flex justify-center bg-white mx-auto px-4 py-8">
-        <LiveStreamFrame width="800px" height="500px" />
+        <LiveStreamFrame width="1000px" height="500px"/>
       </div>
       <div className="bg-white">
         <h1 className="ml-[40px] text-2xl font-bold">

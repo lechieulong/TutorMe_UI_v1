@@ -1,4 +1,6 @@
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import "regenerator-runtime/runtime";
+
 import Home from "./pages/Home";
 import NotFound from "./components/common/NotFound";
 import ClassesList from "./pages/classes/ClassList";
@@ -22,10 +24,11 @@ import TestLayout from "./pages/TestExam/TestLayout";
 import CourseDetail from "./pages/Mentor/CourseDetail";
 import TestForm from "./pages/TestExam/TestForm";
 import ImageTest from "./components/ImageTest";
+import SpeakingGemini from "./service/SpeakingGemini";
 
 const App = () => {
   return (
-    <div className="flex items-center justify-center min-h-screen bg-gray-100">
+    <div className=" min-h-screen ">
       <Router>
         <Routes>
           <Route path="/login" element={<Login />} />
@@ -38,6 +41,7 @@ const App = () => {
           {/* Test  common*/}
           <Route path="/" element={<Home />} />
           <Route path="*" element={<NotFound />} />
+          <Route path="/gemini" element={<SpeakingGemini />} />
 
           {/* Test  exam*/}
           <Route path="/test-setting/test-exam" element={<TestLayout />} />

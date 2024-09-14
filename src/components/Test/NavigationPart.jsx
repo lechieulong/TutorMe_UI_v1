@@ -19,7 +19,7 @@ const NavigationPart = ({ partData, handlePartClick, handleQuestionClick }) => {
   };
 
   return (
-    <div className="absolute bottom-0 left-0 right-0 p-1">
+    <div className="p-3 absolute bottom-0 left-0 right-0 ">
       <div className="flex gap-3">
         {partData.map((part, index) => {
           const partName = part.name;
@@ -32,7 +32,7 @@ const NavigationPart = ({ partData, handlePartClick, handleQuestionClick }) => {
                 openPart === index
                   ? "active flex-[4_4_0%]  border-green-700  p-2"
                   : "flex-1 border-gray-300"
-              } p-2 border  flex justify-between gap-2 cursor-pointer rounded-2xl`}
+              } p-2 border  text-white flex justify-between gap-2 cursor-pointer rounded-2xl`}
               onClick={() => handleAccordionClick(index)}
             >
               <div
@@ -49,7 +49,7 @@ const NavigationPart = ({ partData, handlePartClick, handleQuestionClick }) => {
               >
                 {questions.map((questionId, questionIndex) => (
                   <li
-                    className="border-2 text-sm border-slate-200 w-6 text-black rounded-full cursor-pointer"
+                    className="border text-sm  border-green-600 w-6 text-black rounded-full cursor-pointer"
                     key={questionId}
                     onClick={(event) =>
                       handleQuestionClickWrapper(event, questionId)

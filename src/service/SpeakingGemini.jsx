@@ -1,128 +1,97 @@
-// // src/Speaking.js
-// import React, { useState } from "react";
-// import { GoogleGenerativeAI } from "@google/generative-ai";
-// import axios from "axios";
+import "regenerator-runtime/runtime";
+import SpeechRecognition, {
+  useSpeechRecognition,
+} from "react-speech-recognition";
+import { GoogleGenerativeAI } from "@google/generative-ai";
+import { useEffect, useState } from "react";
 
-// // Initialize GoogleGenerativeAI
-// const genAI = new GoogleGenerativeAI("AIzaSyAkFBzNmOixBE8Elh-nNseThbJZMJAMc_A");
+const genAI = new GoogleGenerativeAI("AIzaSyAkFBzNmOixBE8Elh-nNseThbJZMJAMc_A");
 
-// const SpeakingGemini = () => {
-//   const [question, setQuestion] = useState("");
-//   const [answer, setAnswer] = useState("");
-//   const [correctedAnswer, setCorrectedAnswer] = useState("");
-//   const [feedback, setFeedback] = useState("");
-//   const [spellingFeedback, setSpellingFeedback] = useState("");
-//   const [isLoading, setIsLoading] = useState(false);
+const SpeakingGemini = () => {
+  const { transcript, listening } = useSpeechRecognition();
+  const [thinking, setThinking] = useState(false);
+  const [aiText, setAiText] = useState("");
+  const [question, setQuestion] = useState("");
 
-//   // Function to generate an IELTS speaking question
-//   const generateSpeakingQuestion = async () => {
-//     setIsLoading(true);
-//     try {
-//       const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
-//       const prompt = "Generate an IELTS speaking part 2 question.";
-//       const result = await model.generateContent(prompt);
+  const generateSpeakingQuestion = async () => {
+    try {
+      const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
+      const prompt = "Generate an IELTS speaking part 2 question.";
+      const result = await model.generateContent(prompt);
 
-//       setQuestion(result.response.candidates[0].content.parts[0].text.trim());
-//       setIsLoading(false);
-//     } catch (error) {
-//       console.error("Error generating question:", error);
-//       setIsLoading(false);
-//     }
-//   };
+      const generatedQuestion =
+        result.response.candidates[0].content.parts[0].text.trim();
+      setQuestion(generatedQuestion);
 
-//   // Function to evaluate the corrected answer using Gemini AI after spelling check
-//   const evaluateCorrectedAnswer = async (correctedAnswer) => {
-//     try {
-//       const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
-//       const prompt = `Give an overall score and scores for grammar, vocabulary, fluency, coherence on the IELTS score scale, and provide feedback based on this corrected answer: "${correctedAnswer}"`;
+      // Speak the question
+      if ("speechSynthesis" in window) {
+        const utterance = new SpeechSynthesisUtterance(generatedQuestion);
+        window.speechSynthesis.speak(utterance);
+      } else {
+        console.error("Speech synthesis not supported.");
+      }
+    } catch (error) {
+      console.error("Error generating question:", error);
+    }
+  };
 
-//       const result = await model.generateContent(prompt);
-//       setFeedback(result.response.candidates[0].content.parts[0].text.trim());
-//     } catch (error) {
-//       console.error("Error evaluating corrected answer:", error);
-//     }
-//   };
+  const evaluateCorrectedAnswer = async (userAnswer) => {
+    try {
+      setThinking(true);
+      const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
+      const prompt = `Give an overall score and scores for grammar, vocabulary, fluency, coherence on the IELTS score scale, and provide feedback based on this corrected answer: "${userAnswer}"`;
 
-//   // Function to check spelling using Hugging Face model
-//   const checkSpellingAndEvaluate = async () => {
-//     setIsLoading(true);
-//     try {
-//       // Call the Hugging Face spelling correction model
-//       const response = await axios.post(
-//         "https://api-inference.huggingface.co/models/oliverguhr/spelling-correction-english-base",
-//         { inputs: answer },
-//         {
-//           headers: {
-//             Authorization: `Bearer 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`,
-//           },
-//         }
-//       );
+      const result = await model.generateContent(prompt);
+      setAiText(result.response.candidates[0].content.parts[0].text.trim());
+      setThinking(false);
+      return result; // Return the result so it can be handled outside
+    } catch (error) {
+      console.error("Error evaluating corrected answer:", error);
+      return null;
+    }
+  };
 
-//       const corrected = response.data[0].generated_text;
-//       setCorrectedAnswer(corrected);
-//       setSpellingFeedback(
-//         `Original Answer: ${answer}\nCorrected Answer: ${corrected}`
-//       );
+  useEffect(() => {
+    // Automatically generate question and read it aloud when the component mounts
+    generateSpeakingQuestion();
+  }, []);
 
-//       // Now evaluate the corrected answer
-//       await evaluateCorrectedAnswer(corrected);
+  useEffect(() => {
+    if (!listening && transcript) {
+      evaluateCorrectedAnswer(transcript).then((result) => {
+        if (result && "speechSynthesis" in window) {
+          const resultText =
+            result.response?.candidates?.[0]?.content?.parts?.[0]?.text;
+          if (resultText) {
+            console.log("AI response: ", resultText);
+            const utterance = new SpeechSynthesisUtterance(resultText);
+            window.speechSynthesis.speak(utterance);
+            setAiText(resultText);
+          } else {
+            console.error("No valid response to speak.");
+          }
+        } else {
+          console.error("Speech synthesis not supported or invalid response.");
+        }
+      });
+    }
+  }, [transcript, listening]);
 
-//       setIsLoading(false);
-//     } catch (error) {
-//       console.error("Error checking spelling:", error);
-//       setIsLoading(false);
-//     }
-//   };
+  return (
+    <div className="flex flex-col">
+      {question && <p>{question}</p>}
+      {listening ? <p>Listening...</p> : <p>Click to start speaking</p>}
+      <button onClick={SpeechRecognition.startListening}>Start Speaking</button>
+      <button onClick={SpeechRecognition.stopListening}>Stop</button>
 
-//   return (
-//     <div>
-//       <h1>IELTS Speaking Practice</h1>
+      <div>
+        <h2>Transcript:</h2>
+        {transcript && <p>{transcript}</p>}
+      </div>
+      <div>{thinking && <p>thinking...</p>}</div>
+      <div>{aiText && <p>{aiText}</p>}</div>
+    </div>
+  );
+};
 
-//       <button onClick={generateSpeakingQuestion} disabled={isLoading}>
-//         {isLoading ? "Generating..." : "Generate Speaking Question"}
-//       </button>
-
-//       {question && (
-//         <>
-//           <div className="question">
-//             <h2>Speaking Question:</h2>
-//             <p>{question}</p>
-//           </div>
-
-//           <div className="answer-section">
-//             <textarea
-//               value={answer}
-//               onChange={(e) => setAnswer(e.target.value)}
-//               placeholder="Type your answer here"
-//               rows="10"
-//               cols="80"
-//             ></textarea>
-
-//             <button
-//               onClick={checkSpellingAndEvaluate}
-//               disabled={!answer || isLoading}
-//             >
-//               {isLoading ? "Evaluating..." : "Check Spelling & Evaluate"}
-//             </button>
-//           </div>
-
-//           {spellingFeedback && (
-//             <div className="spelling-feedback">
-//               <h2>Spelling and Pronunciation Feedback:</h2>
-//               <p>{spellingFeedback}</p>
-//             </div>
-//           )}
-
-//           {feedback && (
-//             <div className="feedback">
-//               <h2>Overall Feedback:</h2>
-//               <p>{feedback}</p>
-//             </div>
-//           )}
-//         </>
-//       )}
-//     </div>
-//   );
-// };
-
-// export default SpeakingGemini;
+export default SpeakingGemini;

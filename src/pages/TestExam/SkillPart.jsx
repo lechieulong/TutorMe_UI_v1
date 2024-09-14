@@ -1,4 +1,3 @@
-import React from "react";
 import MainLayout from "../../layout/MainLayout";
 import { useNavigate } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -48,7 +47,7 @@ const SkillPart = () => {
   ];
 
   const handleTakeTest = () => {
-    navigate("/skill-part/test-setting", { state: 3 });
+    navigate("/skill-part/test-setting", { state: 4 });
   };
 
   return (

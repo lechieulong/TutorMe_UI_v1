@@ -15,14 +15,16 @@ const FormSkill = ({ skill, formData, handleDataChange }) => {
   const [selectedPartIndex, setSelectedPartIndex] = useState(null);
   const [leftWidth, setLeftWidth] = useState(50);
   const [previewWith, setPreviewWith] = useState(50);
-  const [selectedQuestionType, setSelectedQuestionType] = useState(null);
+  const [selectedQuestionType, setSelectedQuestionType] = useState("");
 
-  const [subPartType, setSubPartType] = useState({
+  const [subPartTypeCounter, setSubPartTypeCounter] = useState({
     matching: 1,
     multiple: 1,
     "true-false": 1,
     filling: 1,
   });
+
+  const [previousType, setPreviousType] = useState("");
 
   const startResizing = (part) => {
     if (part === "main") {
@@ -62,8 +64,6 @@ const FormSkill = ({ skill, formData, handleDataChange }) => {
   };
 
   const handleSelectTypeQuestion = (item) => {
-    console.log(item);
-
     setSelectedQuestionType(item);
   };
 
@@ -140,12 +140,22 @@ const FormSkill = ({ skill, formData, handleDataChange }) => {
   };
 
   const addQuestion = (partIndex) => {
+    console.log("subPartTypeCounter", subPartTypeCounter);
+    console.log("selectedQuestionType", selectedQuestionType);
+
+    let currentIndex = subPartTypeCounter[selectedQuestionType];
+
+    if (previousType === selectedQuestionType) {
+      currentIndex = subPartTypeCounter[selectedQuestionType];
+    } else {
+      currentIndex = subPartTypeCounter[selectedQuestionType] + 1;
+    }
     const newQuestion = {
       Id: "",
       partId: parts[partIndex].partId,
-      subPartId: "",
+      subPartType: currentIndex,
       questionName: "",
-      questionType: 1,
+      questionType: selectedQuestionType,
       answer: "",
       order: (parts[partIndex].questions?.length || 0) + 1,
       maxMarks: 1,
@@ -156,6 +166,13 @@ const FormSkill = ({ skill, formData, handleDataChange }) => {
       newQuestion,
     ];
     handleDataChange({ parts: updatedParts });
+
+    setSubPartTypeCounter((prevCounters) => ({
+      ...prevCounters,
+      [selectedQuestionType]: currentIndex,
+    }));
+
+    setPreviousType(selectedQuestionType);
   };
 
   const removeQuestion = (partIndex, questionIndex) => {
@@ -263,7 +280,7 @@ const FormSkill = ({ skill, formData, handleDataChange }) => {
                       </h4>
                     </div>
                     <div className="flex flex-col gap-2">
-                      {["Multiple", "Matching", "True-False", "Filling"].map(
+                      {["mutiple", "matching", "true-false", "filling"].map(
                         (item, index) => (
                           <>
                             {" "}
@@ -280,30 +297,16 @@ const FormSkill = ({ skill, formData, handleDataChange }) => {
                               {item}
                             </button>
                             {selectedQuestionType === item && (
-                              <>
+                              <div className="overflow-auto h-[300px]">
                                 {(part.questions || []).map(
                                   (question, questionIndex) => (
                                     <div
                                       key={questionIndex}
-                                      className="flex flex-col gap-3"
+                                      className="flex flex-col gap-3 "
                                     >
                                       <h3 className="mt-4 font-extrabold">
                                         Question {questionIndex + 1}
                                       </h3>
-
-                                      {(skill === "reading" ||
-                                        skill === "listening") && (
-                                        <label className="block text-base">
-                                          Question Type:
-                                          <input
-                                            type="text"
-                                            value={selectedQuestionType}
-                                            readOnly
-                                            className="mt-1 block w-full border border-gray-300 rounded-md bg-gray-200 text-gray-700 cursor-not-allowed"
-                                          />
-                                        </label>
-                                      )}
-
                                       <label className="block mt-2 text-sm">
                                         Question Name:
                                         <input
@@ -383,7 +386,7 @@ const FormSkill = ({ skill, formData, handleDataChange }) => {
                                     <FontAwesomeIcon icon={faTrash} />
                                   </button>
                                 </div>
-                              </>
+                              </div>
                             )}
                           </>
                         )

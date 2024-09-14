@@ -1,110 +1,62 @@
 import React, { useState } from "react";
-import ReadingForm from "../../components/Test/SkillForm/ReadingForm";
-import ListeningForm from "../../components/Test/SkillForm/ListeningForm";
-import WritingForm from "../../components/Test/SkillForm/WrittingForm"; // Fixed typo
-import SpeakingForm from "../../components/Test/SkillForm/SpeakingForm";
+import { DateTimePicker } from "@mui/x-date-pickers/DateTimePicker";
+import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
+import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFns";
+import FormSkill from "../../components/Test/SkillForm/FormSkill";
 import FilterForm from "../../components/Test/SkillForm/FilterForm";
 import Header from "../../components/common/Header";
-import { faStream } from "@fortawesome/free-solid-svg-icons";
+import { faPlane, faStream } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faFly } from "@fortawesome/free-brands-svg-icons";
 
 const TestForm = () => {
   const [selectedClasses, setSelectedClasses] = useState([]);
   const [selectedSkills, setSelectedSkills] = useState([]);
   const [formData, setFormData] = useState({
-    reading: "",
-    listening: [
+    Id: "",
+    testName: "",
+    classIds: [],
+    duration: 40,
+    startTime: new Date(), // Default to current date and time
+    endTime: new Date(), // Default to current date and time
+    parts: [
       {
-        audio: "url",
-        part: 1,
-        question: [
-          {
-            name: "",
-            type: "",
-          },
-        ],
+        partId: "",
+        testId: "",
+        partNumber: 1,
+        skillTest: 1,
+        contentText: "",
+        imgUrl: "",
+        audioUrl: "",
       },
     ],
-    writing: [
-      {
-        img: null,
-        content: "",
-        part: 1,
-      },
-    ],
-    speaking: "",
   });
 
   const handleSelectClass = (classes) => {
-    setSelectedClasses(classes);
+    setFormData((prevData) => ({
+      ...prevData,
+      classIds: classes,
+    }));
   };
 
-  const handleSelectSkill = (skills) => {
-    setSelectedSkills(skills);
-  };
+  const handleSelectSkill = (skills) => setSelectedSkills(skills);
 
-  const handleWritingDataChange = (index, newData) => {
-    setFormData((prevData) => {
-      let updatedWriting = [...prevData.writing];
-      updatedWriting[index] = { ...updatedWriting[index], ...newData };
-      return {
-        ...prevData,
-        writing: updatedWriting,
-      };
-    });
-  };
-
-  const handleAddPart = () => {
-    if (formData.writing.length < 2) {
-      setFormData((prevData) => {
-        const newPart = {
-          img: null,
-          content: "",
-          part: prevData.writing.length
-            ? prevData.writing[prevData.writing.length - 1].part + 1
-            : 1,
-        };
-        return {
-          ...prevData,
-          writing: [...prevData.writing, newPart],
-        };
-      });
-    } else {
-      alert("You can only add up to 2 parts.");
-    }
-  };
-
-  const handleRemovePart = (index) => {
-    if (formData.writing.length > 1) {
-      setFormData((prevData) => {
-        const updatedWriting = prevData.writing.filter((_, i) => i !== index);
-        return {
-          ...prevData,
-          writing: updatedWriting,
-        };
-      });
-    } else {
-      alert("You must have at least 1 part.");
-    }
-  };
+  const handleDataChange = (updatedData) =>
+    setFormData((prevData) => ({ ...prevData, ...updatedData }));
 
   const handleSubmit = async () => {
     try {
-      console.log("Data ne ", formData);
+      console.log("Data: ", formData);
+      // Uncomment and replace with your API endpoint
       // const response = await fetch("https://your-api-endpoint.com/submit", {
       //   method: "POST",
       //   headers: {
       //     "Content-Type": "application/json",
       //   },
-      //   body: JSON.stringify({
-      //     selectedClasses,
-      //     formData,
-      //   }),
+      //   body: JSON.stringify({ selectedClasses, formData }),
       // });
 
-      // if (!response.ok) {
-      //   throw new Error("Network response was not ok");
-      // }
+      // if (!response.ok) throw new Error("Network response was not ok");
 
       alert("Submission successful!");
     } catch (error) {
@@ -113,77 +65,128 @@ const TestForm = () => {
     }
   };
 
-  const renderSkillForms = () => {
-    return selectedSkills.map((skill) => {
-      switch (skill) {
-        case "reading":
-          return <ReadingForm key={skill} />;
-        case "listening":
-          return <ListeningForm key={skill} />;
-        case "writing":
-          return (
-            <div key={skill} className="flex flex-row gap-8 mt-8">
-              {/* Writing Form */}
-              <div className="w-1/2">
-                <WritingForm
-                  skillData={formData.writing}
-                  onDataChange={(index, newData) =>
-                    handleWritingDataChange(index, newData)
-                  }
-                  onAddPart={handleAddPart}
-                  onRemovePart={handleRemovePart}
-                />
-              </div>
-              {/* Preview Section */}
-              <div className="w-1/2 border-l-2 border-gray-200 pl-4 max-h-[600px] overflow-y-auto">
-                <h3 className="text-lg font-semibold mb-4">Preview</h3>
-                {formData.writing.map((part, index) => (
-                  <div key={index} className="mb-6">
-                    <h4 className="font-semibold">Part {part.part}</h4>
-                    {part.img && (
-                      <img
-                        src={part.img}
-                        alt={`Preview of Part ${part.part}`}
-                        className="w-full max-w-sm mt-2"
-                      />
-                    )}
-                    <p>{part.content || "No content yet"}</p>
-                  </div>
-                ))}
-              </div>
-            </div>
-          );
-        case "speaking":
-          return <SpeakingForm key={skill} />;
-        default:
-          return null;
-      }
-    });
-  };
+  const renderSkillForms = () =>
+    selectedSkills.map((skill) => (
+      <FormSkill
+        skill={skill}
+        key={skill}
+        formData={formData}
+        handleDataChange={handleDataChange}
+      />
+    ));
 
   return (
-    <div className="container mt-14 p-3">
+    <div className="w-full p-3 mt-16">
       <Header />
-      <h3 className="mt-2 mb-4 text-2xl font-semibold text-gray-500">
+      <h3 className="mb-4 text-2xl font-semibold text-gray-500">
         <span className="mr-2">
           <FontAwesomeIcon icon={faStream} />
         </span>
         Form Create Test
       </h3>
-      <FilterForm
-        onSelectClass={handleSelectClass}
-        onSelectSkill={handleSelectSkill}
-      />
-      <main className="container mx-auto">
+
+      <div className="p-6 bg-green-50 shadow-lg rounded-lg border border-gray-200">
+        <div className="flex  gap-3 mb-6 ">
+          <div className="w-6/12">
+            <label
+              htmlFor="testName"
+              className="block font-semibold  text-gray-800"
+            >
+              Test Name
+            </label>
+            <input
+              id="testName"
+              type="text"
+              value={formData.testName}
+              onChange={(e) => handleDataChange({ testName: e.target.value })}
+              className="mt-2 block w-full px-2 py-1 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+              placeholder="Enter test name"
+            />
+          </div>
+
+          <div className="w-5/12">
+            <label
+              htmlFor="duration"
+              className="block font-semibold text-gray-800"
+            >
+              Duration (minutes)
+            </label>
+            <input
+              id="duration"
+              type="number"
+              value={formData.duration}
+              onChange={(e) => handleDataChange({ duration: e.target.value })}
+              className="mt-2 block w-full px-2 py-1 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+              placeholder="Enter duration"
+            />
+          </div>
+        </div>
+        <FilterForm
+          onSelectClass={handleSelectClass}
+          onSelectSkill={handleSelectSkill}
+        />
+        <LocalizationProvider dateAdapter={AdapterDateFns}>
+          <div className="flex gap-6">
+            <div className="mb-6">
+              <label
+                htmlFor="startTime"
+                className="block font-semibold text-gray-800"
+              >
+                Start Time
+              </label>
+              <DateTimePicker
+                id="startTime"
+                value={formData.startTime}
+                onChange={(newValue) =>
+                  handleDataChange({ startTime: newValue })
+                }
+                renderInput={(params) => (
+                  <input
+                    {...params.inputProps}
+                    className="mt-2  block w-full px-2 py-1 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                  />
+                )}
+              />
+            </div>
+
+            <div className="mb-6">
+              <label
+                htmlFor="endTime"
+                className="block font-semibold text-gray-800"
+              >
+                End Time
+              </label>
+              <DateTimePicker
+                id="endTime"
+                value={formData.endTime}
+                onChange={(newValue) => handleDataChange({ endTime: newValue })}
+                renderInput={(params) => (
+                  <input
+                    {...params.inputProps}
+                    className="mt-2 block w-full px-2 py-1 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                  />
+                )}
+              />
+            </div>
+          </div>
+        </LocalizationProvider>
+      </div>
+
+      <main className="mx-auto mt-8 rounded  border-2 ">
         {renderSkillForms()}
 
         {selectedSkills.length > 0 && (
-          <button
-            className="mt-4 w-28 bg-green-500 text-white px-4 py-2 rounded-lg hover:bg-green-600"
-            onClick={handleSubmit}
-          >
-            Submit
-          </button>
+          <div className="p-2">
+            <button
+              className="w-28 ml-10  bg-green-500 text-white px-4 py-2 rounded-lg hover:bg-green-600"
+              onClick={handleSubmit}
+            >
+              <span className="mr-2">
+                <FontAwesomeIcon icon={faPlane} />
+              </span>
+              Submit
+            </button>
+          </div>
         )}
       </main>
     </div>

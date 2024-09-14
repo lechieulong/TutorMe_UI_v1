@@ -4,7 +4,7 @@ import Topic from "../../components/Test/Topic";
 import NavigationPart from "../../components/Test/NavigationPart";
 import { useLocation } from "react-router-dom";
 
-const TestView = memo(({ isTimeOut, setDataSubmit }) => {
+const TestView = () => {
   const questionRef = useRef({});
   const [isOpenSideView, setOpenSideView] = useState(false);
   const [partData, setPartData] = useState([]);
@@ -306,7 +306,6 @@ const TestView = memo(({ isTimeOut, setDataSubmit }) => {
     WRITING: 3,
     SPEAKING: 4,
   };
-  console.log("hello");
 
   useEffect(() => {
     if (receivedData.skillPart === englishPart.READING) {
@@ -458,6 +457,6 @@ const TestView = memo(({ isTimeOut, setDataSubmit }) => {
       />
     </div>
   );
-});
+};
 
 export default TestView;

@@ -1,31 +1,57 @@
 import axios from 'axios';
 import { toast } from 'react-toastify';
+import Cookies from 'js-cookie';
 
 const instance = axios.create({
-    baseURL: 'https://localhost:7104'
+    baseURL: 'https://localhost:7030', // Cập nhật với URL API của bạn
 });
 
-// Alter defaults after instance has been created
-// instance.defaults.headers.common['Authorization'] = AUTH_TOKEN;
+// Thêm interceptor cho yêu cầu
+instance.interceptors.request.use(
+    (config) => {
+        // Thêm token vào header nếu có
+        const token = Cookies.get('authToken');
+        if (token) {
+            config.headers['Authorization'] = `Bearer ${token}`;
+        }
+        return config;
+    },
+    (error) => {
+        // Xử lý lỗi yêu cầu
+        return Promise.reject(error);
+    }
+);
 
-// Add a request interceptor
-instance.interceptors.request.use(function (config) {
-    // Do something before request is sent
-    return config;
-}, function (error) {
-    // Do something with request error
-    return Promise.reject(error);
-});
+// Thêm interceptor cho phản hồi
+instance.interceptors.response.use(
+    (response) => {
+        // Trả về dữ liệu phản hồi
+        return response.data;
+    },
+    (error) => {
+        // Xử lý lỗi phản hồi
+        if (error.response) {
+            // Nếu có lỗi từ máy chủ
+            const status = error.response.status;
+            const message = error.response.data?.message || 'An error occurred';
 
-// Add a response interceptor
-instance.interceptors.response.use(function (response) {
-    // Any status code that lie within the range of 2xx cause this function to trigger
-    // Do something with response data
-    return response.data;
-}, function (error) {
-    // Any status codes that falls outside the range of 2xx cause this function to trigger
-    // Do something with response error
-    return Promise.reject(error);
-});
+            // Hiển thị thông báo lỗi
+            if (status === 401) {
+                toast.error('Unauthorized. Please login again.');
+                // Có thể thêm logic để xử lý đăng xuất người dùng
+            } else if (status === 403) {
+                toast.error('Forbidden. You do not have permission.');
+            } else if (status === 404) {
+                toast.error('Resource not found.');
+            } else {
+                toast.error(message);
+            }
+        } else {
+            // Nếu không có lỗi từ máy chủ (network error, etc.)
+            toast.error('Network error. Please check your connection.');
+        }
+        return Promise.reject(error);
+    }
+);
 
 export default instance;

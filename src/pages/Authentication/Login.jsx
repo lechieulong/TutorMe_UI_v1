@@ -1,5 +1,6 @@
-import { useState } from "react";
-import { Link } from "react-router-dom";
+import { useState, useEffect } from "react";
+import Cookies from "js-cookie";
+import { Link, useNavigate } from "react-router-dom";
 import { loginApi } from "../../service/AuthService";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
@@ -7,17 +8,26 @@ import "react-toastify/dist/ReactToastify.css";
 const SignIn = () => {
   const [user, setUser] = useState("");
   const [pwd, setPwd] = useState("");
+  const navigate = useNavigate();
+
+  // Kiểm tra token khi component được render
+  useEffect(() => {
+    const token = Cookies.get("authToken");
+    if (token) {
+      navigate("/"); // Nếu có token, chuyển hướng đến trang Home
+    }
+  }, [navigate]);
 
   const handleLogin = async () => {
     if (!user || !pwd) {
-      toast.error("User or Password is requied!");
+      toast.error("User and Password is requied!");
       return;
     }
 
     let res = await loginApi(user, pwd);
 
     if (!res || !res.result || !res.result.token) {
-      toast.error(res?.message || "Username or password is incorrect!");
+      // toast.error(res?.message || "Login Failed!");
       return;
     }
 
@@ -25,7 +35,7 @@ const SignIn = () => {
       toast.success("Login success!", {
         theme: "light",
       });
-      localStorage.setItem("token", res.result.token);
+      navigate('/');
     }
   };
 
@@ -41,7 +51,10 @@ const SignIn = () => {
           />
           <h1 className="font-mono text-2xl font-bold text-gray-900">LOGIN</h1>
         </div>
-        <form className="space-y-4">
+        <form className="space-y-4" onSubmit={(e) => {
+          e.preventDefault(); // Ngăn trình duyệt tự động refresh sau khi submit form
+          handleLogin();
+        }}>
           <div className="mb-4">
             <label
               htmlFor="username"
@@ -76,15 +89,13 @@ const SignIn = () => {
           </div>
           <div className="login-btn mb-6">
             <button
-              // className="w-full px-4 py-2 font-bold text-white bg-blue-500 rounded-full hover:bg-blue-700 focus:outline-none focus:shadow-outline"
               className={
                 user && pwd
                   ? "active w-full px-4 py-2 font-bold text-white rounded-full focus:outline-none focus:shadow-outline"
                   : "w-full px-4 py-2 font-bold text-white rounded-full focus:outline-none focus:shadow-outline"
               }
-              type="button"
+              type="submit"
               disabled={user && pwd ? false : true}
-              onClick={() => handleLogin()}
             >
               LOGIN
             </button>

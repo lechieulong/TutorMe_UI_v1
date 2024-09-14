@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { DateTimePicker } from "@mui/x-date-pickers/DateTimePicker";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFns";
@@ -17,8 +17,8 @@ const TestForm = () => {
     testName: "",
     classIds: [],
     duration: 40,
-    startTime: new Date(), // Default to current date and time
-    endTime: new Date(), // Default to current date and time
+    startTime: new Date(),
+    endTime: new Date(),
     parts: [
       {
         partId: "",

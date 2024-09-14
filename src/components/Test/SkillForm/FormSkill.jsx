@@ -203,153 +203,144 @@ const FormSkill = ({ skill, formData, handleDataChange }) => {
           style={{ width: `${leftWidth}%` }}
         >
           {parts.map((part, partIndex) => (
-            <>
-              <div
-                key={partIndex}
-                className="flex gap-2  cursor-pointer"
-                onClick={() => handlePartClick(partIndex)}
-              >
-                <div className="w-full flex flex-col gap-3 p-4 border  shadow-xl bg-yellow-50  rounded-lg">
-                  <h3 className="text-lg font-medium">
-                    Part {part.partNumber}
-                  </h3>
-                  {skill !== "speaking" && (
-                    <label className="block mt-2">
-                      <span className="text-lg"> Image topic content:</span>
-                      <input
-                        type="file"
-                        accept="image/*"
-                        onChange={(e) => handleImageChange(partIndex, e)}
-                        className="mt-1 block w-full border-gray-300 rounded-md shadow-sm"
+            <div
+              key={partIndex}
+              className="flex gap-2  cursor-pointer"
+              onClick={() => handlePartClick(partIndex)}
+            >
+              <div className="w-full flex flex-col gap-3 p-4 border  shadow-xl bg-yellow-50  rounded-lg">
+                <h3 className="text-lg font-medium">Part {part.partNumber}</h3>
+                {skill !== "speaking" && (
+                  <label className="block mt-2">
+                    <span className="text-lg"> Image topic content:</span>
+                    <input
+                      type="file"
+                      accept="image/*"
+                      onChange={(e) => handleImageChange(partIndex, e)}
+                      className="mt-1 block w-full border-gray-300 rounded-md shadow-sm"
+                    />
+                  </label>
+                )}
+                {skill === "reading" && (
+                  <div className="  mt-2">
+                    content topic
+                    <div className="mt-2 relative w-full h-[300px] overflow-auto">
+                      <CKEditor
+                        editor={ClassicEditor}
+                        data={part.contentText}
+                        config={{
+                          toolbar: [
+                            "heading",
+                            "|",
+                            "bold",
+                            "italic",
+                            "link",
+                            "|",
+                            "blockQuote",
+                            "|",
+                            "undo",
+                            "redo",
+                          ],
+                        }}
+                        onChange={(event, editor) => {
+                          const data = editor.getData();
+                          handleInputChange(partIndex, {
+                            target: { name: "contentText", value: data },
+                          });
+                        }}
                       />
-                    </label>
-                  )}
-                  {skill === "reading" && (
-                    <div className="  mt-2">
-                      content topic
-                      <div className="mt-2 relative w-full h-[300px] overflow-auto">
-                        <CKEditor
-                          editor={ClassicEditor}
-                          data={part.contentText}
-                          config={{
-                            toolbar: [
-                              "heading",
-                              "|",
-                              "bold",
-                              "italic",
-                              "link",
-                              "|",
-                              "blockQuote",
-                              "|",
-                              "undo",
-                              "redo",
-                            ],
-                          }}
-                          onChange={(event, editor) => {
-                            const data = editor.getData();
-                            handleInputChange(partIndex, {
-                              target: { name: "contentText", value: data },
-                            });
-                          }}
-                        />
-                      </div>
                     </div>
-                  )}
+                  </div>
+                )}
 
-                  {skill === "listening" && (
-                    <label className="block text-base mt-2">
-                      Audio Upload:
-                      <input
-                        type="file"
-                        accept="audio/*"
-                        onChange={(e) => handleAudioChange(partIndex, e)}
-                        className="mt-1  block w-full border-gray-300 rounded-md shadow-sm"
-                      />
-                    </label>
-                  )}
+                {skill === "listening" && (
+                  <label className="block text-base mt-2">
+                    Audio Upload:
+                    <input
+                      type="file"
+                      accept="audio/*"
+                      onChange={(e) => handleAudioChange(partIndex, e)}
+                      className="mt-1  block w-full border-gray-300 rounded-md shadow-sm"
+                    />
+                  </label>
+                )}
 
-                  {/* Question Form  */}
-                  <div className="mt-4 border p-4 mb-2 rounded-md shadow-sm">
-                    <div className="flex justify-between items-center border-b-2 p-2 border-gray-200">
-                      <h4 className="text-lg font-semibold">
-                        Questions
-                        <span>
-                          {"   "}
-                          <FontAwesomeIcon icon={faQuestionCircle} />
-                        </span>
-                      </h4>
-                    </div>
-                    <div className="flex flex-col gap-2">
-                      {["mutiple", "matching", "true-false", "filling"].map(
-                        (item, index) => (
-                          <>
-                            {" "}
-                            <button
-                              key={index}
-                              type="button"
-                              onClick={() => handleSelectTypeQuestion(item)}
-                              className={`bg-yellow-300 text-gray-700 px-4 py-2 rounded-lg  ${
-                                selectedQuestionType === item
-                                  ? "bg-blue-400"
-                                  : ""
-                              }`}
-                            >
-                              {item}
-                            </button>
-                            {selectedQuestionType === item && (
-                              <div className="overflow-auto h-[300px]">
-                                {(part.questions || []).map(
-                                  (question, questionIndex) => (
-                                    <div
-                                      key={questionIndex}
-                                      className="flex flex-col gap-3 "
-                                    >
-                                      <h3 className="mt-4 font-extrabold">
-                                        Question {questionIndex + 1}
-                                      </h3>
-                                      <label className="block mt-2 text-sm">
-                                        Question Name:
+                {/* Question Form  */}
+                <div className="mt-4 border p-4 mb-2 rounded-md shadow-sm">
+                  <div className="flex justify-between items-center border-b-2 p-2 border-gray-200">
+                    <h4 className="text-lg font-semibold">
+                      Questions
+                      <span>
+                        {"   "}
+                        <FontAwesomeIcon icon={faQuestionCircle} />
+                      </span>
+                    </h4>
+                  </div>
+                  <div className="flex flex-col gap-2">
+                    {["Multiple", "Matching", "True-False", "Filling"].map(
+                      (item, index) => (
+                        <>
+                          {" "}
+                          <button
+                            key={index}
+                            type="button"
+                            onClick={() => handleSelectTypeQuestion(item)}
+                            className={`bg-yellow-300 text-gray-700 px-4 py-2 rounded-lg  ${
+                              selectedQuestionType === item ? "bg-blue-400" : ""
+                            }`}
+                          >
+                            {item}
+                          </button>
+                          {selectedQuestionType === item && (
+                            <>
+                              {(part.questions || []).map(
+                                (question, questionIndex) => (
+                                  <div
+                                    key={questionIndex}
+                                    className="flex flex-col gap-3"
+                                  >
+                                    <h3 className="mt-4 font-extrabold">
+                                      Question {questionIndex + 1}
+                                    </h3>
+
+                                    {(skill === "reading" ||
+                                      skill === "listening") && (
+                                      <label className="block text-base">
+                                        Question Type:
                                         <input
                                           type="text"
-                                          name="questionName"
-                                          value={question.questionName}
-                                          onChange={(e) =>
-                                            handleQuestionChange(
-                                              partIndex,
-                                              questionIndex,
-                                              e
-                                            )
-                                          }
-                                          className="mt-1 block w-full p-2 border border-gray-300 rounded-md shadow-sm focus:border-indigo-500 focus:ring focus:ring-indigo-500 focus:ring-opacity-50"
+                                          value={selectedQuestionType}
+                                          readOnly
+                                          className="mt-1 block w-full border border-gray-300 rounded-md bg-gray-200 text-gray-700 cursor-not-allowed"
                                         />
                                       </label>
+                                    )}
 
-                                      {(skill === "reading" ||
-                                        skill === "listening") && (
-                                        <label className="block mt-2">
-                                          Answer:
-                                          <input
-                                            type="text"
-                                            name="answer"
-                                            value={question.answer}
-                                            onChange={(e) =>
-                                              handleQuestionChange(
-                                                partIndex,
-                                                questionIndex,
-                                                e
-                                              )
-                                            }
-                                            className="mt-1 block w-full border p-2 border-gray-300 rounded-md shadow-sm focus:border-indigo-500 focus:ring focus:ring-indigo-500 focus:ring-opacity-50"
-                                          />
-                                        </label>
-                                      )}
+                                    <label className="block mt-2 text-sm">
+                                      Question Name:
+                                      <input
+                                        type="text"
+                                        name="questionName"
+                                        value={question.questionName}
+                                        onChange={(e) =>
+                                          handleQuestionChange(
+                                            partIndex,
+                                            questionIndex,
+                                            e
+                                          )
+                                        }
+                                        className="mt-1 block w-full p-2 border border-gray-300 rounded-md shadow-sm focus:border-indigo-500 focus:ring focus:ring-indigo-500 focus:ring-opacity-50"
+                                      />
+                                    </label>
 
+                                    {(skill === "reading" ||
+                                      skill === "listening") && (
                                       <label className="block mt-2">
-                                        Max Marks:
+                                        Answer:
                                         <input
-                                          type="number"
-                                          name="maxMarks"
-                                          value={question.maxMarks}
+                                          type="text"
+                                          name="answer"
+                                          value={question.answer}
                                           onChange={(e) =>
                                             handleQuestionChange(
                                               partIndex,
@@ -357,70 +348,87 @@ const FormSkill = ({ skill, formData, handleDataChange }) => {
                                               e
                                             )
                                           }
-                                          className="mt-1 p-2 border block w-full border-gray-300 rounded-md shadow-sm focus:border-indigo-500 focus:ring focus:ring-indigo-500 focus:ring-opacity-50"
+                                          className="mt-1 block w-full border p-2 border-gray-300 rounded-md shadow-sm focus:border-indigo-500 focus:ring focus:ring-indigo-500 focus:ring-opacity-50"
                                         />
                                       </label>
-                                    </div>
-                                  )
-                                )}
+                                    )}
 
-                                {/*Button  Question Form  */}
-                                <div className="flex gap-2 justify-center items-center mt-2">
-                                  <button
-                                    type="button"
-                                    onClick={() => addQuestion(partIndex)}
-                                    className=" bg-yellow-300 text-gray-700 px-4 py-2 rounded-lg hover:bg-yellow-400"
-                                  >
-                                    <span className="mr-2">
-                                      <FontAwesomeIcon icon={faPlus} />
-                                    </span>
-                                    Add Question
-                                  </button>
-                                  <button
-                                    type="button"
-                                    onClick={() =>
-                                      removeQuestion(partIndex, questionIndex)
-                                    }
-                                    className="h-10 bg-red-500 text-white rounded-lg hover:bg-red-600"
-                                  >
-                                    <FontAwesomeIcon icon={faTrash} />
-                                  </button>
-                                </div>
+                                    <label className="block mt-2">
+                                      Max Marks:
+                                      <input
+                                        type="number"
+                                        name="maxMarks"
+                                        value={question.maxMarks}
+                                        onChange={(e) =>
+                                          handleQuestionChange(
+                                            partIndex,
+                                            questionIndex,
+                                            e
+                                          )
+                                        }
+                                        className="mt-1 p-2 border block w-full border-gray-300 rounded-md shadow-sm focus:border-indigo-500 focus:ring focus:ring-indigo-500 focus:ring-opacity-50"
+                                      />
+                                    </label>
+                                  </div>
+                                )
+                              )}
+
+                              {/*Button  Question Form  */}
+                              <div className="flex gap-2 justify-center items-center mt-2">
+                                <button
+                                  type="button"
+                                  onClick={() => addQuestion(partIndex)}
+                                  className=" bg-yellow-300 text-gray-700 px-4 py-2 rounded-lg hover:bg-yellow-400"
+                                >
+                                  <span className="mr-2">
+                                    <FontAwesomeIcon icon={faPlus} />
+                                  </span>
+                                  Add Question
+                                </button>
+                                <button
+                                  type="button"
+                                  onClick={() =>
+                                    removeQuestion(partIndex, questionIndex)
+                                  }
+                                  className="h-10 bg-red-500 text-white rounded-lg hover:bg-red-600"
+                                >
+                                  <FontAwesomeIcon icon={faTrash} />
+                                </button>
                               </div>
-                            )}
-                          </>
-                        )
-                      )}
-                    </div>
-                  </div>
-                  {/*End  Question Form  */}
-
-                  {/* Remove part || Add part */}
-                  <div className="flex gap-5">
-                    <button
-                      type="button"
-                      onClick={() => removePart(partIndex)}
-                      className="mt-4 bg-red-500 text-sm text-white px-4 py-2 rounded-lg hover:bg-red-600"
-                    >
-                      <span className="mr-2">
-                        <FontAwesomeIcon icon={faMultiply} />
-                      </span>
-                      Remove Part
-                    </button>
-                    <button
-                      type="button"
-                      onClick={addPart}
-                      className="mt-4 bg-green-500 text-sm text-white px-4 py-2 rounded-lg hover:bg-green-600"
-                    >
-                      <span className="mr-2">
-                        <FontAwesomeIcon icon={faPlus} />
-                      </span>
-                      Add Part
-                    </button>
+                            </>
+                          )}
+                        </>
+                      )
+                    )}
                   </div>
                 </div>
+                {/*End  Question Form  */}
+
+                {/* Remove part || Add part */}
+                <div className="flex gap-5">
+                  <button
+                    type="button"
+                    onClick={() => removePart(partIndex)}
+                    className="mt-4 bg-red-500 text-sm text-white px-4 py-2 rounded-lg hover:bg-red-600"
+                  >
+                    <span className="mr-2">
+                      <FontAwesomeIcon icon={faMultiply} />
+                    </span>
+                    Remove Part
+                  </button>
+                  <button
+                    type="button"
+                    onClick={addPart}
+                    className="mt-4 bg-green-500 text-sm text-white px-4 py-2 rounded-lg hover:bg-green-600"
+                  >
+                    <span className="mr-2">
+                      <FontAwesomeIcon icon={faPlus} />
+                    </span>
+                    Add Part
+                  </button>
+                </div>
               </div>
-            </>
+            </div>
           ))}
         </div>
 

@@ -56,7 +56,7 @@ const fetchRoomData = async () => {
 
   const baseURL = `https://rtc-api.zego.im/?Action=DescribeUserNum`;
 
-  const roomIds = ['12343', '12345']; // Xác định ID phòng ở đây
+  const roomIds = ['12345', '12323']; // Xác định ID phòng ở đây
 
   const roomIdParams = roomIds.map(id => `RoomId[]=${id}`).join('&');
   const generatedUrl = `${baseURL}&${roomIdParams}&AppId=${appID}&SignatureNonce=${signatureNonce}&Timestamp=${timestamp}&Signature=${encodeURIComponent(signature)}&SignatureVersion=2.0`;
@@ -111,7 +111,9 @@ useEffect(() => {
     return <div>No room data available</div>;
   }
   //infomation user from backend
-  const UserId=randomID(5);
+  const url = window.location.href;
+  
+  const UserId=url==='http://localhost:5173/'?randomID(5):"12345";
   const UserName="guest";
   const role_str = UserId=== roomID?'Host':'Audience';
   const role =
@@ -143,9 +145,9 @@ useEffect(() => {
         },
       },     
       sharedLinks,
-      // showTextChat:false,
-      showPreJoinView: false,
-      // showRoomDetailsButton:false,
+      showTextChat:role_str==='Host'?true:false,
+      showPreJoinView:role_str==='Host'?true:false,
+      showRoomDetailsButton:role_str==='Host'?true:false,
       showLeavingView:false,
     });
   };

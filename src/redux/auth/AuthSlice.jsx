@@ -2,34 +2,36 @@ import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import axios from "axios";
 import { SLICE_NAMES, ACTIONS, STATUS } from "../../constant/SliceName";
 
+// Action login
 export const Login = createAsyncThunk(
   `${SLICE_NAMES.AUTH}/${ACTIONS.LOGIN}`,
-  async () => {
-    const response = await axios.get("https://localhost:7104/api/auth/login");
-    return response.data;
+  async (loginData, { rejectWithValue }) => {
+    try {
+      const response = await axios.post("https://localhost:7104/api/auth/login", loginData);
+      return response.data;
+    } catch (error) {
+      return rejectWithValue(error.response?.data?.message || "Failed to login");
+    }
   }
 );
 
+// Action register
 export const Regis = createAsyncThunk(
   `${SLICE_NAMES.AUTH}/${ACTIONS.REGIS}`,
-  async (userData) => {
+  async (userData, { rejectWithValue }) => {
     try {
-      const response = await axios.post(
-        "https://localhost:7104/api/auth/register",
-        userData
-      );
-
+      const response = await axios.post("https://localhost:7030/api/auth/register", userData);
       return response.data;
     } catch (error) {
-      throw new Error(error.response?.data?.message || "Failed to register");
+      return rejectWithValue(error.response?.data?.message || "Failed to register");
     }
   }
 );
 
 const initialState = {
-  user: {},
-  status: STATUS.SUCCESS,
-  error: null,
+  user: null,         // Thông tin người dùng sau khi đăng nhập hoặc đăng ký
+  status: STATUS.IDLE, // Trạng thái mặc định
+  error: null,        // Thông báo lỗi nếu có
 };
 
 const AuthSlice = createSlice({
@@ -38,6 +40,7 @@ const AuthSlice = createSlice({
   reducers: {},
   extraReducers: (builder) => {
     builder
+      // Xử lý login
       .addCase(Login.pending, (state) => {
         state.status = STATUS.PENDING;
       })
@@ -47,19 +50,20 @@ const AuthSlice = createSlice({
       })
       .addCase(Login.rejected, (state, action) => {
         state.status = STATUS.FAILED;
-        state.error = action.error.message;
+        state.error = action.payload || action.error.message;
       })
 
+      // Xử lý register
       .addCase(Regis.pending, (state) => {
         state.status = STATUS.PENDING;
       })
       .addCase(Regis.fulfilled, (state, action) => {
         state.status = STATUS.SUCCESS;
-        state.classes = action.payload;
+        state.user = action.payload;
       })
       .addCase(Regis.rejected, (state, action) => {
         state.status = STATUS.FAILED;
-        state.error = action.error.message;
+        state.error = action.payload || action.error.message;
       });
   },
 });

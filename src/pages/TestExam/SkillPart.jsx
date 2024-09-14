@@ -48,7 +48,7 @@ const SkillPart = () => {
   ];
 
   const handleTakeTest = () => {
-    navigate("/skill-part/test-setting", { state: 3 });
+    navigate("/skill-part/test-setting", { state: 1 });
   };
 
   return (
@@ -103,10 +103,10 @@ const SkillPart = () => {
             {skillParts.map((skill, index) => (
               <div
                 key={index}
-                className="p-4 md:p-5 flex flex-col gap-6 items-center border shadow-sm rounded-xl dark:bg-neutral-900 dark:border-neutral-700 dark:shadow-neutral-700/70"
+                className="p-4 md:p-5 flex flex-col gap-6 items-center border shadow-lg rounded-xl dark:bg-neutral-900 dark:border-neutral-700 dark:shadow-neutral-700/70"
                 style={{ flex: "1 1 300px" }} // Ensures cards are responsive and grow/shrink as needed
               >
-                <p className="text-2xl">
+                <p className="text-2xl text-green-800">
                   <FontAwesomeIcon icon={iconMap[skill.icon]} />
                 </p>
                 <h3 className="text-lg font-bold text-gray-800 dark:text-white">
@@ -121,23 +121,23 @@ const SkillPart = () => {
                   href="#"
                 >
                   <FontAwesomeIcon icon={faPlay} className="mr-2" />
-                  Take Test
+                  Take part
                 </button>
               </div>
             ))}
           </div>
 
           {/* fullPart */}
-          <div className="border border-gray-300 p-3 flex justify-between mt-2 rounded-xl items-center">
-            <h4 className="w-5/12 text-2xl text-gray-600 font-semibold">
+          <div className="border bg-green-600 text-white shadow-md border-gray-300 p-2 flex justify-between mt-2 rounded-xl items-center">
+            <h4 className="w-5/12 text-2xl font-semibold">
               <span>
                 <FontAwesomeIcon icon={faBorderAll} className="mr-2 " />
               </span>
               Full Test
             </h4>
-            <button className="bg-green-400 rounded-full text-white w-3/12">
+            <button className="text-gray-500 text-xl rounded-full w-3/12">
               Start
-              <span className="text-red-500">
+              <span className="text-blue-500">
                 <FontAwesomeIcon icon={faBolt} className="ml-2 " />
               </span>
             </button>

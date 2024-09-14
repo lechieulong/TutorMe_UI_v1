@@ -11,12 +11,12 @@ const FilterForm = ({ onSelectClass, onSelectSkill }) => {
     { value: "class1", label: "Class 1" },
     { value: "class2", label: "Class 2" },
     { value: "class3", label: "Class 3" },
-    { value: "class4", label: "Class 4" },
-    { value: "class4", label: "Class 4" },
-    { value: "class4", label: "Class 4" },
-    { value: "class4", label: "Class 4" },
-    { value: "class4", label: "Class 4" },
-    { value: "class4", label: "Class 4" },
+    { value: "class5", label: "Class 4" },
+    { value: "class6", label: "Class 5" },
+    { value: "class7", label: "Class 6" },
+    { value: "class8", label: "Class 7" },
+    { value: "class9", label: "Class 8" },
+    { value: "class10", label: "Class9" },
   ];
 
   const skills = [
@@ -70,11 +70,11 @@ const FilterForm = ({ onSelectClass, onSelectSkill }) => {
   };
 
   return (
-    <div className="bg-green-500 container  text-gray-100 p-4 shadow-md rounded-lg">
-      <div className="flex justify-between items-center gap-11">
+    <div className="   mt-2 mb-5">
+      <div className="flex gap-10  items-center ">
         {/* Classes Section */}
-        <div className="flex-1">
-          <h2 className="text-xl  mb-2">
+        <div className=" w-5/12 ">
+          <h2 className=" mb-2 font-extrabold">
             {" "}
             <span className="mr-4 ">
               <FontAwesomeIcon icon={faLandmark} />
@@ -89,15 +89,14 @@ const FilterForm = ({ onSelectClass, onSelectSkill }) => {
         </div>
 
         {/* Skills Section */}
-        <div className="">
-          <h2 className="text-xl font-semibold mb-2">
-            {" "}
+        <div className=" ">
+          <h2 className=" font-extrabold ">
             <span className="mr-4">
               <FontAwesomeIcon icon={faThunderstorm} />
             </span>
             Skills
           </h2>
-          <div className="flex gap-4 items-center mt-4">
+          <div className="flex gap-4 items-center mt-1 border rounded-lg p-3 bg-green-400 text-white  ">
             {skills.map((skill) => (
               <label
                 key={skill.id}
@@ -110,7 +109,7 @@ const FilterForm = ({ onSelectClass, onSelectSkill }) => {
                   id={skill.id}
                   checked={selectedSkills.includes(skill.id)}
                   onChange={() => handleSkillChange(skill.id)}
-                  className="form-checkbox text-blue-500 dark:text-blue-400"
+                  className="form-checkbox tex text-blue-500  dark:text-blue-400"
                 />
                 <span className="">{skill.name}</span>
               </label>

@@ -13,7 +13,6 @@ const TestForm = () => {
   const [selectedClasses, setSelectedClasses] = useState([]);
   const [selectedSkills, setSelectedSkills] = useState([]);
   const [formData, setFormData] = useState({
-    Id: "",
     testName: "",
     classIds: [],
     duration: 40,
@@ -21,13 +20,23 @@ const TestForm = () => {
     endTime: new Date(),
     parts: [
       {
-        partId: "",
-        testId: "",
         partNumber: 1,
         skillTest: 1,
         contentText: "",
-        imgUrl: "",
         audioUrl: "",
+        questionTypePart: [
+          {
+            questionGuide: "",
+            questionType: "",
+            questions: [
+              {
+                questionName: "",
+                answer: "",
+                maxMarks: 1,
+              },
+            ],
+          },
+        ],
       },
     ],
   });

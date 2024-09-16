@@ -21,8 +21,10 @@ export const Regis = createAsyncThunk(
   async (userData, { rejectWithValue }) => {
     try {
       const response = await axios.post("https://localhost:7030/api/auth/register", userData);
+      // console.log(response);
       return response.data;
     } catch (error) {
+      console.error("Error details:", error.response);
       return rejectWithValue(error.response?.data?.message || "Failed to register");
     }
   }

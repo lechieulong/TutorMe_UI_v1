@@ -9,6 +9,7 @@ import {
   faQuestionCircle,
   faTrash,
 } from "@fortawesome/free-solid-svg-icons";
+import AnswerSide from "./AnswerSide";
 
 const FormSkill = ({ skill, formData, handleDataChange }) => {
   const { parts } = formData;
@@ -148,14 +149,11 @@ const FormSkill = ({ skill, formData, handleDataChange }) => {
       </h2>
       <div className="flex">
         <div
-          className="overflow-auto flex flex-col gap-6 h-[640px] hide-scrollbar"
+          className="overflow-auto flex flex-col gap-6 h-[640px]  border border-gray-300 shadow-lg bg-yellow-50 rounded-lg"
           style={{ width: `${leftWidth}%` }}
         >
           {parts.map((part, partIndex) => (
-            <div
-              key={partIndex}
-              className="w-full flex flex-col p-6 border border-gray-300 shadow-lg bg-yellow-50 rounded-lg"
-            >
+            <div key={partIndex} className="w-full flex flex-col p-6 ">
               <h4 className="text-xl font-semibold text-gray-700">
                 Part {part.partNumber}
               </h4>
@@ -363,19 +361,22 @@ const FormSkill = ({ skill, formData, handleDataChange }) => {
               </div>
             </div>
           ))}
-
-          {/* BUTTON */}
         </div>
-
         <div>
           <div
-            className="cursor-ew-resize  bg-yellow-500 rounded-full "
+            className="cursor-ew-resize  bg-gray-300 rounded-full "
             style={{
-              width: "5px",
-              height: "calc(100% - 224px)",
+              width: "1px",
+              height: "100%",
             }}
             onMouseDown={() => startResizing("main")}
           />
+        </div>
+
+        {/* Preview  */}
+        <div className="p-2 w-1/2">
+          <h4>Preview </h4>
+          <AnswerSide parts={parts} />
         </div>
       </div>
     </div>

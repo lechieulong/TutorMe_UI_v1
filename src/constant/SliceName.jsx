@@ -8,7 +8,7 @@ export const SLICE_NAMES = {
 export const ACTIONS = {
   GET_CLASS: "getClass",
   LOGIN: "login",
-  REGIS: "regis",
+  REGIS: "register",
   FETCH_TESTS: "getTests",
   CREATE_TEST: "createTest",
   UPDATE_TEST: "updateTest",

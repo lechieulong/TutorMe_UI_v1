@@ -9,7 +9,7 @@ const SignUp = () => {
   const { status, error } = useSelector((state) => state.auth);
 
   const [formData, setFormData] = useState({
-    fullname: "",
+    name: "",
     email: "",
     phonenumber: "",
     password: "",
@@ -17,7 +17,7 @@ const SignUp = () => {
   });
 
   const [formErrors, setFormErrors] = useState({
-    fullname: "",
+    name: "",
     email: "",
     phonenumber: "",
     password: "",
@@ -36,7 +36,7 @@ const SignUp = () => {
     const errors = {};
     const passwordRegex = /^(?=.*[A-Z])(?=.*[!@#$%^&*]).{8,}$/;
 
-    if (!formData.fullname) errors.fullname = "Full Name is required";
+    if (!formData.name) errors.name = "Full Name is required";
     if (!formData.email) errors.email = "Email is required";
     if (!formData.phonenumber) errors.phonenumber = "Phone Number is required";
     if (!formData.password) {
@@ -57,15 +57,17 @@ const SignUp = () => {
 
     if (Object.keys(errors).length === 0) {
       setFormErrors({
-        fullname: "",
+        name: "",
         email: "",
         phonenumber: "",
         password: "",
-        confirmPassword: "",
-        role: ""
+        confirmPassword: ""
       });
 
-      dispatch(Regis(formData));
+      // Remove confirmPassword before dispatching
+      const { confirmPassword, ...userData } = formData;
+
+      dispatch(Regis(userData));
     } else {
       setFormErrors(errors);
     }
@@ -99,13 +101,13 @@ const SignUp = () => {
         <form className="space-y-4" onSubmit={handleSubmit}>
           <InputField
             label="Full Name"
-            id="fullname"
+            id="name"
             type="text"
-            name="fullname"
-            value={formData.fullname}
+            name="name"
+            value={formData.name}
             onChange={handleChange}
             placeholder="Full Name"
-            error={formErrors.fullname}
+            error={formErrors.name}
           />
           <InputField
             label="Email"
@@ -155,6 +157,12 @@ const SignUp = () => {
               >
                 REGISTER
               </button>
+              {/* Success message */}
+              {status === "success" && (
+                <p className="font-mono text-xs text-green-500 text-center mt-2">
+                  Registration successful! <br />  Please <Link to="/login" className="underline text-blue-500">log in</Link>.
+                </p>
+              )}
               {status === "pending" && (
                 <p className="font-mono text-xs text-yellow-500 text-center mt-2">Registering...</p>
               )}
@@ -163,21 +171,6 @@ const SignUp = () => {
               )}
             </div>
           </div>
-
-          {/* <div className="mt-6">
-            <button
-              className="w-full px-4 py-2 font-bold text-white bg-blue-500 rounded-full hover:bg-blue-700 focus:outline-none focus:shadow-outline"
-              type="submit"
-            >
-              REGISTER
-            </button>
-            {status === "pending" && (
-              <p className="text-blue-500 text-center mt-2">Registering...</p>
-            )}
-            {status === "failed" && (
-              <p className="text-red-500 text-center mt-2">{error}</p>
-            )}
-          </div> */}
         </form>
 
         <div className="space-y-4 text-gray-600 text-center">

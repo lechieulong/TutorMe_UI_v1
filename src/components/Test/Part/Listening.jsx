@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import FillInTheBlankQuestion from "../FillInTheBlankQuestion";
+import FillInTheBlankQuestion from "../AnswerType/FillInTheBlankQuestion";
 import RadioOption from "../AnswerType/RadioOption";
 
 const Listening = ({ partData, part, refs }) => {

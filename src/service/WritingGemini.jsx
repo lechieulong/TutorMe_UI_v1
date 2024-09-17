@@ -3,7 +3,7 @@
 // import { GoogleGenerativeAI } from "@google/generative-ai";
 
 // // Initialize GoogleGenerativeAI
-// const genAI = new GoogleGenerativeAI("AIzaSyAkFBzNmOixBE8Elh-nNseThbJZMJAMc_A");
+// const genAI = new GoogleGenerativeAI("");
 
 // const WritingGemini = () => {
 //   const [userText, setUserText] = useState("");
@@ -68,7 +68,7 @@
 //         {
 //           responseType: "blob",
 //           headers: {
-//             Authorization: `Bearer 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`,
+//             Authorization: `Bearer `,
 //           },
 //         }
 //       );

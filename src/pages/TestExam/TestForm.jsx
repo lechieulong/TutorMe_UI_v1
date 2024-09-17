@@ -7,7 +7,10 @@ import FilterForm from "../../components/Test/SkillForm/FilterForm";
 import Header from "../../components/common/Header";
 import { faPlane, faStream } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { useDispatch, useSelector } from "react-redux";
 import { faFly } from "@fortawesome/free-brands-svg-icons";
+
+import { createTest } from "../../redux/testExam/TestSlice";
 
 const TestForm = () => {
   const [selectedClasses, setSelectedClasses] = useState([]);
@@ -40,6 +43,7 @@ const TestForm = () => {
       },
     ],
   });
+  const dispatch = useDispatch();
 
   const handleSelectClass = (classes) => {
     setFormData((prevData) => ({
@@ -55,18 +59,7 @@ const TestForm = () => {
 
   const handleSubmit = async () => {
     try {
-      console.log("Data: ", formData);
-      // Uncomment and replace with your API endpoint
-      // const response = await fetch("https://your-api-endpoint.com/submit", {
-      //   method: "POST",
-      //   headers: {
-      //     "Content-Type": "application/json",
-      //   },
-      //   body: JSON.stringify({ selectedClasses, formData }),
-      // });
-
-      // if (!response.ok) throw new Error("Network response was not ok");
-
+      dispatch(createTest(formData));
       alert("Submission successful!");
     } catch (error) {
       console.error("Submission failed:", error);

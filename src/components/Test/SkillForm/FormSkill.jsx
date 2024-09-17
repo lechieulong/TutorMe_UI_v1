@@ -9,6 +9,7 @@ import {
   faQuestionCircle,
   faTrash,
 } from "@fortawesome/free-solid-svg-icons";
+import AnswerSide from "./AnswerSide";
 
 const FormSkill = ({ skill, formData, handleDataChange }) => {
   const { parts } = formData;
@@ -128,7 +129,15 @@ const FormSkill = ({ skill, formData, handleDataChange }) => {
     const newQuestion = {
       questionName: "",
       answer: "",
+      options: [
+        {
+          answerText: "",
+          isCorrect: false,
+        },
+      ],
       maxMarks: 1,
+      answerFilling: "",
+      answerTrueFalse: false,
     };
     const updatedParts = [...parts];
     updatedParts[partIndex].questionTypePart[qTypeIndex].questions = [
@@ -148,14 +157,11 @@ const FormSkill = ({ skill, formData, handleDataChange }) => {
       </h2>
       <div className="flex">
         <div
-          className="overflow-auto flex flex-col gap-6 h-[640px] hide-scrollbar"
+          className="overflow-auto flex flex-col gap-6 h-[640px]  border border-gray-300 shadow-lg bg-yellow-50 rounded-lg"
           style={{ width: `${leftWidth}%` }}
         >
           {parts.map((part, partIndex) => (
-            <div
-              key={partIndex}
-              className="w-full flex flex-col p-6 border border-gray-300 shadow-lg bg-yellow-50 rounded-lg"
-            >
+            <div key={partIndex} className="w-full flex flex-col p-6 ">
               <h4 className="text-xl font-semibold text-gray-700">
                 Part {part.partNumber}
               </h4>
@@ -260,9 +266,8 @@ const FormSkill = ({ skill, formData, handleDataChange }) => {
                                 Fill in the Blank
                               </option>
                               <option value="matching">Matching</option>
-                              <option value="select-answer">
-                                Select Answer
-                              </option>
+                              <option value="true-false">true-false</option>
+
                               {/* Add more options as needed */}
                             </select>
                           </div>
@@ -297,22 +302,79 @@ const FormSkill = ({ skill, formData, handleDataChange }) => {
                       {skill === "reading" ||
                         (skill === "listening" && (
                           <>
-                            <label className="text-gray-700 font-medium mt-2">
-                              Answer:
-                            </label>
-                            <input
-                              type="text"
-                              name="answer"
-                              value={question.answer}
-                              onChange={(e) => {
-                                const newParts = [...parts];
-                                newParts[partIndex].questionTypePart[
-                                  qIndex
-                                ].questions[qtnIndex].answer = e.target.value;
-                                handleDataChange({ parts: newParts });
-                              }}
-                              className="mt-1 p-2 border border-gray-300 rounded-md w-full"
-                            />
+                            {(qTypePart.questionType === "fill-in-the-blank" ||
+                              qTypePart.questionType === "matching") && (
+                              <div>
+                                <label className="text-gray-700 font-medium mt-2">
+                                  Answer:
+                                </label>
+                                <input
+                                  type="text"
+                                  name="answer"
+                                  value={question.answer}
+                                  onChange={(e) => {
+                                    const newParts = [...parts];
+                                    newParts[partIndex].questionTypePart[
+                                      qIndex
+                                    ].questions[qtnIndex].answer =
+                                      e.target.value;
+                                    handleDataChange({ parts: newParts });
+                                  }}
+                                  className="mt-1 p-2 border border-gray-300 rounded-md w-full"
+                                />
+                              </div>
+                            )}
+
+                            {qTypePart.questionType === "true-false" && (
+                              <div className="w-5/12 flex flex-col">
+                                <label className="text-gray-700 font-medium">
+                                  Answer
+                                </label>
+                                <div className="mt-1">
+                                  <label className="inline-flex items-center mr-4">
+                                    <input
+                                      type="radio"
+                                      name={`questionType-${partIndex}-${qIndex}`}
+                                      value="true"
+                                      checked={
+                                        qTypePart.questionType ===
+                                        "fill-in-the-blank"
+                                      }
+                                      onChange={(e) => {
+                                        const newParts = [...parts];
+                                        newParts[partIndex].questionTypePart[
+                                          qIndex
+                                        ].questionType = e.target.value;
+                                        handleDataChange({ parts: newParts });
+                                      }}
+                                      className="form-radio"
+                                    />
+                                    <span className="ml-2">
+                                      Fill in the Blank
+                                    </span>
+                                  </label>
+                                  <label className="inline-flex items-center mr-4">
+                                    <input
+                                      type="radio"
+                                      name={`questionType-${partIndex}-${qIndex}`}
+                                      value="false"
+                                      checked={
+                                        qTypePart.questionType === "matching"
+                                      }
+                                      onChange={(e) => {
+                                        const newParts = [...parts];
+                                        newParts[partIndex].questionTypePart[
+                                          qIndex
+                                        ].questionType = e.target.value;
+                                        handleDataChange({ parts: newParts });
+                                      }}
+                                      className="form-radio"
+                                    />
+                                    <span className="ml-2">Matching</span>
+                                  </label>
+                                </div>
+                              </div>
+                            )}
                           </>
                         ))}
                     </div>
@@ -363,19 +425,22 @@ const FormSkill = ({ skill, formData, handleDataChange }) => {
               </div>
             </div>
           ))}
-
-          {/* BUTTON */}
         </div>
-
         <div>
           <div
-            className="cursor-ew-resize  bg-yellow-500 rounded-full "
+            className="cursor-ew-resize  bg-gray-300 rounded-full "
             style={{
-              width: "5px",
-              height: "calc(100% - 224px)",
+              width: "1px",
+              height: "100%",
             }}
             onMouseDown={() => startResizing("main")}
           />
+        </div>
+
+        {/* Preview  */}
+        <div className="p-2 w-1/2">
+          <h4>Preview </h4>
+          <AnswerSide parts={parts} />
         </div>
       </div>
     </div>

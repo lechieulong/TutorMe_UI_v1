@@ -27,12 +27,21 @@ const TestForm = () => {
         questionTypePart: [
           {
             questionGuide: "",
-            questionType: "",
+            questionType: 1,
             questions: [
               {
                 questionName: "",
-                answer: "",
                 maxMarks: 1,
+                answer: "",
+                answersOptions: [
+                  {
+                    answerText: "",
+                    isCorrect: false,
+                  },
+                ],
+                answerFilling: "",
+                answerTrueFalse: 1,
+                answerMatching: [{ heading: "", matching: "" }],
               },
             ],
           },

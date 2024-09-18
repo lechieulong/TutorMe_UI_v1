@@ -7,7 +7,10 @@ import {
   faMultiply,
   faPlus,
   faQuestionCircle,
-  faTrash,
+  faHeadphones,
+  faPen,
+  faMicrophone,
+  faBook,
 } from "@fortawesome/free-solid-svg-icons";
 import AnswerSide from "./AnswerSide";
 
@@ -51,6 +54,16 @@ const FormSkill = ({ skill, formData, handleDataChange }) => {
   const stopResizing = () => {
     document.removeEventListener("mousemove", handleMouseMove);
     document.removeEventListener("mouseup", stopResizing);
+  };
+
+  const handleDurationChange = (duration) => {
+    const updatedFormData = { ...formData };
+
+    updatedFormData.skills[skill - 0] = {
+      ...updatedFormData.skills[skill - 0],
+      duration: duration,
+    };
+    handleDataChange(updatedFormData);
   };
 
   const handleInputChange = (index, event) => {
@@ -148,13 +161,43 @@ const FormSkill = ({ skill, formData, handleDataChange }) => {
   };
 
   return (
-    <div className="p-4 ">
+    <div className="p-4 border border-gray-400">
       <h2 className="text-2xl p-2 font-extrabold text-green-500">
         <span className="mr-2">
-          <FontAwesomeIcon icon={faBookOpen} />
+          <FontAwesomeIcon
+            icon={
+              skill === 1
+                ? faBookOpen // Reading
+                : skill === 2
+                ? faHeadphones // Listening (Ví dụ icon khác)
+                : skill === 3
+                ? faPen // Writing (Ví dụ icon khác)
+                : skill === 4
+                ? faMicrophone // Speaking (Ví dụ icon khác)
+                : faBook // Default icon (hoặc icon cho 'All')
+            }
+          />
         </span>
-        {skill}
+        {skill === 1
+          ? "Reading"
+          : skill === 2
+          ? "Listening"
+          : skill === 3
+          ? "Writing"
+          : skill === 4
+          ? "Speaking"
+          : "All"}
       </h2>
+      <label className=" w-3/12  p-2 flex items-center gap-3 justify-center  text-base font-medium text-gray-700">
+        <span className="w-1/2">Duration of skill</span>
+        <input
+          type="number"
+          value={formData.skills[skill - 1].duration}
+          onChange={(e) => handleDurationChange(e.target.value)}
+          placeholder="Enter duration"
+          className="block w-6/12 border p-2 border-gray-400 rounded-md shadow-sm"
+        />
+      </label>
       <div className="flex">
         <div
           className="overflow-auto flex flex-col gap-6 h-[640px]  border border-gray-300 shadow-lg bg-yellow-50 rounded-lg"
@@ -166,7 +209,7 @@ const FormSkill = ({ skill, formData, handleDataChange }) => {
                 Part {part.partNumber}
               </h4>
 
-              {skill === "reading" && (
+              {skill === 1 && (
                 <div className="mt-4">
                   <div className="text-lg font-medium text-gray-600">
                     Content Topic
@@ -200,7 +243,7 @@ const FormSkill = ({ skill, formData, handleDataChange }) => {
                 </div>
               )}
 
-              {skill === "listening" && (
+              {skill === 2 && (
                 <div className="mt-4">
                   <label className="block text-base font-medium text-gray-700">
                     Audio Upload:
@@ -220,7 +263,7 @@ const FormSkill = ({ skill, formData, handleDataChange }) => {
                   className="mt-4 p-4 border border-gray-200 rounded-lg shadow-sm bg-white"
                 >
                   <div className="flex gap-4 mb-4">
-                    {(skill === "reading" || skill === "listening") && (
+                    {(skill === 1 || skill === 2) && (
                       <>
                         <div className="w-7/12 flex flex-col">
                           <label className="text-gray-700 font-medium">
@@ -258,15 +301,11 @@ const FormSkill = ({ skill, formData, handleDataChange }) => {
                             <option value="" disabled>
                               Select Question Type
                             </option>
-                            <option value="multiple-choice">
-                              Multiple Choice
-                            </option>
-                            <option value="fill-in-the-blank">
-                              Fill in the Blank
-                            </option>
-                            <option value="matching">Matching</option>
-                            <option value="select-answer">Select Answer</option>
-                            {/* Add more options as needed */}
+                            <option value={1}>Matching</option>
+                            <option value={2}>Fill in the Blank</option>
+                            <option value={3}>Multiple Choice</option>
+                            <option value={4}>Radio Choice</option>
+                            <option value={5}>true-false</option>
                           </select>
                         </div>
                       </>
@@ -297,8 +336,8 @@ const FormSkill = ({ skill, formData, handleDataChange }) => {
                         }}
                         className="mt-1 p-2 border border-gray-300 rounded-md w-full"
                       />
-                      {skill === "reading" ||
-                        (skill === "listening" && (
+                      {skill === 1 ||
+                        (skill === 2 && (
                           <>
                             {(qTypePart.questionType === "fill-in-the-blank" ||
                               qTypePart.questionType === "matching") && (
@@ -388,8 +427,8 @@ const FormSkill = ({ skill, formData, handleDataChange }) => {
                 </div>
               ))}
 
-              {skill === "reading" ||
-                (skill === "listening " && (
+              {skill === 1 ||
+                (skill === 2 && (
                   <button
                     type="button"
                     onClick={() => addQuestionTypePart(partIndex)}

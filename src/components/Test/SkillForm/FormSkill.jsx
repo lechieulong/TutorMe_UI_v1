@@ -11,6 +11,10 @@ import {
   faPen,
   faMicrophone,
   faBook,
+  faHeadphones,
+  faPen,
+  faMicrophone,
+  faBook,
 } from "@fortawesome/free-solid-svg-icons";
 import AnswerSide from "./AnswerSide";
 

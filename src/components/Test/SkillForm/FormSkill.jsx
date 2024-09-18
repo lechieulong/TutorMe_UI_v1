@@ -10,6 +10,7 @@ import {
   faTrash,
 } from "@fortawesome/free-solid-svg-icons";
 import AnswerSide from "./AnswerSide";
+import AnswerSide from "./AnswerSide";
 
 const FormSkill = ({ skill, formData, handleDataChange }) => {
   const { parts } = formData;

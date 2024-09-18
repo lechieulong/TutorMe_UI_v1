@@ -13,7 +13,6 @@ import { faFly } from "@fortawesome/free-brands-svg-icons";
 import { createTest } from "../../redux/testExam/TestSlice";
 
 const TestForm = () => {
-  const [selectedClasses, setSelectedClasses] = useState([]);
   const [selectedSkills, setSelectedSkills] = useState([]);
   const [formData, setFormData] = useState({
     testName: "",
@@ -21,30 +20,36 @@ const TestForm = () => {
     duration: 40,
     startTime: new Date(),
     endTime: new Date(),
-    parts: [
+    skills: [
       {
-        partNumber: 1,
-        skillTest: 1,
-        contentText: "",
-        audioUrl: "",
-        questionTypePart: [
+        type: 1,
+        duration: 30,
+        parts: [
           {
-            questionGuide: "",
-            questionType: 1,
-            questions: [
+            partNumber: 1,
+            skillTest: 1,
+            contentText: "",
+            audioUrl: "",
+            questionTypePart: [
               {
-                questionName: "",
-                maxMarks: 1,
-                answer: "",
-                answersOptions: [
+                questionGuide: "",
+                questionType: 1,
+                questions: [
                   {
-                    answerText: "",
-                    isCorrect: false,
+                    questionName: "",
+                    maxMarks: 1,
+                    answer: "",
+                    answersOptions: [
+                      {
+                        answerText: "",
+                        isCorrect: false,
+                      },
+                    ],
+                    answerFilling: "",
+                    answerTrueFalse: 0,
+                    answerMatching: [{ heading: "", matching: "" }],
                   },
                 ],
-                answerFilling: "",
-                answerTrueFalse: 1,
-                answerMatching: [{ heading: "", matching: "" }],
               },
             ],
           },
@@ -67,13 +72,15 @@ const TestForm = () => {
     setFormData((prevData) => ({ ...prevData, ...updatedData }));
 
   const handleSubmit = async () => {
-    try {
-      dispatch(createTest(formData));
-      alert("Submission successful!");
-    } catch (error) {
-      console.error("Submission failed:", error);
-      alert("Submission failed.");
-    }
+    console.log(formData);
+
+    // try {
+    //   dispatch(createTest(formData));
+    //   alert("Submission successful!");
+    // } catch (error) {
+    //   console.error("Submission failed:", error);
+    //   alert("Submission failed.");
+    // }
   };
 
   const renderSkillForms = () =>

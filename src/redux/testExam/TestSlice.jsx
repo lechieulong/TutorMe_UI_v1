@@ -1,0 +1,137 @@
+import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
+import axios from "axios";
+import { SLICE_NAMES, ACTIONS, STATUS } from "../../constant/SliceName";
+
+const API_BASE_URL = "https://localhost:7030/api";
+
+export const fetchTests = createAsyncThunk(
+  `${SLICE_NAMES.TEST}/${ACTIONS.FETCH_TESTS}`,
+  async (_, { rejectWithValue }) => {
+    try {
+      const response = await axios.get(`${API_BASE_URL}/test`);
+      return response.data;
+    } catch (error) {
+      return rejectWithValue(
+        error.response?.data?.message || "Failed to fetch tests"
+      );
+    }
+  }
+);
+
+// Action to create a test
+export const createTest = createAsyncThunk(
+  `${SLICE_NAMES.TEST}/${ACTIONS.CREATE_TEST}`,
+  async (testData, { rejectWithValue }) => {
+    try {
+      const response = await axios.post(`${API_BASE_URL}/test`, testData);
+      return response.data;
+    } catch (error) {
+      return rejectWithValue(
+        error.response?.data?.message || "Failed to create test"
+      );
+    }
+  }
+);
+
+// Action to update a test
+export const updateTest = createAsyncThunk(
+  `${SLICE_NAMES.TEST}/${ACTIONS.UPDATE_TEST}`,
+  async ({ id, testData }, { rejectWithValue }) => {
+    try {
+      const response = await axios.put(`${API_BASE_URL}/test/${id}`, testData);
+      return response.data;
+    } catch (error) {
+      return rejectWithValue(
+        error.response?.data?.message || "Failed to update test"
+      );
+    }
+  }
+);
+
+export const deleteTest = createAsyncThunk(
+  `${SLICE_NAMES.TEST}/${ACTIONS.DELETE_TEST}`,
+  async (id, { rejectWithValue }) => {
+    try {
+      await axios.delete(`${API_BASE_URL}/test/${id}`);
+      return id;
+    } catch (error) {
+      return rejectWithValue(
+        error.response?.data?.message || "Failed to delete test"
+      );
+    }
+  }
+);
+
+const initialState = {
+  tests: [],
+  status: STATUS.IDLE,
+  error: null,
+};
+
+const TestSlice = createSlice({
+  name: SLICE_NAMES.TEST,
+  initialState,
+  reducers: {},
+  extraReducers: (builder) => {
+    builder
+      // Fetch tests
+      .addCase(fetchTests.pending, (state) => {
+        state.status = STATUS.PENDING;
+      })
+      .addCase(fetchTests.fulfilled, (state, action) => {
+        state.status = STATUS.SUCCESS;
+        state.tests = action.payload;
+      })
+      .addCase(fetchTests.rejected, (state, action) => {
+        state.status = STATUS.FAILED;
+        state.error = action.payload || action.error.message;
+      })
+
+      .addCase(createTest.pending, (state) => {
+        state.status = STATUS.PENDING;
+      })
+      .addCase(createTest.fulfilled, (state, action) => {
+        state.status = STATUS.SUCCESS;
+        state.tests.push(action.payload); // Add the new test to the list
+      })
+      .addCase(createTest.rejected, (state, action) => {
+        state.status = STATUS.FAILED;
+        state.error = action.payload || action.error.message;
+      })
+
+      // Update a test
+      .addCase(updateTest.pending, (state) => {
+        state.status = STATUS.PENDING;
+      })
+      .addCase(updateTest.fulfilled, (state, action) => {
+        state.status = STATUS.SUCCESS;
+        // Update the test in the list
+        const index = state.tests.findIndex(
+          (test) => test.id === action.payload.id
+        );
+        if (index !== -1) {
+          state.tests[index] = action.payload;
+        }
+      })
+      .addCase(updateTest.rejected, (state, action) => {
+        state.status = STATUS.FAILED;
+        state.error = action.payload || action.error.message;
+      })
+
+      // Delete a test
+      .addCase(deleteTest.pending, (state) => {
+        state.status = STATUS.PENDING;
+      })
+      .addCase(deleteTest.fulfilled, (state, action) => {
+        state.status = STATUS.SUCCESS;
+        // Remove the test from the list
+        state.tests = state.tests.filter((test) => test.id !== action.payload);
+      })
+      .addCase(deleteTest.rejected, (state, action) => {
+        state.status = STATUS.FAILED;
+        state.error = action.payload || action.error.message;
+      });
+  },
+});
+
+export default TestSlice.reducer;

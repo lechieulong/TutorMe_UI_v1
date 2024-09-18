@@ -7,10 +7,15 @@ export const Login = createAsyncThunk(
   `${SLICE_NAMES.AUTH}/${ACTIONS.LOGIN}`,
   async (loginData, { rejectWithValue }) => {
     try {
-      const response = await axios.post("https://localhost:7104/api/auth/login", loginData);
+      const response = await axios.post(
+        "https://localhost:7104/api/auth/login",
+        loginData
+      );
       return response.data;
     } catch (error) {
-      return rejectWithValue(error.response?.data?.message || "Failed to login");
+      return rejectWithValue(
+        error.response?.data?.message || "Failed to login"
+      );
     }
   }
 );
@@ -20,20 +25,23 @@ export const Regis = createAsyncThunk(
   `${SLICE_NAMES.AUTH}/${ACTIONS.REGIS}`,
   async (userData, { rejectWithValue }) => {
     try {
-      const response = await axios.post("https://localhost:7030/api/auth/register", userData);
-      // console.log(response);
+      const response = await axios.post(
+        "https://localhost:7030/api/auth/register",
+        userData
+      );
       return response.data;
     } catch (error) {
-      console.error("Error details:", error.response);
-      return rejectWithValue(error.response?.data?.message || "Failed to register");
+      return rejectWithValue(
+        error.response?.data?.message || "Failed to register"
+      );
     }
   }
 );
 
 const initialState = {
-  user: null,         // Thông tin người dùng sau khi đăng nhập hoặc đăng ký
+  user: null, // Thông tin người dùng sau khi đăng nhập hoặc đăng ký
   status: STATUS.IDLE, // Trạng thái mặc định
-  error: null,        // Thông báo lỗi nếu có
+  error: null, // Thông báo lỗi nếu có
 };
 
 const AuthSlice = createSlice({

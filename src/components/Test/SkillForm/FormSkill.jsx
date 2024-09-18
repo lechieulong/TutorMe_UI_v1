@@ -10,6 +10,7 @@ import {
   faTrash,
 } from "@fortawesome/free-solid-svg-icons";
 import AnswerSide from "./AnswerSide";
+import AnswerSide from "./AnswerSide";
 
 const FormSkill = ({ skill, formData, handleDataChange }) => {
   const { parts } = formData;
@@ -220,59 +221,57 @@ const FormSkill = ({ skill, formData, handleDataChange }) => {
                   className="mt-4 p-4 border border-gray-200 rounded-lg shadow-sm bg-white"
                 >
                   <div className="flex gap-4 mb-4">
-                    {skill === "reading" ||
-                      (skill === "listening" && (
-                        <>
-                          <div className="w-7/12 flex flex-col">
-                            <label className="text-gray-700 font-medium">
-                              Question Guide:
-                            </label>
-                            <input
-                              name="questionGuide"
-                              value={qTypePart.questionGuide}
-                              onChange={(e) => {
-                                const newParts = [...parts];
-                                newParts[partIndex].questionTypePart[
-                                  qIndex
-                                ].questionGuide = e.target.value;
-                                handleDataChange({ parts: newParts });
-                              }}
-                              className="mt-1 p-2 border border-gray-300 rounded-md"
-                            />
-                          </div>
-                          <div className="w-5/12 flex flex-col">
-                            <label className="text-gray-700 font-medium">
-                              Question Type:
-                            </label>
-                            <select
-                              name="questionType"
-                              value={qTypePart.questionType}
-                              onChange={(e) => {
-                                const newParts = [...parts];
-                                newParts[partIndex].questionTypePart[
-                                  qIndex
-                                ].questionType = e.target.value;
-                                handleDataChange({ parts: newParts });
-                              }}
-                              className="mt-1 p-2 border border-gray-300 rounded-md"
-                            >
-                              <option value="" disabled>
-                                Select Question Type
-                              </option>
-                              <option value="multiple-choice">
-                                Multiple Choice
-                              </option>
-                              <option value="fill-in-the-blank">
-                                Fill in the Blank
-                              </option>
-                              <option value="matching">Matching</option>
-                              <option value="true-false">true-false</option>
-
-                              {/* Add more options as needed */}
-                            </select>
-                          </div>
-                        </>
-                      ))}
+                    {(skill === "reading" || skill === "listening") && (
+                      <>
+                        <div className="w-7/12 flex flex-col">
+                          <label className="text-gray-700 font-medium">
+                            Question Guide:
+                          </label>
+                          <input
+                            name="questionGuide"
+                            value={qTypePart.questionGuide}
+                            onChange={(e) => {
+                              const newParts = [...parts];
+                              newParts[partIndex].questionTypePart[
+                                qIndex
+                              ].questionGuide = e.target.value;
+                              handleDataChange({ parts: newParts });
+                            }}
+                            className="mt-1 p-2 border border-gray-300 rounded-md"
+                          />
+                        </div>
+                        <div className="w-5/12 flex flex-col">
+                          <label className="text-gray-700 font-medium">
+                            Question Type:
+                          </label>
+                          <select
+                            name="questionType"
+                            value={qTypePart.questionType}
+                            onChange={(e) => {
+                              const newParts = [...parts];
+                              newParts[partIndex].questionTypePart[
+                                qIndex
+                              ].questionType = e.target.value;
+                              handleDataChange({ parts: newParts });
+                            }}
+                            className="mt-1 p-2 border border-gray-300 rounded-md"
+                          >
+                            <option value="" disabled>
+                              Select Question Type
+                            </option>
+                            <option value="multiple-choice">
+                              Multiple Choice
+                            </option>
+                            <option value="fill-in-the-blank">
+                              Fill in the Blank
+                            </option>
+                            <option value="matching">Matching</option>
+                            <option value="select-answer">Select Answer</option>
+                            {/* Add more options as needed */}
+                          </select>
+                        </div>
+                      </>
+                    )}
                   </div>
 
                   {qTypePart.questions.map((question, qtnIndex) => (

@@ -5,13 +5,18 @@ export const SLICE_NAMES = {
   COURSES: "courses",
   CLASSES: "classes",
   AUTH: "auth",
+  TEST: "test",
 };
 
 export const ACTIONS = {
   GET_COURSES: "getCourses",
   GET_CLASS: "getClass",
   LOGIN: "login",
-  REGIS: "regis",
+  REGIS: "register",
+  FETCH_TESTS: "getTests",
+  CREATE_TEST: "createTest",
+  UPDATE_TEST: "updateTest",
+  DELETE_TEST: "deleteTest",
 };
 
 export const STATUS = {

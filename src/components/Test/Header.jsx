@@ -7,7 +7,7 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 import { useEffect, useState } from "react";
 
-const Header = ({ setIsTimeOut, dataSubmit }) => {
+const Header = ({ setIsTimeOut }) => {
   const [timeLeft, setTimeLeft] = useState(60 * 60 * 1000);
 
   useEffect(() => {

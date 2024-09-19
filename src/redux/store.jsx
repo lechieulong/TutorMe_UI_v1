@@ -4,6 +4,7 @@ import authReducer from "./auth/AuthSlice";
 import courseReducer from "./courses/CourseSlice";
 import courseTimelineReducer from "./courses/CourseTimelineSlice";
 import courseTimelineDetailReducer from "./courses/CourseTimelineDetailSlice";
+import testReducer from "./testExam/TestSlice";
 
 export const store = configureStore({
   reducer: {
@@ -12,6 +13,7 @@ export const store = configureStore({
     courses: courseReducer,
     classes: classReducer,
     auth: authReducer,
+    test: testReducer,
   },
 });
 

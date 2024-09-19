@@ -1,4 +1,6 @@
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import "regenerator-runtime/runtime";
+
 import Home from "./pages/Home";
 import NotFound from "./components/common/NotFound";
 import ClassesList from "./pages/classes/ClassList";
@@ -21,8 +23,7 @@ import TestLayout from "./pages/TestExam/TestLayout";
 import CourseDetail from "./pages/Course/CourseDetail";
 import TestForm from "./pages/TestExam/TestForm";
 import ImageTest from "./components/ImageTest";
-import CourseTimeline from "./pages/Course/components/CourseTimeline";
-import CreateCourse from "./pages/Course/components/CreateCourse";
+import SpeakingGemini from "./service/SpeakingGemini";
 
 const App = () => {
   return (
@@ -39,6 +40,7 @@ const App = () => {
           {/* Test  common*/}
           <Route path="/" element={<Home />} />
           <Route path="*" element={<NotFound />} />
+          <Route path="/gemini" element={<SpeakingGemini />} />
 
           {/* Test  exam*/}
           <Route path="/test-setting/test-exam" element={<TestLayout />} />

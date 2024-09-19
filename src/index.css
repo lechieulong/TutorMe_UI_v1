@@ -15,15 +15,24 @@
   font-synthesis: none;
   text-rendering: optimizeLegibility;
 }
-/* Hide scrollbar for WebKit browsers */
-.hide-scrollbar::-webkit-scrollbar {
-  display: none;
+.overflow-auto::-webkit-scrollbar {
+  width: 8px;
+  height: 12px;
 }
 
-/* Hide scrollbar for other browsers */
-.hide-scrollbar {
-  -ms-overflow-style: none;  /* IE and Edge */
-  scrollbar-width: none;  /* Firefox */
+.overflow-auto::-webkit-scrollbar-thumb {
+  background-color: #cbd5e0; /* Màu của thanh kéo */
+  border-radius: 10px;
+  border: 2px solid #f7fafc; /* Màu nền của thanh */
+}
+
+.overflow-auto::-webkit-scrollbar-thumb:hover {
+  background-color: #a0aec0; /* Màu khi hover */
+}
+
+.overflow-auto::-webkit-scrollbar-track {
+  background-color: #f7fafc; /* Màu nền của thanh track */
+  border-radius: 10px;
 }
 
 

@@ -23,6 +23,7 @@
     "@google/generative-ai": "^0.17.1",
     "@mui/icons-material": "^5.16.7",
     "@mui/material": "^5.16.7",
+    "@mui/x-date-pickers": "^7.16.0",
     "@preline/accordion": "^2.4.1",
     "@preline/overlay": "^2.4.1",
     "@reduxjs/toolkit": "^2.2.7",

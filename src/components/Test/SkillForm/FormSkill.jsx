@@ -31,6 +31,7 @@ const FormSkill = ({ skill, formData, handleDataChange }) => {
       document.addEventListener("mouseup", stopResizingPreview);
     }
   };
+  console.log(parts);
 
   const handleMouseMovePreview = (e) => {
     const newWidth = Math.min(
@@ -443,7 +444,7 @@ const FormSkill = ({ skill, formData, handleDataChange }) => {
                                 }}
                                 className="mt-2 px-4 py-2 bg-blue-500 text-white rounded-md shadow-md hover:bg-blue-600"
                               >
-                                Add Heading Matching
+                                Add Heading Matchingg
                               </button>
                             </div>
                           )}
@@ -707,16 +708,15 @@ const FormSkill = ({ skill, formData, handleDataChange }) => {
                 </div>
               ))}
 
-              {skill === 0 ||
-                (skill === 1 && (
-                  <button
-                    type="button"
-                    onClick={() => addQuestionTypePart(partIndex)}
-                    className="mt-4 px-4 py-2 bg-green-500 text-white rounded-md shadow-md hover:bg-green-600"
-                  >
-                    Add Question Type
-                  </button>
-                ))}
+              {(skill === 0 || skill === 1) && (
+                <button
+                  type="button"
+                  onClick={() => addQuestionTypePart(partIndex)}
+                  className="mt-4 px-4 py-2 bg-green-500 text-white rounded-md shadow-md hover:bg-green-600"
+                >
+                  Add Question Type
+                </button>
+              )}
 
               <div className="flex gap-5">
                 <button

@@ -11,6 +11,9 @@ import {
   faPen,
   faMicrophone,
   faBook,
+  faTrash,
+  faDeleteLeft,
+  faAdd,
 } from "@fortawesome/free-solid-svg-icons";
 import AnswerSide from "./AnswerSide";
 
@@ -18,7 +21,6 @@ const FormSkill = ({ skill, formData, handleDataChange }) => {
   const { parts } = formData;
   const [leftWidth, setLeftWidth] = useState(50);
   const [previewWith, setPreviewWith] = useState(50);
-
   const startResizing = (part) => {
     if (part === "main") {
       document.addEventListener("mousemove", handleMouseMove);
@@ -59,10 +61,12 @@ const FormSkill = ({ skill, formData, handleDataChange }) => {
   const handleDurationChange = (duration) => {
     const updatedFormData = { ...formData };
 
-    updatedFormData.skills[skill - 0] = {
-      ...updatedFormData.skills[skill - 0],
-      duration: duration,
+    updatedFormData.skills[skill] = {
+      ...updatedFormData.skills[skill],
+      type: skill,
+      duration,
     };
+
     handleDataChange(updatedFormData);
   };
 
@@ -121,12 +125,20 @@ const FormSkill = ({ skill, formData, handleDataChange }) => {
   const addQuestionTypePart = (partIndex) => {
     const newQuestionTypePart = {
       questionGuide: "",
-      questionType: "",
+      questionType: 1,
       questions: [
         {
           questionName: "",
-          answer: "",
           maxMarks: 1,
+          answersOptions: [
+            {
+              answerText: "",
+              isCorrect: false,
+            },
+          ],
+          answerFilling: "",
+          answerTrueFalse: 0,
+          answerMatching: [{ heading: "", matching: "" }],
         },
       ],
     };
@@ -141,16 +153,16 @@ const FormSkill = ({ skill, formData, handleDataChange }) => {
   const addQuestion = (partIndex, qTypeIndex) => {
     const newQuestion = {
       questionName: "",
-      answer: "",
-      options: [
+      maxMarks: 1,
+      answersOptions: [
         {
           answerText: "",
           isCorrect: false,
         },
       ],
-      maxMarks: 1,
       answerFilling: "",
-      answerTrueFalse: false,
+      answerTrueFalse: 0,
+      answerMatching: [{ heading: "", matching: "" }],
     };
     const updatedParts = [...parts];
     updatedParts[partIndex].questionTypePart[qTypeIndex].questions = [
@@ -160,31 +172,37 @@ const FormSkill = ({ skill, formData, handleDataChange }) => {
     handleDataChange({ parts: updatedParts });
   };
 
+  const removeQuestion = (partIndex, qIndex, qtnIndex) => {
+    const newParts = [...parts];
+    newParts[partIndex].questionTypePart[qIndex].questions.splice(qtnIndex, 1);
+    handleDataChange({ parts: newParts });
+  };
+
   return (
     <div className="p-4 border border-gray-400">
       <h2 className="text-2xl p-2 font-extrabold text-green-500">
         <span className="mr-2">
           <FontAwesomeIcon
             icon={
-              skill === 1
+              skill === 0
                 ? faBookOpen // Reading
-                : skill === 2
+                : skill === 1
                 ? faHeadphones // Listening (Ví dụ icon khác)
-                : skill === 3
+                : skill === 2
                 ? faPen // Writing (Ví dụ icon khác)
-                : skill === 4
+                : skill === 3
                 ? faMicrophone // Speaking (Ví dụ icon khác)
                 : faBook // Default icon (hoặc icon cho 'All')
             }
           />
         </span>
-        {skill === 1
+        {skill === 0
           ? "Reading"
-          : skill === 2
+          : skill === 1
           ? "Listening"
-          : skill === 3
+          : skill === 2
           ? "Writing"
-          : skill === 4
+          : skill === 3
           ? "Speaking"
           : "All"}
       </h2>
@@ -192,15 +210,15 @@ const FormSkill = ({ skill, formData, handleDataChange }) => {
         <span className="w-1/2">Duration of skill</span>
         <input
           type="number"
-          value={formData.skills[skill - 1].duration}
-          onChange={(e) => handleDurationChange(e.target.value)}
+          value={formData.skills[skill].duration}
+          onChange={(e) => handleDurationChange(Number(e.target.value))}
           placeholder="Enter duration"
           className="block w-6/12 border p-2 border-gray-400 rounded-md shadow-sm"
         />
       </label>
       <div className="flex">
         <div
-          className="overflow-auto flex flex-col gap-6 h-[640px]  border border-gray-300 shadow-lg bg-yellow-50 rounded-lg"
+          className="overflow-auto flex flex-col gap-6  h-[630px] border border-gray-300 shadow-lg bg-yellow-50 rounded-lg"
           style={{ width: `${leftWidth}%` }}
         >
           {parts.map((part, partIndex) => (
@@ -209,12 +227,12 @@ const FormSkill = ({ skill, formData, handleDataChange }) => {
                 Part {part.partNumber}
               </h4>
 
-              {skill === 1 && (
+              {skill === 0 && (
                 <div className="mt-4">
                   <div className="text-lg font-medium text-gray-600">
                     Content Topic
                   </div>
-                  <div className="mt-2 relative w-full h-[300px] overflow-auto bg-white rounded-md shadow-inner">
+                  <div className="mt-2 relative w-full  overflow-auto bg-white rounded-md shadow-inner">
                     <CKEditor
                       editor={ClassicEditor}
                       data={part.contentText}
@@ -243,7 +261,7 @@ const FormSkill = ({ skill, formData, handleDataChange }) => {
                 </div>
               )}
 
-              {skill === 2 && (
+              {skill === 1 && (
                 <div className="mt-4">
                   <label className="block text-base font-medium text-gray-700">
                     Audio Upload:
@@ -262,8 +280,13 @@ const FormSkill = ({ skill, formData, handleDataChange }) => {
                   key={qIndex}
                   className="mt-4 p-4 border border-gray-200 rounded-lg shadow-sm bg-white"
                 >
+                  <div className="bg-yellow-100 border-l-4 border-yellow-500 text-yellow-700 p-4 rounded-md">
+                    <p className="italic">
+                      Please choose type before add question!!!
+                    </p>
+                  </div>
                   <div className="flex gap-4 mb-4">
-                    {(skill === 1 || skill === 2) && (
+                    {(skill === 0 || skill === 1) && (
                       <>
                         <div className="w-7/12 flex flex-col">
                           <label className="text-gray-700 font-medium">
@@ -293,7 +316,7 @@ const FormSkill = ({ skill, formData, handleDataChange }) => {
                               const newParts = [...parts];
                               newParts[partIndex].questionTypePart[
                                 qIndex
-                              ].questionType = e.target.value;
+                              ].questionType = Number(e.target.value);
                               handleDataChange({ parts: newParts });
                             }}
                             className="mt-1 p-2 border border-gray-300 rounded-md"
@@ -313,13 +336,23 @@ const FormSkill = ({ skill, formData, handleDataChange }) => {
                   </div>
 
                   {qTypePart.questions.map((question, qtnIndex) => (
-                    <div key={qtnIndex} className="mb-4">
-                      <h4>
-                        Question {qtnIndex + 1}
-                        <span className="ml-4">
-                          <FontAwesomeIcon icon={faQuestionCircle} />
+                    <div key={qtnIndex} className="mb-4   p-2">
+                      <div className="flex items-center justify-between">
+                        <h4>
+                          Question {qtnIndex + 1}
+                          <span className="ml-4">
+                            <FontAwesomeIcon icon={faQuestionCircle} />
+                          </span>
+                        </h4>
+
+                        <span
+                          type="button"
+                          onClick={() => removeQuestion(partIndex, qIndex)}
+                          className=" px-4 py-1 bg-red-500 text-white rounded-md shadow-md hover:bg-red-600"
+                        >
+                          <FontAwesomeIcon icon={faMultiply} />
                         </span>
-                      </h4>
+                      </div>
                       <label className="text-gray-700 font-medium">
                         Question Name:
                       </label>
@@ -336,84 +369,331 @@ const FormSkill = ({ skill, formData, handleDataChange }) => {
                         }}
                         className="mt-1 p-2 border border-gray-300 rounded-md w-full"
                       />
-                      {skill === 1 ||
-                        (skill === 2 && (
-                          <>
-                            {(qTypePart.questionType === "fill-in-the-blank" ||
-                              qTypePart.questionType === "matching") && (
-                              <div>
-                                <label className="text-gray-700 font-medium mt-2">
-                                  Answer:
-                                </label>
-                                <input
-                                  type="text"
-                                  name="answer"
-                                  value={question.answer}
-                                  onChange={(e) => {
+                      {(skill === 0 || skill === 1) && (
+                        <>
+                          {qTypePart.questionType === 1 && (
+                            <div>
+                              <label className="text-gray-700 font-medium mt-2">
+                                Heading Matching:
+                              </label>
+                              {question.answerMatching.map(
+                                (matchItem, matchIndex) => (
+                                  <div
+                                    key={matchIndex}
+                                    className="flex space-x-4 mt-2"
+                                  >
+                                    {/* Input cho Heading */}
+                                    <div className="w-1/2">
+                                      <label className="text-gray-700">
+                                        Heading:
+                                      </label>
+                                      <input
+                                        type="text"
+                                        name={`heading-${partIndex}-${qIndex}-${qtnIndex}-${matchIndex}`}
+                                        value={matchItem.heading}
+                                        onChange={(e) => {
+                                          const newParts = [...parts];
+                                          newParts[partIndex].questionTypePart[
+                                            qIndex
+                                          ].questions[qtnIndex].answerMatching[
+                                            matchIndex
+                                          ].heading = e.target.value;
+                                          handleDataChange({ parts: newParts });
+                                        }}
+                                        className="mt-1 p-2 border border-gray-300 rounded-md w-full"
+                                      />
+                                    </div>
+
+                                    {/* Input cho Matching */}
+                                    <div className="w-1/2">
+                                      <label className="text-gray-700">
+                                        Matching:
+                                      </label>
+                                      <input
+                                        type="text"
+                                        name={`matching-${partIndex}-${qIndex}-${qtnIndex}-${matchIndex}`}
+                                        value={matchItem.matching}
+                                        onChange={(e) => {
+                                          const newParts = [...parts];
+                                          newParts[partIndex].questionTypePart[
+                                            qIndex
+                                          ].questions[qtnIndex].answerMatching[
+                                            matchIndex
+                                          ].matching = e.target.value;
+                                          handleDataChange({ parts: newParts });
+                                        }}
+                                        className="mt-1 p-2 border border-gray-300 rounded-md w-full"
+                                      />
+                                    </div>
+                                  </div>
+                                )
+                              )}
+                              {/* Nút thêm câu trả lời */}
+                              <button
+                                type="button"
+                                onClick={() => {
+                                  const newParts = [...parts];
+                                  newParts[partIndex].questionTypePart[
+                                    qIndex
+                                  ].questions[qtnIndex].answerMatching.push({
+                                    heading: "",
+                                    matching: "",
+                                  });
+                                  handleDataChange({ parts: newParts });
+                                }}
+                                className="mt-2 px-4 py-2 bg-blue-500 text-white rounded-md shadow-md hover:bg-blue-600"
+                              >
+                                Add Heading Matching
+                              </button>
+                            </div>
+                          )}
+
+                          {qTypePart.questionType === 2 && (
+                            <div>
+                              <label className="text-gray-700 font-medium mt-2">
+                                Answer Filling:
+                              </label>
+                              <input
+                                type="text"
+                                name="answerFilling"
+                                value={question.answerFilling}
+                                onChange={(e) => {
+                                  const newParts = [...parts];
+                                  newParts[partIndex].questionTypePart[
+                                    qIndex
+                                  ].questions[qtnIndex].answerFilling =
+                                    e.target.value;
+                                  handleDataChange({ parts: newParts });
+                                }}
+                                className="mt-1 p-2 border border-gray-300 rounded-md w-full"
+                              />
+                            </div>
+                          )}
+                          {qTypePart.questionType === 3 && (
+                            <div className="w-5/12 flex flex-col">
+                              <label className="text-gray-700 font-medium">
+                                Answer Selection (Multiple Choice)
+                              </label>
+                              <div className="mt-1">
+                                {question.answersOptions.map((option, idx) => (
+                                  <div
+                                    key={idx}
+                                    className="flex items-center mb-2"
+                                  >
+                                    <input
+                                      type="text"
+                                      value={option.answerText}
+                                      onChange={(e) => {
+                                        const newParts = [...parts];
+                                        newParts[partIndex].questionTypePart[
+                                          qIndex
+                                        ].questions[qtnIndex].answersOptions[
+                                          idx
+                                        ].answerText = e.target.value;
+                                        handleDataChange({ parts: newParts });
+                                      }}
+                                      className="mt-1 p-2 border border-gray-300 rounded-md w-full"
+                                    />
+                                    <input
+                                      type="checkbox"
+                                      checked={option.isCorrect}
+                                      onChange={() => {
+                                        const newParts = [...parts];
+                                        newParts[partIndex].questionTypePart[
+                                          qIndex
+                                        ].questions[qtnIndex].answersOptions[
+                                          idx
+                                        ].isCorrect = !option.isCorrect;
+                                        handleDataChange({ parts: newParts });
+                                      }}
+                                      className="ml-2"
+                                    />
+                                    <button
+                                      type="button"
+                                      onClick={() => {
+                                        const newParts = [...parts];
+                                        newParts[partIndex].questionTypePart[
+                                          qIndex
+                                        ].questions[
+                                          qtnIndex
+                                        ].answersOptions.splice(idx, 1);
+                                        handleDataChange({ parts: newParts });
+                                      }}
+                                      className="ml-2 px-2 py-1 bg-red-500 text-white rounded-md shadow-md hover:bg-red-600"
+                                    >
+                                      Remove
+                                    </button>
+                                  </div>
+                                ))}
+                                <button
+                                  type="button"
+                                  onClick={() => {
                                     const newParts = [...parts];
                                     newParts[partIndex].questionTypePart[
                                       qIndex
-                                    ].questions[qtnIndex].answer =
-                                      e.target.value;
+                                    ].questions[qtnIndex].answersOptions.push({
+                                      answerText: "",
+                                      isCorrect: false,
+                                    });
                                     handleDataChange({ parts: newParts });
                                   }}
-                                  className="mt-1 p-2 border border-gray-300 rounded-md w-full"
-                                />
+                                  className="mt-2 px-4 py-2 bg-blue-500 text-white rounded-md shadow-md hover:bg-blue-600"
+                                >
+                                  Add Answer Option
+                                </button>
                               </div>
-                            )}
+                            </div>
+                          )}
 
-                            {qTypePart.questionType === "true-false" && (
-                              <div className="w-5/12 flex flex-col">
-                                <label className="text-gray-700 font-medium">
-                                  Answer
-                                </label>
-                                <div className="mt-1">
-                                  <label className="inline-flex items-center mr-4">
+                          {qTypePart.questionType === 4 && (
+                            <div className=" flex flex-col">
+                              <label className="text-gray-700 font-medium">
+                                Answer Selection (Single Choice)
+                              </label>
+                              <div className="mt-1 border p-2">
+                                {question.answersOptions.map((option, idx) => (
+                                  <div
+                                    key={idx}
+                                    className="flex gap-3 items-center mb-2"
+                                  >
+                                    <div className="border rounded-full p-2">
+                                      {idx === 0
+                                        ? "A"
+                                        : idx === 1
+                                        ? "B"
+                                        : idx === 2
+                                        ? "C"
+                                        : idx === 3
+                                        ? "D"
+                                        : idx === 4
+                                        ? "E"
+                                        : idx === 5
+                                        ? "F"
+                                        : idx === 6
+                                        ? "G"
+                                        : "None"}{" "}
+                                    </div>
                                     <input
-                                      type="radio"
-                                      name={`questionType-${partIndex}-${qIndex}`}
-                                      value="true"
-                                      checked={
-                                        qTypePart.questionType ===
-                                        "fill-in-the-blank"
-                                      }
+                                      type="text"
+                                      placeholder="enter answer"
+                                      value={option.answerText}
                                       onChange={(e) => {
                                         const newParts = [...parts];
                                         newParts[partIndex].questionTypePart[
                                           qIndex
-                                        ].questionType = e.target.value;
+                                        ].questions[qtnIndex].answersOptions[
+                                          idx
+                                        ].answerText = e.target.value;
                                         handleDataChange({ parts: newParts });
                                       }}
-                                      className="form-radio"
+                                      className="mt-1 p-2 border border-gray-300 rounded-md w-full"
                                     />
-                                    <span className="ml-2">
-                                      Fill in the Blank
-                                    </span>
-                                  </label>
-                                  <label className="inline-flex items-center mr-4">
+                                    <label className=" ">Is Correct</label>
                                     <input
                                       type="radio"
-                                      name={`questionType-${partIndex}-${qIndex}`}
-                                      value="false"
-                                      checked={
-                                        qTypePart.questionType === "matching"
-                                      }
-                                      onChange={(e) => {
+                                      checked={option.isCorrect}
+                                      onChange={() => {
                                         const newParts = [...parts];
                                         newParts[partIndex].questionTypePart[
                                           qIndex
-                                        ].questionType = e.target.value;
+                                        ].questions[
+                                          qtnIndex
+                                        ].answersOptions.forEach(
+                                          (opt, i) =>
+                                            (opt.isCorrect = i === idx)
+                                        );
                                         handleDataChange({ parts: newParts });
                                       }}
-                                      className="form-radio"
+                                      className="ml-2"
                                     />
-                                    <span className="ml-2">Matching</span>
-                                  </label>
-                                </div>
+                                    <button
+                                      type="button"
+                                      onClick={() => {
+                                        const newParts = [...parts];
+                                        newParts[partIndex].questionTypePart[
+                                          qIndex
+                                        ].questions[
+                                          qtnIndex
+                                        ].answersOptions.splice(idx, 1);
+                                        handleDataChange({ parts: newParts });
+                                      }}
+                                      className="ml-2 px-2 py-1 bg-red-500 text-white rounded-md shadow-md hover:bg-red-600"
+                                    >
+                                      <FontAwesomeIcon icon={faTrash} />
+                                    </button>
+                                  </div>
+                                ))}
+                                <button
+                                  type="button"
+                                  onClick={() => {
+                                    const newParts = [...parts];
+                                    newParts[partIndex].questionTypePart[
+                                      qIndex
+                                    ].questions[qtnIndex].answersOptions.push({
+                                      answerText: "",
+                                      isCorrect: false,
+                                    });
+                                    handleDataChange({ parts: newParts });
+                                  }}
+                                  className="mt-2 <w-32></w-32> text-[12px]  px-4 py-2 bg-blue-500 text-white rounded-md shadow-md hover:bg-blue-600"
+                                >
+                                  Add Answer
+                                </button>
                               </div>
-                            )}
-                          </>
-                        ))}
+                            </div>
+                          )}
+
+                          {qTypePart.questionType === 5 && (
+                            <div className="w-5/12 flex flex-col">
+                              <label className="text-gray-700 font-medium">
+                                Answer
+                              </label>
+                              <div className="mt-1">
+                                <label className="inline-flex items-center mr-4">
+                                  <input
+                                    type="radio"
+                                    name={`questionType-${partIndex}-${qIndex}`}
+                                    value="true"
+                                    checked={
+                                      qTypePart.questions[qtnIndex]
+                                        .answerTrueFalse === 0
+                                    }
+                                    onChange={(e) => {
+                                      const newParts = [...parts];
+                                      newParts[partIndex].questionTypePart[
+                                        qIndex
+                                      ].questions[qtnIndex].answerTrueFalse = 0;
+                                      handleDataChange({ parts: newParts });
+                                    }}
+                                    className="form-radio"
+                                  />
+                                  <span className="ml-2">true</span>
+                                </label>
+                                <label className="inline-flex items-center mr-4">
+                                  <input
+                                    type="radio"
+                                    name={`questionType-${partIndex}-${qIndex}`}
+                                    value="false"
+                                    checked={
+                                      qTypePart.questions[qtnIndex]
+                                        .answerTrueFalse === 1
+                                    }
+                                    onChange={(e) => {
+                                      const newParts = [...parts];
+                                      newParts[partIndex].questionTypePart[
+                                        qIndex
+                                      ].questions[qtnIndex].answerTrueFalse = 1; // Set to false
+                                      handleDataChange({ parts: newParts });
+                                    }}
+                                    className="form-radio"
+                                  />
+                                  <span className="ml-2">false</span>
+                                </label>
+                              </div>
+                            </div>
+                          )}
+                        </>
+                      )}
                     </div>
                   ))}
 
@@ -427,8 +707,8 @@ const FormSkill = ({ skill, formData, handleDataChange }) => {
                 </div>
               ))}
 
-              {skill === 1 ||
-                (skill === 2 && (
+              {skill === 0 ||
+                (skill === 1 && (
                   <button
                     type="button"
                     onClick={() => addQuestionTypePart(partIndex)}
@@ -444,10 +724,10 @@ const FormSkill = ({ skill, formData, handleDataChange }) => {
                   onClick={() => removePart(partIndex)}
                   className="mt-4 bg-red-500 text-sm text-white px-4 py-2 rounded-lg hover:bg-red-600"
                 >
-                  <span className="mr-2">
-                    <FontAwesomeIcon icon={faMultiply} />
-                  </span>
                   Remove Part
+                  <span className="ml-3">
+                    <FontAwesomeIcon icon={faDeleteLeft} />
+                  </span>
                 </button>
                 <button
                   type="button"
@@ -475,7 +755,7 @@ const FormSkill = ({ skill, formData, handleDataChange }) => {
         </div>
 
         {/* Preview  */}
-        <div className="p-2 w-1/2">
+        <div className="p-2 w-1/2 h-[630px]">
           <h4>Preview </h4>
           <AnswerSide parts={parts} />
         </div>

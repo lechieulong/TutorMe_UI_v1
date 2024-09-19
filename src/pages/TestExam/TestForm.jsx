@@ -22,14 +22,14 @@ const TestForm = () => {
     endTime: new Date(),
     skills: [
       {
-        type: 1,
+        type: 0,
         duration: 30,
       },
     ],
     parts: [
       {
         partNumber: 1,
-        skill: 1,
+        skill: 0,
         contentText: "",
         audioUrl: "",
         questionTypePart: [
@@ -40,7 +40,6 @@ const TestForm = () => {
               {
                 questionName: "",
                 maxMarks: 1,
-                answer: "",
                 answersOptions: [
                   {
                     answerText: "",
@@ -57,6 +56,7 @@ const TestForm = () => {
       },
     ],
   });
+
   const dispatch = useDispatch();
 
   const handleSelectClass = (classes) => {

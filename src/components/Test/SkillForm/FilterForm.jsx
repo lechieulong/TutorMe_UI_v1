@@ -20,11 +20,11 @@ const FilterForm = ({ onSelectClass, onSelectSkill }) => {
   ];
 
   const skills = [
-    { id: 1, name: "Reading" },
-    { id: 2, name: "Listening" },
-    { id: 3, name: "Writing" },
-    { id: 4, name: "Speaking" },
-    { id: 5, name: "All" },
+    { id: 0, name: "Reading" },
+    { id: 1, name: "Listening" },
+    { id: 2, name: "Writing" },
+    { id: 3, name: "Speaking" },
+    { id: 4, name: "All" },
   ];
 
   const handleClassChange = (selectedOptions) => {

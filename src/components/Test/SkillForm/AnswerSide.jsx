@@ -3,10 +3,8 @@ import FillInTheBlankQuestion from "../AnswerType/FillInTheBlankQuestion";
 import RadioOption from "../AnswerType/RadioOption";
 
 const AnswerSide = ({ parts }) => {
-  console.log(parts);
-
   return (
-    <div className="bg-green-50 h-screen p-3">
+    <div className="bg-green-50  p-3">
       {parts.map((part, partIndex) => (
         <div key={partIndex}>
           {part.questionTypePart.map((qType, qTypeIndex) => (

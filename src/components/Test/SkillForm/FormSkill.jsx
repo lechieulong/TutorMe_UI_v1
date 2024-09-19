@@ -443,7 +443,7 @@ const FormSkill = ({ skill, formData, handleDataChange }) => {
                                 }}
                                 className="mt-2 px-4 py-2 bg-blue-500 text-white rounded-md shadow-md hover:bg-blue-600"
                               >
-                                Add Heading Matching
+                                Add Heading Matchingg
                               </button>
                             </div>
                           )}

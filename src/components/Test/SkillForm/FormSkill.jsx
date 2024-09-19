@@ -17,7 +17,7 @@ import {
 import AnswerSide from "./AnswerSide";
 
 const FormSkill = ({ skill, formData, handleDataChange }) => {
-  const { parts } = formData;
+  const { parts } = formData.skills[skill];
 
   const [leftWidth, setLeftWidth] = useState(50);
   const [previewWith, setPreviewWith] = useState(50);
@@ -91,6 +91,9 @@ const FormSkill = ({ skill, formData, handleDataChange }) => {
   };
 
   const addPart = () => {
+    const updatedSkills = [...formData.skills];
+    const parts = updatedSkills[skill].parts;
+
     const newPart = {
       partNumber: parts.length + 1,
       skillType: 0,
@@ -119,13 +122,24 @@ const FormSkill = ({ skill, formData, handleDataChange }) => {
         },
       ],
     };
-    handleDataChange({ parts: [...parts, newPart] });
+    updatedSkills[skill] = {
+      ...updatedSkills[skill],
+      parts: [...parts, newPart],
+    };
+    handleDataChange({ skills: updatedSkills });
   };
 
-  const removePart = (index) => {
+  const removePart = (partIndex) => {
+    const updatedSkills = [...formData.skills];
+
     if (parts.length > 1) {
-      const updatedParts = parts.filter((_, i) => i !== index);
-      handleDataChange({ parts: updatedParts });
+      const updatedParts = parts.filter((_, i) => i !== partIndex);
+
+      updatedSkills[skill] = {
+        ...updatedSkills[skill],
+        parts: updatedParts,
+      };
+      handleDataChange({ skills: updatedSkills });
     } else {
       alert("You must have at least 1 part.");
     }
@@ -198,10 +212,10 @@ const FormSkill = ({ skill, formData, handleDataChange }) => {
                 : skill === 1
                 ? faHeadphones // Listening (Ví dụ icon khác)
                 : skill === 2
-                ? faPen // Writing (Ví dụ icon khác)
+                ? faPen
                 : skill === 3
-                ? faMicrophone // Speaking (Ví dụ icon khác)
-                : faBook // Default icon (hoặc icon cho 'All')
+                ? faMicrophone
+                : faBook
             }
           />
         </span>
@@ -232,9 +246,21 @@ const FormSkill = ({ skill, formData, handleDataChange }) => {
         >
           {parts.map((part, partIndex) => (
             <div key={partIndex} className="w-full flex flex-col p-6 ">
-              <h4 className="text-xl font-semibold text-gray-700">
-                Part {part.partNumber}
-              </h4>
+              <div className="flex justify-between items-center">
+                <h4 className="text-xl font-semibold text-gray-700">
+                  Part {part.partNumber}
+                </h4>
+                <button
+                  type="button"
+                  onClick={() => removePart(partIndex)}
+                  className="mt-4 bg-red-500 text-sm text-white px-4 py-2 rounded-lg hover:bg-red-600"
+                >
+                  Remove Part
+                  <span className="ml-3">
+                    <FontAwesomeIcon icon={faDeleteLeft} />
+                  </span>
+                </button>
+              </div>
 
               {skill === 0 && (
                 <div className="mt-4">
@@ -261,8 +287,20 @@ const FormSkill = ({ skill, formData, handleDataChange }) => {
                       }}
                       onChange={(event, editor) => {
                         const data = editor.getData();
-                        handleInputChange(partIndex, {
-                          target: { name: "contentText", value: data },
+
+                        const newSkills = [...formData.skills];
+                        const newParts = [...newSkills[skill].parts];
+
+                        newParts[partIndex].contentText = data;
+
+                        newSkills[skill] = {
+                          ...newSkills[skill],
+                          parts: newParts,
+                        };
+
+                        handleDataChange({
+                          ...formData,
+                          skills: newSkills,
                         });
                       }}
                     />
@@ -320,10 +358,28 @@ const FormSkill = ({ skill, formData, handleDataChange }) => {
                             value={qTypePart.questionGuide}
                             onChange={(e) => {
                               const newParts = [...parts];
-                              newParts[partIndex].questionTypePart[
-                                qIndex
-                              ].questionGuide = e.target.value;
-                              handleDataChange({ parts: newParts });
+                              newParts[partIndex] = {
+                                ...newParts[partIndex],
+                                questionTypePart: newParts[
+                                  partIndex
+                                ].questionTypePart.map((qtp, idx) =>
+                                  idx === qIndex
+                                    ? { ...qtp, questionGuide: e.target.value }
+                                    : qtp
+                                ),
+                              };
+
+                              handleDataChange({
+                                ...formData,
+                                skills: [
+                                  ...formData.skills.slice(0, skill),
+                                  {
+                                    ...formData.skills[skill],
+                                    parts: newParts,
+                                  },
+                                  ...formData.skills.slice(skill + 1),
+                                ],
+                              });
                             }}
                             className="mt-1 p-2 border border-gray-300 rounded-md"
                           />
@@ -336,11 +392,19 @@ const FormSkill = ({ skill, formData, handleDataChange }) => {
                             name="questionType"
                             value={qTypePart.questionType}
                             onChange={(e) => {
-                              const newParts = [...parts];
+                              const newSkills = [...formData.skills];
+                              const newParts = [...newSkills[skill].parts];
                               newParts[partIndex].questionTypePart[
                                 qIndex
                               ].questionType = Number(e.target.value);
-                              handleDataChange({ parts: newParts });
+                              newSkills[skill] = {
+                                ...newSkills[skill],
+                                parts: newParts,
+                              };
+                              handleDataChange({
+                                ...formData,
+                                skills: newSkills,
+                              });
                             }}
                             className="mt-1 p-2 border border-gray-300 rounded-md"
                           >
@@ -388,7 +452,14 @@ const FormSkill = ({ skill, formData, handleDataChange }) => {
                           newParts[partIndex].questionTypePart[
                             qIndex
                           ].questions[qtnIndex].questionName = e.target.value;
-                          handleDataChange({ parts: newParts });
+                          handleDataChange({
+                            ...formData,
+                            skills: [
+                              ...formData.skills.slice(0, skill),
+                              { ...formData.skills[skill], parts: newParts },
+                              ...formData.skills.slice(skill + 1),
+                            ],
+                          });
                         }}
                         className="mt-1 p-2 border border-gray-300 rounded-md w-full"
                       />
@@ -415,13 +486,31 @@ const FormSkill = ({ skill, formData, handleDataChange }) => {
                                         name={`heading-${partIndex}-${qIndex}-${qtnIndex}-${matchIndex}`}
                                         value={matchItem.heading}
                                         onChange={(e) => {
-                                          const newParts = [...parts];
+                                          const newSkills = [
+                                            ...formData.skills,
+                                          ];
+                                          const newParts = [
+                                            ...newSkills[skill].parts,
+                                          ];
+
+                                          // Cập nhật giá trị heading tại phần tử matchIndex
                                           newParts[partIndex].questionTypePart[
                                             qIndex
                                           ].questions[qtnIndex].answerMatching[
                                             matchIndex
                                           ].heading = e.target.value;
-                                          handleDataChange({ parts: newParts });
+
+                                          // Cập nhật phần mới trong kỹ năng
+                                          newSkills[skill] = {
+                                            ...newSkills[skill],
+                                            parts: newParts,
+                                          };
+
+                                          // Cập nhật formData với kỹ năng mới
+                                          handleDataChange({
+                                            ...formData,
+                                            skills: newSkills,
+                                          });
                                         }}
                                         className="mt-1 p-2 border border-gray-300 rounded-md w-full"
                                       />
@@ -437,13 +526,31 @@ const FormSkill = ({ skill, formData, handleDataChange }) => {
                                         name={`matching-${partIndex}-${qIndex}-${qtnIndex}-${matchIndex}`}
                                         value={matchItem.matching}
                                         onChange={(e) => {
-                                          const newParts = [...parts];
+                                          const newSkills = [
+                                            ...formData.skills,
+                                          ];
+                                          const newParts = [
+                                            ...newSkills[skill].parts,
+                                          ];
+
+                                          // Cập nhật giá trị matching tại phần tử matchIndex
                                           newParts[partIndex].questionTypePart[
                                             qIndex
                                           ].questions[qtnIndex].answerMatching[
                                             matchIndex
                                           ].matching = e.target.value;
-                                          handleDataChange({ parts: newParts });
+
+                                          // Cập nhật phần mới trong kỹ năng
+                                          newSkills[skill] = {
+                                            ...newSkills[skill],
+                                            parts: newParts,
+                                          };
+
+                                          // Cập nhật formData với kỹ năng mới
+                                          handleDataChange({
+                                            ...formData,
+                                            skills: newSkills,
+                                          });
                                         }}
                                         className="mt-1 p-2 border border-gray-300 rounded-md w-full"
                                       />
@@ -455,18 +562,32 @@ const FormSkill = ({ skill, formData, handleDataChange }) => {
                               <button
                                 type="button"
                                 onClick={() => {
-                                  const newParts = [...parts];
+                                  const newSkills = [...formData.skills];
+                                  const newParts = [...newSkills[skill].parts];
+
+                                  // Thêm phần heading matching mới vào câu hỏi
                                   newParts[partIndex].questionTypePart[
                                     qIndex
                                   ].questions[qtnIndex].answerMatching.push({
                                     heading: "",
                                     matching: "",
                                   });
-                                  handleDataChange({ parts: newParts });
+
+                                  // Cập nhật kỹ năng mới
+                                  newSkills[skill] = {
+                                    ...newSkills[skill],
+                                    parts: newParts,
+                                  };
+
+                                  // Cập nhật formData với kỹ năng mới
+                                  handleDataChange({
+                                    ...formData,
+                                    skills: newSkills,
+                                  });
                                 }}
                                 className="mt-2 px-4 py-2 bg-blue-500 text-white rounded-md shadow-md hover:bg-blue-600"
                               >
-                                Add Heading Matchingg
+                                Add Heading Matching
                               </button>
                             </div>
                           )}
@@ -481,12 +602,26 @@ const FormSkill = ({ skill, formData, handleDataChange }) => {
                                 name="answerFilling"
                                 value={question.answerFilling}
                                 onChange={(e) => {
-                                  const newParts = [...parts];
+                                  const newSkills = [...formData.skills];
+                                  const newParts = [...newSkills[skill].parts];
+
+                                  // Cập nhật answerFilling tại vị trí question tương ứng
                                   newParts[partIndex].questionTypePart[
                                     qIndex
                                   ].questions[qtnIndex].answerFilling =
                                     e.target.value;
-                                  handleDataChange({ parts: newParts });
+
+                                  // Cập nhật phần mới trong kỹ năng
+                                  newSkills[skill] = {
+                                    ...newSkills[skill],
+                                    parts: newParts,
+                                  };
+
+                                  // Cập nhật formData với kỹ năng mới
+                                  handleDataChange({
+                                    ...formData,
+                                    skills: newSkills,
+                                  });
                                 }}
                                 className="mt-1 p-2 border border-gray-300 rounded-md w-full"
                               />
@@ -507,30 +642,59 @@ const FormSkill = ({ skill, formData, handleDataChange }) => {
                                       type="text"
                                       value={option.answerText}
                                       onChange={(e) => {
-                                        const newParts = [...parts];
+                                        const newSkills = [...formData.skills];
+                                        const newParts = [
+                                          ...newSkills[skill].parts,
+                                        ];
                                         newParts[partIndex].questionTypePart[
                                           qIndex
                                         ].questions[qtnIndex].answersOptions[
                                           idx
                                         ].answerText = e.target.value;
-                                        handleDataChange({ parts: newParts });
+
+                                        newSkills[skill] = {
+                                          ...newSkills[skill],
+                                          parts: newParts,
+                                        };
+                                        handleDataChange({
+                                          ...formData,
+                                          skills: newSkills,
+                                        });
                                       }}
                                       className="mt-1 p-2 border border-gray-300 rounded-md w-full"
                                     />
+
                                     <input
                                       type="checkbox"
                                       checked={option.isCorrect}
                                       onChange={() => {
-                                        const newParts = [...parts];
+                                        const newSkills = [...formData.skills];
+                                        const newParts = [
+                                          ...newSkills[skill].parts,
+                                        ];
+
+                                        // Đổi trạng thái isCorrect tại qIndex và qtnIndex
                                         newParts[partIndex].questionTypePart[
                                           qIndex
                                         ].questions[qtnIndex].answersOptions[
                                           idx
                                         ].isCorrect = !option.isCorrect;
-                                        handleDataChange({ parts: newParts });
+
+                                        // Cập nhật lại phần mới trong kỹ năng
+                                        newSkills[skill] = {
+                                          ...newSkills[skill],
+                                          parts: newParts,
+                                        };
+
+                                        // Cập nhật formData với kỹ năng mới
+                                        handleDataChange({
+                                          ...formData,
+                                          skills: newSkills,
+                                        });
                                       }}
                                       className="ml-2"
                                     />
+
                                     <button
                                       type="button"
                                       onClick={() => {
@@ -551,14 +715,30 @@ const FormSkill = ({ skill, formData, handleDataChange }) => {
                                 <button
                                   type="button"
                                   onClick={() => {
-                                    const newParts = [...parts];
+                                    const newSkills = [...formData.skills];
+                                    const newParts = [
+                                      ...newSkills[skill].parts,
+                                    ];
+
+                                    // Thêm tùy chọn câu trả lời mới vào câu hỏi
                                     newParts[partIndex].questionTypePart[
                                       qIndex
                                     ].questions[qtnIndex].answersOptions.push({
                                       answerText: "",
                                       isCorrect: false,
                                     });
-                                    handleDataChange({ parts: newParts });
+
+                                    // Cập nhật kỹ năng mới
+                                    newSkills[skill] = {
+                                      ...newSkills[skill],
+                                      parts: newParts,
+                                    };
+
+                                    // Cập nhật formData với kỹ năng mới
+                                    handleDataChange({
+                                      ...formData,
+                                      skills: newSkills,
+                                    });
                                   }}
                                   className="mt-2 px-4 py-2 bg-blue-500 text-white rounded-md shadow-md hover:bg-blue-600"
                                 >
@@ -601,22 +781,45 @@ const FormSkill = ({ skill, formData, handleDataChange }) => {
                                       placeholder="enter answer"
                                       value={option.answerText}
                                       onChange={(e) => {
-                                        const newParts = [...parts];
+                                        const newSkills = [...formData.skills];
+                                        const newParts = [
+                                          ...newSkills[skill].parts,
+                                        ];
+
+                                        // Cập nhật answerText tại vị trí answersOptions tương ứng
                                         newParts[partIndex].questionTypePart[
                                           qIndex
                                         ].questions[qtnIndex].answersOptions[
                                           idx
                                         ].answerText = e.target.value;
-                                        handleDataChange({ parts: newParts });
+
+                                        // Cập nhật phần mới trong kỹ năng
+                                        newSkills[skill] = {
+                                          ...newSkills[skill],
+                                          parts: newParts,
+                                        };
+
+                                        // Cập nhật formData với kỹ năng mới
+                                        handleDataChange({
+                                          ...formData,
+                                          skills: newSkills,
+                                        });
                                       }}
                                       className="mt-1 p-2 border border-gray-300 rounded-md w-full"
                                     />
+
                                     <label className=" ">Is Correct</label>
                                     <input
                                       type="radio"
                                       checked={option.isCorrect}
                                       onChange={() => {
-                                        const newParts = [...parts];
+                                        const newSkills = [...formData.skills];
+                                        const newParts = [
+                                          ...newSkills[skill].parts,
+                                        ];
+
+                                        // Đặt isCorrect cho tất cả options trong question thành false,
+                                        // chỉ đặt true cho option được chọn
                                         newParts[partIndex].questionTypePart[
                                           qIndex
                                         ].questions[
@@ -625,10 +828,22 @@ const FormSkill = ({ skill, formData, handleDataChange }) => {
                                           (opt, i) =>
                                             (opt.isCorrect = i === idx)
                                         );
-                                        handleDataChange({ parts: newParts });
+
+                                        // Cập nhật phần mới trong kỹ năng
+                                        newSkills[skill] = {
+                                          ...newSkills[skill],
+                                          parts: newParts,
+                                        };
+
+                                        // Cập nhật formData với kỹ năng mới
+                                        handleDataChange({
+                                          ...formData,
+                                          skills: newSkills,
+                                        });
                                       }}
                                       className="ml-2"
                                     />
+
                                     <button
                                       type="button"
                                       onClick={() => {
@@ -649,16 +864,32 @@ const FormSkill = ({ skill, formData, handleDataChange }) => {
                                 <button
                                   type="button"
                                   onClick={() => {
-                                    const newParts = [...parts];
+                                    const newSkills = [...formData.skills];
+                                    const newParts = [
+                                      ...newSkills[skill].parts,
+                                    ];
+
+                                    // Thêm tùy chọn câu trả lời mới vào câu hỏi
                                     newParts[partIndex].questionTypePart[
                                       qIndex
                                     ].questions[qtnIndex].answersOptions.push({
                                       answerText: "",
                                       isCorrect: false,
                                     });
-                                    handleDataChange({ parts: newParts });
+
+                                    // Cập nhật kỹ năng mới
+                                    newSkills[skill] = {
+                                      ...newSkills[skill],
+                                      parts: newParts,
+                                    };
+
+                                    // Cập nhật formData với kỹ năng mới
+                                    handleDataChange({
+                                      ...formData,
+                                      skills: newSkills,
+                                    });
                                   }}
-                                  className="mt-2 <w-32></w-32> text-[12px]  px-4 py-2 bg-blue-500 text-white rounded-md shadow-md hover:bg-blue-600"
+                                  className="mt-2 w-32 text-[12px] px-4 py-2 bg-blue-500 text-white rounded-md shadow-md hover:bg-blue-600"
                                 >
                                   Add Answer
                                 </button>
@@ -678,35 +909,72 @@ const FormSkill = ({ skill, formData, handleDataChange }) => {
                                     name={`questionType-${partIndex}-${qIndex}`}
                                     value="true"
                                     checked={
-                                      qTypePart.questions[qtnIndex]
-                                        .answerTrueFalse === 0
+                                      formData.skills[skill].parts[partIndex]
+                                        .questionTypePart[qIndex].questions[
+                                        qtnIndex
+                                      ].answerTrueFalse === 0
                                     }
-                                    onChange={(e) => {
-                                      const newParts = [...parts];
+                                    onChange={() => {
+                                      const newSkills = [...formData.skills];
+                                      const newParts = [
+                                        ...newSkills[skill].parts,
+                                      ];
+
+                                      // Đặt answerTrueFalse thành 0 (true)
                                       newParts[partIndex].questionTypePart[
                                         qIndex
                                       ].questions[qtnIndex].answerTrueFalse = 0;
-                                      handleDataChange({ parts: newParts });
+
+                                      // Cập nhật kỹ năng mới
+                                      newSkills[skill] = {
+                                        ...newSkills[skill],
+                                        parts: newParts,
+                                      };
+
+                                      // Cập nhật formData với kỹ năng mới
+                                      handleDataChange({
+                                        ...formData,
+                                        skills: newSkills,
+                                      });
                                     }}
                                     className="form-radio"
                                   />
                                   <span className="ml-2">true</span>
                                 </label>
+
                                 <label className="inline-flex items-center mr-4">
                                   <input
                                     type="radio"
                                     name={`questionType-${partIndex}-${qIndex}`}
                                     value="false"
                                     checked={
-                                      qTypePart.questions[qtnIndex]
-                                        .answerTrueFalse === 1
+                                      formData.skills[skill].parts[partIndex]
+                                        .questionTypePart[qIndex].questions[
+                                        qtnIndex
+                                      ].answerTrueFalse === 1
                                     }
-                                    onChange={(e) => {
-                                      const newParts = [...parts];
+                                    onChange={() => {
+                                      const newSkills = [...formData.skills];
+                                      const newParts = [
+                                        ...newSkills[skill].parts,
+                                      ];
+
+                                      // Đặt answerTrueFalse thành 1 (false)
                                       newParts[partIndex].questionTypePart[
                                         qIndex
-                                      ].questions[qtnIndex].answerTrueFalse = 1; // Set to false
-                                      handleDataChange({ parts: newParts });
+                                      ].questions[qtnIndex].answerTrueFalse = 1;
+
+                                      // Cập nhật kỹ năng mới
+                                      newSkills[skill] = {
+                                        ...newSkills[skill],
+                                        parts: newParts,
+                                      };
+
+                                      // Cập nhật formData với kỹ năng mới
+                                      handleDataChange({
+                                        ...formData,
+                                        skills: newSkills,
+                                      });
                                     }}
                                     className="form-radio"
                                   />
@@ -741,16 +1009,6 @@ const FormSkill = ({ skill, formData, handleDataChange }) => {
               )}
 
               <div className="flex gap-5">
-                <button
-                  type="button"
-                  onClick={() => removePart(partIndex)}
-                  className="mt-4 bg-red-500 text-sm text-white px-4 py-2 rounded-lg hover:bg-red-600"
-                >
-                  Remove Part
-                  <span className="ml-3">
-                    <FontAwesomeIcon icon={faDeleteLeft} />
-                  </span>
-                </button>
                 <button
                   type="button"
                   onClick={addPart}

@@ -24,44 +24,134 @@ const TestForm = () => {
       {
         type: 0,
         duration: 30,
+        parts: [
+          {
+            partNumber: 1,
+            skillType: 0,
+            contentText: "",
+            audioUrl: "",
+            imageUrl: "",
+            questionTypePart: [
+              {
+                questionGuide: "",
+                questionType: 1,
+                questions: [
+                  {
+                    questionName: "",
+                    maxMarks: 1,
+                    answersOptions: [
+                      {
+                        answerText: "",
+                        isCorrect: false,
+                      },
+                    ],
+                    answerFilling: "",
+                    answerTrueFalse: 0,
+                    answerMatching: [{ heading: "", matching: "" }],
+                  },
+                ],
+              },
+            ],
+          },
+        ],
       },
       {
         type: 1,
         duration: 30,
+        parts: [
+          {
+            partNumber: 1,
+            skillType: 0,
+            contentText: "",
+            audioUrl: "",
+            imageUrl: "",
+            questionTypePart: [
+              {
+                questionGuide: "",
+                questionType: 1,
+                questions: [
+                  {
+                    questionName: "",
+                    maxMarks: 1,
+                    answersOptions: [
+                      {
+                        answerText: "",
+                        isCorrect: false,
+                      },
+                    ],
+                    answerFilling: "",
+                    answerTrueFalse: 0,
+                    answerMatching: [{ heading: "", matching: "" }],
+                  },
+                ],
+              },
+            ],
+          },
+        ],
       },
       {
         type: 2,
         duration: 30,
+        parts: [
+          {
+            partNumber: 1,
+            skillType: 0,
+            contentText: "",
+            audioUrl: "",
+            imageUrl: "",
+            questionTypePart: [
+              {
+                questionGuide: "",
+                questionType: 1,
+                questions: [
+                  {
+                    questionName: "",
+                    maxMarks: 1,
+                    answersOptions: [
+                      {
+                        answerText: "",
+                        isCorrect: false,
+                      },
+                    ],
+                    answerFilling: "",
+                    answerTrueFalse: 0,
+                    answerMatching: [{ heading: "", matching: "" }],
+                  },
+                ],
+              },
+            ],
+          },
+        ],
       },
       {
         type: 3,
         duration: 30,
-      },
-    ],
-    parts: [
-      {
-        partNumber: 1,
-        skillType: 0,
-        contentText: "",
-        audioUrl: "",
-        imageUrl: "",
-        questionTypePart: [
+        parts: [
           {
-            questionGuide: "",
-            questionType: 1,
-            questions: [
+            partNumber: 1,
+            skillType: 0,
+            contentText: "",
+            audioUrl: "",
+            imageUrl: "",
+            questionTypePart: [
               {
-                questionName: "",
-                maxMarks: 1,
-                answersOptions: [
+                questionGuide: "",
+                questionType: 1,
+                questions: [
                   {
-                    answerText: "",
-                    isCorrect: false,
+                    questionName: "",
+                    maxMarks: 1,
+                    answersOptions: [
+                      {
+                        answerText: "",
+                        isCorrect: false,
+                      },
+                    ],
+                    answerFilling: "",
+                    answerTrueFalse: 0,
+                    answerMatching: [{ heading: "", matching: "" }],
                   },
                 ],
-                answerFilling: "",
-                answerTrueFalse: 0,
-                answerMatching: [{ heading: "", matching: "" }],
               },
             ],
           },

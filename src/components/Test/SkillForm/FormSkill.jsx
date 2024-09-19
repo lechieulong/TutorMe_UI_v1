@@ -18,7 +18,6 @@ const FormSkill = ({ skill, formData, handleDataChange }) => {
   const { parts } = formData;
   const [leftWidth, setLeftWidth] = useState(50);
   const [previewWith, setPreviewWith] = useState(50);
-
   const startResizing = (part) => {
     if (part === "main") {
       document.addEventListener("mousemove", handleMouseMove);
@@ -59,10 +58,13 @@ const FormSkill = ({ skill, formData, handleDataChange }) => {
   const handleDurationChange = (duration) => {
     const updatedFormData = { ...formData };
 
-    updatedFormData.skills[skill - 0] = {
-      ...updatedFormData.skills[skill - 0],
-      duration: duration,
+    updatedFormData.skills[skill] = {
+      ...updatedFormData.skills[skill],
+      type: skill,
+      duration,
     };
+    console.log(updatedFormData);
+
     handleDataChange(updatedFormData);
   };
 
@@ -121,12 +123,20 @@ const FormSkill = ({ skill, formData, handleDataChange }) => {
   const addQuestionTypePart = (partIndex) => {
     const newQuestionTypePart = {
       questionGuide: "",
-      questionType: "",
+      questionType: 1,
       questions: [
         {
           questionName: "",
-          answer: "",
           maxMarks: 1,
+          answersOptions: [
+            {
+              answerText: "",
+              isCorrect: false,
+            },
+          ],
+          answerFilling: "",
+          answerTrueFalse: 0,
+          answerMatching: [{ heading: "", matching: "" }],
         },
       ],
     };
@@ -141,16 +151,16 @@ const FormSkill = ({ skill, formData, handleDataChange }) => {
   const addQuestion = (partIndex, qTypeIndex) => {
     const newQuestion = {
       questionName: "",
-      answer: "",
-      options: [
+      maxMarks: 1,
+      answersOptions: [
         {
           answerText: "",
           isCorrect: false,
         },
       ],
-      maxMarks: 1,
       answerFilling: "",
-      answerTrueFalse: false,
+      answerTrueFalse: 0,
+      answerMatching: [{ heading: "", matching: "" }],
     };
     const updatedParts = [...parts];
     updatedParts[partIndex].questionTypePart[qTypeIndex].questions = [
@@ -166,25 +176,25 @@ const FormSkill = ({ skill, formData, handleDataChange }) => {
         <span className="mr-2">
           <FontAwesomeIcon
             icon={
-              skill === 1
+              skill === 0
                 ? faBookOpen // Reading
-                : skill === 2
+                : skill === 1
                 ? faHeadphones // Listening (Ví dụ icon khác)
-                : skill === 3
+                : skill === 2
                 ? faPen // Writing (Ví dụ icon khác)
-                : skill === 4
+                : skill === 3
                 ? faMicrophone // Speaking (Ví dụ icon khác)
                 : faBook // Default icon (hoặc icon cho 'All')
             }
           />
         </span>
-        {skill === 1
+        {skill === 0
           ? "Reading"
-          : skill === 2
+          : skill === 1
           ? "Listening"
-          : skill === 3
+          : skill === 2
           ? "Writing"
-          : skill === 4
+          : skill === 3
           ? "Speaking"
           : "All"}
       </h2>
@@ -192,8 +202,8 @@ const FormSkill = ({ skill, formData, handleDataChange }) => {
         <span className="w-1/2">Duration of skill</span>
         <input
           type="number"
-          value={formData.skills[skill - 1].duration}
-          onChange={(e) => handleDurationChange(e.target.value)}
+          value={formData.skills[skill].duration}
+          onChange={(e) => handleDurationChange(Number(e.target.value))}
           placeholder="Enter duration"
           className="block w-6/12 border p-2 border-gray-400 rounded-md shadow-sm"
         />
@@ -209,7 +219,7 @@ const FormSkill = ({ skill, formData, handleDataChange }) => {
                 Part {part.partNumber}
               </h4>
 
-              {skill === 1 && (
+              {skill === 0 && (
                 <div className="mt-4">
                   <div className="text-lg font-medium text-gray-600">
                     Content Topic
@@ -243,7 +253,7 @@ const FormSkill = ({ skill, formData, handleDataChange }) => {
                 </div>
               )}
 
-              {skill === 2 && (
+              {skill === 1 && (
                 <div className="mt-4">
                   <label className="block text-base font-medium text-gray-700">
                     Audio Upload:
@@ -263,7 +273,7 @@ const FormSkill = ({ skill, formData, handleDataChange }) => {
                   className="mt-4 p-4 border border-gray-200 rounded-lg shadow-sm bg-white"
                 >
                   <div className="flex gap-4 mb-4">
-                    {(skill === 1 || skill === 2) && (
+                    {(skill === 0 || skill === 1) && (
                       <>
                         <div className="w-7/12 flex flex-col">
                           <label className="text-gray-700 font-medium">
@@ -293,7 +303,7 @@ const FormSkill = ({ skill, formData, handleDataChange }) => {
                               const newParts = [...parts];
                               newParts[partIndex].questionTypePart[
                                 qIndex
-                              ].questionType = e.target.value;
+                              ].questionType = Number(e.target.value);
                               handleDataChange({ parts: newParts });
                             }}
                             className="mt-1 p-2 border border-gray-300 rounded-md"
@@ -336,84 +346,81 @@ const FormSkill = ({ skill, formData, handleDataChange }) => {
                         }}
                         className="mt-1 p-2 border border-gray-300 rounded-md w-full"
                       />
-                      {skill === 1 ||
-                        (skill === 2 && (
-                          <>
-                            {(qTypePart.questionType === "fill-in-the-blank" ||
-                              qTypePart.questionType === "matching") && (
-                              <div>
-                                <label className="text-gray-700 font-medium mt-2">
-                                  Answer:
+                      {(skill === 0 || skill === 1) && (
+                        <>
+                          {qTypePart.questionType === 2 && (
+                            <div>
+                              <label className="text-gray-700 font-medium mt-2">
+                                Answer Filling:
+                              </label>
+                              <input
+                                type="text"
+                                name="answerFilling"
+                                value={question.answerFilling}
+                                onChange={(e) => {
+                                  const newParts = [...parts];
+                                  newParts[partIndex].questionTypePart[
+                                    qIndex
+                                  ].questions[qtnIndex].answerFilling =
+                                    e.target.value;
+                                  handleDataChange({ parts: newParts });
+                                }}
+                                className="mt-1 p-2 border border-gray-300 rounded-md w-full"
+                              />
+                            </div>
+                          )}
+                          {qTypePart.questionType === "true-false" && (
+                            <div className="w-5/12 flex flex-col">
+                              <label className="text-gray-700 font-medium">
+                                Answer
+                              </label>
+                              <div className="mt-1">
+                                <label className="inline-flex items-center mr-4">
+                                  <input
+                                    type="radio"
+                                    name={`questionType-${partIndex}-${qIndex}`}
+                                    value="true"
+                                    checked={
+                                      qTypePart.questionType ===
+                                      "fill-in-the-blank"
+                                    }
+                                    onChange={(e) => {
+                                      const newParts = [...parts];
+                                      newParts[partIndex].questionTypePart[
+                                        qIndex
+                                      ].questionType = e.target.value;
+                                      handleDataChange({ parts: newParts });
+                                    }}
+                                    className="form-radio"
+                                  />
+                                  <span className="ml-2">
+                                    Fill in the Blank
+                                  </span>
                                 </label>
-                                <input
-                                  type="text"
-                                  name="answer"
-                                  value={question.answer}
-                                  onChange={(e) => {
-                                    const newParts = [...parts];
-                                    newParts[partIndex].questionTypePart[
-                                      qIndex
-                                    ].questions[qtnIndex].answer =
-                                      e.target.value;
-                                    handleDataChange({ parts: newParts });
-                                  }}
-                                  className="mt-1 p-2 border border-gray-300 rounded-md w-full"
-                                />
-                              </div>
-                            )}
-
-                            {qTypePart.questionType === "true-false" && (
-                              <div className="w-5/12 flex flex-col">
-                                <label className="text-gray-700 font-medium">
-                                  Answer
+                                <label className="inline-flex items-center mr-4">
+                                  <input
+                                    type="radio"
+                                    name={`questionType-${partIndex}-${qIndex}`}
+                                    value="false"
+                                    checked={
+                                      qTypePart.questionType === "matching"
+                                    }
+                                    onChange={(e) => {
+                                      const newParts = [...parts];
+                                      newParts[partIndex].questionTypePart[
+                                        qIndex
+                                      ].questionType = e.target.value;
+                                      handleDataChange({ parts: newParts });
+                                    }}
+                                    className="form-radio"
+                                  />
+                                  <span className="ml-2">Matching</span>
                                 </label>
-                                <div className="mt-1">
-                                  <label className="inline-flex items-center mr-4">
-                                    <input
-                                      type="radio"
-                                      name={`questionType-${partIndex}-${qIndex}`}
-                                      value="true"
-                                      checked={
-                                        qTypePart.questionType ===
-                                        "fill-in-the-blank"
-                                      }
-                                      onChange={(e) => {
-                                        const newParts = [...parts];
-                                        newParts[partIndex].questionTypePart[
-                                          qIndex
-                                        ].questionType = e.target.value;
-                                        handleDataChange({ parts: newParts });
-                                      }}
-                                      className="form-radio"
-                                    />
-                                    <span className="ml-2">
-                                      Fill in the Blank
-                                    </span>
-                                  </label>
-                                  <label className="inline-flex items-center mr-4">
-                                    <input
-                                      type="radio"
-                                      name={`questionType-${partIndex}-${qIndex}`}
-                                      value="false"
-                                      checked={
-                                        qTypePart.questionType === "matching"
-                                      }
-                                      onChange={(e) => {
-                                        const newParts = [...parts];
-                                        newParts[partIndex].questionTypePart[
-                                          qIndex
-                                        ].questionType = e.target.value;
-                                        handleDataChange({ parts: newParts });
-                                      }}
-                                      className="form-radio"
-                                    />
-                                    <span className="ml-2">Matching</span>
-                                  </label>
-                                </div>
                               </div>
-                            )}
-                          </>
-                        ))}
+                            </div>
+                          )}
+                        </>
+                      )}
                     </div>
                   ))}
 
@@ -427,8 +434,8 @@ const FormSkill = ({ skill, formData, handleDataChange }) => {
                 </div>
               ))}
 
-              {skill === 1 ||
-                (skill === 2 && (
+              {skill === 0 ||
+                (skill === 1 && (
                   <button
                     type="button"
                     onClick={() => addQuestionTypePart(partIndex)}

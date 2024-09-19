@@ -3,8 +3,6 @@ import FillInTheBlankQuestion from "../AnswerType/FillInTheBlankQuestion";
 import RadioOption from "../AnswerType/RadioOption";
 
 const AnswerSide = ({ parts }) => {
-  console.log(parts);
-
   return (
     <div className="bg-green-50 h-screen p-3">
       {parts.map((part, partIndex) => (

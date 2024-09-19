@@ -25,13 +25,26 @@ const TestForm = () => {
         type: 0,
         duration: 30,
       },
+      {
+        type: 1,
+        duration: 30,
+      },
+      {
+        type: 2,
+        duration: 30,
+      },
+      {
+        type: 3,
+        duration: 30,
+      },
     ],
     parts: [
       {
         partNumber: 1,
-        skill: 0,
+        skillType: 0,
         contentText: "",
         audioUrl: "",
+        imageUrl: "",
         questionTypePart: [
           {
             questionGuide: "",
@@ -191,8 +204,7 @@ const TestForm = () => {
       </div>
 
       <main className="mx-auto mt-8 rounded  border-2 ">
-        {renderSkillForms()}
-
+        <div className="flex flex-col gap-2">{renderSkillForms()}</div>
         {selectedSkills.length > 0 && (
           <div className="p-2">
             <button

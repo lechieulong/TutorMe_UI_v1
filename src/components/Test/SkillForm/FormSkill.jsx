@@ -13,12 +13,12 @@ import {
   faBook,
   faTrash,
   faDeleteLeft,
-  faAdd,
 } from "@fortawesome/free-solid-svg-icons";
 import AnswerSide from "./AnswerSide";
 
 const FormSkill = ({ skill, formData, handleDataChange }) => {
   const { parts } = formData;
+
   const [leftWidth, setLeftWidth] = useState(50);
   const [previewWith, setPreviewWith] = useState(50);
   const startResizing = (part) => {
@@ -31,7 +31,6 @@ const FormSkill = ({ skill, formData, handleDataChange }) => {
       document.addEventListener("mouseup", stopResizingPreview);
     }
   };
-  console.log(parts);
 
   const handleMouseMovePreview = (e) => {
     const newWidth = Math.min(
@@ -94,18 +93,27 @@ const FormSkill = ({ skill, formData, handleDataChange }) => {
   const addPart = () => {
     const newPart = {
       partNumber: parts.length + 1,
-      skillTest: 1,
+      skillType: 0,
       contentText: "",
       audioUrl: "",
+      imageUrl: "",
       questionTypePart: [
         {
           questionGuide: "",
-          questionType: "",
+          questionType: 1,
           questions: [
             {
               questionName: "",
-              answer: "",
               maxMarks: 1,
+              answersOptions: [
+                {
+                  answerText: "",
+                  isCorrect: false,
+                },
+              ],
+              answerFilling: "",
+              answerTrueFalse: 0,
+              answerMatching: [{ heading: "", matching: "" }],
             },
           ],
         },
@@ -180,7 +188,7 @@ const FormSkill = ({ skill, formData, handleDataChange }) => {
   };
 
   return (
-    <div className="p-4 border border-gray-400">
+    <div className="p-4 border  border-gray-400">
       <h2 className="text-2xl p-2 font-extrabold text-green-500">
         <span className="mr-2">
           <FontAwesomeIcon
@@ -270,6 +278,20 @@ const FormSkill = ({ skill, formData, handleDataChange }) => {
                       type="file"
                       accept="audio/*"
                       onChange={(e) => handleAudioChange(partIndex, e)}
+                      className="mt-1 block w-full border-gray-300 rounded-md shadow-sm"
+                    />
+                  </label>
+                </div>
+              )}
+
+              {skill == 2 && partIndex === 0 && (
+                <div className="mt-4">
+                  <label className="block text-base font-medium text-gray-700">
+                    Image Upload:
+                    <input
+                      type="file"
+                      accept="image/*"
+                      onChange={(e) => handleImageChange(partIndex, e)}
                       className="mt-1 block w-full border-gray-300 rounded-md shadow-sm"
                     />
                   </label>

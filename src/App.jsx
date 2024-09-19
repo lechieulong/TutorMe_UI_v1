@@ -15,13 +15,14 @@ import LiveStream from "./pages/LiveStream";
 import MetorInfor from "./pages/Mentor/MentorInforTest";
 import CourseList from "./pages/Course/CourseList";
 import TestList from "./pages/User/TestList";
-// import CourseDetail from './CourseDetail';
 
 import "preline";
 import TestLayout from "./pages/TestExam/TestLayout";
-import ClassDetail from "./pages/User/ClassDetail";
+import CourseDetail from "./pages/Course/CourseDetail";
 import TestForm from "./pages/TestExam/TestForm";
 import ImageTest from "./components/ImageTest";
+import CourseTimeline from "./pages/Course/components/CourseTimeline";
+import CreateCourse from "./pages/Course/components/CreateCourse";
 
 const App = () => {
   return (
@@ -51,14 +52,17 @@ const App = () => {
 
           {/* Calender */}
           <Route path="/calendar" element={<Calendar />} />
+
           {/* Test Mentor */}
-          <Route path="/class-detail" element={<ClassDetail />} />
 
           {/* Mentor */}
           <Route path="/metorinfor" element={<MetorInfor />} />
 
           {/* Course */}
           <Route path="/courselist" element={<CourseList />} />
+          <Route path="/createCourse" element={<CreateCourse />} />
+          <Route path="/courseDetail/:courseId" element={<CourseDetail />} />
+          <Route path="/course-timeline" element={<CourseTimeline />} />
           {/* <Route path="/courses/:courseId" element={<CourseDetail />} /> */}
 
           {/* List test that User did */}

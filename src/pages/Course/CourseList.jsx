@@ -1,5 +1,6 @@
 import React, { useEffect, useState, useMemo } from "react";
 import { useDispatch, useSelector } from "react-redux";
+import { useNavigate } from "react-router-dom";
 import {
   FaBook,
   FaSurprise,
@@ -11,9 +12,11 @@ import Filter from "./components/Filter";
 import CourseCard from "./components/CourseCard";
 import { fetchCourses } from "../../redux/courses/CourseSlice";
 import { STATUS } from "../../constant/SliceName";
+import axios from "axios"; // Import axios
 
-const CoursesSection = () => {
+const CourseList = () => {
   const dispatch = useDispatch();
+  const navigate = useNavigate();
   const { courses = [], status, error } = useSelector((state) => state.courses);
 
   const [selectedCategory, setSelectedCategory] = useState("All");
@@ -30,7 +33,6 @@ const CoursesSection = () => {
     []
   );
 
-  // Filter courses based on selected category and search term
   const filteredCourses = useMemo(() => {
     if (status === STATUS.SUCCESS) {
       return courses
@@ -47,7 +49,6 @@ const CoursesSection = () => {
     return [];
   }, [courses, selectedCategory, searchTerm, status]);
 
-  // Pagination
   const indexOfLastCourse = currentPage * coursesPerPage;
   const indexOfFirstCourse = indexOfLastCourse - coursesPerPage;
   const currentCourses = filteredCourses.slice(
@@ -68,6 +69,41 @@ const CoursesSection = () => {
     }
   };
 
+  const handleCourseClick = (courseId) => {
+    if (courseId) {
+      navigate(`/courseDetail/${courseId}`);
+    } else {
+      console.error("Course ID is undefined");
+    }
+  };
+
+  const handleDelete = async (courseId) => {
+    try {
+      await axios.delete(`http://localhost:5156/api/Courses/${courseId}`);
+      dispatch(fetchCourses()); // Tải lại danh sách khóa học sau khi xóa
+    } catch (error) {
+      console.error("Error deleting course", error);
+      alert("Failed to delete course.");
+    }
+  };
+
+  const getIcon = (category) => {
+    switch (category) {
+      case "Reading":
+        return <FaBook className="text-blue-500 text-2xl" />;
+      case "Listening":
+        return (
+          <FaAssistiveListeningSystems className="text-blue-500 text-2xl" />
+        );
+      case "Writing":
+        return <FaPenAlt className="text-blue-500 text-2xl" />;
+      case "Speaking":
+        return <FaSurprise className="text-blue-500 text-2xl" />;
+      default:
+        return <FaBook className="text-blue-500 text-2xl" />;
+    }
+  };
+
   if (status === STATUS.PENDING) return <p>Loading...</p>;
   if (status === STATUS.FAILED) return <p>Error: {error}</p>;
 
@@ -85,33 +121,41 @@ const CoursesSection = () => {
           </p>
         </div>
 
-        {/* Filter and Courses Grid */}
-        <Filter
-          categories={categories}
-          selectedCategory={selectedCategory}
-          onCategorySelect={(category) => {
-            setSelectedCategory(category);
-            setCurrentPage(1); // Reset to page 1 when changing category
-          }}
-          searchTerm={searchTerm}
-          onSearchChange={(term) => setSearchTerm(term)}
-        />
+        <div className="flex items-center justify-between mb-4">
+          <Filter
+            categories={categories}
+            selectedCategory={selectedCategory}
+            onCategorySelect={(category) => {
+              setSelectedCategory(category);
+              setCurrentPage(1);
+            }}
+            searchTerm={searchTerm}
+            onSearchChange={(term) => setSearchTerm(term)}
+          />
+          <button
+            type="button"
+            className="py-2 px-3 inline-flex items-center gap-x-2 text-sm font-medium rounded-lg border border-gray-200 bg-white text-gray-800 shadow-sm hover:bg-gray-50 focus:outline-none focus:bg-gray-50 disabled:opacity-50 disabled:pointer-events-none dark:border-neutral-700 transition-transform duration-500 dark:hover:scale-110"
+            onClick={() => navigate("/createCourse")}
+          >
+            Create
+          </button>
+        </div>
+
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mt-6">
           {currentCourses.map((course) => (
-            <CourseCard
-              key={course.id} // Ensure `course.id` is unique
-              title={course.title}
-              description={course.description}
-              category={course.category}
-              icon={
-                course.icon ? (
-                  <i className={`text-blue-500 text-2xl ${course.icon}`}></i>
-                ) : (
-                  <FaBook className="text-blue-500 text-2xl" />
-                )
-              }
-              teacher={course.teacher}
-            />
+            <div key={course.id} className="cursor-pointer">
+              <CourseCard
+                courseName={course.courseName}
+                content={course.content}
+                title={course.title}
+                description={course.description}
+                category={course.category}
+                icon={getIcon(course.category)}
+                teacher={course.teacher}
+                courseId={course.id}
+                onDelete={handleDelete} // Truyền hàm xóa
+              />
+            </div>
           ))}
         </div>
 
@@ -127,7 +171,7 @@ const CoursesSection = () => {
           >
             Previous
           </button>
-          <span className="text-sm mx-2">
+          <span className="text-sm mx-2 text-black">
             Page {currentPage} of {totalPages}
           </span>
           <button
@@ -146,4 +190,4 @@ const CoursesSection = () => {
   );
 };
 
-export default CoursesSection;
+export default CourseList;

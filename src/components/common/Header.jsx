@@ -63,7 +63,10 @@ const Header = () => {
               </span>
               Livestreams
             </a>
-            <a className="font-medium text-black focus:outline-none  " href="">
+            <a
+              className="font-medium text-black focus:outline-none  "
+              href="courselist"
+            >
               <span className="mr-2">
                 <FontAwesomeIcon icon={faBook} />
               </span>

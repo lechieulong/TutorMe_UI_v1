@@ -1,5 +1,7 @@
 // Slice name
 export const SLICE_NAMES = {
+  COURSESTIMELINEDETAIL: "courseTimelineDetail",
+  COURSESTIMELINE: "coursesTimeline",
   COURSES: "courses",
   CLASSES: "classes",
   AUTH: "auth",

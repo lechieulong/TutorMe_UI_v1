@@ -5,11 +5,11 @@ const ForgotPassword = () => {
     return (
         <div className="font-montserrat bg-gradient-to-br from-sky-50 to-gray-200 w-screen h-screen flex items-center justify-center">
             <div className="flex w-full max-w-screen-lg">
-                <div className="w-full lg:w-1/2 bg-gray-400 hidden lg:flex items-center justify-center bg-cover rounded-l-lg">
+                <div className="w-full lg:w-1/2 bg-yellow-100 hidden lg:flex items-center justify-center bg-cover rounded-l-lg">
                     <img
-                        src="./src/assets/logo.png"
+                        src="./src/assets/images/logo_1.png"
                         loading="lazy"
-                        className="h-24 p-6 transition-all duration-300 hover:drop-shadow-lg"
+                        className="w-[200px] p-6 transition-all duration-300 hover:drop-shadow-lg"
                         alt="tutorme logo"
                     />
                 </div>
@@ -20,7 +20,7 @@ const ForgotPassword = () => {
                             We get it, stuff happens. Just enter your email address below and we'll send you a link to reset your password!
                         </p>
                     </div>
-                    <form className="px-8 pt-6 pb-8 mb-4 bg-white rounded flex flex-col">
+                    <form className="px-8 pb-8 mb-4 bg-white rounded flex flex-col">
                         <div className="mb-4">
                             <label className="block mb-2 text-sm font-bold text-gray-700" htmlFor="email">
                                 Email
@@ -42,7 +42,14 @@ const ForgotPassword = () => {
                             You don't have an account? <Link to="/register" className="underline">Register</Link> a new account <br />
                         </div>
                         <div className="text-center text-xs">
-                            Already have an account? <Link to="/" className="underline">Login</Link>
+                            Already have an account? <Link to="/login" className="underline">Login</Link>
+                            <p className="text-xs mt-2">
+                                Back to our{" "}
+                                <Link to="/" className="underline">
+                                    Home page
+                                </Link>{" "}
+                                and continue.
+                            </p>
                         </div>
                     </form>
                 </div>

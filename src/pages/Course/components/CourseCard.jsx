@@ -15,7 +15,7 @@ const CourseCard = ({
 }) => {
   const handleDelete = async () => {
     try {
-      await axios.delete(`http://localhost:5156/api/Courses/${courseId}`);
+      await axios.delete(`https://localhost:7030/api/Courses/${courseId}`);
       onDelete(courseId); // Gọi hàm onDelete để cập nhật trạng thái ở component cha
     } catch (error) {
       console.error("Error deleting course", error);

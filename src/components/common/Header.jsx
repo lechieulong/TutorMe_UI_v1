@@ -10,6 +10,7 @@ import {
   faPenNib,
   faUserGraduate,
   faHeadset,
+  faGraduationCap,
 } from "@fortawesome/free-solid-svg-icons";
 
 const Header = () => {
@@ -32,6 +33,13 @@ const Header = () => {
         <div className="sm:order-3 flex items-center gap-x-2">
           {authToken ? (
             <>
+                <button
+                  type="button"
+                  className="py-2 px-3 inline-flex items-center gap-x-2 text-sm font-medium rounded-lg border border-gray-200 bg-white text-gray-800 shadow-sm hover:bg-gray-50 focus:outline-none focus:bg-gray-50 disabled:opacity-50 disabled:pointer-events-none   dark:border-neutral-700 transition-hover transition-transform duration-500 dark:hover:scale-110"
+                >
+                  Stream now
+                  <FontAwesomeIcon icon={faHeadset} />
+                </button>
               <button
                 onClick={handleLogout}
                 className="py-2 px-3 inline-flex items-center gap-x-2 text-sm font-medium rounded-lg border border-gray-200 bg-white text-gray-800 shadow-sm hover:bg-gray-50 focus:outline-none focus:bg-gray-50"
@@ -49,27 +57,9 @@ const Header = () => {
               type="button"
               className="py-2 px-3 inline-flex items-center gap-x-2 text-sm font-medium rounded-lg border border-gray-200 bg-white text-gray-800 shadow-sm hover:bg-gray-50 focus:outline-none focus:bg-gray-50"
             >
-              Đăng nhập
+              Log In
             </Link>
           )}
-          <button
-            type="button"
-            className="py-2 px-3 inline-flex items-center gap-x-2 text-sm font-medium rounded-lg border border-gray-200 bg-white text-gray-800 shadow-sm hover:bg-gray-50 focus:outline-none focus:bg-gray-50 disabled:opacity-50 disabled:pointer-events-none   dark:border-neutral-700 transition-hover transition-transform duration-500 dark:hover:scale-110"
-          >
-            Stream now
-            <FontAwesomeIcon icon={faHeadset} />
-          </button>
-          <button
-            type="button"
-            className="py-2 px-3 inline-flex items-center gap-x-2 text-sm font-medium rounded-lg border border-gray-200 bg-white text-gray-800 shadow-sm hover:bg-gray-50 focus:outline-none focus:bg-gray-50 disabled:opacity-50 disabled:pointer-events-none   dark:border-neutral-700 transition-hover transition-transform duration-500 dark:hover:scale-110"
-          >
-            Log In
-          </button>
-          <img
-            className="inline-block size-[38px] rounded-full"
-            src="https://images.unsplash.com/photo-1568602471122-7832951cc4c5?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=facearea&facepad=2&w=300&h=300&q=80"
-            alt="Avatar"
-          />
         </div>
         <div
           id="hs-navbar-alignment"
@@ -111,12 +101,12 @@ const Header = () => {
               Test
             </a>
             {authToken && (
-            <a className="font-medium text-black focus:outline-none" href="mylearning">
-              <span className="mr-2">
-              <FontAwesomeIcon icon={faGraduationCap} />
-              </span>
-              My Learning
-            </a>
+              <a className="font-medium text-black focus:outline-none" href="mylearning">
+                <span className="mr-2">
+                  <FontAwesomeIcon icon={faGraduationCap} />
+                </span>
+                My Learning
+              </a>
             )}
             <a className="font-medium text-black focus:outline-none" href="#">
               <span className="mr-2">

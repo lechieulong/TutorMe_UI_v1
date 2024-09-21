@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import FillInTheBlankQuestion from "../FillInTheBlankQuestion";
+import FillInTheBlankQuestion from "../AnswerType/FillInTheBlankQuestion";
 import RadioOption from "../AnswerType/RadioOption";
 import MatchingHeading from "../AnswerType/MatchingHeading";
 

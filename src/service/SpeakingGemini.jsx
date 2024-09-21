@@ -5,7 +5,7 @@ import SpeechRecognition, {
 import { GoogleGenerativeAI } from "@google/generative-ai";
 import { useEffect, useState } from "react";
 
-const genAI = new GoogleGenerativeAI("AIzaSyAkFBzNmOixBE8Elh-nNseThbJZMJAMc_A");
+const genAI = new GoogleGenerativeAI(import.meta.env.VITE_GEN_AI);
 
 const SpeakingGemini = () => {
   const { transcript, listening } = useSpeechRecognition();

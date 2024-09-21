@@ -7,30 +7,160 @@ import FilterForm from "../../components/Test/SkillForm/FilterForm";
 import Header from "../../components/common/Header";
 import { faPlane, faStream } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { useDispatch, useSelector } from "react-redux";
 import { faFly } from "@fortawesome/free-brands-svg-icons";
 
+import { createTest } from "../../redux/testExam/TestSlice";
+
 const TestForm = () => {
-  const [selectedClasses, setSelectedClasses] = useState([]);
   const [selectedSkills, setSelectedSkills] = useState([]);
   const [formData, setFormData] = useState({
-    Id: "",
     testName: "",
     classIds: [],
     duration: 40,
     startTime: new Date(),
     endTime: new Date(),
-    parts: [
+    skills: [
       {
-        partId: "",
-        testId: "",
-        partNumber: 1,
-        skillTest: 1,
-        contentText: "",
-        imgUrl: "",
-        audioUrl: "",
+        type: 0,
+        duration: 30,
+        parts: [
+          {
+            partNumber: 1,
+            skillType: 0,
+            contentText: "",
+            audioUrl: "",
+            imageUrl: "",
+            questionTypePart: [
+              {
+                questionGuide: "",
+                questionType: 1,
+                questions: [
+                  {
+                    questionName: "",
+                    maxMarks: 1,
+                    answersOptions: [
+                      {
+                        answerText: "",
+                        isCorrect: false,
+                      },
+                    ],
+                    answerFilling: "",
+                    answerTrueFalse: 0,
+                    answerMatching: [{ heading: "", matching: "" }],
+                  },
+                ],
+              },
+            ],
+          },
+        ],
+      },
+      {
+        type: 1,
+        duration: 30,
+        parts: [
+          {
+            partNumber: 1,
+            skillType: 0,
+            contentText: "",
+            audioUrl: "",
+            imageUrl: "",
+            questionTypePart: [
+              {
+                questionGuide: "",
+                questionType: 1,
+                questions: [
+                  {
+                    questionName: "",
+                    maxMarks: 1,
+                    answersOptions: [
+                      {
+                        answerText: "",
+                        isCorrect: false,
+                      },
+                    ],
+                    answerFilling: "",
+                    answerTrueFalse: 0,
+                    answerMatching: [{ heading: "", matching: "" }],
+                  },
+                ],
+              },
+            ],
+          },
+        ],
+      },
+      {
+        type: 2,
+        duration: 30,
+        parts: [
+          {
+            partNumber: 1,
+            skillType: 0,
+            contentText: "",
+            audioUrl: "",
+            imageUrl: "",
+            questionTypePart: [
+              {
+                questionGuide: "",
+                questionType: 1,
+                questions: [
+                  {
+                    questionName: "",
+                    maxMarks: 1,
+                    answersOptions: [
+                      {
+                        answerText: "",
+                        isCorrect: false,
+                      },
+                    ],
+                    answerFilling: "",
+                    answerTrueFalse: 0,
+                    answerMatching: [{ heading: "", matching: "" }],
+                  },
+                ],
+              },
+            ],
+          },
+        ],
+      },
+      {
+        type: 3,
+        duration: 30,
+        parts: [
+          {
+            partNumber: 1,
+            skillType: 0,
+            contentText: "",
+            audioUrl: "",
+            imageUrl: "",
+            questionTypePart: [
+              {
+                questionGuide: "",
+                questionType: 1,
+                questions: [
+                  {
+                    questionName: "",
+                    maxMarks: 1,
+                    answersOptions: [
+                      {
+                        answerText: "",
+                        isCorrect: false,
+                      },
+                    ],
+                    answerFilling: "",
+                    answerTrueFalse: 0,
+                    answerMatching: [{ heading: "", matching: "" }],
+                  },
+                ],
+              },
+            ],
+          },
+        ],
       },
     ],
   });
+
+  const dispatch = useDispatch();
 
   const handleSelectClass = (classes) => {
     setFormData((prevData) => ({
@@ -45,24 +175,15 @@ const TestForm = () => {
     setFormData((prevData) => ({ ...prevData, ...updatedData }));
 
   const handleSubmit = async () => {
-    try {
-      console.log("Data: ", formData);
-      // Uncomment and replace with your API endpoint
-      // const response = await fetch("https://your-api-endpoint.com/submit", {
-      //   method: "POST",
-      //   headers: {
-      //     "Content-Type": "application/json",
-      //   },
-      //   body: JSON.stringify({ selectedClasses, formData }),
-      // });
+    console.log(formData);
 
-      // if (!response.ok) throw new Error("Network response was not ok");
-
-      alert("Submission successful!");
-    } catch (error) {
-      console.error("Submission failed:", error);
-      alert("Submission failed.");
-    }
+    // try {
+    //   dispatch(createTest(formData));
+    //   alert("Submission successful!");
+    // } catch (error) {
+    //   console.error("Submission failed:", error);
+    //   alert("Submission failed.");
+    // }
   };
 
   const renderSkillForms = () =>
@@ -173,8 +294,7 @@ const TestForm = () => {
       </div>
 
       <main className="mx-auto mt-8 rounded  border-2 ">
-        {renderSkillForms()}
-
+        <div className="flex flex-col gap-2">{renderSkillForms()}</div>
         {selectedSkills.length > 0 && (
           <div className="p-2">
             <button

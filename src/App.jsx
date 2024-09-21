@@ -22,9 +22,11 @@ import TestList from "./pages/User/TestList";
 
 import "preline";
 import TestLayout from "./pages/TestExam/TestLayout";
-import CourseDetail from "./pages/Mentor/CourseDetail";
+import CourseDetail from "./pages/Course/CourseDetail";
 import TestForm from "./pages/TestExam/TestForm";
 import ImageTest from "./components/ImageTest";
+import CourseTimeline from "./pages/Course/components/CourseTimeline";
+import CreateCourse from "./pages/Course/components/CreateCourse";
 import SpeakingGemini from "./service/SpeakingGemini";
 import MyLearning from "./pages/Class/MyLearning";
 
@@ -57,14 +59,17 @@ const App = () => {
 
           {/* Calender */}
           <Route path="/calendar" element={<Calendar />} />
+
           {/* Test Mentor */}
-          <Route path="/courses" element={<CourseDetail />} />
 
           {/* Mentor */}
           <Route path="/metorinfor" element={<MetorInfor />} />
 
           {/* Course */}
           <Route path="/course" element={<CourseList />} />
+          <Route path="/createCourse" element={<CreateCourse />} />
+          <Route path="/courseDetail/:courseId" element={<CourseDetail />} />
+          <Route path="/course-timeline" element={<CourseTimeline />} />
           {/* <Route path="/courses/:courseId" element={<CourseDetail />} /> */}
 
           {/* Class */}

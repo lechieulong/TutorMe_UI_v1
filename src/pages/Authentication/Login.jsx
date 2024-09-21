@@ -44,9 +44,9 @@ const SignIn = () => {
       <div className="w-full max-w-md bg-white p-6 rounded-lg shadow-lg">
         <div className="flex items-center justify-center space-x-4 mb-4">
           <img
-            src="./src/assets/logo.png"
+            src="./src/assets/images/logo_1.png"
             loading="lazy"
-            className="w-[200px]"
+            className="w-[100px]"
             alt="tutorme logo"
           />
           <h1 className="font-mono text-2xl font-bold text-gray-900">LOGIN</h1>

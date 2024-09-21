@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 import useAuthToken from '../../hooks/useAuthToken'; // Import useAuthToken
 import Cookies from 'js-cookie'; // Import js-cookie
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faHouse, faTv, faBook, faPenNib, faUserGraduate } from "@fortawesome/free-solid-svg-icons";
+import { faHouse, faTv, faBook, faPenNib, faUserGraduate, faGraduationCap } from "@fortawesome/free-solid-svg-icons";
 
 const Header = () => {
   const authToken = useAuthToken(); // Lấy token từ cookie
@@ -30,7 +30,7 @@ const Header = () => {
               </button>
               <img
                 className="inline-block size-[38px] rounded-full"
-                src="https://scontent.fsgn2-8.fna.fbcdn.net/v/t39.30808-6/428608379_1107729527084945_699601624333735778_n.jpg?_nc_cat=102&ccb=1-7&_nc_sid=6ee11a&_nc_eui2=AeGyVNuzP4Hc8Dbdt9fO1j7gqcEP5iSFCnKpwQ_mJIUKckbEXT7w3bFwY3fwedmZXiSmhLJmd69z1YqhZFIY0buO&_nc_ohc=tHAMdD9qR38Q7kNvgEnH1NK&_nc_ht=scontent.fsgn2-8.fna&_nc_gid=A67UmE9Be5K2Zko00Modiwb&oh=00_AYA5r3fzu3zouyXE0nx_Hu8-p3hqSGQu96x0HsJ0cHJb1Q&oe=66EA5AF0"                alt="Avatar"
+                src="https://scontent.fsgn2-8.fna.fbcdn.net/v/t39.30808-6/428608379_1107729527084945_699601624333735778_n.jpg?_nc_cat=102&ccb=1-7&_nc_sid=6ee11a&_nc_eui2=AeGyVNuzP4Hc8Dbdt9fO1j7gqcEP5iSFCnKpwQ_mJIUKckbEXT7w3bFwY3fwedmZXiSmhLJmd69z1YqhZFIY0buO&_nc_ohc=tHAMdD9qR38Q7kNvgEnH1NK&_nc_ht=scontent.fsgn2-8.fna&_nc_gid=A67UmE9Be5K2Zko00Modiwb&oh=00_AYA5r3fzu3zouyXE0nx_Hu8-p3hqSGQu96x0HsJ0cHJb1Q&oe=66EA5AF0" alt="Avatar"
               />
             </>
           ) : (
@@ -57,7 +57,7 @@ const Header = () => {
               </span>
               Livestreams
             </a>
-            <a className="font-medium text-black focus:outline-none" href="courselist">
+            <a className="font-medium text-black focus:outline-none" href="course">
               <span className="mr-2">
                 <FontAwesomeIcon icon={faBook} />
               </span>
@@ -69,6 +69,14 @@ const Header = () => {
               </span>
               Kiểm tra
             </a>
+            {authToken && (
+            <a className="font-medium text-black focus:outline-none" href="mylearning">
+              <span className="mr-2">
+              <FontAwesomeIcon icon={faGraduationCap} />
+              </span>
+              My Learning
+            </a>
+            )}
             <a className="font-medium text-black focus:outline-none" href="#">
               <span className="mr-2">
                 <FontAwesomeIcon icon={faUserGraduate} />

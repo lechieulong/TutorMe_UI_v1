@@ -3,7 +3,7 @@ import "regenerator-runtime/runtime";
 
 import Home from "./pages/Home";
 import NotFound from "./components/common/NotFound";
-import ClassesList from "./pages/classes/ClassList";
+import ClassesList from "./pages/Class/ClassList";
 import TestSetting from "./pages/TestExam/TestSetting";
 import Login from "./pages/Authentication/Login";
 import Register from "./pages/Authentication/Register";
@@ -17,6 +17,7 @@ import LiveStream from "./pages/LiveStream";
 import MetorInfor from "./pages/Mentor/MentorInforTest";
 import CourseList from "./pages/Course/CourseList";
 import TestList from "./pages/User/TestList";
+// import MyLearning from "./pages/Class/MyLearning";
 // import CourseDetail from './CourseDetail';
 
 import "preline";
@@ -25,6 +26,7 @@ import CourseDetail from "./pages/Mentor/CourseDetail";
 import TestForm from "./pages/TestExam/TestForm";
 import ImageTest from "./components/ImageTest";
 import SpeakingGemini from "./service/SpeakingGemini";
+import MyLearning from "./pages/Class/MyLearning";
 
 const App = () => {
   return (
@@ -37,7 +39,7 @@ const App = () => {
           <Route path="/userdetail" element={<UserDetail />} />
           <Route path="/profileedit" element={<ProfileEdit />} />
           <Route path="/changepassword" element={<ChangePassword />} />
-
+          
           {/* Test  common*/}
           <Route path="/" element={<Home />} />
           <Route path="*" element={<NotFound />} />
@@ -62,8 +64,11 @@ const App = () => {
           <Route path="/metorinfor" element={<MetorInfor />} />
 
           {/* Course */}
-          <Route path="/courselist" element={<CourseList />} />
+          <Route path="/course" element={<CourseList />} />
           {/* <Route path="/courses/:courseId" element={<CourseDetail />} /> */}
+
+          {/* Class */}
+          <Route path="/mylearning" element={<MyLearning />} />
 
           {/* List test that User did */}
           <Route path="/testlist" element={<TestList />} />

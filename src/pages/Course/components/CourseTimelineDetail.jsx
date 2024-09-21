@@ -11,7 +11,7 @@ const CourseTimelineDetail = ({ timelineId }) => {
     const fetchTimelineDetails = async () => {
       try {
         const response = await axios.get(
-          `http://localhost:5156/api/CourseTimelineDetail/CourseTimeline/${timelineId}`
+          `https://localhost:7030/api/CourseTimelineDetail/CourseTimeline/${timelineId}`
         );
         setDetails(response.data);
         setLoading(false);

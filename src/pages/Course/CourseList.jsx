@@ -79,7 +79,7 @@ const CourseList = () => {
 
   const handleDelete = async (courseId) => {
     try {
-      await axios.delete(`http://localhost:5156/api/Courses/${courseId}`);
+      await axios.delete(`https://localhost:7030/api/Courses/${courseId}`);
       dispatch(fetchCourses()); // Tải lại danh sách khóa học sau khi xóa
     } catch (error) {
       console.error("Error deleting course", error);

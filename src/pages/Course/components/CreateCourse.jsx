@@ -27,7 +27,7 @@ const CreateCourse = () => {
     };
 
     try {
-      await axios.post("http://localhost:5156/api/Courses", courseData);
+      await axios.post("https://localhost:7030/api/Courses", courseData);
       // Reset the form
       setCourse({
         courseName: "",

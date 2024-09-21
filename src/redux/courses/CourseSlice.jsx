@@ -6,7 +6,7 @@ export const fetchCourses = createAsyncThunk(
   `${SLICE_NAMES.COURSES}/${ACTIONS.GET_COURSES}`,
   async () => {
     try {
-      const response = await axios.get("http://localhost:5156/api/Courses");
+      const response = await axios.get("https://localhost:7030/api/Courses");
       return response.data;
     } catch (error) {
       throw Error(error.message);

@@ -10,7 +10,7 @@ const CourseTimeline = ({ courseId, onSelectTimeline }) => {
     const fetchTimelines = async () => {
       try {
         const response = await axios.get(
-          `http://localhost:5156/api/CourseTimeline/Course/${courseId}`
+          `https://localhost:7030/api/CourseTimeline/Course/${courseId}`
         );
         setTimelines(response.data);
         onSelectTimeline(response.data.map((t) => t.id)); // Gọi onSelectTimeline với tất cả ID

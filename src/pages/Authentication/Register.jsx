@@ -160,7 +160,8 @@ const SignUp = () => {
               {/* Success message */}
               {status === "success" && (
                 <p className="font-mono text-xs text-green-500 text-center mt-2">
-                  Registration successful! <br />  Please <Link to="/login" className="underline text-blue-500">log in</Link>.
+                  {/* Registration successful! <br />  Please <Link to="/login" className="underline text-blue-500">log in</Link>. */}
+                  Registration successful! <br />  Please <Link to="https://mail.google.com/" className="underline text-blue-500" target="_blank" rel="noopener noreferrer">Check your email</Link>.
                 </p>
               )}
               {status === "pending" && (

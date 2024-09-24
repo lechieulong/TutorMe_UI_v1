@@ -1,5 +1,6 @@
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import "regenerator-runtime/runtime";
+import { GoogleOAuthProvider } from '@react-oauth/google';
 
 import Home from "./pages/Home";
 import NotFound from "./components/common/NotFound";
@@ -33,54 +34,56 @@ import MyLearning from "./pages/Class/MyLearning";
 const App = () => {
   return (
     <div className=" min-h-screen ">
-      <Router>
-        <Routes>
-          <Route path="/login" element={<Login />} />
-          <Route path="/register" element={<Register />} />
-          <Route path="/forgotpass" element={<ForgotPassword />} />
-          <Route path="/userdetail" element={<UserDetail />} />
-          <Route path="/profileedit" element={<ProfileEdit />} />
-          <Route path="/changepassword" element={<ChangePassword />} />
-          
-          {/* Test  common*/}
-          <Route path="/" element={<Home />} />
-          <Route path="*" element={<NotFound />} />
-          <Route path="/gemini" element={<SpeakingGemini />} />
+      <GoogleOAuthProvider clientId="553052882546-kmot9sitmhmu5ahgt47p07j96vagbqim.apps.googleusercontent.com">
+        <Router>
+          <Routes>
+            <Route path="/login" element={<Login />} />
+            <Route path="/register" element={<Register />} />
+            <Route path="/forgotpass" element={<ForgotPassword />} />
+            <Route path="/userdetail" element={<UserDetail />} />
+            <Route path="/profileedit" element={<ProfileEdit />} />
+            <Route path="/changepassword" element={<ChangePassword />} />
 
-          {/* Test  exam*/}
-          <Route path="/test-setting/test-exam" element={<TestLayout />} />
-          <Route path="/live-stream" element={<LiveStream />} />
-          <Route path="/skill-part/test-setting" element={<TestSetting />} />
-          <Route path="/skill-part" element={<SkillPart />} />
-          <Route path="/create-test" element={<TestForm />} />
+            {/* Test  common*/}
+            <Route path="/" element={<Home />} />
+            <Route path="*" element={<NotFound />} />
+            <Route path="/gemini" element={<SpeakingGemini />} />
 
-          {/* Test  class*/}
-          <Route path="/classes" element={<ClassesList />} />
+            {/* Test  exam*/}
+            <Route path="/test-setting/test-exam" element={<TestLayout />} />
+            <Route path="/live-stream" element={<LiveStream />} />
+            <Route path="/skill-part/test-setting" element={<TestSetting />} />
+            <Route path="/skill-part" element={<SkillPart />} />
+            <Route path="/create-test" element={<TestForm />} />
 
-          {/* Calender */}
-          <Route path="/calendar" element={<Calendar />} />
+            {/* Test  class*/}
+            <Route path="/classes" element={<ClassesList />} />
 
-          {/* Test Mentor */}
+            {/* Calender */}
+            <Route path="/calendar" element={<Calendar />} />
 
-          {/* Mentor */}
-          <Route path="/metorinfor" element={<MetorInfor />} />
+            {/* Test Mentor */}
 
-          {/* Course */}
-          <Route path="/course" element={<CourseList />} />
-          <Route path="/createCourse" element={<CreateCourse />} />
-          <Route path="/courseDetail/:courseId" element={<CourseDetail />} />
-          <Route path="/course-timeline" element={<CourseTimeline />} />
-          {/* <Route path="/courses/:courseId" element={<CourseDetail />} /> */}
+            {/* Mentor */}
+            <Route path="/metorinfor" element={<MetorInfor />} />
 
-          {/* Class */}
-          <Route path="/mylearning" element={<MyLearning />} />
+            {/* Course */}
+            <Route path="/course" element={<CourseList />} />
+            <Route path="/createCourse" element={<CreateCourse />} />
+            <Route path="/courseDetail/:courseId" element={<CourseDetail />} />
+            <Route path="/course-timeline" element={<CourseTimeline />} />
+            {/* <Route path="/courses/:courseId" element={<CourseDetail />} /> */}
 
-          {/* List test that User did */}
-          <Route path="/testlist" element={<TestList />} />
+            {/* Class */}
+            <Route path="/mylearning" element={<MyLearning />} />
 
-          <Route path="/uploadImage" element={<ImageTest />} />
-        </Routes>
-      </Router>
+            {/* List test that User did */}
+            <Route path="/testlist" element={<TestList />} />
+
+            <Route path="/uploadImage" element={<ImageTest />} />
+          </Routes>
+        </Router>
+      </GoogleOAuthProvider>
     </div>
   );
 };

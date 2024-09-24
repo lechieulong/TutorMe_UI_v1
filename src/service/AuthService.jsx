@@ -15,6 +15,42 @@ const loginApi = async (username, password) => {
     }
 };
 
+// Check if email exists
+export const checkEmailExistsApi = async (email) => {
+    const response = await fetch(`/api/auth/check-email`, {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ email }),
+    });
+    return response.json();
+};
+
+// Register a new user with Google email
+export const registerGoogleUserApi = async (email, token) => {
+    const response = await fetch(`/api/auth/register-google`, {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ email, token }),
+    });
+    return response.json();
+};
+
+// Log in with Google token
+export const loginWithGoogleApi = async (token) => {
+    const response = await fetch(`/api/auth/login-google`, {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ token }),
+    });
+    return response.json();
+};
+
 const logoutApi = () => {
     Cookies.remove('authToken');
     window.location.reload();

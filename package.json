@@ -26,6 +26,7 @@
     "@mui/x-date-pickers": "^7.16.0",
     "@preline/accordion": "^2.4.1",
     "@preline/overlay": "^2.4.1",
+    "@react-oauth/google": "^0.12.1",
     "@reduxjs/toolkit": "^2.2.7",
     "@syncfusion/ej2-react-schedule": "^26.2.12",
     "@types/jquery": "^3.5.30",

@@ -11,9 +11,6 @@ import { createTest } from "../../redux/testExam/TestSlice";
 
 const TestFormSchema = Yup.object().shape({
   testName: Yup.string().required("Test Name is required"),
-  duration: Yup.number()
-    .required("Duration is required")
-    .min(1, "Duration must be at least 1 minute"),
   startTime: Yup.date()
     .min(new Date(), "Start time cannot be in the past")
     .required("Start time is required"),
@@ -28,7 +25,6 @@ const TestForm = () => {
   const [formData, setFormData] = useState({
     testName: "",
     classIds: [],
-    duration: 40,
     startTime: new Date(),
     endTime: new Date(),
     skills: [
@@ -38,7 +34,6 @@ const TestForm = () => {
         parts: [
           {
             partNumber: 1,
-            skillType: 0,
             contentText: "",
             audioUrl: "",
             imageUrl: "",
@@ -244,27 +239,6 @@ const TestForm = () => {
                 />
                 <ErrorMessage
                   name="testName"
-                  component="div"
-                  className="text-red-500 text-sm"
-                />
-              </div>
-
-              <div className="w-5/12">
-                <label
-                  htmlFor="duration"
-                  className="block font-semibold text-gray-800"
-                >
-                  Duration (minutes)
-                </label>
-                <Field
-                  id="duration"
-                  name="duration"
-                  type="number"
-                  className="mt-2 block w-full px-2 py-1 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                  placeholder="Enter duration"
-                />
-                <ErrorMessage
-                  name="duration"
                   component="div"
                   className="text-red-500 text-sm"
                 />

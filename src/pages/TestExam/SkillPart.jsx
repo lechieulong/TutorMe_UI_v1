@@ -9,7 +9,6 @@ import {
   faCalendarAlt,
   faUser,
   faBorderAll,
-  faBolt,
   faPlay,
 } from "@fortawesome/free-solid-svg-icons";
 import Breadcrumbs from "../../components/common/Breadcrumbs";

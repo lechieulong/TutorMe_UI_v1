@@ -207,7 +207,7 @@ const TestForm = () => {
       </h3>
 
       <div className="p-6 bg-green-50 shadow-lg rounded-lg border border-gray-200">
-        <div className="flex  gap-3 mb-6 ">
+        <div className="flex gap-3 mb-6">
           <div className="w-6/12">
             <label
               htmlFor="testName"
@@ -293,12 +293,12 @@ const TestForm = () => {
         </LocalizationProvider>
       </div>
 
-      <main className="mx-auto mt-8 rounded  border-2 ">
+      <main className="mx-auto mt-8 rounded border-2">
         <div className="flex flex-col gap-2">{renderSkillForms()}</div>
         {selectedSkills.length > 0 && (
           <div className="p-2">
             <button
-              className="w-28 ml-10  bg-green-500 text-white px-4 py-2 rounded-lg hover:bg-green-600"
+              className="w-28 ml-10 bg-green-500 text-white px-4 py-2 rounded-lg hover:bg-green-600"
               onClick={handleSubmit}
             >
               <span className="mr-2">

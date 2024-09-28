@@ -145,6 +145,23 @@ const FormSkill = ({ skill, formData, handleDataChange }) => {
     }
   };
 
+  const removeQuestionTypePart = (partIndex, qTypeIndex) => {
+    const updatedSkills = [...formData.skills];
+    const updatedParts = [...updatedSkills[skill].parts];
+
+    if (updatedParts[partIndex].questionTypePart.length > 1) {
+      updatedParts[partIndex].questionTypePart.splice(qTypeIndex, 1);
+
+      updatedSkills[skill] = {
+        ...updatedSkills[skill],
+        parts: updatedParts,
+      };
+      handleDataChange({ skills: updatedSkills });
+    } else {
+      alert("You must have at least 1 question type part.");
+    }
+  };
+
   const addQuestionTypePart = (partIndex) => {
     const newQuestionTypePart = {
       questionGuide: "",
@@ -267,7 +284,7 @@ const FormSkill = ({ skill, formData, handleDataChange }) => {
                   <div className="text-lg font-medium text-gray-600">
                     Content Topic
                   </div>
-                  <div className="mt-2 relative w-full  overflow-auto bg-white rounded-md shadow-inner">
+                  <div className="mt-2 relative w-full overflow-auto bg-white rounded-md shadow-inner">
                     <CKEditor
                       editor={ClassicEditor}
                       data={part.contentText}
@@ -342,9 +359,20 @@ const FormSkill = ({ skill, formData, handleDataChange }) => {
                   className="mt-4 p-4 border border-gray-200 rounded-lg shadow-sm bg-white"
                 >
                   <div className="bg-yellow-100 border-l-4 border-yellow-500 text-yellow-700 p-4 rounded-md">
-                    <p className="italic">
-                      Please choose type before add question!!!
-                    </p>
+                    <div className="flex justify-between items-center">
+                      <p className="italic">
+                        Please choose type before add question!!!
+                      </p>
+                      <button
+                        type="button"
+                        onClick={() =>
+                          removeQuestionTypePart(partIndex, qIndex)
+                        }
+                        className=" px-4 py-2 bg-red-500 text-white rounded-md shadow-md hover:bg-green-600"
+                      >
+                        <FontAwesomeIcon icon={faTrash} />
+                      </button>
+                    </div>
                   </div>
                   <div className="flex gap-4 mb-4">
                     {(skill === 0 || skill === 1) && (
@@ -493,20 +521,20 @@ const FormSkill = ({ skill, formData, handleDataChange }) => {
                                             ...newSkills[skill].parts,
                                           ];
 
-                                          // Cập nhật giá trị heading tại phần tử matchIndex
+                                          // Update heading value
                                           newParts[partIndex].questionTypePart[
                                             qIndex
                                           ].questions[qtnIndex].answerMatching[
                                             matchIndex
                                           ].heading = e.target.value;
 
-                                          // Cập nhật phần mới trong kỹ năng
+                                          // Update the skill
                                           newSkills[skill] = {
                                             ...newSkills[skill],
                                             parts: newParts,
                                           };
 
-                                          // Cập nhật formData với kỹ năng mới
+                                          // Update formData with the new skill
                                           handleDataChange({
                                             ...formData,
                                             skills: newSkills,
@@ -533,20 +561,20 @@ const FormSkill = ({ skill, formData, handleDataChange }) => {
                                             ...newSkills[skill].parts,
                                           ];
 
-                                          // Cập nhật giá trị matching tại phần tử matchIndex
+                                          // Update matching value
                                           newParts[partIndex].questionTypePart[
                                             qIndex
                                           ].questions[qtnIndex].answerMatching[
                                             matchIndex
                                           ].matching = e.target.value;
 
-                                          // Cập nhật phần mới trong kỹ năng
+                                          // Update the skill
                                           newSkills[skill] = {
                                             ...newSkills[skill],
                                             parts: newParts,
                                           };
 
-                                          // Cập nhật formData với kỹ năng mới
+                                          // Update formData with the new skill
                                           handleDataChange({
                                             ...formData,
                                             skills: newSkills,
@@ -605,19 +633,19 @@ const FormSkill = ({ skill, formData, handleDataChange }) => {
                                   const newSkills = [...formData.skills];
                                   const newParts = [...newSkills[skill].parts];
 
-                                  // Cập nhật answerFilling tại vị trí question tương ứng
+                                  // Update answerFilling at the corresponding question position
                                   newParts[partIndex].questionTypePart[
                                     qIndex
                                   ].questions[qtnIndex].answerFilling =
                                     e.target.value;
 
-                                  // Cập nhật phần mới trong kỹ năng
+                                  // Update the skill
                                   newSkills[skill] = {
                                     ...newSkills[skill],
                                     parts: newParts,
                                   };
 
-                                  // Cập nhật formData với kỹ năng mới
+                                  // Update formData with the new skill
                                   handleDataChange({
                                     ...formData,
                                     skills: newSkills,
@@ -627,12 +655,13 @@ const FormSkill = ({ skill, formData, handleDataChange }) => {
                               />
                             </div>
                           )}
+
                           {qTypePart.questionType === 3 && (
-                            <div className="w-5/12 flex flex-col">
+                            <div className="w-full flex flex-col">
                               <label className="text-gray-700 font-medium">
                                 Answer Selection (Multiple Choice)
                               </label>
-                              <div className="mt-1">
+                              <div className="flex flex-col gap-3 ">
                                 {question.answersOptions.map((option, idx) => (
                                   <div
                                     key={idx}

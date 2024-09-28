@@ -1,6 +1,9 @@
 import React, { useState } from "react";
 import { CKEditor } from "@ckeditor/ckeditor5-react";
 import ClassicEditor from "@ckeditor/ckeditor5-build-classic";
+import { Formik, Field, Form, ErrorMessage } from "formik";
+import * as Yup from "yup";
+
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faBookOpen,
@@ -68,13 +71,6 @@ const FormSkill = ({ skill, formData, handleDataChange }) => {
     };
 
     handleDataChange(updatedFormData);
-  };
-
-  const handleInputChange = (index, event) => {
-    const { name, value } = event.target;
-    const updatedParts = [...parts];
-    updatedParts[index] = { ...updatedParts[index], [name]: value };
-    handleDataChange({ parts: updatedParts });
   };
 
   const handleAudioChange = (index, event) => {
@@ -247,7 +243,7 @@ const FormSkill = ({ skill, formData, handleDataChange }) => {
           : "All"}
       </h2>
       <label className=" w-3/12  p-2 flex items-center gap-3 justify-center  text-base font-medium text-gray-700">
-        <span className="w-1/2">Duration of skill</span>
+        <span className="w-1/2">Duration (minutes)</span>
         <input
           type="number"
           value={formData.skills[skill].duration}
@@ -1056,7 +1052,7 @@ const FormSkill = ({ skill, formData, handleDataChange }) => {
           <div
             className="cursor-ew-resize  bg-gray-300 rounded-full "
             style={{
-              width: "1px",
+              width: "3px",
               height: "100%",
             }}
             onMouseDown={() => startResizing("main")}

@@ -3,9 +3,15 @@ import Cookies from "js-cookie";
 import { Link, useNavigate } from "react-router-dom";
 import { loginApi } from "../../service/AuthService";
 import { ToastContainer, toast } from "react-toastify";
+import { GoogleLogin } from '@react-oauth/google';
+import { loginWithGoogleApi } from "../../redux/auth/AuthSlice";
 import "react-toastify/dist/ReactToastify.css";
+import { useDispatch, useSelector } from "react-redux";
 
 const SignIn = () => {
+  const dispatch = useDispatch();
+  const { status, error } = useSelector((state) => state.auth);
+
   const [user, setUser] = useState("");
   const [pwd, setPwd] = useState("");
   const navigate = useNavigate();
@@ -39,14 +45,41 @@ const SignIn = () => {
     }
   };
 
+  // Handle Google login success
+  const handleGoogleLoginSuccess = async (credentialResponse) => {
+    const token = credentialResponse.credential;
+    // Store the token in cookies or localStorage
+    try {
+      const response = await dispatch(loginWithGoogleApi({ token })).unwrap();
+      console.log(response);
+      // Handle the API response for successful login/registration
+      if (response.isSuccess) {
+        Cookies.set("authToken", token, { expires: 7 });
+        toast.success("Google login successful!");
+        navigate("/");
+      } else {
+        toast.error(response.message || "Google login failed.");
+      }
+    } catch (error) {
+      console.log("Fail");
+      console.log(error);
+      toast.error(error || "Google login failed. Please try again.");
+    }
+  };
+
+  // Handle Google login failure
+  const handleGoogleLoginFailure = () => {
+    toast.error("Google login failed. Please try again.");
+  };
+
   return (
     <div className="container-login font-montserrat bg-gradient-to-br from-sky-50 to-gray-200 w-screen h-screen flex items-center justify-center">
       <div className="w-full max-w-md bg-white p-6 rounded-lg shadow-lg">
         <div className="flex items-center justify-center space-x-4 mb-4">
           <img
-            src="./src/assets/logo.png"
+            src="./src/assets/images/logo_1.png"
             loading="lazy"
-            className="w-[200px]"
+            className="w-[100px]"
             alt="tutorme logo"
           />
           <h1 className="font-mono text-2xl font-bold text-gray-900">LOGIN</h1>
@@ -99,13 +132,17 @@ const SignIn = () => {
             >
               LOGIN
             </button>
+            {/* Success message */}
+            {status === "pending" && (
+              <p className="font-mono text-xs text-yellow-500 text-center mt-2">Loging...</p>
+            )}
             <ToastContainer autoClose={3000} newestOnTop closeOnClick />
           </div>
         </form>
         <div className="space-y-4 text-gray-600 text-center">
           <p className="text-xs mt-2">-----------------or-----------------</p>
           <div className="grid gap-4">
-            <button className="group h-12 px-4 border-2 border-gray-300 rounded-full transition duration-300 hover:border-blue-400 focus:bg-blue-50 active:bg-blue-100">
+            {/* <button className="group h-12 px-4 border-2 border-gray-300 rounded-full transition duration-300 hover:border-blue-400 focus:bg-blue-50 active:bg-blue-100">
               <div className="relative flex items-center space-x-3 justify-center">
                 <img
                   src="https://tailus.io/sources/blocks/social/preview/images/google.svg"
@@ -116,7 +153,11 @@ const SignIn = () => {
                   Continue with Google
                 </span>
               </div>
-            </button>
+            </button> */}
+            <GoogleLogin
+              onSuccess={handleGoogleLoginSuccess}
+              onError={handleGoogleLoginFailure}
+            />
             <button className="group h-12 px-4 border-2 border-gray-300 rounded-full transition duration-300 hover:border-blue-400 focus:bg-blue-50 active:bg-blue-100">
               <div className="relative flex items-center space-x-3 justify-center">
                 <img

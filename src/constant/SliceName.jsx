@@ -13,6 +13,11 @@ export const ACTIONS = {
   GET_CLASS: "getClass",
   LOGIN: "login",
   REGIS: "register",
+  
+  CHECK_EMAIL: "check-email",
+  REGISTER_GOOGLE: "register-google",
+  LOGIN_GOOGLE: "login-google",
+
   FETCH_TESTS: "getTests",
   CREATE_TEST: "createTest",
   UPDATE_TEST: "updateTest",

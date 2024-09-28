@@ -88,9 +88,9 @@ const SignUp = () => {
       <div className="w-full sm:w-1/2 bg-white p-4 px-12 rounded-lg shadow-lg flex flex-col space-y-4 overflow-y-auto">
         <div className="flex items-center justify-center space-x-4 mb-4">
           <img
-            src="./src/assets/logo.png"
+            src="./src/assets/images/logo_1.png"
             loading="lazy"
-            className="w-[200px]"
+            className="w-[100px]"
             alt="tutorme logo"
           />
           <h1 className="font-mono text-2xl font-bold text-gray-900">
@@ -160,7 +160,8 @@ const SignUp = () => {
               {/* Success message */}
               {status === "success" && (
                 <p className="font-mono text-xs text-green-500 text-center mt-2">
-                  Registration successful! <br />  Please <Link to="/login" className="underline text-blue-500">log in</Link>.
+                  {/* Registration successful! <br />  Please <Link to="/login" className="underline text-blue-500">log in</Link>. */}
+                  Registration successful! <br />  Please <Link to="https://mail.google.com/" className="underline text-blue-500" target="_blank" rel="noopener noreferrer">Check your email</Link>.
                 </p>
               )}
               {status === "pending" && (

@@ -9,7 +9,6 @@ import {
   faCalendarAlt,
   faUser,
   faBorderAll,
-  faBolt,
   faPlay,
 } from "@fortawesome/free-solid-svg-icons";
 import Breadcrumbs from "../../components/common/Breadcrumbs";
@@ -25,29 +24,33 @@ const SkillPart = () => {
 
   const skillParts = [
     {
+      id: 0,
       icon: "book",
       name: "Reading",
       scorePercent: 5.5,
     },
     {
+      id: 1,
       icon: "headPhone",
       name: "Listening",
       scorePercent: 7,
     },
     {
+      id: 2,
       icon: "pen",
       name: "Writing",
       scorePercent: 8,
     },
     {
+      id: 3,
       icon: "microphone",
       name: "Speaking",
       scorePercent: 6,
     },
   ];
 
-  const handleTakeTest = () => {
-    navigate("/skill-part/test-setting", { state: 1 });
+  const handleTakeTest = (id) => {
+    navigate("/skill-part/test-setting", { state: id });
   };
 
   return (
@@ -83,7 +86,7 @@ const SkillPart = () => {
               <span className=" text-gray-800 dark:text-neutral-200">
                 Due Date:
               </span>
-              <span className="text-gray-600 text-sm text-green-700 dark:text-neutral-400">
+              <span className="text-gray-600 text-sm  dark:text-neutral-400">
                 31st August 2024, 3:30 PM
               </span>
             </p>
@@ -98,7 +101,23 @@ const SkillPart = () => {
 
         {/* Skill Part  */}
         <div className="p-4 border mt-2 border-gray-400  shadow-sm rounded-xl dark:bg-neutral-900 dark:border-neutral-700 dark:shadow-neutral-700/70">
+          <div className="border bg-green-600 text-white shadow-md border-gray-300 p-2 flex justify-between mt-2 rounded-xl items-center">
+            <div className="flex  items-center justify-start gap-9">
+              <h4 className="text-2xl font-semibold">
+                <span>
+                  <FontAwesomeIcon icon={faBorderAll} className="mr-2 " />
+                </span>
+                Overal score
+              </h4>
+              <p className="text-xl font-semibold border border-gray-600  p-2 rounded-full bg-white text-gray-700  ">
+                {" "}
+                7.5
+              </p>
+            </div>
+          </div>
           <div className="flex gap-4 justify-center mt-6">
+            {/* fullPart */}
+
             {skillParts.map((skill, index) => (
               <div
                 key={index}
@@ -115,31 +134,15 @@ const SkillPart = () => {
                   {skill.scorePercent}
                 </div>
                 <button
-                  onClick={() => handleTakeTest()}
+                  onClick={() => handleTakeTest(skill.id)} // Gửi id vào hàm
                   className="mt-2 py-2 px-3 inline-flex justify-center items-center gap-x-2 text-sm font-medium rounded-lg border border-transparent bg-green-600 text-white hover:bg-green-700 focus:outline-none focus:bg-green-700 disabled:opacity-50 disabled:pointer-events-none"
                   href="#"
                 >
                   <FontAwesomeIcon icon={faPlay} className="mr-2" />
-                  Take part
+                  Start
                 </button>
               </div>
             ))}
-          </div>
-
-          {/* fullPart */}
-          <div className="border bg-green-600 text-white shadow-md border-gray-300 p-2 flex justify-between mt-2 rounded-xl items-center">
-            <h4 className="w-5/12 text-2xl font-semibold">
-              <span>
-                <FontAwesomeIcon icon={faBorderAll} className="mr-2 " />
-              </span>
-              Full Test
-            </h4>
-            <button className="text-gray-500 text-xl rounded-full w-3/12">
-              Start
-              <span className="text-blue-500">
-                <FontAwesomeIcon icon={faBolt} className="ml-2 " />
-              </span>
-            </button>
           </div>
         </div>
       </MainLayout>

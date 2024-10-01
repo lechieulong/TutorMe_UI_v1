@@ -100,12 +100,12 @@ const Header = () => {
               </span>
               Livestreams
             </a>
-            <a className="font-medium text-black focus:outline-none" href="course">
+            <Link className="font-medium text-black focus:outline-none" to="/course">
               <span className="mr-2">
                 <FontAwesomeIcon icon={faBook} />
               </span>
               Course
-            </a>
+            </Link>
             <a
               className="font-medium text-black focus:outline-none"
               href="skill-part"

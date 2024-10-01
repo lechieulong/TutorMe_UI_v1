@@ -1,17 +1,18 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import axios from "axios";
 import { SLICE_NAMES, ACTIONS, STATUS } from "../../constant/SliceName";
+import apiURLConfig from "../common/apiURLConfig";
 
 // Action login
-export const Login = createAsyncThunk(
+export const LoginApi = createAsyncThunk(
   `${SLICE_NAMES.AUTH}/${ACTIONS.LOGIN}`,
   async (loginData, { rejectWithValue }) => {
     try {
       const response = await axios.post(
-        "https://localhost:7104/api/auth/login",
+        `${apiURLConfig.baseURL}/auth/login`,
         loginData
       );
-      return response.data;
+      return response.data.result;
     } catch (error) {
       return rejectWithValue(
         error.response?.data?.message || "Failed to login"
@@ -26,7 +27,7 @@ export const Regis = createAsyncThunk(
   async (userData, { rejectWithValue }) => {
     try {
       const response = await axios.post(
-        "https://localhost:7030/api/auth/register",
+        `${apiURLConfig.baseURL}/auth/register`,
         userData
       );
       return response.data;
@@ -44,7 +45,7 @@ export const checkEmailExistsApi = createAsyncThunk(
   async (email, { rejectWithValue }) => {
     try {
       const response = await axios.get(
-        `https://localhost:7104/api/auth/check-email?email=${email}`
+        `${apiURLConfig.baseURL}/auth/check-email?email=${email}`,
       );
       return response.data.exists;
     } catch (error) {
@@ -61,7 +62,7 @@ export const registerGoogleUserApi = createAsyncThunk(
   async (googleData, { rejectWithValue }) => {
     try {
       const response = await axios.post(
-        "https://localhost:7104/api/auth/register-google",
+        `${apiURLConfig.baseURL}/auth/register-google`,
         googleData
       );
       return response.data;
@@ -79,7 +80,7 @@ export const loginWithGoogleApi = createAsyncThunk(
   async (googleToken, { rejectWithValue }) => {
     try {
       const response = await axios.post(
-        "https://localhost:7030/api/auth/login-google",
+        `${apiURLConfig.baseURL}/auth/login-google`,
         googleToken
       );
       return response.data;
@@ -91,10 +92,66 @@ export const loginWithGoogleApi = createAsyncThunk(
   }
 );
 
+// Action change password
+export const changePasswordAPI = createAsyncThunk(
+  `${SLICE_NAMES.AUTH}/${ACTIONS.CHANGE_PASSWORD}`,
+  async (data, { rejectWithValue }) => {
+    try {
+      const response = await axios.post(
+        `${apiURLConfig.baseURL}/auth/change-password`,
+        data
+      );
+      return response.data;
+    } catch (error) {
+      return rejectWithValue(
+        error.response?.data?.message || "Failed to change password."
+      );
+    }
+  }
+);
+
+// Action change password
+export const requestForgotAPI = createAsyncThunk(
+  `${SLICE_NAMES.AUTH}/${ACTIONS.REQUEST_FORGOT}`,
+  async (data, { rejectWithValue }) => {
+    try {
+      const response = await axios.post(
+        `${apiURLConfig.baseURL}/auth/forgot-password`,
+        data
+      );
+      return response.data;
+    } catch (error) {
+      return rejectWithValue(
+        error.response?.data?.message || "Failed to change password."
+      );
+    }
+  }
+);
+
+// Action reset password
+export const resetPasswordAPI = createAsyncThunk(
+  `${SLICE_NAMES.AUTH}/${ACTIONS.RESET_PASSWORD}`,
+  async (userData, { rejectWithValue }) => {
+    console.log(userData);
+    try {
+      const response = await axios.post(
+        `${apiURLConfig.baseURL}/auth/reset-password`,
+        userData
+      );
+      return response.data;
+    } catch (error) {
+      return rejectWithValue(
+        error.response?.data?.message || "Failed to reset password. Please request again."
+      );
+    }
+  }
+);
+
 const initialState = {
   user: null, // Thông tin người dùng sau khi đăng nhập hoặc đăng ký
   status: STATUS.IDLE, // Trạng thái mặc định
   error: null, // Thông báo lỗi nếu có
+  token: null
 };
 
 const AuthSlice = createSlice({
@@ -104,14 +161,15 @@ const AuthSlice = createSlice({
   extraReducers: (builder) => {
     builder
       // Xử lý login
-      .addCase(Login.pending, (state) => {
+      .addCase(LoginApi.pending, (state) => {
         state.status = STATUS.PENDING;
       })
-      .addCase(Login.fulfilled, (state, action) => {
+      .addCase(LoginApi.fulfilled, (state, action) => {
         state.status = STATUS.SUCCESS;
-        state.user = action.payload;
+        state.user = action.payload.user;
+        state.token = action.payload.token;
       })
-      .addCase(Login.rejected, (state, action) => {
+      .addCase(LoginApi.rejected, (state, action) => {
         state.status = STATUS.FAILED;
         state.error = action.payload || action.error.message;
       })
@@ -160,9 +218,46 @@ const AuthSlice = createSlice({
       })
       .addCase(loginWithGoogleApi.fulfilled, (state, action) => {
         state.status = STATUS.SUCCESS;
-        state.user = action.payload;
+        state.user = action.payload.user;
+        state.token = action.payload.token;
       })
       .addCase(loginWithGoogleApi.rejected, (state, action) => {
+        state.status = STATUS.FAILED;
+        state.error = action.payload || action.error.message;
+      })
+
+      // Xử lý change password
+      .addCase(changePasswordAPI.pending, (state) => {
+        state.status = STATUS.PENDING;
+      })
+      .addCase(changePasswordAPI.fulfilled, (state, action) => {
+        state.status = STATUS.SUCCESS;
+      })
+      .addCase(changePasswordAPI.rejected, (state, action) => {
+        state.status = STATUS.FAILED;
+        state.error = action.payload || action.error.message;
+      })
+
+      // Xử lý forgot password
+      .addCase(requestForgotAPI.pending, (state) => {
+        state.status = STATUS.PENDING;
+      })
+      .addCase(requestForgotAPI.fulfilled, (state, action) => {
+        state.status = STATUS.SUCCESS;
+      })
+      .addCase(requestForgotAPI.rejected, (state, action) => {
+        state.status = STATUS.FAILED;
+        state.error = action.payload || action.error.message;
+      })
+
+      // Xử lý forgot password
+      .addCase(resetPasswordAPI.pending, (state) => {
+        state.status = STATUS.PENDING;
+      })
+      .addCase(resetPasswordAPI.fulfilled, (state, action) => {
+        state.status = STATUS.SUCCESS;
+      })
+      .addCase(resetPasswordAPI.rejected, (state, action) => {
         state.status = STATUS.FAILED;
         state.error = action.payload || action.error.message;
       })

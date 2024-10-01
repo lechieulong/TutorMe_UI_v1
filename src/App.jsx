@@ -9,9 +9,14 @@ import TestSetting from "./pages/TestExam/TestSetting";
 import Login from "./pages/Authentication/Login";
 import Register from "./pages/Authentication/Register";
 import ForgotPassword from "./pages/Authentication/ForgotPassword";
+import ResetPassword from "./pages/Authentication/ResetPassword";
+
 import UserDetail from "./pages/User/UserDetail";
 import ProfileEdit from "./pages/User/ProfileEdit";
+
 import ChangePassword from "./pages/User/ChangePassword";
+
+
 import Calendar from "./pages/Calendar/Calendar";
 import SkillPart from "./pages/TestExam/SkillPart";
 import LiveStream from "./pages/LiveStream";
@@ -40,9 +45,10 @@ const App = () => {
             <Route path="/login" element={<Login />} />
             <Route path="/register" element={<Register />} />
             <Route path="/forgotpass" element={<ForgotPassword />} />
-            <Route path="/userdetail" element={<UserDetail />} />
-            <Route path="/profileedit" element={<ProfileEdit />} />
+            <Route path="/user/:username" element={<UserDetail />} />
+            <Route path="/user/edit/:username" element={<ProfileEdit />} />
             <Route path="/changepassword" element={<ChangePassword />} />
+            <Route path="/reset-password" element={<ResetPassword />} />
 
             {/* Test  common*/}
             <Route path="/" element={<Home />} />

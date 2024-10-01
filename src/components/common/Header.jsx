@@ -2,6 +2,8 @@
 import { Link } from "react-router-dom";
 import useAuthToken from "../../hooks/useAuthToken"; // Import useAuthToken
 import Cookies from "js-cookie"; // Import js-cookie
+import { getUser } from "../../service/GetUser";
+import defaulAvatar from "../../assets/images/defaul-avatar.jpg";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faHouse,
@@ -12,9 +14,19 @@ import {
   faHeadset,
   faGraduationCap,
 } from "@fortawesome/free-solid-svg-icons";
+import { useEffect, useState } from "react";
 
 const Header = () => {
   const authToken = useAuthToken(); // Lấy token từ cookie
+
+  const [user, setUser] = useState(null);
+
+  useEffect(() => {
+    if (authToken) {
+      const fetchedUser = getUser(); // Fetch the user using getUser
+      setUser(fetchedUser); // Set user data in state
+    }
+  }, [authToken]);
 
   const handleLogout = () => {
     Cookies.remove("authToken"); // Xoá cookie khi logout
@@ -33,23 +45,26 @@ const Header = () => {
         <div className="sm:order-3 flex items-center gap-x-2">
           {authToken ? (
             <>
-                <button
-                  type="button"
-                  className="py-2 px-3 inline-flex items-center gap-x-2 text-sm font-medium rounded-lg border border-gray-200 bg-white text-gray-800 shadow-sm hover:bg-gray-50 focus:outline-none focus:bg-gray-50 disabled:opacity-50 disabled:pointer-events-none   dark:border-neutral-700 transition-hover transition-transform duration-500 dark:hover:scale-110"
-                >
-                  Stream now
-                  <FontAwesomeIcon icon={faHeadset} />
-                </button>
+              <button
+                type="button"
+                className="py-2 px-3 inline-flex items-center gap-x-2 text-sm font-medium rounded-lg border border-gray-200 bg-white text-gray-800 shadow-sm hover:bg-gray-50 focus:outline-none focus:bg-gray-50 disabled:opacity-50 disabled:pointer-events-none   dark:border-neutral-700 transition-hover transition-transform duration-500 dark:hover:scale-110"
+              >
+                Stream now
+                <FontAwesomeIcon icon={faHeadset} />
+              </button>
               <button
                 onClick={handleLogout}
                 className="py-2 px-3 inline-flex items-center gap-x-2 text-sm font-medium rounded-lg border border-gray-200 bg-white text-gray-800 shadow-sm hover:bg-gray-50 focus:outline-none focus:bg-gray-50"
               >
                 Logout
               </button>
-              <img
-                className="inline-block size-[38px] rounded-full"
-                src="https://scontent.fsgn2-8.fna.fbcdn.net/v/t39.30808-6/428608379_1107729527084945_699601624333735778_n.jpg?_nc_cat=102&ccb=1-7&_nc_sid=6ee11a&_nc_eui2=AeGyVNuzP4Hc8Dbdt9fO1j7gqcEP5iSFCnKpwQ_mJIUKckbEXT7w3bFwY3fwedmZXiSmhLJmd69z1YqhZFIY0buO&_nc_ohc=tHAMdD9qR38Q7kNvgEnH1NK&_nc_ht=scontent.fsgn2-8.fna&_nc_gid=A67UmE9Be5K2Zko00Modiwb&oh=00_AYA5r3fzu3zouyXE0nx_Hu8-p3hqSGQu96x0HsJ0cHJb1Q&oe=66EA5AF0" alt="Avatar"
-              />
+              <Link to={`/user/${user?.userName}`}>
+                <img
+                  className="inline-block size-[38px] rounded-full"
+                  src={user?.imageURL || defaulAvatar}
+                  alt="Avatar"
+                />
+              </Link>
             </>
           ) : (
             <Link
@@ -57,7 +72,7 @@ const Header = () => {
               type="button"
               className="py-2 px-3 inline-flex items-center gap-x-2 text-sm font-medium rounded-lg border border-gray-200 bg-white text-gray-800 shadow-sm hover:bg-gray-50 focus:outline-none focus:bg-gray-50"
             >
-              Log In
+              LOGIN
             </Link>
           )}
         </div>

@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from "react";
-import CustomSelect from "../../common/CustomSelect"; // Adjust the path as needed
+import CustomSelect from "../../common/CustomSelect";
 import { faThunderstorm, faLandmark } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
-const FilterForm = ({ onSelectClass, onSelectSkill }) => {
+const FilterForm = ({ onSelectClass, formData, handleDataChange }) => {
   const [selectedClasses, setSelectedClasses] = useState([]);
   const [selectedSkills, setSelectedSkills] = useState([]);
 
@@ -11,12 +11,12 @@ const FilterForm = ({ onSelectClass, onSelectSkill }) => {
     { value: "class1", label: "Class 1" },
     { value: "class2", label: "Class 2" },
     { value: "class3", label: "Class 3" },
-    { value: "class5", label: "Class 4" },
-    { value: "class6", label: "Class 5" },
-    { value: "class7", label: "Class 6" },
-    { value: "class8", label: "Class 7" },
-    { value: "class9", label: "Class 8" },
-    { value: "class10", label: "Class 9" },
+    { value: "class4", label: "Class 4" },
+    { value: "class5", label: "Class 5" },
+    { value: "class6", label: "Class 6" },
+    { value: "class7", label: "Class 7" },
+    { value: "class8", label: "Class 8" },
+    { value: "class9", label: "Class 9" },
   ];
 
   const skills = [
@@ -24,8 +24,13 @@ const FilterForm = ({ onSelectClass, onSelectSkill }) => {
     { id: 1, name: "Listening" },
     { id: 2, name: "Writing" },
     { id: 3, name: "Speaking" },
-    { id: 4, name: "All" },
   ];
+
+  useEffect(() => {
+    if (formData.skills) {
+      setSelectedSkills(formData.skills);
+    }
+  }, [formData]);
 
   const handleClassChange = (selectedOptions) => {
     setSelectedClasses(selectedOptions);
@@ -33,40 +38,34 @@ const FilterForm = ({ onSelectClass, onSelectSkill }) => {
   };
 
   const handleSkillChange = (id) => {
-    let newSkills;
+    let newSkills = [...selectedSkills];
 
-    if (id === 5) {
-      // Toggle 'All' checkbox
-      if (selectedSkills.includes(5)) {
-        // Unchecking 'All', remove 'All' from selected skills
-        newSkills = selectedSkills.filter((skill) => skill !== 5);
-      } else {
-        // Checking 'All', add all individual skills to selected skills
-        newSkills = [1, 2, 3, 4, 5];
-      }
+    if (newSkills.some((skill) => skill.type === id)) {
+      newSkills = newSkills.filter((skill) => skill.type !== id);
     } else {
-      // Toggle individual skills
-      newSkills = selectedSkills.includes(id)
-        ? selectedSkills.filter((skill) => skill !== id)
-        : [...selectedSkills, id];
-
-      // Manage 'All' checkbox based on individual skills
-      const allSkills = [1, 2, 3, 4];
-      const allSelected = allSkills.every((skill) => newSkills.includes(skill));
-
-      if (allSelected) {
-        // Add 'All' if all individual skills are selected
-        if (!newSkills.includes(5)) {
-          newSkills.push(5);
-        }
-      } else {
-        // Remove 'All' if not all individual skills are selected
-        newSkills = newSkills.filter((skill) => skill !== 5);
-      }
+      newSkills.push({
+        type: id,
+        duration: 30,
+        parts: [
+          {
+            partNumber: 1,
+            contentText: "",
+            audioUrl: "",
+            imageUrl: "",
+            questionTypeParts: [
+              {
+                questionGuide: "",
+                questionType: 1,
+                questions: [],
+              },
+            ],
+          },
+        ],
+      });
     }
 
     setSelectedSkills(newSkills);
-    onSelectSkill(newSkills); // Notify parent component
+    handleDataChange({ skills: newSkills });
   };
 
   return (
@@ -99,18 +98,16 @@ const FilterForm = ({ onSelectClass, onSelectSkill }) => {
             {skills.map((skill) => (
               <label
                 key={skill.id}
-                className={`flex items-center gap-3 rounded-lg transition duration-300 ease-in-out ${
-                  skill.id === 5 ? "" : "cursor-pointer"
-                }`}
+                className="flex items-center gap-3 rounded-lg cursor-pointer"
               >
                 <input
                   type="checkbox"
                   id={skill.id}
-                  checked={selectedSkills.includes(skill.id)}
+                  checked={selectedSkills.some((s) => s.type === skill.id)}
                   onChange={() => handleSkillChange(skill.id)}
-                  className="form-checkbox tex text-blue-500 dark:text-blue-400"
+                  className="form-checkbox text-blue-500 dark:text-blue-400"
                 />
-                <span className="">{skill.name}</span>
+                <span>{skill.name}</span>
               </label>
             ))}
           </div>

@@ -5,7 +5,6 @@ import {
   faPen,
 } from "@fortawesome/free-solid-svg-icons";
 import { useEffect, useState, useCallback } from "react";
-import Modal from "react-modal";
 
 // Custom Hook for Timer Logic
 const useTimer = (initialTime, setIsTimeOut) => {

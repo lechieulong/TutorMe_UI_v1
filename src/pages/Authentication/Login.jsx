@@ -4,16 +4,15 @@ import { Link, useNavigate } from "react-router-dom";
 import { loginApi } from "../../service/AuthService";
 import { ToastContainer, toast } from "react-toastify";
 import { GoogleLogin } from '@react-oauth/google';
-import { loginWithGoogleApi } from "../../redux/auth/AuthSlice";
+import { LoginApi, loginWithGoogleApi } from "../../redux/auth/AuthSlice";
 import "react-toastify/dist/ReactToastify.css";
 import { useDispatch, useSelector } from "react-redux";
+import InputField from "./components/InputField";
 
 const SignIn = () => {
   const dispatch = useDispatch();
-  const { status, error } = useSelector((state) => state.auth);
+  const { status, error, token } = useSelector((state) => state.auth);
 
-  const [user, setUser] = useState("");
-  const [pwd, setPwd] = useState("");
   const navigate = useNavigate();
 
   // Kiểm tra token khi component được render
@@ -24,24 +23,65 @@ const SignIn = () => {
     }
   }, [navigate]);
 
-  const handleLogin = async () => {
-    if (!user || !pwd) {
-      toast.error("User and Password is requied!");
-      return;
+  const [formData, setFormData] = useState({
+    username: "",
+    password: "",
+  });
+
+  const [formErrors, setFormErrors] = useState({
+    username: "",
+    password: "",
+  });
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setFormData({
+      ...formData,
+      [name]: value,
+    });
+  };
+
+  const validateForm = () => {
+    const errors = {};
+    if (!formData.username) {
+      errors.username = "Username is required";
     }
-
-    let res = await loginApi(user, pwd);
-
-    if (!res || !res.result || !res.result.token) {
-      // toast.error(res?.message || "Login Failed!");
-      return;
+    if (!formData.password) {
+      errors.password = "Password is required";
     }
+    return errors;
+  };
 
-    if (res && res.result.token) {
-      toast.success("Login success!", {
-        theme: "light",
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    const errors = validateForm();
+
+    if (Object.keys(errors).length === 0) {
+      setFormErrors({
+        username: "",
+        password: "",
       });
-      navigate('/');
+
+      const userData = formData;
+      try {
+        const response = await dispatch(LoginApi(userData)).unwrap(); // unwrap để lấy dữ liệu trực tiếp từ action
+
+        // Kiểm tra nếu đăng nhập thành công
+        if (response.isSuccess) {
+          Cookies.set("authToken", response.result.token, { expires: 7 });
+          toast.success("Login successful!");
+          // navigate("/"); // Chuyển hướng sau khi đăng nhập thành công
+          // Chuyển hướng đến trang Home mà không cần reload
+          window.location.href = "/";
+        } else {
+          toast.error(response.message || "Login failed.");
+        }
+      } catch (error) {
+        console.error(error);
+        toast.error("Login failed. Please try again.");
+      }
+    } else {
+      setFormErrors(errors);
     }
   };
 
@@ -51,12 +91,12 @@ const SignIn = () => {
     // Store the token in cookies or localStorage
     try {
       const response = await dispatch(loginWithGoogleApi({ token })).unwrap();
-      console.log(response);
       // Handle the API response for successful login/registration
       if (response.isSuccess) {
-        Cookies.set("authToken", token, { expires: 7 });
-        toast.success("Google login successful!");
-        navigate("/");
+        Cookies.set("authToken", response.result.token, { expires: 7 });
+        // toast.success("Google login successful!");
+        // navigate("/");
+        window.location.href = "/";
       } else {
         toast.error(response.message || "Google login failed.");
       }
@@ -84,57 +124,45 @@ const SignIn = () => {
           />
           <h1 className="font-mono text-2xl font-bold text-gray-900">LOGIN</h1>
         </div>
-        <form className="space-y-4" onSubmit={(e) => {
-          e.preventDefault(); // Ngăn trình duyệt tự động refresh sau khi submit form
-          handleLogin();
-        }}>
-          <div className="mb-4">
-            <label
-              htmlFor="username"
-              className="block text-gray-700 font-semibold mb-1"
-            >
-              Username
-            </label>
-            <input
-              type="text"
-              id="username"
-              className="block w-full h-12 px-4 border rounded-lg bg-white shadow-sm placeholder-gray-400 text-gray-700 focus:ring focus:outline-none"
-              placeholder="Username"
-              value={user}
-              onChange={(event) => setUser(event.target.value)}
-            />
-          </div>
-          <div className="mb-4">
-            <label
-              htmlFor="password"
-              className="block text-gray-700 font-semibold mb-1"
-            >
-              Password
-            </label>
-            <input
-              type="password"
-              id="password"
-              className="block w-full h-12 px-4 border rounded-lg bg-white shadow-sm placeholder-gray-400 text-gray-700 focus:ring focus:outline-none"
-              placeholder="Password"
-              value={pwd}
-              onChange={(event) => setPwd(event.target.value)}
-            />
-          </div>
+        <form className="space-y-4" onSubmit={handleSubmit}>
+          <InputField
+            label="User Name"
+            id="username"
+            type="text"
+            name="username"
+            value={formData.username}
+            onChange={handleChange}
+            placeholder="Username"
+            error={formErrors.username}
+          />
+          <InputField
+            label="Password"
+            id="password"
+            type="password"
+            name="password"
+            value={formData.password}
+            onChange={handleChange}
+            placeholder="Password"
+            error={formErrors.password}
+          />
           <div className="login-btn mb-6">
             <button
               className={
-                user && pwd
+                formData.username && formData.password
                   ? "active w-full px-4 py-2 font-bold text-white rounded-full focus:outline-none focus:shadow-outline"
                   : "w-full px-4 py-2 font-bold text-white rounded-full focus:outline-none focus:shadow-outline"
               }
               type="submit"
-              disabled={user && pwd ? false : true}
+              disabled={formData.username && formData.password ? false : true}
             >
               LOGIN
             </button>
             {/* Success message */}
             {status === "pending" && (
-              <p className="font-mono text-xs text-yellow-500 text-center mt-2">Loging...</p>
+              <p className="font-mono text-xs text-yellow-500 text-center mt-2">Logging...</p>
+            )}
+            {status === "failed" && (
+              <p className="font-mono text-xs text-red-500 text-center mt-2">{error}</p>
             )}
             <ToastContainer autoClose={3000} newestOnTop closeOnClick />
           </div>

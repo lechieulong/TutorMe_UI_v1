@@ -85,7 +85,6 @@ const TestSetting = () => {
       selectedParts: parts.length ? parts : selectedSkill.parts, // Use the actual skill parts if none selected
       skillPart,
     };
-    console.log(testData); // `parts` should now be an array of numbers
 
     // enterFullScreen();
     navigate("/test-setting/test-exam", { state: testData });

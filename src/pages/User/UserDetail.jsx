@@ -6,7 +6,6 @@ import defaulAvatar from "../../assets/images/defaul-avatar.jpg";
 import Cookies from "js-cookie";
 import { Link, useNavigate } from "react-router-dom";
 import { Profile } from "../../redux/users/UserSlice";
-import { useParams } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { useEffect, useState } from "react";
 import { getUser } from '../../service/GetUser';

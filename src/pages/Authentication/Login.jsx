@@ -11,7 +11,7 @@ import InputField from "./components/InputField";
 
 const SignIn = () => {
   const dispatch = useDispatch();
-  const { status, error, token } = useSelector((state) => state.auth);
+  const { loginStatus, error, token } = useSelector((state) => state.auth);
 
   const navigate = useNavigate();
 
@@ -70,9 +70,9 @@ const SignIn = () => {
         if (response.isSuccess) {
           Cookies.set("authToken", response.result.token, { expires: 7 });
           toast.success("Login successful!");
-          // navigate("/"); // Chuyển hướng sau khi đăng nhập thành công
+          navigate("/"); // Chuyển hướng sau khi đăng nhập thành công
           // Chuyển hướng đến trang Home mà không cần reload
-          window.location.href = "/";
+          // window.location.href = "/";
         } else {
           toast.error(response.message || "Login failed.");
         }
@@ -95,8 +95,8 @@ const SignIn = () => {
       if (response.isSuccess) {
         Cookies.set("authToken", response.result.token, { expires: 7 });
         // toast.success("Google login successful!");
-        // navigate("/");
-        window.location.href = "/";
+        navigate("/");
+        // window.location.href = "/";
       } else {
         toast.error(response.message || "Google login failed.");
       }
@@ -158,10 +158,10 @@ const SignIn = () => {
               LOGIN
             </button>
             {/* Success message */}
-            {status === "pending" && (
+            {loginStatus === "pending" && (
               <p className="font-mono text-xs text-yellow-500 text-center mt-2">Logging...</p>
             )}
-            {status === "failed" && (
+            {loginStatus === "failed" && (
               <p className="font-mono text-xs text-red-500 text-center mt-2">{error}</p>
             )}
             <ToastContainer autoClose={3000} newestOnTop closeOnClick />

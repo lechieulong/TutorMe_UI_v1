@@ -148,10 +148,16 @@ export const resetPasswordAPI = createAsyncThunk(
 );
 
 const initialState = {
-  user: null, // Thông tin người dùng sau khi đăng nhập hoặc đăng ký
-  status: STATUS.IDLE, // Trạng thái mặc định
-  error: null, // Thông báo lỗi nếu có
-  token: null
+  user: null,
+  status: STATUS.IDLE,
+  loginStatus: STATUS.IDLE,
+  registerStatus: STATUS.IDLE,
+  changePasswordStatus: STATUS.IDLE,
+  forgotPasswordStatus: STATUS.IDLE,
+  resetPassworStatus: STATUS.IDLE,
+  error: null,
+  token: null,
+  // IschangePassword
 };
 
 const AuthSlice = createSlice({
@@ -162,28 +168,28 @@ const AuthSlice = createSlice({
     builder
       // Xử lý login
       .addCase(LoginApi.pending, (state) => {
-        state.status = STATUS.PENDING;
+        state.loginStatus = STATUS.PENDING;
       })
       .addCase(LoginApi.fulfilled, (state, action) => {
-        state.status = STATUS.SUCCESS;
+        state.loginStatus = STATUS.SUCCESS;
         state.user = action.payload.user;
         state.token = action.payload.token;
       })
       .addCase(LoginApi.rejected, (state, action) => {
-        state.status = STATUS.FAILED;
+        state.loginStatus = STATUS.FAILED;
         state.error = action.payload || action.error.message;
       })
 
       // Xử lý register
       .addCase(Regis.pending, (state) => {
-        state.status = STATUS.PENDING;
+        state.registerStatus = STATUS.PENDING;
       })
       .addCase(Regis.fulfilled, (state, action) => {
-        state.status = STATUS.SUCCESS;
+        state.registerStatus = STATUS.SUCCESS;
         state.user = action.payload;
       })
       .addCase(Regis.rejected, (state, action) => {
-        state.status = STATUS.FAILED;
+        state.registerStatus = STATUS.FAILED;
         state.error = action.payload || action.error.message;
       })
 
@@ -201,64 +207,64 @@ const AuthSlice = createSlice({
 
       // Xử lý registerGoogleUserApi
       .addCase(registerGoogleUserApi.pending, (state) => {
-        state.status = STATUS.PENDING;
+        state.registerStatus = STATUS.PENDING;
       })
       .addCase(registerGoogleUserApi.fulfilled, (state, action) => {
-        state.status = STATUS.SUCCESS;
+        state.registerStatus = STATUS.SUCCESS;
         state.user = action.payload;
       })
       .addCase(registerGoogleUserApi.rejected, (state, action) => {
-        state.status = STATUS.FAILED;
+        state.registerStatus = STATUS.FAILED;
         state.error = action.payload || action.error.message;
       })
 
       // Xử lý loginWithGoogleApi
       .addCase(loginWithGoogleApi.pending, (state) => {
-        state.status = STATUS.PENDING;
+        state.loginStatus = STATUS.PENDING;
       })
       .addCase(loginWithGoogleApi.fulfilled, (state, action) => {
-        state.status = STATUS.SUCCESS;
+        state.loginStatus = STATUS.SUCCESS;
         state.user = action.payload.user;
         state.token = action.payload.token;
       })
       .addCase(loginWithGoogleApi.rejected, (state, action) => {
-        state.status = STATUS.FAILED;
+        state.loginStatus = STATUS.FAILED;
         state.error = action.payload || action.error.message;
       })
 
       // Xử lý change password
       .addCase(changePasswordAPI.pending, (state) => {
-        state.status = STATUS.PENDING;
+        state.changePasswordStatus = STATUS.PENDING;
       })
       .addCase(changePasswordAPI.fulfilled, (state, action) => {
-        state.status = STATUS.SUCCESS;
+        state.changePasswordStatus = STATUS.SUCCESS;
       })
       .addCase(changePasswordAPI.rejected, (state, action) => {
-        state.status = STATUS.FAILED;
+        state.changePasswordStatus = STATUS.FAILED;
         state.error = action.payload || action.error.message;
       })
 
       // Xử lý forgot password
       .addCase(requestForgotAPI.pending, (state) => {
-        state.status = STATUS.PENDING;
+        state.forgotPasswordStatus = STATUS.PENDING;
       })
       .addCase(requestForgotAPI.fulfilled, (state, action) => {
-        state.status = STATUS.SUCCESS;
+        state.forgotPasswordStatus = STATUS.SUCCESS;
       })
       .addCase(requestForgotAPI.rejected, (state, action) => {
-        state.status = STATUS.FAILED;
+        state.forgotPasswordStatus = STATUS.FAILED;
         state.error = action.payload || action.error.message;
       })
 
-      // Xử lý forgot password
+      // Xử lý reset password
       .addCase(resetPasswordAPI.pending, (state) => {
-        state.status = STATUS.PENDING;
+        state.resetPassworStatus = STATUS.PENDING;
       })
       .addCase(resetPasswordAPI.fulfilled, (state, action) => {
-        state.status = STATUS.SUCCESS;
+        state.resetPassworStatus = STATUS.SUCCESS;
       })
       .addCase(resetPasswordAPI.rejected, (state, action) => {
-        state.status = STATUS.FAILED;
+        state.resetPassworStatus = STATUS.FAILED;
         state.error = action.payload || action.error.message;
       })
   },

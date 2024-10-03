@@ -74,7 +74,7 @@ const MyLearning = () => {
                                 </li>
                                 <li>
                                     <Link
-                                        to="/my-learning"
+                                        to="/mylearning"
                                         className={`hover:text-gray-400 ${
                                             activeLink === 'mylearning' ? 'text-gray-100 border-b-2 border-gray-400' : ''
                                         }`}
@@ -85,7 +85,7 @@ const MyLearning = () => {
                                 </li>
                                 <li>
                                     <Link
-                                        to="/wishlist"
+                                        to="/mylearning"
                                         className={`hover:text-gray-400 ${
                                             activeLink === 'wishlist' ? 'text-gray-100 border-b-2 border-gray-400' : ''
                                         }`}

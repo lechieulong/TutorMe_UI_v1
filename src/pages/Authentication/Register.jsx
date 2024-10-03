@@ -6,7 +6,7 @@ import InputField from "./components/InputField";
 
 const SignUp = () => {
   const dispatch = useDispatch();
-  const { status, error } = useSelector((state) => state.auth);
+  const { registerStatus, error } = useSelector((state) => state.auth);
 
   const [formData, setFormData] = useState({
     name: "",
@@ -158,15 +158,15 @@ const SignUp = () => {
                 REGISTER
               </button>
               {/* Success message */}
-              {status === "success" && (
+              {registerStatus === "success" && (
                 <p className="font-mono text-xs text-green-500 text-center mt-2">
                   Registration successful! <br />  Please <Link to="https://mail.google.com/" className="underline text-blue-500" target="_blank" rel="noopener noreferrer">Check your email</Link>.
                 </p>
               )}
-              {status === "pending" && (
+              {registerStatus === "pending" && (
                 <p className="font-mono text-xs text-yellow-500 text-center mt-2">Registering...</p>
               )}
-              {status === "failed" && (
+              {registerStatus === "failed" && (
                 <p className="font-mono text-xs text-red-500 text-center mt-2">{error}</p>
               )}
             </div>

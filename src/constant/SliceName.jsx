@@ -13,6 +13,7 @@ export const ACTIONS = {
   GET_COURSES: "getCourses",
   GET_CLASSESOFCOURSE: "getClassesOfCourse",
   GET_CLASS: "getClass",
+  CREATE_CLASS: "createClass",
 
   LOGIN: "login",
   REGIS: "register",  

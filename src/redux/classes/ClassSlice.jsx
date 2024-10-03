@@ -1,6 +1,7 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import axios from "axios";
 import { SLICE_NAMES, ACTIONS, STATUS } from "../../constant/SliceName";
+import apiURLConfig from "../common/apiURLConfig";
 
 export const fetchClassesWithStudents = createAsyncThunk(
   `${SLICE_NAMES.CLASSES}/${ACTIONS.GET_CLASS}`,
@@ -12,10 +13,31 @@ export const fetchClassesWithStudents = createAsyncThunk(
   }
 );
 
+// Action create class
+export const CreateClassAPI = createAsyncThunk(
+  `${SLICE_NAMES.CLASSES}/${ACTIONS.CREATE_CLASS}`,
+  async (classData, { rejectWithValue }) => {
+    console.log(classData);
+    try {
+      const response = await axios.post(
+        `${apiURLConfig.baseURL}/class`,
+        classData
+      );
+      return response.data;
+    } catch (error) {
+      return rejectWithValue(
+        error.response?.data?.message || "Failed to craete class."
+      );
+    }
+  }
+);
+
 const initialState = {
-  courses: [],
+  class: null,
+  classes: [],
   count: 0,
-  status: STATUS.SUCCESS,
+  status: STATUS.IDLE,
+  createStatus: STATUS.IDLE,
   error: null,
 };
 
@@ -35,6 +57,22 @@ const classSlice = createSlice({
       .addCase(fetchClassesWithStudents.rejected, (state, action) => {
         state.status = STATUS.FAILED;
         state.error = action.error.message;
+      })
+
+      // Xử lý create class
+      .addCase(CreateClassAPI.pending, (state) => {
+        state.createStatus = STATUS.PENDING;
+        state.error = null; // Clear any previous errors
+      })
+      .addCase(CreateClassAPI.fulfilled, (state, action) => {
+        state.createStatus = STATUS.SUCCESS;
+        state.class = action.payload.result;
+        state.classes.push(action.payload.result); // Add the newly created class to the list
+        state.error = null;
+      })
+      .addCase(CreateClassAPI.rejected, (state, action) => {
+        state.createStatus = STATUS.FAILED;
+        state.error = action.payload || "Failed to create class."; // Show error message
       });
   },
 });

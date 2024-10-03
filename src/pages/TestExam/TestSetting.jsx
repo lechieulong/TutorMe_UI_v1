@@ -87,7 +87,7 @@ const TestSetting = () => {
     };
     console.log(testData); // `parts` should now be an array of numbers
 
-    enterFullScreen();
+    // enterFullScreen();
     navigate("/test-setting/test-exam", { state: testData });
   };
 

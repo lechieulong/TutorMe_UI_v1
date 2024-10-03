@@ -327,54 +327,54 @@ const TestView = () => {
     }
   }, [receivedData]);
 
-  const exitFullScreen = () => {
-    if (document.exitFullscreen) {
-      document.exitFullscreen();
-    } else if (document.mozCancelFullScreen) {
-      // Firefox
-      document.mozCancelFullScreen();
-    } else if (document.webkitExitFullscreen) {
-      // Chrome, Safari, and Opera
-      document.webkitExitFullscreen();
-    } else if (document.msExitFullscreen) {
-      // IE/Edge
-      document.msExitFullscreen();
-    }
-  };
+  // const exitFullScreen = () => {
+  //   if (document.exitFullscreen) {
+  //     document.exitFullscreen();
+  //   } else if (document.mozCancelFullScreen) {
+  //     // Firefox
+  //     document.mozCancelFullScreen();
+  //   } else if (document.webkitExitFullscreen) {
+  //     // Chrome, Safari, and Opera
+  //     document.webkitExitFullscreen();
+  //   } else if (document.msExitFullscreen) {
+  //     // IE/Edge
+  //     document.msExitFullscreen();
+  //   }
+  // };
 
-  useEffect(() => {
-    const blockKeys = (e) => {
-      if (e.key === "F11" || e.key === "Escape") {
-        e.preventDefault();
-      }
-    };
+  // useEffect(() => {
+  //   const blockKeys = (e) => {
+  //     if (e.key === "F11" || e.key === "Escape") {
+  //       e.preventDefault();
+  //     }
+  //   };
 
-    const ensureFullScreen = () => {
-      if (!document.fullscreenElement) {
-        document.documentElement.requestFullscreen().catch((err) => {
-          console.log(
-            `Error attempting to enable full-screen mode: ${err.message}`
-          );
-        });
-      }
-    };
+  //   const ensureFullScreen = () => {
+  //     if (!document.fullscreenElement) {
+  //       document.documentElement.requestFullscreen().catch((err) => {
+  //         console.log(
+  //           `Error attempting to enable full-screen mode: ${err.message}`
+  //         );
+  //       });
+  //     }
+  //   };
 
-    const onVisibilityChange = () => {
-      if (document.hidden) {
-        ensureFullScreen();
-      }
-    };
+  //   const onVisibilityChange = () => {
+  //     if (document.hidden) {
+  //       ensureFullScreen();
+  //     }
+  //   };
 
-    document.addEventListener("keydown", blockKeys);
-    document.addEventListener("fullscreenchange", ensureFullScreen);
-    document.addEventListener("visibilitychange", onVisibilityChange);
+  //   document.addEventListener("keydown", blockKeys);
+  //   document.addEventListener("fullscreenchange", ensureFullScreen);
+  //   document.addEventListener("visibilitychange", onVisibilityChange);
 
-    return () => {
-      document.removeEventListener("keydown", blockKeys);
-      document.removeEventListener("fullscreenchange", ensureFullScreen);
-      document.removeEventListener("visibilitychange", onVisibilityChange);
-    };
-  }, []);
+  //   return () => {
+  //     document.removeEventListener("keydown", blockKeys);
+  //     document.removeEventListener("fullscreenchange", ensureFullScreen);
+  //     document.removeEventListener("visibilitychange", onVisibilityChange);
+  //   };
+  // }, []);
 
   const hanldeTestSubmit = () => {
     exitFullScreen();

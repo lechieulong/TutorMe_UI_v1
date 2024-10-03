@@ -6,7 +6,7 @@ import { useState, useEffect } from "react";
 import React from "react";
 
 // Accessing environment variables
-const appID = import.meta.env.VITE_APP_ID;
+const appID = Number(import.meta.env.VITE_APP_ID);
 const serverSecret = import.meta.env.VITE_SERVER_SECRET;
 
 function randomID(len) {
@@ -162,7 +162,7 @@ const LiveStreamFrame = ({ width, height, className }) => {
   );
 
   const myMeeting = (element) => {
-    if (!element) return; // Ensure element is available
+    if (!element) return;
 
     const zp = ZegoUIKitPrebuilt.create(kitToken);
     zp.joinRoom({

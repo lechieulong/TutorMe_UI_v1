@@ -1,6 +1,6 @@
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import "regenerator-runtime/runtime";
-import { GoogleOAuthProvider } from '@react-oauth/google';
+import { GoogleOAuthProvider } from "@react-oauth/google";
 
 import Home from "./pages/Home";
 import NotFound from "./components/common/NotFound";
@@ -30,7 +30,6 @@ import "preline";
 import TestLayout from "./pages/TestExam/TestLayout";
 import CourseDetail from "./pages/Course/CourseDetail";
 import TestForm from "./pages/TestExam/TestForm";
-import ImageTest from "./components/ImageTest";
 import CourseTimeline from "./pages/Course/components/CourseTimeline";
 import CreateCourse from "./pages/Course/components/CreateCourse";
 import SpeakingGemini from "./service/SpeakingGemini";
@@ -77,7 +76,10 @@ const App = () => {
             <Route path="/course" element={<CourseList />} />
             <Route path="/createCourse" element={<CreateCourse />} />
             <Route path="/courseDetail/:courseId" element={<CourseDetail />} />
-            <Route path="/courseDetail/:courseId/classes" element={<ClassOfCourse />} />
+            <Route
+              path="/courseDetail/:courseId/classes"
+              element={<ClassOfCourse />}
+            />
             <Route path="/course-timeline" element={<CourseTimeline />} />
             {/* <Route path="/courses/:courseId" element={<CourseDetail />} /> */}
 
@@ -86,8 +88,6 @@ const App = () => {
 
             {/* List test that User did */}
             <Route path="/testlist" element={<TestList />} />
-
-            <Route path="/uploadImage" element={<ImageTest />} />
           </Routes>
         </Router>
       </GoogleOAuthProvider>

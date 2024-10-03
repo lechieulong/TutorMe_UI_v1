@@ -1,40 +1,89 @@
 import React from 'react';
 import Sidebar from './components/Sidebar';
-import { Link } from 'react-router-dom';
 import MainLayout from '../../layout/MainLayout';
-import { FaRegIdCard, FaPhoneSquareAlt, FaRegAddressCard, FaLocationArrow, FaMastodon, FaEnvelope, FaPhone } from "react-icons/fa";
+import { FaLocationArrow, FaEnvelope, FaPhone } from "react-icons/fa";
+import defaulAvatar from "../../assets/images/defaul-avatar.jpg";
+import Cookies from "js-cookie";
+import { Link, useNavigate } from "react-router-dom";
+import { Profile } from "../../redux/users/UserSlice";
+import { useParams } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
+import { useEffect, useState } from "react";
+import { getUser } from '../../service/GetUser';
 
 const UserDetail = () => {
+    const dispatch = useDispatch();
+    const navigate = useNavigate();
+
+    // Modal state to show/hide the phone input form
+    const [showPhoneModal, setShowPhoneModal] = useState(false);
+    const [newPhoneNumber, setNewPhoneNumber] = useState("");
+
+    const userFromToken = getUser();
+    useEffect(() => {
+        if (userFromToken?.userName) {
+            dispatch(Profile(userFromToken.userName)); // Fetch profile based on the username from token and save state User
+        }
+    }, [dispatch]);
+
+    // Get user information and status from the Redux store
+    const { userInfor, status, error } = useSelector((state) => state.user);
+
+    // Check authentication token
+    useEffect(() => {
+        const token = Cookies.get("authToken");
+        if (!token) {
+            navigate("/"); // Nếu ko có token, chuyển hướng đến Landing Page
+        }
+    }, [navigate]);
+
+    const handleSavePhoneNumber = () => {
+        // Save the phone number logic here (could be via Redux action or API call)
+        console.log('New Phone Number:', newPhoneNumber);
+        // After saving, hide the modal
+        setShowPhoneModal(false);
+    };
+
     return (
         <MainLayout>
-            <div className="flex flex-1 bg-gray-100">
-                <Sidebar className="" />
+            <div className="flex h-screen w-full pt-5 bg-gray-100">
+                <Sidebar userInfor={userInfor} />
                 <main className="flex-1">
                     <div className="w-full max-w-full mx-auto bg-gray-100 pt-10 flex flex-col">
                         <div className="flex flex-col lg:flex-row items-start">
                             <div className="lg:w-1/4 flex flex-col items-center mb-6 lg:mb-0 lg:mr-6">
                                 <img
-                                    src="https://scontent.fhan20-1.fna.fbcdn.net/v/t39.30808-6/428608379_1107729527084945_699601624333735778_n.jpg?_nc_cat=102&ccb=1-7&_nc_sid=6ee11a&_nc_eui2=AeGyVNuzP4Hc8Dbdt9fO1j7gqcEP5iSFCnKpwQ_mJIUKckbEXT7w3bFwY3fwedmZXiSmhLJmd69z1YqhZFIY0buO&_nc_ohc=wm6OeX9ql34Q7kNvgHsTvJz&_nc_ht=scontent.fhan20-1.fna&_nc_gid=AQGdO7WmKUtsTwEVtkQRJ-Z&oh=00_AYC8qWbax88dXtVjKAxEhfTil54Au2-PaLTPdS-1qeKvzw&oe=66E158B0"
-                                    alt="Profile"
+                                    src={userInfor?.imageURL || defaulAvatar}
+                                    alt="Avatar"
                                     className="w-36 h-36 rounded-full object-cover border-4 border-white mb-4"
                                     loading="lazy"
                                 />
-                                <Link to="/profileedit" className="mt-2 bg-white text-black border border-black rounded-lg px-3 py-1 hover:bg-gray-100">
+                                <Link to={`/user/edit/${userInfor?.userName}`} state={{ userInfor }} className="mt-2 bg-white text-black border border-black rounded-lg px-3 py-1 hover:bg-gray-100">
                                     Edit Profile
                                 </Link>
-
                             </div>
                             <div className="lg:w-2/4 flex flex-col">
                                 <div className="bg-black text-white p-4 rounded-t-lg flex flex-col lg:flex-row items-start">
                                     <div className="flex-1 lg:ml-6">
-                                        <h5 className="text-2xl font-bold">Nguyen Van Sy</h5>
-                                        <div className="flex items-center text-base text-gray-600">
-                                            <FaPhone className="mr-2 text-gray-400" />
-                                            <p>0888715729</p>
+                                        <h5 className="text-2xl font-bold">{userInfor?.name}</h5>
+                                        <div className="flex items-center my-1 text-base text-amber-300">
+                                            <FaPhone className="mr-2 text-stone-400" />
+                                            <p>
+                                                {userInfor?.phoneNumber ? (
+                                                    userInfor?.phoneNumber
+                                                ) : (
+                                                    <button
+                                                        onClick={() => setShowPhoneModal(true)}
+                                                        className="bg-black text-sm"
+                                                    >
+                                                        Add phone number
+                                                    </button>
+                                                )}
+                                            </p>
                                         </div>
-                                        <div className="flex items-center text-sm text-gray-600">
-                                            <FaEnvelope className="mr-2 text-gray-400" />
-                                            <p>nguyensy23112311@gmail.com</p>
+                                        <div className="italic flex items-center text-sm text-amber-200">
+                                            <FaEnvelope className="mr-2 text-stone-400" />
+                                            <p>{userInfor?.email}</p>
                                         </div>
                                     </div>
                                 </div>
@@ -74,8 +123,36 @@ const UserDetail = () => {
                         </div>
                     </div>
                 </main>
-                {/* Uncomment below if Logout is needed */}
-                {/* <Logout /> */}
+
+                {/* Modal for Phone Number Input */}
+                {showPhoneModal && (
+                    <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
+                        <div className="bg-white rounded-lg p-6 w-96 shadow-lg">
+                            <h3 className="text-xl font-bold mb-4">Add Phone Number</h3>
+                            <input
+                                type="text"
+                                placeholder="Enter your phone number"
+                                value={newPhoneNumber}
+                                onChange={(e) => setNewPhoneNumber(e.target.value)}
+                                className="w-full p-2 border border-gray-300 rounded-md mb-4"
+                            />
+                            <div className="flex justify-end space-x-2">
+                                <button
+                                    onClick={() => setShowPhoneModal(false)}
+                                    className="px-4 py-2 bg-gray-500 text-white rounded-lg"
+                                >
+                                    Cancel
+                                </button>
+                                <button
+                                    onClick={handleSavePhoneNumber}
+                                    className="px-4 py-2 bg-blue-600 text-white rounded-lg"
+                                >
+                                    Save
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                )}
             </div>
         </MainLayout>
     );

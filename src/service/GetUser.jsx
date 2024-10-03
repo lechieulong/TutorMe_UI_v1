@@ -1,3 +1,5 @@
+// ./service/GetUser
+
 import {jwtDecode } from 'jwt-decode';
 import Cookies from 'js-cookie';
 
@@ -5,8 +7,8 @@ export const getUser = () => {
     const token = Cookies.get('authToken');
     if (token) {
         try {
-            const user = jwtDecode(token);
-            return user;
+            const response = jwtDecode(token);
+            return response;
         } catch (error) {
             console.error('Token không hợp lệ', error);
             return null;

@@ -4,12 +4,13 @@ import SubjectListCard from "../components/common/SubjectListCard";
 import idols from "../data/idols";
 import subjects from "../data/subjects";
 import MainLayout from "../layout/MainLayout";
+import Calendar from "../components/common/linkToCalendar";
 
 const Home = () => {
   return (
     <MainLayout>
       <div className="flex justify-center bg-white mx-auto px-4 py-8">
-        <LiveStreamFrame width="1000px" height="500px"/>
+        <LiveStreamFrame width="1000px" height="500px" />
       </div>
       <div className="bg-white">
         <h1 className="ml-[40px] text-2xl font-bold">
@@ -53,6 +54,7 @@ const Home = () => {
           </div>
         </div>
       </div>
+      <Calendar/>
     </MainLayout>
   );
 };

@@ -13,6 +13,7 @@ import CourseCard from "./components/CourseCard";
 import { fetchCourses } from "../../redux/courses/CourseSlice";
 import { STATUS } from "../../constant/SliceName";
 import axios from "axios"; // Import axios
+import Calendar from "../../components/common/linkToCalendar";
 
 const CourseList = () => {
   const dispatch = useDispatch();
@@ -186,6 +187,7 @@ const CourseList = () => {
           </button>
         </div>
       </div>
+      <Calendar/>
     </MainLayout>
   );
 };

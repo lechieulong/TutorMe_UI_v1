@@ -12,7 +12,7 @@ const ProfileSection = () => {
     const userInfor = location.state?.userInfor;
     const navigate = useNavigate();
     const dispatch = useDispatch(); // Initialize dispatch
-    const { status, error } = useSelector((state) => state.auth);
+    const { error, changePasswordStatus } = useSelector((state) => state.auth);
 
     useEffect(() => {
         const token = Cookies.get("authToken");
@@ -163,15 +163,15 @@ const ProfileSection = () => {
                                                 Save Change
                                             </button>
                                             {/* Success message */}
-                                            {status === "success" && (
+                                            {changePasswordStatus === "success" && (
                                                 <p className="font-mono text-xs text-green-500 text-center mt-2">
                                                     Change password successful!
                                                 </p>
                                             )}
-                                            {status === "pending" && (
-                                                <p className="font-mono text-xs text-yellow-500 text-center mt-2">Registering...</p>
+                                            {changePasswordStatus === "pending" && (
+                                                <p className="font-mono text-xs text-yellow-500 text-center mt-2">Changing...</p>
                                             )}
-                                            {status === "failed" && (
+                                            {changePasswordStatus === "failed" && (
                                                 <p className="font-mono text-xs text-red-500 text-center mt-2">{error}</p>
                                             )}
                                         </div>

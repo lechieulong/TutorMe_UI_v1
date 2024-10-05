@@ -7,6 +7,7 @@ export const SLICE_NAMES = {
   AUTH: "auth",
   TEST: "test",
   USER: "user",
+  EVENT: "event",
 };
 
 export const ACTIONS = {
@@ -29,7 +30,10 @@ export const ACTIONS = {
   UPDATE_TEST: "updateTest",
   DELETE_TEST: "deleteTest",
 
-  GET_USER_INFORMATION: "getProfile"
+  GET_USER_INFORMATION: "getProfile",
+
+  //Event
+  GET_EVENT_BY_USERID: "geteventbyuserid"
 };
 
 export const STATUS = {

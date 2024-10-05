@@ -33,17 +33,17 @@
 }
 
 .rbc-event {
-    background-color: #3b82f6;
+    background-color: #fb2fbb;
     color: white;
     border-radius: 4px;
 }
 
 .rbc-day-bg, .rbc-slot-selection {
-    background-color: #f3f4f6;
+    background-color: #f6f6f3;
 }
 
 .rbc-header {
-    background-color: #f1f5f9;
+    background-color: #556575;
     color: #111827;
     padding: 10px 0;
 }

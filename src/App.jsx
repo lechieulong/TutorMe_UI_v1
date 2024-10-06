@@ -29,15 +29,15 @@ import TestList from "./pages/User/TestList";
 import "preline";
 import TestLayout from "./pages/TestExam/TestLayout";
 import CourseDetail from "./pages/Course/CourseDetail";
-import TestForm from "./pages/TestExam/TestForm";
 import CourseTimeline from "./pages/Course/components/CourseTimeline";
 import CreateCourse from "./pages/Course/components/CreateCourse";
 import SpeakingGemini from "./service/SpeakingGemini";
 import MyLearning from "./pages/Class/MyLearning";
+import TestForm from "./pages/ExamTest/TestForm";
 
 const App = () => {
   return (
-    <div className=" min-h-screen ">
+    <div className="  ">
       <GoogleOAuthProvider clientId="553052882546-kmot9sitmhmu5ahgt47p07j96vagbqim.apps.googleusercontent.com">
         <Router>
           <Routes>

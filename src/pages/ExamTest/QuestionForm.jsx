@@ -3,10 +3,10 @@ import { useFieldArray, Controller } from "react-hook-form";
 import AnswerForm from "./AnswerForm";
 import QuestionCard from "./QuestionCard";
 import {
-  faAngleDown,
   faMultiply,
   faQuestionCircle,
   faSun,
+  faToggleOn,
 } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
@@ -94,7 +94,7 @@ const QuestionForm = ({ skill, partIndex, sectionIndex, control }) => {
         >
           Select Questions
           <span className="ml-3">
-            <FontAwesomeIcon icon={faAngleDown} />
+            <FontAwesomeIcon icon={faToggleOn} />
           </span>
         </button>
         {/* Button to add a new question */}

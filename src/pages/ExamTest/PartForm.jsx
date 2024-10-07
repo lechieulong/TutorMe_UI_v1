@@ -1,7 +1,12 @@
 import React from "react";
 import { useFieldArray, Controller } from "react-hook-form";
 import SectionForm from "./SectionForm";
-import { faImage, faMusic, faTrash } from "@fortawesome/free-solid-svg-icons";
+import {
+  faImage,
+  faMusic,
+  faPlusSquare,
+  faTrash,
+} from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
 const PartForm = ({ skill, control }) => {
@@ -14,7 +19,7 @@ const PartForm = ({ skill, control }) => {
     <div>
       <h3 className="text-2xl font-semibold ">Parts</h3>
       {fields.map((part, index) => (
-        <div key={part.id} clafssName="mb-4 border   p-4 rounded space-y-5">
+        <div key={part.id} className="mb-4 border p-4 rounded space-y-5">
           <div className="flex justify-between items-center gap-10">
             <h4 className="font-extrabold text-xl">Part {index + 1}</h4>
             <button
@@ -26,25 +31,29 @@ const PartForm = ({ skill, control }) => {
             </button>
           </div>
 
-          {/* Content Text Field */}
-          <Controller
-            name={`skills.${skill}.parts.${index}.contentText`}
-            control={control}
-            rules={{ required: "Content Text is required" }} // Validation for contentText
-            render={({ field, fieldState }) => (
-              <div className="mb-2">
-                <input
-                  {...field}
-                  className="border p-1 w-full"
-                  placeholder="Part Content"
-                />
-                {fieldState.error && (
-                  <p className="text-red-500">{fieldState.error.message}</p>
-                )}
-              </div>
-            )}
-          />
-          <div className="flex gap-10">
+          {/* Input for Part Content (Only for Reading) */}
+          {skill === "Reading" && (
+            <Controller
+              name={`skills.${skill}.parts.${index}.contentText`}
+              control={control}
+              rules={{ required: "Content Text is required" }} // Validation for contentText
+              render={({ field, fieldState }) => (
+                <div className="mb-2">
+                  <input
+                    {...field}
+                    className="border p-1 w-full"
+                    placeholder="Part Content"
+                  />
+                  {fieldState.error && (
+                    <p className="text-red-500">{fieldState.error.message}</p>
+                  )}
+                </div>
+              )}
+            />
+          )}
+
+          {/* Input for Audio (Only for Listening) */}
+          {skill === "Listening" && (
             <Controller
               name={`skills.${skill}.parts.${index}.audio`}
               control={control}
@@ -70,7 +79,10 @@ const PartForm = ({ skill, control }) => {
                 </div>
               )}
             />
+          )}
 
+          {/* Input for Image (Only for Writing) */}
+          {skill === "Writing" && (
             <Controller
               name={`skills.${skill}.parts.${index}.image`}
               control={control}
@@ -96,21 +108,93 @@ const PartForm = ({ skill, control }) => {
                 </div>
               )}
             />
-          </div>
+          )}
 
-          <SectionForm skill={skill} partIndex={index} control={control} />
+          {/* Questions Field Array */}
+          <h5 className="font-semibold mt-4">Questions</h5>
+          <QuestionsFieldArray
+            partIndex={index}
+            skill={skill}
+            control={control}
+          />
+
+          {/* Render SectionForm only for Reading and Listening */}
+          {(skill === "Reading" || skill === "Listening") && (
+            <SectionForm skill={skill} partIndex={index} control={control} />
+          )}
         </div>
       ))}
 
-      {/* Add Part Button */}
       <button
         type="button"
         onClick={() =>
-          append({ contentText: "", audio: null, image: null, sections: [] })
+          append({
+            contentText: "",
+            audio: null,
+            image: null,
+            questionName: "",
+            questions: [],
+          })
         }
-        className="bg-green-500 text-white p-2 rounded"
+        className="border border-green-400 text-gray-600 p-2 rounded"
       >
+        <span className="mr-3">
+          <FontAwesomeIcon icon={faPlusSquare} />
+        </span>
         Add Part
+      </button>
+    </div>
+  );
+};
+
+// New Component for Questions
+const QuestionsFieldArray = ({ partIndex, skill, control }) => {
+  const {
+    fields: questionFields,
+    append: appendQuestion,
+    remove: removeQuestion,
+  } = useFieldArray({
+    name: `skills.${skill}.parts.${partIndex}.questions`,
+    control,
+  });
+
+  return (
+    <div className="mt-2">
+      {questionFields.map((question, qIndex) => (
+        <div
+          key={question.id}
+          className="flex items-center mb-2 border p-2 rounded"
+        >
+          <p className="mr-4"> {qIndex + 1}</p>
+          <Controller
+            name={`skills.${skill}.parts.${partIndex}.questions.${qIndex}.questionText`}
+            control={control}
+            render={({ field }) => (
+              <input
+                {...field}
+                className="border p-1 w-full"
+                placeholder="Question Text"
+              />
+            )}
+          />
+          <button
+            type="button"
+            onClick={() => removeQuestion(qIndex)}
+            className="bg-red-500 text-white p-1 ml-2 rounded"
+          >
+            <FontAwesomeIcon icon={faTrash} />
+          </button>
+        </div>
+      ))}
+      <button
+        type="button"
+        onClick={() => appendQuestion({ questionText: "" })}
+        className="border border-blue-400 text-gray-600 p-2 rounded mt-2"
+      >
+        <span className="mr-3">
+          <FontAwesomeIcon icon={faPlusSquare} />
+        </span>
+        Add Question
       </button>
     </div>
   );

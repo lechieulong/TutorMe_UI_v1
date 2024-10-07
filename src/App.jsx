@@ -34,6 +34,7 @@ import CreateCourse from "./pages/Course/components/CreateCourse";
 import SpeakingGemini from "./service/SpeakingGemini";
 import MyLearning from "./pages/Class/MyLearning";
 import TestForm from "./pages/ExamTest/TestForm";
+import TestFormDetail from "./pages/ExamTest/TestFormDetail";
 
 const App = () => {
   return (
@@ -60,6 +61,7 @@ const App = () => {
             <Route path="/skill-part/test-setting" element={<TestSetting />} />
             <Route path="/skill-part" element={<SkillPart />} />
             <Route path="/create-test" element={<TestForm />} />
+            <Route path="/formDetail" element={<TestFormDetail />} />
 
             {/* Test  class*/}
             <Route path="/classes" element={<ClassesList />} />

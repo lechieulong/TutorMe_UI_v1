@@ -85,12 +85,11 @@ const TestFormDetail = () => {
           ))}
         </div>
 
-        {/* Import File Button */}
         <input
           type="file"
-          accept=".csv" // Accept only CSV files
+          accept=".csv"
           onChange={handleFileImport}
-          className="border p-2 rounded"
+          className="border border-gray-400  h-max  p-2 rounded"
         />
       </div>
 

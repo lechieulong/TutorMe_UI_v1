@@ -7,7 +7,6 @@ import {
   faCalendar,
   faTable,
 } from "@fortawesome/free-solid-svg-icons";
-import Header from "../../components/common/Header";
 import { createTest } from "../../redux/testExam/TestSlice";
 import { useDispatch } from "react-redux";
 
@@ -38,7 +37,6 @@ const TestForm = () => {
 
   return (
     <>
-      <Header />
       <form
         onSubmit={handleSubmit(onSubmit)}
         className="space-y-6 p-6 max-w-lg mt-20 mx-auto bg-white shadow-lg rounded-xl"

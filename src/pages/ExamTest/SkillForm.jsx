@@ -53,6 +53,7 @@ const SkillForm = ({ skill, control }) => {
               </label>
               <input
                 {...field}
+                type="number" // Set the input type to number
                 className="border p-2 rounded w-full focus:outline-none focus:ring-1 focus:ring-green-400"
                 placeholder="Duration"
               />

@@ -29,8 +29,6 @@ const CreateTest = () => {
 
       <div className="mt-20 p-10 ">
         {/* Stepper */}
-        {/* <h1 className="text-2xl font-bold mb-4">Test Form</h1> */}
-
         <ul className="relative flex flex-row justify-between gap-x-2">
           {steps.map((step, index) => (
             <li

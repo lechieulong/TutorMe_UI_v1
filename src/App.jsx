@@ -17,6 +17,8 @@ import ProfileEdit from "./pages/User/ProfileEdit";
 import ChangePassword from "./pages/User/ChangePassword";
 
 import Calendar from "./pages/Calendar/Calendar";
+import CoachingSchedule from "./pages/Teacher/CoachingSchedule";
+
 import SkillPart from "./pages/TestExam/SkillPart";
 import LiveStream from "./pages/LiveStream";
 import MetorInfor from "./pages/Mentor/MentorInforTest";
@@ -34,63 +36,64 @@ import ImageTest from "./components/ImageTest";
 import CourseTimeline from "./pages/Course/components/CourseTimeline";
 import CreateCourse from "./pages/Course/components/CreateCourse";
 import SpeakingGemini from "./service/SpeakingGemini";
+
 import MyLearning from "./pages/Class/MyLearning";
 
 const App = () => {
   return (
     <div className=" min-h-screen ">
-      <GoogleOAuthProvider clientId="553052882546-kmot9sitmhmu5ahgt47p07j96vagbqim.apps.googleusercontent.com">
-        <Router>
-          <Routes>
-            <Route path="/login" element={<Login />} />
-            <Route path="/register" element={<Register />} />
-            <Route path="/forgotpass" element={<ForgotPassword />} />
-            <Route path="/user/:username" element={<UserDetail />} />
-            <Route path="/user/edit/:username" element={<ProfileEdit />} />
-            <Route path="/changepassword" element={<ChangePassword />} />
-            <Route path="/reset-password" element={<ResetPassword />} />
+      <Router>
+        <Routes>
+          <Route path="/login" element={<Login />} />
+          <Route path="/register" element={<Register />} />
+          <Route path="/forgotpass" element={<ForgotPassword />} />
+          <Route path="/user/:username" element={<UserDetail />} />
+          <Route path="/user/edit/:username" element={<ProfileEdit />} />
+          <Route path="/changepassword" element={<ChangePassword />} />
+          <Route path="/reset-password" element={<ResetPassword />} />
 
-            {/* Test  common*/}
-            <Route path="/" element={<Home />} />
-            <Route path="*" element={<NotFound />} />
-            <Route path="/gemini" element={<SpeakingGemini />} />
+          {/* Test  common*/}
+          <Route path="/" element={<Home />} />
+          <Route path="*" element={<NotFound />} />
+          <Route path="/gemini" element={<SpeakingGemini />} />
 
-            {/* Test  exam*/}
-            <Route path="/test-setting/test-exam" element={<TestLayout />} />
-            <Route path="/live-stream" element={<LiveStream />} />
-            <Route path="/skill-part/test-setting" element={<TestSetting />} />
-            <Route path="/skill-part" element={<SkillPart />} />
-            <Route path="/create-test" element={<TestForm />} />
+          {/* Test  exam*/}
+          <Route path="/test-setting/test-exam" element={<TestLayout />} />
+          <Route path="/live-stream" element={<LiveStream />} />
+          <Route path="/skill-part/test-setting" element={<TestSetting />} />
+          <Route path="/skill-part" element={<SkillPart />} />
+          <Route path="/create-test" element={<TestForm />} />
 
-            {/* Test  class*/}
-            <Route path="/classes" element={<ClassesList />} />
+          {/* Test  class*/}
+          <Route path="/classes" element={<ClassesList />} />
 
-            {/* Calender */}
-            <Route path="/calendar" element={<Calendar />} />
+          {/* Calender */}
+          <Route path="/calendar" element={<Calendar />} />
+          <Route path="/coachingschedule" element={<CoachingSchedule />} />
+          <Route path="/coachingschedule/:teachername" element={<CoachingSchedule />} />
+          
+          {/* Test Mentor */}
 
-            {/* Test Mentor */}
+          {/* Mentor */}
+          <Route path="/metorinfor" element={<MetorInfor />} />
 
-            {/* Mentor */}
-            <Route path="/metorinfor" element={<MetorInfor />} />
+          {/* Course */}
+          <Route path="/course" element={<CourseList />} />
+          <Route path="/createCourse" element={<CreateCourse />} />
+          <Route path="/courseDetail/:courseId" element={<CourseDetail />} />
+          <Route path="/courseDetail/:courseId/classes" element={<ClassOfCourse />} />
+          <Route path="/course-timeline" element={<CourseTimeline />} />
+          {/* <Route path="/courses/:courseId" element={<CourseDetail />} /> */}
 
-            {/* Course */}
-            <Route path="/course" element={<CourseList />} />
-            <Route path="/createCourse" element={<CreateCourse />} />
-            <Route path="/courseDetail/:courseId" element={<CourseDetail />} />
-            <Route path="/courseDetail/:courseId/classes" element={<ClassOfCourse />} />
-            <Route path="/course-timeline" element={<CourseTimeline />} />
-            {/* <Route path="/courses/:courseId" element={<CourseDetail />} /> */}
+          {/* Class */}
+          <Route path="/mylearning" element={<MyLearning />} />
 
-            {/* Class */}
-            <Route path="/mylearning" element={<MyLearning />} />
+          {/* List test that User did */}
+          <Route path="/testlist" element={<TestList />} />
 
-            {/* List test that User did */}
-            <Route path="/testlist" element={<TestList />} />
-
-            <Route path="/uploadImage" element={<ImageTest />} />
-          </Routes>
-        </Router>
-      </GoogleOAuthProvider>
+          <Route path="/uploadImage" element={<ImageTest />} />
+        </Routes>
+      </Router>
     </div>
   );
 };

@@ -8,6 +8,7 @@ import { LoginApi, loginWithGoogleApi } from "../../redux/auth/AuthSlice";
 import "react-toastify/dist/ReactToastify.css";
 import { useDispatch, useSelector } from "react-redux";
 import InputField from "./components/InputField";
+import { GoogleOAuthProvider } from '@react-oauth/google';
 
 const SignIn = () => {
   const dispatch = useDispatch();
@@ -182,10 +183,12 @@ const SignIn = () => {
                 </span>
               </div>
             </button> */}
-            <GoogleLogin
-              onSuccess={handleGoogleLoginSuccess}
-              onError={handleGoogleLoginFailure}
-            />
+            <GoogleOAuthProvider clientId={import.meta.env.VITE_GOOGLE_CLIENT_ID}>
+              <GoogleLogin
+                onSuccess={handleGoogleLoginSuccess}
+                onError={handleGoogleLoginFailure}
+              />
+            </GoogleOAuthProvider>
             <button className="group h-12 px-4 border-2 border-gray-300 rounded-full transition duration-300 hover:border-blue-400 focus:bg-blue-50 active:bg-blue-100">
               <div className="relative flex items-center space-x-3 justify-center">
                 <img

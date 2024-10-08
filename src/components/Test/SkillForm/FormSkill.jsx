@@ -452,9 +452,7 @@ const FormSkill = ({
                         formData.skills[skill].parts[partIndex]?.contentText ||
                         ""
                       }
-                      rules={{
-                        required: "Content text is required",
-                      }}
+                      rules={{ required: "Content text is required" }}
                       render={({
                         field: { onChange, value },
                         fieldState: { error },
@@ -480,16 +478,16 @@ const FormSkill = ({
                             onChange={(event, editor) => {
                               const data = editor.getData();
                               onChange(data); // Update value for validation
-                              const newSkills = [...formData.skills];
-                              const newParts = [...newSkills[skill].parts];
-                              newParts[partIndex].contentText = data;
-                              newSkills[skill] = {
-                                ...newSkills[skill],
-                                parts: newParts,
-                              };
+
+                              // Update the formData state manually
+                              const updatedSkills = [...formData.skills];
+                              updatedSkills[skill].parts[
+                                partIndex
+                              ].contentText = data;
+
                               handleDataChange({
                                 ...formData,
-                                skills: newSkills,
+                                skills: updatedSkills,
                               });
                             }}
                           />

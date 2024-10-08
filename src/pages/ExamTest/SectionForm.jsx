@@ -22,7 +22,7 @@ const SectionForm = ({ skill, partIndex, control }) => {
       <h4 className="font-medium">Sections</h4>
       {fields.map((section, index) => (
         <div key={section.id} className="mb-4 space-y-4 border p-4 rounded">
-          <div className="flex justify-between items-center ">
+          <div className="flex justify-between items-center">
             <h5 className="font-extrabold">Section {index + 1}</h5>{" "}
             <button
               type="button"
@@ -56,6 +56,34 @@ const SectionForm = ({ skill, partIndex, control }) => {
               </div>
             )}
           />
+          <Controller
+            name={`skills.${skill}.parts.${partIndex}.sections.${index}.image`}
+            control={control}
+            render={({ field }) => (
+              <div className="mb-4">
+                <label className="block text-gray-700 font-medium mb-2">
+                  Upload Image
+                </label>
+                <input
+                  type="file"
+                  accept="image/*"
+                  onChange={(e) => {
+                    const file = e.target.files[0];
+                    if (file) {
+                      const reader = new FileReader();
+                      reader.onloadend = () => {
+                        field.onChange(reader.result); // Store image data (base64)
+                      };
+                      reader.readAsDataURL(file); // Convert file to base64
+                    } else {
+                      field.onChange(null); // Reset if no file
+                    }
+                  }}
+                  className="border p-1 w-full"
+                />
+              </div>
+            )}
+          />
           {/* Section Guide Input */}
           <Controller
             name={`skills.${skill}.parts.${partIndex}.sections.${index}.sectionGuide`}
@@ -77,6 +105,8 @@ const SectionForm = ({ skill, partIndex, control }) => {
               </div>
             )}
           />
+          {/* Image Upload Input */}
+
           {/* Question Form */}
           <QuestionForm
             skill={skill}
@@ -89,8 +119,13 @@ const SectionForm = ({ skill, partIndex, control }) => {
       <button
         type="button"
         onClick={() =>
-          append({ sectionGuide: "", sectionType: "", questions: [] })
-        } // Initialize sectionType
+          append({
+            sectionGuide: "",
+            sectionType: "",
+            image: "",
+            questions: [],
+          })
+        }
         className="bg-green-500 text-white p-2 rounded"
       >
         Add Section

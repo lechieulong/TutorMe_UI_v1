@@ -1,5 +1,6 @@
 import { useEffect, useState, useMemo } from "react";
 import { useDispatch, useSelector } from "react-redux";
+import { useNavigate } from "react-router-dom";
 import {
   FaBook,
   FaSurprise,
@@ -7,14 +8,16 @@ import {
   FaPenAlt,
 } from "react-icons/fa";
 import MainLayout from "../../layout/MainLayout";
-import Filter from "./components/Filter";
-import CourseCard from "./components/CourseCard";
-import { fetchCourses } from "../../redux/courses/CourseSlice";
-import { STATUS } from "../../constant/SliceName";
-import Calendar from "../../components/common/linkToCalendar";
+import Filter from "../Course/components/Filter"; // Reuse Filter component
+import CourseCard from "../Course/components/CourseCard";
+import { fetchCoursesByUserId } from "../../redux/courses/CourseSlice"; // Import action
+import axios from "axios";
+import { getUser } from "../../service/GetUser";
 
-const CourseList = () => {
+const MentorCourseList = () => {
   const dispatch = useDispatch();
+  const navigate = useNavigate();
+  const [user, setUser] = useState(null);
   const { courses = [], status, error } = useSelector((state) => state.courses);
 
   const [selectedCategory, setSelectedCategory] = useState("All");
@@ -23,29 +26,32 @@ const CourseList = () => {
   const coursesPerPage = 8;
 
   useEffect(() => {
-    dispatch(fetchCourses());
-  }, [dispatch]);
+    const userFromToken = getUser();
+    setUser(userFromToken);
+  }, []);
 
+  useEffect(() => {
+    if (user?.sub) {
+      dispatch(fetchCoursesByUserId(user.sub)); // Fetch courses based on UserId
+    }
+  }, [dispatch, user]);
   const categories = useMemo(
     () => ["All", "Listening", "Reading", "Writing", "Speaking"],
     []
   );
 
   const filteredCourses = useMemo(() => {
-    if (status === STATUS.SUCCESS) {
-      return courses
-        .filter(
-          (course) =>
-            selectedCategory === "All" || course.category === selectedCategory
-        )
-        .filter((course) => {
-          const courseTitle = course.title || "";
-          const term = searchTerm || "";
-          return courseTitle.toLowerCase().includes(term.toLowerCase());
-        });
-    }
-    return [];
-  }, [courses, selectedCategory, searchTerm, status]);
+    return courses
+      .filter(
+        (course) =>
+          selectedCategory === "All" || course.category === selectedCategory
+      )
+      .filter((course) => {
+        const courseTitle = course.title || "";
+        const term = searchTerm || "";
+        return courseTitle.toLowerCase().includes(term.toLowerCase());
+      });
+  }, [courses, selectedCategory, searchTerm]);
 
   const indexOfLastCourse = currentPage * coursesPerPage;
   const indexOfFirstCourse = indexOfLastCourse - coursesPerPage;
@@ -67,6 +73,16 @@ const CourseList = () => {
     }
   };
 
+  const handleDelete = async (courseId) => {
+    try {
+      await axios.delete(`https://localhost:7030/api/Courses/${courseId}`);
+      dispatch(fetchCoursesByUserId(user.sub)); // Reload courses after deletion
+    } catch (error) {
+      console.error("Error deleting course", error);
+      alert("Failed to delete course.");
+    }
+  };
+
   const getIcon = (category) => {
     switch (category) {
       case "Reading":
@@ -84,8 +100,9 @@ const CourseList = () => {
     }
   };
 
-  if (status === STATUS.PENDING) return <p>Loading...</p>;
-  if (status === STATUS.FAILED) return <p>Error: {error}</p>;
+  if (!user) return <p>Loading user data...</p>;
+  if (status === "pending") return <p>Loading courses...</p>;
+  if (status === "failed") return <p>Error: {error}</p>;
 
   return (
     <MainLayout>
@@ -93,14 +110,14 @@ const CourseList = () => {
         {/* Banner Section */}
         <div className="bg-blue-100 p-4 rounded-lg mb-6 text-center">
           <h2 className="text-2xl font-semibold text-blue-700">
-            Enhance Your IELTS Skills with Our Comprehensive Courses!
+            Manage Your Courses as a Mentor!
           </h2>
           <p className="text-gray-700 mt-2">
-            Browse through our range of courses designed to help you ace the
-            IELTS exam. Explore and start learning today!
+            View, manage, and delete your created courses here.
           </p>
         </div>
 
+        {/* Filter Section */}
         <div className="flex items-center justify-between mb-4">
           <Filter
             categories={categories}
@@ -112,8 +129,16 @@ const CourseList = () => {
             searchTerm={searchTerm}
             onSearchChange={(term) => setSearchTerm(term)}
           />
+          <button
+            type="button"
+            className="py-2 px-3 inline-flex items-center gap-x-2 text-sm font-medium rounded-lg border border-gray-200 bg-white text-gray-800 shadow-sm hover:bg-gray-50 focus:outline-none focus:bg-gray-50"
+            onClick={() => navigate("/createCourse")}
+          >
+            Create Course
+          </button>
         </div>
 
+        {/* Course List */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mt-6">
           {currentCourses.map((course) => (
             <CourseCard
@@ -124,32 +149,30 @@ const CourseList = () => {
               description={course.description}
               category={course.category}
               icon={getIcon(course.category)}
-              teacher={course.userId}
+              teacher={user.name}
               courseId={course.id}
-              // onDelete={handleDelete} // Pass the handleDelete function
+              onDelete={handleDelete}
             />
           ))}
         </div>
 
-        {/* Pagination controls */}
+        {/* Pagination */}
         <div className="flex justify-center items-center mt-4">
           <button
             onClick={handlePrevPage}
             disabled={currentPage === 1}
-            aria-label="Previous Page"
             className={`px-3 py-1.5 mx-1 text-sm font-medium ${
               currentPage === 1 ? "bg-gray-300" : "bg-blue-600"
             } text-white border border-blue-600 rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-400`}
           >
             Previous
           </button>
-          <span className="text-sm mx-2 text-black">
+          <span className="text-sm mx-2">
             Page {currentPage} of {totalPages}
           </span>
           <button
             onClick={handleNextPage}
             disabled={currentPage === totalPages}
-            aria-label="Next Page"
             className={`px-3 py-1.5 mx-1 text-sm font-medium ${
               currentPage === totalPages ? "bg-gray-300" : "bg-blue-600"
             } text-white border border-blue-600 rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-400`}
@@ -158,9 +181,8 @@ const CourseList = () => {
           </button>
         </div>
       </div>
-      <Calendar />
     </MainLayout>
   );
 };
 
-export default CourseList;
+export default MentorCourseList;

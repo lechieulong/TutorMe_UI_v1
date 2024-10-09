@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { FaEye, FaRegUser, FaSignOutAlt, FaUserGraduate } from "react-icons/fa";
 import { Link } from 'react-router-dom';
 import { useDispatch, useSelector } from "react-redux";
-import { getUser } from '../../../service/GetUser';
+import { getUser } from "../../../service/GetUser";
 import { Profile } from "../../../redux/users/UserSlice";
 import { Roles } from "../../../utils/config";
 

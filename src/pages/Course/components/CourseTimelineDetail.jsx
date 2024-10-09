@@ -5,7 +5,7 @@ const CourseTimelineDetail = ({ timelineId }) => {
   const [details, setDetails] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [activeIndex, setActiveIndex] = useState(null); // Thêm trạng thái để quản lý index đang mở
+  const [activeIndex, setActiveIndex] = useState(null); // Trạng thái để quản lý index đang mở
 
   useEffect(() => {
     const fetchTimelineDetails = async () => {
@@ -48,27 +48,38 @@ const CourseTimelineDetail = ({ timelineId }) => {
               </button>
             </h2>
 
-            {/* Collapse content */}
+            {/* Nội dung Collapse */}
             <div
               style={{
-                maxHeight: activeIndex === index ? "100px" : "0",
+                maxHeight: activeIndex === index ? "400px" : "0",
                 opacity: activeIndex === index ? 1 : 0,
                 transition: "opacity 0.5s ease, max-height 0.5s ease",
                 overflow: "hidden",
               }}
             >
-              <p className="text-gray-700 mt-2">
-                Video URL:{" "}
-                <a
-                  href={detail.videoUrl}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="text-blue-600 hover:underline"
-                >
-                  {detail.videoUrl}
-                </a>
-              </p>
-              <p className="text-gray-700">{detail.topic}</p>
+              <div
+                style={{
+                  position: "relative",
+                  paddingBottom: "56.25%", // 16:9 aspect ratio (9/16 = 0.5625 or 56.25%)
+                  height: 0,
+                  overflow: "hidden",
+                  width: "100%",
+                }}
+              >
+                <iframe
+                  src={`https://www.youtube.com/embed/ew-fVQyMZSo`}
+                  title="Youtube Video"
+                  style={{
+                    position: "absolute",
+                    top: 0,
+                    left: 0,
+                    width: "100%",
+                    height: "100%",
+                  }}
+                  allowFullScreen
+                ></iframe>
+              </div>
+              <p className="text-gray-700 mt-2">{detail.topic}</p>
             </div>
           </div>
         ))

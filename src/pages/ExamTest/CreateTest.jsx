@@ -5,19 +5,28 @@ import Header from "../../components/common/Header";
 import PreviewTest from "./PreviewTest";
 
 const CreateTest = () => {
-  const { control, resetField, handleSubmit } = useForm();
+  const { control, resetField, handleSubmit, setValue, getValues } = useForm();
 
   const [activeStep, setActiveStep] = useState(0); // Active step index
   const [formData, setFormData] = useState(null); // To hold form data from TestFormDetail
+  const [selectedSkills, setSelectedSkills] = useState([]); // Move selectedSkills to parent
+
   const steps = [
     {
       label: "Update Test Info",
-      content: <TestFormDetail control={control} resetField={resetField} />,
+      content: (
+        <TestFormDetail
+          control={control}
+          resetField={resetField}
+          setSelectedSkills={setSelectedSkills} // Pass down setSelectedSkills
+          selectedSkills={selectedSkills} // Pass down selectedSkills
+        />
+      ),
     },
     {
       label: "Preview",
       content: <PreviewTest data={formData} />,
-    }, // Pass formData to PreviewTest
+    },
   ];
 
   const handleFinish = () => {
@@ -28,6 +37,7 @@ const CreateTest = () => {
       alert("Please fill out the form before finishing.");
     }
   };
+
   const onSubmit = (data) => {
     setFormData(data);
   };
@@ -39,30 +49,32 @@ const CreateTest = () => {
       <div className="mt-20 p-10 ">
         {/* Stepper */}
         <div className="">
-          <ul className="relative flex flex-row justify-between gap-x-2 ">
+          <ul className="relative flex flex-row justify-between gap-x-2  ">
             {steps.map((step, index) => (
-              <li
-                key={index}
-                className="flex items-center gap-x-2 shrink basis-0 flex-1 group"
-              >
-                <div className="min-w-7 min-h-7 inline-flex justify-center items-center text-xs align-middle">
-                  {activeStep === index ? (
-                    <span className="size-7 flex justify-center items-center shrink-0 bg-green-500 text-white rounded-full">
-                      {index + 1}
+              <>
+                <li
+                  key={index}
+                  className="flex justify-center items-center gap-x-2 shrink basis-0 flex-1 group"
+                >
+                  <div className="min-w-7 min-h-7 inline-flex justify-center items-center text-xs align-middle">
+                    {activeStep === index ? (
+                      <span className="size-7 flex justify-center items-center shrink-0 bg-green-500 text-white rounded-full">
+                        {index + 1}
+                      </span>
+                    ) : (
+                      <span className="size-7 flex justify-center items-center shrink-0 bg-white border border-gray-200 font-medium text-gray-800 rounded-full">
+                        {index + 1}
+                      </span>
+                    )}
+                    <span className="ms-2 block text-sm font-medium text-gray-800 dark:text-white">
+                      {step.label}
                     </span>
-                  ) : (
-                    <span className="size-7 flex justify-center items-center shrink-0 bg-white border border-gray-200 font-medium text-gray-800 rounded-full">
-                      {index + 1}
-                    </span>
-                  )}
-                  <span className="ms-2 block text-sm font-medium text-gray-800 dark:text-white">
-                    {step.label}
-                  </span>
-                </div>
+                  </div>
+                </li>
                 {index < steps.length - 1 && (
-                  <div className="w-full h-px flex-1 bg-gray-200 group-last:hidden dark:bg-neutral-700"></div>
+                  <div className="w-full h-px flex-1 self-center bg-gray-400 group-last:hidden dark:bg-neutral-700"></div>
                 )}
-              </li>
+              </>
             ))}
           </ul>
         </div>

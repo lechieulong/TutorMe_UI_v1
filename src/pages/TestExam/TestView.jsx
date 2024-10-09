@@ -52,9 +52,9 @@ const TestView = ({ receivedData, isPreview, skillName }) => {
   return (
     <div className="relative flex flex-col h-screen">
       <div className="flex justify-between h-full">
-        <h3>{skillName}</h3>
+        <h3 className="font-semibold text-2xl mt-2">{skillName}</h3>
 
-        {isOpenSideView && partData.length > 0 ? (
+        {isOpenSideView && partData.length > 0 && (
           <div
             className="overflow-auto"
             style={{
@@ -66,8 +66,6 @@ const TestView = ({ receivedData, isPreview, skillName }) => {
             {/* Render Topic based on selectedPart */}
             <Topic partData={partData[selectedPart]} />
           </div>
-        ) : (
-          <p>No parts available for this skill.</p>
         )}
 
         {isOpenSideView && partData.length > 0 && (

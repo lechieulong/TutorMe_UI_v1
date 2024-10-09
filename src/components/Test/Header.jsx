@@ -4,39 +4,23 @@ import {
   faPaperPlane,
   faPen,
 } from "@fortawesome/free-solid-svg-icons";
-import { useEffect, useState, useCallback } from "react";
-
-// Custom Hook for Timer Logic
-const useTimer = (initialTime, setIsTimeOut) => {
-  const [timeLeft, setTimeLeft] = useState(initialTime);
-
-  useEffect(() => {
-    const timerInterval = setInterval(() => {
-      setTimeLeft((prevTime) => {
-        if (prevTime <= 0) {
-          clearInterval(timerInterval);
-          setIsTimeOut(true);
-          return 0;
-        }
-        return prevTime - 1000; // Decrease by 1 second
-      });
-    }, 1000);
-
-    return () => clearInterval(timerInterval); // Clean up on component unmount
-  }, [setIsTimeOut]);
-
-  return timeLeft;
-};
+import { useEffect, useState } from "react";
+import NoteCard from "./NoteCard"; // Adjust the path as necessary
 
 const Header = ({ setIsTimeOut }) => {
-  // Timer Logic - use custom hook
+  // Timer Logic
   const timeLeft = useTimer(60 * 60 * 1000, setIsTimeOut);
+  const [isNoteOpen, setIsNoteOpen] = useState(false); // State for note visibility
+
+  const openNoteModal = () => setIsNoteOpen(true);
+  const closeNoteModal = () => setIsNoteOpen(false);
 
   const formatTime = (milliseconds) => {
     const minutes = Math.floor(milliseconds / (60 * 1000));
     const seconds = Math.floor((milliseconds % (60 * 1000)) / 1000);
     return `${minutes}:${seconds < 10 ? `0${seconds}` : seconds}`;
   };
+
   return (
     <div className="left-0 right-0 flex justify-between items-center p-4 fixed bg-green-400 shadow-md">
       <p className="text-lg font-semibold">Logo</p>
@@ -44,13 +28,13 @@ const Header = ({ setIsTimeOut }) => {
         <span className="mr-2 text-white">
           <FontAwesomeIcon icon={faClock} />
         </span>
-        <span className="text-sm mr-4">Time left </span>{" "}
+        <span className="text-sm mr-4">Time left </span>
         <span className="text-xl text-white">{formatTime(timeLeft)}</span>
         <span className="text-sm ml-2">minutes</span>
       </p>
       <div className="flex gap-8 justify-center items-center">
         <span
-          onClick={openNoteModal}
+          onClick={openNoteModal} // Open the note modal
           className="text-md font-semibold text-white cursor-pointer"
         >
           <span className="mr-2 text-sm">
@@ -68,6 +52,9 @@ const Header = ({ setIsTimeOut }) => {
           Submit
         </button>
       </div>
+
+      {/* Render NoteCard if the note modal is open */}
+      {isNoteOpen && <NoteCard onClose={closeNoteModal} />}
     </div>
   );
 };

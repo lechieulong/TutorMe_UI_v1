@@ -6,7 +6,7 @@ import { getUser } from "../../service/GetUser";
 import { Roles } from "../../utils/config";
 import defaulAvatar from "../../assets/images/defaul-avatar.jpg";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { FaGraduationCap  } from "react-icons/fa";
+import { FaGraduationCap } from "react-icons/fa";
 import {
   faHouse,
   faTv,
@@ -117,14 +117,12 @@ const Header = () => {
               </span>
               Test
             </a>
-            {authToken && user?.role === Roles.USER && (
-              <a className="font-medium text-black focus:outline-none" href="mylearning">
-                <span className="mr-2">
-                  <FontAwesomeIcon icon={faGraduationCap} />
-                </span>
-                MyLearning
-              </a>
-            )}
+            <Link className="font-medium text-black focus:outline-none" to="/mylearning">
+              <span className="mr-2">
+                <FontAwesomeIcon icon={faGraduationCap} />
+              </span>
+              MyLearning
+            </Link>
             {/* <a className="font-medium text-black focus:outline-none" href="#">
               <span className="mr-2">
                 <FontAwesomeIcon icon={faUserGraduate} />

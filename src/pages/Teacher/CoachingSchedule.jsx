@@ -1,14 +1,23 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { useDispatch, useSelector } from "react-redux";
 import { useParams } from 'react-router-dom';
 import MainLayout from '../../layout/MainLayout';
 import { FaSearch, FaCaretDown } from "react-icons/fa";
 import About from './components/About';
 import Certification from './components/Certification';
 import AvailableTime from './components/AvailableTime';
+import { GetTopTeachers } from '../../redux/users/UserSlice';
 
 const CoachingSchedule = () => {
+    const dispatch = useDispatch();
     const [activeTab, setActiveTab] = useState('about'); // Default tab
     const { teachername } = useParams(); // Get teachername from URL params
+
+    useEffect(() => {
+        dispatch(GetTopTeachers());
+    }, [dispatch]);
+
+    const { teachers, status, error } = useSelector((state) => state.user);
 
     return (
         <MainLayout>
@@ -26,14 +35,19 @@ const CoachingSchedule = () => {
                     </header>
 
                     <div className="flex items-center space-x-2 mb-4">
-                        {[...Array(12)].map((_, index) => (
-                            <img
-                                key={index}
-                                src={`https://placehold.co/40x40`}
-                                alt={`Profile ${index + 1}`}
-                                className="rounded-full"
-                            />
-                        ))}
+                        {teachers.length > 0 ? (
+                            teachers.map((teacher) => (
+                                <a href={`/coachingschedule/${teacher.userName}`} className="inline-block">
+                                    <img
+                                        src={teacher.imageURL || `https://placehold.co/40x40`}
+                                        alt={`Profile of ${teacher.name}`}
+                                        className="rounded-full w-10 h-10" // Set size to 40x40
+                                    />
+                                </a>
+                            ))
+                        ) : (
+                            <p className="text-gray-600">No teachers available.</p>
+                        )}
 
                         <div className="flex items-center">
                             <button className="bg-slate-100 text-blue-500 px-4 py-2 ml-2 rounded">

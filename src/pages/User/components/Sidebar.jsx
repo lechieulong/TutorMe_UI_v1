@@ -38,12 +38,19 @@ const Sidebar = () => {
                         <span className="hidden sm:inline">Your Profile</span>
                     </Link>
                     {/* Only show "Be Teacher" link if role is not TEACHER */}
-                    {userFromToken?.role !== Roles.TEACHER && (
+                    {!userFromToken?.role?.includes(Roles.TEACHER) ? (
                         <Link
                             to="/changepassword"
                             className="flex items-center p-3 text-gray-700 hover:bg-gray-200 rounded-lg transition-colors duration-300 text-sm">
                             <FaUserGraduate className="mr-3 text-lg text-gray-500" /> {/* Smaller icon */}
                             <span className="hidden sm:inline">Be Teacher</span>
+                        </Link>
+                    ): (
+                        <Link
+                            to="/changepassword"
+                            className="flex items-center p-3 text-gray-700 hover:bg-gray-200 rounded-lg transition-colors duration-300 text-sm">
+                            <FaUserGraduate className="mr-3 text-lg text-gray-500" /> {/* Smaller icon */}
+                            <span className="hidden sm:inline">Teacher Profile</span>
                         </Link>
                     )}
                     <Link

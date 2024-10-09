@@ -1,7 +1,6 @@
 import { useState, useEffect } from "react";
 import Cookies from "js-cookie";
 import { Link, useNavigate } from "react-router-dom";
-import { loginApi } from "../../service/AuthService";
 import { ToastContainer, toast } from "react-toastify";
 import { GoogleLogin } from '@react-oauth/google';
 import { LoginApi, loginWithGoogleApi } from "../../redux/auth/AuthSlice";
@@ -20,7 +19,7 @@ const SignIn = () => {
   useEffect(() => {
     const token = Cookies.get("authToken");
     if (token) {
-      navigate("/"); // Nếu có token, chuyển hướng đến trang Home
+      navigate("/");
     }
   }, [navigate]);
 
@@ -65,14 +64,13 @@ const SignIn = () => {
 
       const userData = formData;
       try {
-        const response = await dispatch(LoginApi(userData)).unwrap(); // unwrap để lấy dữ liệu trực tiếp từ action
+         // unwrap để lấy dữ liệu trực tiếp từ action
+        const response = await dispatch(LoginApi(userData)).unwrap();
 
-        // Kiểm tra nếu đăng nhập thành công
         if (response.isSuccess) {
           Cookies.set("authToken", response.result.token, { expires: 7 });
-          toast.success("Login successful!");
           navigate("/"); // Chuyển hướng sau khi đăng nhập thành công
-          // Chuyển hướng đến trang Home mà không cần reload
+          // Chuyển hướng đến trang Home mà hông cần reload
           // window.location.href = "/";
         } else {
           toast.error(response.message || "Login failed.");
@@ -92,10 +90,8 @@ const SignIn = () => {
     // Store the token in cookies or localStorage
     try {
       const response = await dispatch(loginWithGoogleApi({ token })).unwrap();
-      // Handle the API response for successful login/registration
       if (response.isSuccess) {
         Cookies.set("authToken", response.result.token, { expires: 7 });
-        // toast.success("Google login successful!");
         navigate("/");
         // window.location.href = "/";
       } else {
@@ -171,18 +167,6 @@ const SignIn = () => {
         <div className="space-y-4 text-gray-600 text-center">
           <p className="text-xs mt-2">-----------------or-----------------</p>
           <div className="grid gap-4">
-            {/* <button className="group h-12 px-4 border-2 border-gray-300 rounded-full transition duration-300 hover:border-blue-400 focus:bg-blue-50 active:bg-blue-100">
-              <div className="relative flex items-center space-x-3 justify-center">
-                <img
-                  src="https://tailus.io/sources/blocks/social/preview/images/google.svg"
-                  className="absolute left-0 w-5"
-                  alt="google logo"
-                />
-                <span className="block w-max font-semibold tracking-wide text-gray-700 text-sm transition duration-300 group-hover:text-blue-600">
-                  Continue with Google
-                </span>
-              </div>
-            </button> */}
             <GoogleOAuthProvider clientId={import.meta.env.VITE_GOOGLE_CLIENT_ID}>
               <GoogleLogin
                 onSuccess={handleGoogleLoginSuccess}

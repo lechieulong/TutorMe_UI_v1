@@ -1,12 +1,24 @@
-import { useState } from "react";
-import { Link } from "react-router-dom";
+import { useState, useEffect } from "react";
+import { GoogleOAuthProvider } from '@react-oauth/google';
+import { GoogleLogin } from '@react-oauth/google';
+import { loginWithGoogleApi } from "../../redux/auth/AuthSlice";
+import { Link, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { Regis } from "../../redux/auth/AuthSlice";
 import InputField from "./components/InputField";
+import Cookies from "js-cookie";
 
 const SignUp = () => {
   const dispatch = useDispatch();
+  const navigate = useNavigate();
   const { registerStatus, error } = useSelector((state) => state.auth);
+
+  useEffect(() => {
+    const token = Cookies.get("authToken");
+    if (token) {
+      navigate("/");
+    }
+  }, [navigate]);
 
   const [formData, setFormData] = useState({
     name: "",
@@ -71,6 +83,31 @@ const SignUp = () => {
     } else {
       setFormErrors(errors);
     }
+  };
+
+  // Handle Google login success
+  const handleGoogleLoginSuccess = async (credentialResponse) => {
+    const token = credentialResponse.credential;
+    // Store the token in cookies or localStorage
+    try {
+      const response = await dispatch(loginWithGoogleApi({ token })).unwrap();
+      if (response.isSuccess) {
+        Cookies.set("authToken", response.result.token, { expires: 7 });
+        navigate("/");
+        // window.location.href = "/";
+      } else {
+        toast.error(response.message || "Google login failed.");
+      }
+    } catch (error) {
+      console.log("Fail");
+      console.log(error);
+      toast.error(error || "Google login failed. Please try again.");
+    }
+  };
+
+  // Handle Google login failure
+  const handleGoogleLoginFailure = () => {
+    toast.error("Google login failed. Please try again.");
   };
 
   return (
@@ -176,18 +213,12 @@ const SignUp = () => {
         <div className="space-y-4 text-gray-600 text-center">
           <p className="font-mono text-xs">-----------------or-----------------</p>
           <div className="grid gap-4">
-            <button className="group h-12 px-4 border-2 border-gray-300 rounded-full transition duration-300 hover:border-blue-400 focus:bg-blue-50 active:bg-blue-100">
-              <div className="relative flex items-center space-x-3 justify-center">
-                <img
-                  src="https://tailus.io/sources/blocks/social/preview/images/google.svg"
-                  className="absolute left-0 w-5"
-                  alt="Google logo"
-                />
-                <span className="block font-semibold text-gray-700 text-sm transition duration-300 group-hover:text-blue-600">
-                  Continue with Google
-                </span>
-              </div>
-            </button>
+            <GoogleOAuthProvider clientId={import.meta.env.VITE_GOOGLE_CLIENT_ID}>
+              <GoogleLogin
+                onSuccess={handleGoogleLoginSuccess}
+                onError={handleGoogleLoginFailure}
+              />
+            </GoogleOAuthProvider>
             <button className="group h-12 px-4 border-2 border-gray-300 rounded-full transition duration-300 hover:border-blue-400 focus:bg-blue-50 active:bg-blue-100">
               <div className="relative flex items-center space-x-3 justify-center">
                 <img

@@ -31,7 +31,7 @@ export const ACTIONS = {
   DELETE_TEST: "deleteTest",
 
   GET_USER_INFORMATION: "getProfile",
-
+  GET_TOP10_TEACHERS: "getTop10Teachers",
   //Event
   GET_EVENT_BY_USERID: "geteventbyuserid"
 };

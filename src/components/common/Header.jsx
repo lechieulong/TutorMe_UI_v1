@@ -3,8 +3,10 @@ import { Link } from "react-router-dom";
 import useAuthToken from "../../hooks/useAuthToken"; // Import useAuthToken
 import Cookies from "js-cookie"; // Import js-cookie
 import { getUser } from "../../service/GetUser";
+import { Roles } from "../../utils/config";
 import defaulAvatar from "../../assets/images/defaul-avatar.jpg";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { FaGraduationCap } from "react-icons/fa";
 import {
   faHouse,
   faTv,
@@ -29,8 +31,10 @@ const Header = () => {
   }, [authToken]);
 
   const handleLogout = () => {
-    Cookies.remove("authToken"); // Xoá cookie khi logout
-    window.location.reload(); // Reload trang để cập nhật trạng thái
+    Cookies.remove("authToken");
+    localStorage.clear();
+    sessionStorage.clear();
+    window.location.reload();
   };
 
   return (
@@ -60,7 +64,7 @@ const Header = () => {
               </button>
               <Link to={`/user/${user?.userName}`}>
                 <img
-                  className="inline-block size-[38px] rounded-full"
+                  className="inline-block w-[38px] h-[38px] rounded-full transition-transform duration-300 transform hover:scale-110 hover:bg-gray-50 focus:outline-none focus:bg-gray-50"
                   src={user?.imageURL || defaulAvatar}
                   alt="Avatar"
                 />
@@ -100,7 +104,7 @@ const Header = () => {
               </span>
               Livestreams
             </a>
-            <Link className="font-medium text-black focus:outline-none" to="/course">
+            <Link className="font-medium text-black focus:outline-none" to="/course" >
               <span className="mr-2">
                 <FontAwesomeIcon icon={faBook} />
               </span>
@@ -115,20 +119,18 @@ const Header = () => {
               </span>
               Test
             </a>
-            {authToken && (
-              <a className="font-medium text-black focus:outline-none" href="mylearning">
-                <span className="mr-2">
-                  <FontAwesomeIcon icon={faGraduationCap} />
-                </span>
-                My Learning
-              </a>
-            )}
-            <a className="font-medium text-black focus:outline-none" href="#">
+            <Link className="font-medium text-black focus:outline-none" to="/mylearning">
+              <span className="mr-2">
+                <FontAwesomeIcon icon={faGraduationCap} />
+              </span>
+              MyLearning
+            </Link>
+            {/* <a className="font-medium text-black focus:outline-none" href="#">
               <span className="mr-2">
                 <FontAwesomeIcon icon={faUserGraduate} />
               </span>
               Mentor register
-            </a>
+            </a> */}
           </div>
         </div>
       </nav>

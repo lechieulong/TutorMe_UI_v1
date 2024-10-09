@@ -1,4 +1,3 @@
-/* eslint-disable react/prop-types */
 import React from "react";
 import Reading from "../../components/Test/Part/Reading";
 import Writing from "../../components/Test/Part/Writing";
@@ -7,10 +6,10 @@ import Speaking from "../../components/Test/Part/Speaking";
 
 const Answer = ({ skillPart, part, partData, refs }) => {
   const englishPart = {
-    READING: 1,
-    LISTENING: 2,
-    WRITING: 3,
-    SPEAKING: 4,
+    READING: "Reading",
+    LISTENING: "Listening",
+    WRITING: "Writing",
+    SPEAKING: "Speaking",
   };
 
   return (

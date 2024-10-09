@@ -6,33 +6,35 @@ const NavigationPart = ({ partData, handlePartClick, handleQuestionClick }) => {
 
   const handleAccordionClick = (partNumber) => {
     if (openPart === partNumber) {
-      setOpenPart(null);
+      setOpenPart(0);
     } else {
       setOpenPart(partNumber);
-      handlePartClick(partNumber);
+      handlePartClick(partNumber); // Call this to handle part selection
     }
   };
 
   const handleQuestionClickWrapper = (event, questionId) => {
     event.stopPropagation();
-    handleQuestionClick(questionId);
+    handleQuestionClick(questionId); // Call this to handle question selection
   };
 
   return (
-    <div className="p-3 absolute bottom-0 left-0 right-0 ">
+    <div className="absolute bottom-0 left-0 right-0">
       <div className="flex gap-3">
         {partData.map((part, index) => {
-          const partName = part.name;
-          const questions = part.navigations;
+          const partName = part.questionName || `Part ${index + 1}`; // Use questionName or fallback
+          const questions = part.sections.flatMap(
+            (section) => section.questions
+          ); // Flatten questions from sections
 
           return (
             <div
               key={index}
               className={`${
                 openPart === index
-                  ? "active flex-[4_4_0%]  border-green-700  p-2"
+                  ? "active flex-[4_4_0%] border-green-700 p-2"
                   : "flex-1 border-gray-300"
-              } p-2 border  text-white flex justify-between gap-2 cursor-pointer rounded-2xl`}
+              } p-2 border text-white flex justify-between gap-2 cursor-pointer rounded-2xl`}
               onClick={() => handleAccordionClick(index)}
             >
               <div
@@ -47,15 +49,16 @@ const NavigationPart = ({ partData, handlePartClick, handleQuestionClick }) => {
                   openPart === index ? "flex-[4_4_0%]" : "hidden"
                 } flex h-full justify-center text-center items-center gap-4`}
               >
-                {questions.map((questionId, questionIndex) => (
+                {questions.map((question, questionIndex) => (
                   <li
-                    className="border text-sm  border-green-600 w-6 text-black rounded-full cursor-pointer"
-                    key={questionId}
-                    onClick={(event) =>
-                      handleQuestionClickWrapper(event, questionId)
+                    className="border text-sm border-green-600 w-6 text-black rounded-full cursor-pointer"
+                    key={question.id} // Use a unique identifier, such as question.id
+                    onClick={
+                      (event) => handleQuestionClickWrapper(event, question.id) // Pass question.id as identifier
                     }
                   >
-                    {questionIndex}
+                    {questionIndex + 1}{" "}
+                    {/* Display the question index (1-based) */}
                   </li>
                 ))}
               </ul>

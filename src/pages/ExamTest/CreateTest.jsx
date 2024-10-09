@@ -39,7 +39,7 @@ const CreateTest = () => {
       <div className="mt-20 p-10 ">
         {/* Stepper */}
         <div className="">
-          <ul className="relative flex flex-row justify-between ml-36 gap-x-2 ">
+          <ul className="relative flex flex-row justify-between gap-x-2 ">
             {steps.map((step, index) => (
               <li
                 key={index}
@@ -73,7 +73,7 @@ const CreateTest = () => {
         <div>{steps[activeStep].content}</div>
 
         {/* Navigation Buttons */}
-        <div className="flex justify-between mt-4">
+        <div className="flex justify-between ">
           <button
             className={`py-2 px-4 rounded bg-gray-200 text-gray-600 ${
               activeStep === 0 ? "opacity-50 cursor-not-allowed" : ""

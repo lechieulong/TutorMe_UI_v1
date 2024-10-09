@@ -31,8 +31,10 @@ const Header = () => {
   }, [authToken]);
 
   const handleLogout = () => {
-    Cookies.remove("authToken"); // Xoá cookie khi logout
-    window.location.reload(); // Reload trang để cập nhật trạng thái
+    Cookies.remove("authToken");
+    localStorage.clear();
+    sessionStorage.clear();
+    window.location.reload();
   };
 
   return (

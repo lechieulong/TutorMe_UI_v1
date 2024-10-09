@@ -1,10 +1,8 @@
 import React, { useState } from "react";
-import { useForm } from "react-hook-form";
 import { useDispatch } from "react-redux";
 import SkillForm from "./SkillForm";
 
-const TestFormDetail = ({ onFormSubmit }) => {
-  const { control, watch, resetField } = useForm();
+const TestFormDetail = ({ control, resetField }) => {
   const [selectedSkills, setSelectedSkills] = useState([]);
   const dispatch = useDispatch();
 
@@ -22,12 +20,12 @@ const TestFormDetail = ({ onFormSubmit }) => {
   };
 
   // Watch form changes and submit data whenever it changes
-  const formData = watch(); // Watch for form changes
+  // const formData = watch(); // Watch for form changes
 
-  // Update parent component with the current form data
-  React.useEffect(() => {
-    onFormSubmit(formData);
-  }, [formData, onFormSubmit]);
+  // // Update parent component with the current form data
+  // React.useEffect(() => {
+  //   onFormSubmit(formData);
+  // }, [formData, onFormSubmit]);
 
   return (
     <div className="p-4">
@@ -49,11 +47,9 @@ const TestFormDetail = ({ onFormSubmit }) => {
         </div>
       </div>
 
-      <form>
-        {selectedSkills.map((skill) => (
-          <SkillForm key={skill} skill={skill} control={control} />
-        ))}
-      </form>
+      {selectedSkills.map((skill) => (
+        <SkillForm key={skill} skill={skill} control={control} />
+      ))}
     </div>
   );
 };

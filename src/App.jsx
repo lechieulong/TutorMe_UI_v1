@@ -36,6 +36,9 @@ import MyLearning from "./pages/Class/MyLearning";
 // import TestForm from "./pages/ExamTest/TestForm";
 // import TestFormDetail from "./pages/ExamTest/TestFormDetail";
 import CreateTest from "./pages/ExamTest/CreateTest";
+import MentorCourseList from "./pages/Mentor/MentorCourseList";
+
+import Error404 from "./pages/Error/Error404";
 
 const App = () => {
   return (
@@ -73,6 +76,7 @@ const App = () => {
 
             {/* Mentor */}
             <Route path="/metorinfor" element={<MetorInfor />} />
+            <Route path="/mentorCourstList" element={<MentorCourseList />} />
 
             {/* Course */}
             <Route path="/course" element={<CourseList />} />
@@ -90,6 +94,8 @@ const App = () => {
 
             {/* List test that User did */}
             <Route path="/testlist" element={<TestList />} />
+
+            <Route path="/404" element={<Error404 />} />
           </Routes>
         </Router>
       </GoogleOAuthProvider>

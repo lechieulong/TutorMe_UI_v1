@@ -7,7 +7,7 @@ const TestLayout = () => {
   return (
     <div>
       <Header setIsTimeOut={setIsTimeOut} />
-      <TestView isTimeOut={isTimeOut} />
+      <TestView />
     </div>
   );
 };

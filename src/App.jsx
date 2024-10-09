@@ -1,6 +1,6 @@
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import "regenerator-runtime/runtime";
-import { GoogleOAuthProvider } from '@react-oauth/google';
+import { GoogleOAuthProvider } from "@react-oauth/google";
 
 import Home from "./pages/Home";
 import NotFound from "./components/common/NotFound";
@@ -31,13 +31,14 @@ import TestList from "./pages/User/TestList";
 import "preline";
 import TestLayout from "./pages/TestExam/TestLayout";
 import CourseDetail from "./pages/Course/CourseDetail";
-import TestForm from "./pages/TestExam/TestForm";
-import ImageTest from "./components/ImageTest";
 import CourseTimeline from "./pages/Course/components/CourseTimeline";
 import CreateCourse from "./pages/Course/components/CreateCourse";
 import SpeakingGemini from "./service/SpeakingGemini";
 
 import MyLearning from "./pages/Class/MyLearning";
+// import TestForm from "./pages/ExamTest/TestForm";
+// import TestFormDetail from "./pages/ExamTest/TestFormDetail";
+import CreateTest from "./pages/ExamTest/CreateTest";
 
 const App = () => {
   return (
@@ -57,12 +58,12 @@ const App = () => {
           <Route path="*" element={<NotFound />} />
           <Route path="/gemini" element={<SpeakingGemini />} />
 
-          {/* Test  exam*/}
-          <Route path="/test-setting/test-exam" element={<TestLayout />} />
-          <Route path="/live-stream" element={<LiveStream />} />
-          <Route path="/skill-part/test-setting" element={<TestSetting />} />
-          <Route path="/skill-part" element={<SkillPart />} />
-          <Route path="/create-test" element={<TestForm />} />
+            {/* Test  exam*/}
+            <Route path="/test-setting/test-exam" element={<TestLayout />} />
+            <Route path="/live-stream" element={<LiveStream />} />
+            <Route path="/skill-part/test-setting" element={<TestSetting />} />
+            <Route path="/skill-part" element={<SkillPart />} />
+            <Route path="/create-test" element={<CreateTest />} />
 
           {/* Test  class*/}
           <Route path="/classes" element={<ClassesList />} />
@@ -77,23 +78,24 @@ const App = () => {
           {/* Mentor */}
           <Route path="/metorinfor" element={<MetorInfor />} />
 
-          {/* Course */}
-          <Route path="/course" element={<CourseList />} />
-          <Route path="/createCourse" element={<CreateCourse />} />
-          <Route path="/courseDetail/:courseId" element={<CourseDetail />} />
-          <Route path="/courseDetail/:courseId/classes" element={<ClassOfCourse />} />
-          <Route path="/course-timeline" element={<CourseTimeline />} />
-          {/* <Route path="/courses/:courseId" element={<CourseDetail />} /> */}
+            {/* Course */}
+            <Route path="/course" element={<CourseList />} />
+            <Route path="/createCourse" element={<CreateCourse />} />
+            <Route path="/courseDetail/:courseId" element={<CourseDetail />} />
+            <Route
+              path="/courseDetail/:courseId/classes"
+              element={<ClassOfCourse />}
+            />
+            <Route path="/course-timeline" element={<CourseTimeline />} />
+            {/* <Route path="/courses/:courseId" element={<CourseDetail />} /> */}
 
           {/* Class */}
           <Route path="/mylearning" element={<MyLearning />} />
 
-          {/* List test that User did */}
-          <Route path="/testlist" element={<TestList />} />
-
-          <Route path="/uploadImage" element={<ImageTest />} />
-        </Routes>
-      </Router>
+            {/* List test that User did */}
+            <Route path="/testlist" element={<TestList />} />
+          </Routes>
+        </Router>
     </div>
   );
 };

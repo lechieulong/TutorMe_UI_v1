@@ -1,35 +1,39 @@
-import React, { useState } from "react";
-import Breadcrumbs from "../../components/common/Breadcrumbs";
+import React, { useState, useEffect } from "react";
 import MainLayout from "../../layout/MainLayout";
-import { useNavigate, useLocation } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faBolt } from "@fortawesome/free-solid-svg-icons";
 
 const TestSetting = () => {
   const navigate = useNavigate();
-  const location = useLocation();
+  // const skillId = useParams();
+  const skillId = 2;
 
-  const skillPart = location.state; // skillPart is the ID of the skill
-  const skillPartsInfo = [
-    { id: 0, name: "Reading", parts: [1, 2, 3] }, // 3 parts
-    { id: 1, name: "Listening", parts: [1, 2, 3, 4] }, // 4 parts
-    { id: 2, name: "Writing", parts: [1, 2] }, // 2 parts
-    { id: 3, name: "Speaking", parts: [1, 2, 3] }, // 3 parts
-  ];
-
-  // Find the selected skill information based on the skillPart ID
-  const selectedSkill = skillPartsInfo.find((skill) => skill.id === skillPart);
-
+  const [selectedSkill, setSelectedSkill] = useState(null);
   const [timeLimit, setTimeLimit] = useState(60);
-  const [selectedParts, setSelectedParts] = useState(
-    selectedSkill.parts.reduce(
-      (acc, part) => {
-        acc[part] = true; // Initialize selected parts as true
-        return acc;
-      },
-      { fullParts: true }
-    )
-  );
+  const [selectedParts, setSelectedParts] = useState({});
+
+  const fetchSkillPartsInfo = async () => {
+    const data = { id: skillId, name: "Reading", parts: [1, 2, 3, 4] }; // Example data
+    setSelectedSkill(data);
+  };
+
+  useEffect(() => {
+    fetchSkillPartsInfo();
+  }, []);
+
+  useEffect(() => {
+    if (selectedSkill) {
+      const initialSelectedParts = selectedSkill.parts.reduce(
+        (acc, part) => {
+          acc[part] = true;
+          return acc;
+        },
+        { fullParts: true }
+      );
+      setSelectedParts(initialSelectedParts);
+    }
+  }, [selectedSkill]);
 
   const handlePartSelection = (part) => {
     setSelectedParts((prev) => {
@@ -39,7 +43,6 @@ const TestSetting = () => {
         const allPartsSelected = !updatedParts.fullParts;
         updatedParts.fullParts = allPartsSelected;
 
-        // Toggle all parts
         selectedSkill.parts.forEach((p) => {
           updatedParts[p] = allPartsSelected;
         });
@@ -59,22 +62,7 @@ const TestSetting = () => {
     });
   };
 
-  const enterFullScreen = () => {
-    const elem = document.documentElement;
-
-    if (elem.requestFullscreen) {
-      elem.requestFullscreen();
-    } else if (elem.mozRequestFullScreen) {
-      elem.mozRequestFullScreen();
-    } else if (elem.webkitRequestFullscreen) {
-      elem.webkitRequestFullscreen();
-    } else if (elem.msRequestFullscreen) {
-      elem.msRequestFullscreen();
-    }
-  };
-
   const handleStartTest = () => {
-    // Create an array of selected part numbers
     const parts = Object.keys(selectedParts)
       .filter((part) => selectedParts[part] && part !== "fullParts")
       .map(Number); // Convert string to number here
@@ -83,22 +71,25 @@ const TestSetting = () => {
     const testData = {
       duration,
       selectedParts: parts.length ? parts : selectedSkill.parts, // Use the actual skill parts if none selected
-      skillPart,
+      skillPart: selectedSkill.id,
     };
 
-    // enterFullScreen();
+    console.log("Test Data to send:", testData); // For debugging purpose
+
     navigate("/test-setting/test-exam", { state: testData });
   };
 
-  // Function to handle time limit selection
   const handleTimeLimitChange = (event) => {
     setTimeLimit(Number(event.target.value)); // Convert value to number
   };
 
+  if (!selectedSkill) {
+    return <div>Loading...</div>; // Show loading state while fetching data
+  }
+
   return (
     <MainLayout>
-      <div className="mt-8">
-        <Breadcrumbs />
+      <div className="mt-36">
         <div className="flex mt-5 justify-center items-center ">
           <div className="bg-white border shadow-lg rounded-lg p-6 w-full max-w-4xl">
             <h2 className="text-2xl font-semibold text-center text-green-700 mb-4">
@@ -149,7 +140,7 @@ const TestSetting = () => {
                 </h4>
                 <select
                   value={timeLimit}
-                  onChange={handleTimeLimitChange} // Updated here
+                  onChange={handleTimeLimitChange}
                   className="form-select w-full p-2 border border-gray-300 rounded-md"
                 >
                   <option value={60}>60 mins</option>

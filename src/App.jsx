@@ -36,6 +36,7 @@ import MyLearning from "./pages/Class/MyLearning";
 // import TestForm from "./pages/ExamTest/TestForm";
 // import TestFormDetail from "./pages/ExamTest/TestFormDetail";
 import CreateTest from "./pages/ExamTest/CreateTest";
+import DEMO from "./pages/TestExam/DEMO";
 
 const App = () => {
   return (
@@ -55,13 +56,16 @@ const App = () => {
             <Route path="/" element={<Home />} />
             <Route path="*" element={<NotFound />} />
             <Route path="/gemini" element={<SpeakingGemini />} />
+            <Route path="/demo" element={<DEMO />} />
 
             {/* Test  exam*/}
-            <Route path="/test-setting/test-exam" element={<TestLayout />} />
-            <Route path="/live-stream" element={<LiveStream />} />
-            <Route path="/skill-part/test-setting" element={<TestSetting />} />
-            <Route path="/skill-part" element={<SkillPart />} />
+            <Route path="/testing/:testId" element={<TestLayout />} />
+            <Route path="/test/:skillId/settings" element={<TestSetting />} />
+            <Route path="/testDetail/:testId" element={<SkillPart />} />
             <Route path="/create-test" element={<CreateTest />} />
+
+            {/* LiveStream  exam*/}
+            <Route path="/live-stream" element={<LiveStream />} />
 
             {/* Test  class*/}
             <Route path="/classes" element={<ClassesList />} />

@@ -6,12 +6,7 @@ const PreviewTest = ({ data }) => {
     <div className="p-4">
       {data && data.skills ? (
         Object.keys(data.skills).map((skillName) => (
-          <TestView
-            key={skillName}
-            receivedData={data.skills[skillName]}
-            isPreview={true}
-            skillName={skillName}
-          />
+          <TestView key={skillName} skillData={data.skills[skillName]} />
         ))
       ) : (
         <p className="">No data available. Please fill out the form.</p>

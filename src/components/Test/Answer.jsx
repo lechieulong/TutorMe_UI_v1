@@ -4,28 +4,25 @@ import Writing from "../../components/Test/Part/Writing";
 import Listening from "../../components/Test/Part/Listening";
 import Speaking from "../../components/Test/Part/Speaking";
 
-const Answer = ({ skillPart, part, partData, refs }) => {
+const Answer = ({ skillPart, partData, refs }) => {
   const englishPart = {
     READING: "Reading",
     LISTENING: "Listening",
     WRITING: "Writing",
     SPEAKING: "Speaking",
   };
+  console.log(partData);
 
   return (
     <div>
       {skillPart === englishPart.READING && (
-        <Reading partData={partData} part={part} refs={refs} />
+        <Reading partData={partData} refs={refs} />
       )}
       {skillPart === englishPart.LISTENING && (
-        <Listening partData={partData} part={part} refs={refs} />
+        <Listening partData={partData} refs={refs} />
       )}
-      {skillPart === englishPart.WRITING && (
-        <Writing partData={partData} part={part} />
-      )}
-      {skillPart === englishPart.SPEAKING && (
-        <Speaking partData={partData} part={part} />
-      )}
+      {skillPart === englishPart.WRITING && <Writing partData={partData} />}
+      {skillPart === englishPart.SPEAKING && <Speaking partData={partData} />}
     </div>
   );
 };

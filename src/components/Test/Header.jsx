@@ -6,9 +6,13 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 import { useEffect, useState } from "react";
 import NoteCard from "./NoteCard"; // Adjust the path as necessary
+import { useSelector } from "react-redux";
 
 const Header = ({ setIsTimeOut }) => {
-  // Timer Logic
+  const answer = useSelector((state) => state.answer);
+
+  console.log(answer);
+
   const timeLeft = useTimer(60 * 60 * 1000, setIsTimeOut);
   const [isNoteOpen, setIsNoteOpen] = useState(false); // State for note visibility
 

@@ -7,6 +7,7 @@ import courseTimelineDetailReducer from "./courses/CourseTimelineDetailSlice";
 import testReducer from "./testExam/TestSlice";
 import userReducer from "./users/UserSlice";
 import eventReducer from "./event/EventSlice";
+import answerReducer from "./answer/answerSlice";
 
 export const store = configureStore({
   reducer: {
@@ -18,6 +19,7 @@ export const store = configureStore({
     test: testReducer,
     user: userReducer,
     event: eventReducer,
+    answer: answerReducer,
   },
 });
 

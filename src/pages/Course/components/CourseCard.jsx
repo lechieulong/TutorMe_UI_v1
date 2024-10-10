@@ -1,7 +1,8 @@
 import React from "react";
 import { Link } from "react-router-dom";
-import axios from "axios";
 import { FaTrash } from "react-icons/fa";
+import axios from "axios";
+
 const CourseCard = ({
   content,
   courseName,
@@ -11,27 +12,31 @@ const CourseCard = ({
   icon,
   teacher,
   courseId,
-  onDelete, // Thêm prop onDelete để xử lý xóa
+  onDelete = null, // Thêm prop onDelete với giá trị mặc định là null
 }) => {
   const handleDelete = async () => {
-    try {
-      await axios.delete(`https://localhost:7030/api/Courses/${courseId}`);
-      onDelete(courseId); // Gọi hàm onDelete để cập nhật trạng thái ở component cha
-    } catch (error) {
-      console.error("Error deleting course", error);
-      alert("Failed to delete course.");
+    if (onDelete) {
+      try {
+        await axios.delete(`https://localhost:7030/api/Courses/${courseId}`);
+        onDelete(courseId); // Gọi hàm onDelete để cập nhật trạng thái ở component cha
+      } catch (error) {
+        console.error("Error deleting course", error);
+        alert("Failed to delete course.");
+      }
     }
   };
 
   return (
     <div className="relative bg-white h-52 shadow-md rounded-lg p-4 flex flex-col items-center hover:bg-gray-100 transition-all">
-      <button
-        onClick={handleDelete}
-        className="absolute bg-transparent top-1 right-1 text-red-400 hover:text-red-700"
-        aria-label="Delete Course"
-      >
-        <FaTrash />
-      </button>
+      {onDelete && ( // Chỉ hiển thị nút delete nếu onDelete được truyền vào
+        <button
+          onClick={handleDelete}
+          className="absolute bg-transparent top-1 right-1 text-red-400 hover:text-red-700"
+          aria-label="Delete Course"
+        >
+          <FaTrash />
+        </button>
+      )}
       <Link
         to={`/courseDetail/${courseId}`}
         className="flex-grow flex flex-col items-center"

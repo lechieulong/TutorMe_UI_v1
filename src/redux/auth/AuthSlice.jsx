@@ -12,7 +12,7 @@ export const LoginApi = createAsyncThunk(
         `${apiURLConfig.baseURL}/auth/login`,
         loginData
       );
-      return response.data.result;
+      return response.data;
     } catch (error) {
       return rejectWithValue(
         error.response?.data?.message || "Failed to login"

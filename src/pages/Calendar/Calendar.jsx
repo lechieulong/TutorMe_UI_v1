@@ -16,8 +16,8 @@ const MyCalendar = () => {
     const dispatch = useDispatch();
     const navigate = useNavigate();
 
-    const eventsFromRedux = useSelector(state => state.event.events); // Make sure this points to your events in Redux
-    console.log("Events: ", eventsFromRedux);
+    // Make sure this points to your events in Redux
+    const eventsFromRedux = useSelector(state => state.event.events);
     const [events, setEvents] = useState([]);
 
     // Check authentication token
@@ -51,6 +51,7 @@ const MyCalendar = () => {
                             style={{ height: '100%', width: '100%' }}
                             views={['month', 'week', 'day', 'agenda']}
                             defaultView="agenda"
+                            onSelectEvent={event => alert(event.description)}
                             components={{
                                 event: ({ event }) => (
                                     <div>
@@ -59,7 +60,7 @@ const MyCalendar = () => {
                                         {event.description && <p>{event.description}</p>}
                                         {event.link && (
                                             <a href={event.link} target="_blank" rel="noopener noreferrer">
-                                                Join event
+                                                Join meet
                                             </a>
                                         )}
                                     </div>
@@ -96,15 +97,9 @@ const MyCalendar = () => {
                                             {event.description && <p>{event.description}</p>}
                                             {event.link && (
                                                 <a href={event.link} target="_blank" rel="noopener noreferrer">
-                                                    Join event
+                                                    Join meet
                                                 </a>
                                             )}
-                                            {/* <p className="text-xs text-gray-500">
-                                                Start: {moment(event.start).format('MMMM Do YYYY, h:mm A')}
-                                            </p>
-                                            <p className="text-xs text-gray-500">
-                                                End: {moment(event.end).format('MMMM Do YYYY, h:mm A')}
-                                            </p> */}
                                         </div>
                                     ),
                                 },

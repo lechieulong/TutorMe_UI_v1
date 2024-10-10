@@ -21,10 +21,29 @@ export const Profile = createAsyncThunk(
     }
 );
 
+// Action to get top 10 teachers
+export const GetTopTeachers = createAsyncThunk(
+    `${SLICE_NAMES.USER}/${ACTIONS.GET_TOP10_TEACHERS}`,
+    async (_, { rejectWithValue }) => {
+        try {
+            const { data } = await axios.get(
+                `${apiURLConfig.baseURL}/user/top-teachers` // API endpoint
+            );
+            return data.result; // Return the result from the response
+        } catch (error) {
+            return rejectWithValue(
+                error.response?.data?.message || "Failed to get teachers."
+            );
+        }
+    }
+);
+
 const initialState = {
+    teachers: [],
     userInfor: null, // Thông tin người dùng
     status: STATUS.IDLE, // Trạng thái mặc định
     error: null, // Thông báo lỗi nếu có
+    loadingTopTeachers: false,
 };
 
 const UserSlice = createSlice({
@@ -33,6 +52,7 @@ const UserSlice = createSlice({
     reducers: {},
     extraReducers: (builder) => {
         builder
+            //Hanlde get User Information
             .addCase(Profile.pending, (state) => {
                 state.status = STATUS.PENDING;
             })
@@ -44,6 +64,22 @@ const UserSlice = createSlice({
                 state.status = STATUS.FAILED;
                 state.error = action.payload || action.error.message;
             })
+
+            // Handle get top teachers
+            .addCase(GetTopTeachers.pending, (state) => {
+                state.loadingTopTeachers = true; // Set loading state for top teachers
+                state.status = STATUS.PENDING;
+            })
+            .addCase(GetTopTeachers.fulfilled, (state, action) => {
+                state.loadingTopTeachers = false; // Reset loading state
+                state.status = STATUS.SUCCESS;
+                state.teachers = action.payload;
+            })
+            .addCase(GetTopTeachers.rejected, (state, action) => {
+                state.loadingTopTeachers = false; // Reset loading state
+                state.status = STATUS.FAILED;
+                state.error = action.payload || action.error.message;
+            });
     },
 });
 

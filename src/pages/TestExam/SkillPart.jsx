@@ -15,7 +15,7 @@ import Breadcrumbs from "../../components/common/Breadcrumbs";
 import { useEffect } from "react";
 import { getUser } from "../../service/GetUser";
 import { useDispatch } from "react-redux";
-import { useParams } from "react-router-dom";
+import { useParams, Link } from "react-router-dom";
 
 const SkillPart = () => {
   const navigate = useNavigate();
@@ -76,9 +76,9 @@ const SkillPart = () => {
   return (
     <>
       <MainLayout>
-        <button className="bg-green-500 text-white">
-          <a href="create-test">Create test</a>
-        </button>
+        <Link to="create-test">
+          <p>Create Test</p>
+        </Link>
 
         {/* Name Test */}
         <div className="bg-white mt-10 border rounded-xl h-56 shadow-sm sm:flex dark:bg-neutral-900 dark:border-neutral-700 dark:shadow-neutral-700/70">

@@ -42,7 +42,6 @@ import CreateTest from "./pages/ExamTest/CreateTest";
 import MentorCourseList from "./pages/Mentor/MentorCourseList";
 
 import Error404 from "./pages/Error/Error404";
-import DEMO from "./pages/TestExam/DEMO";
 
 const App = () => {
   return (
@@ -61,7 +60,6 @@ const App = () => {
           <Route path="/" element={<Home />} />
           <Route path="*" element={<NotFound />} />
           <Route path="/gemini" element={<SpeakingGemini />} />
-          <Route path="/demo" element={<DEMO />} />
 
           {/* Test  exam*/}
           <Route path="/testing/:testId" element={<TestLayout />} />

@@ -1,79 +1,68 @@
+// TestLayout.jsx
 import { useState, useEffect } from "react";
-import TestView from "./TestView";
+import { useParams } from "react-router-dom";
+import mockTestData from "../../data/mockTestData";
 import Header from "../../components/Test/Header";
-import { useNavigate, useParams } from "react-router-dom";
-const testData = [
-  { name: "Listening", duration: 1 }, // thời gian theo phút
-  { name: "Reading", duration: 1 },
-  { name: "Writing", duration: 1 },
-  { name: "Speaking", duration: 1 },
-];
+import TestView from "./TestView";
 
 const TestLayout = () => {
   const [currentSkillIndex, setCurrentSkillIndex] = useState(0);
-  const [timeLeft, setTimeLeft] = useState(testData[0].duration * 30);
   const [testData, setTestData] = useState([]);
+  const [loading, setLoading] = useState(true);
+
   const { testId } = useParams();
 
-  // if (dataPreview) {
-  //   setData = dataPreview;
-  // } else {
-  //   if (location) {
-  //     fetchData(testId, partIds);
-  //     setData;
-  //   } else {
-  //     fetchData(testId);
-  //   }
-  // }
+  const fetchTestData = async () => {
+    try {
+      setLoading(true);
+      const fetchedTestData = await new Promise((resolve) => {
+        setTimeout(() => resolve(mockTestData), 1000); // Simulate network delay
+      });
+
+      setTestData(fetchedTestData);
+    } catch (error) {
+      console.error("Error fetching test data:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   useEffect(() => {
-    const timer = setInterval(() => {
-      setTimeLeft((prev) => {
-        if (prev <= 0) {
-          if (currentSkillIndex === testData.length - 1) {
-            handleSubmit();
-            clearInterval(timer);
-          } else {
-            handleNextSkill();
-          }
-          return 0;
-        }
-        return prev - 1;
-      });
-    }, 1000);
-
-    return () => clearInterval(timer);
-  }, [currentSkillIndex]);
-
-  const handleNextSkill = () => {
-    setCurrentSkillIndex((prevIndex) => {
-      const nextIndex = prevIndex + 1;
-      if (nextIndex < testData.length) {
-        setTimeLeft(testData[nextIndex].duration * 4);
-      }
-      return nextIndex;
-    });
-  };
+    if (testId) {
+      fetchTestData();
+    }
+  }, [testId]);
 
   const handleSubmit = () => {
     console.log("Submit test");
     alert("Test submitted!");
   };
 
-  return (
-    <div>
-      <h1>IELTS Exam</h1>
-      <h2>Current Skill: {testData[currentSkillIndex].name}</h2>
-      <h3>
-        Time Left: {Math.floor(timeLeft / 60)}:
-        {("0" + (timeLeft % 60)).slice(-2)}
-      </h3>
+  // Move handleNextSkill here
+  const handleNextSkill = () => {
+    setCurrentSkillIndex((prevIndex) => {
+      const nextIndex = prevIndex + 1;
+      if (nextIndex < testData.length) {
+        return nextIndex;
+      }
+      return prevIndex;
+    });
+  };
 
-      {currentSkillIndex < testData.length - 1 ? (
-        <button onClick={handleNextSkill}>Next Skill</button>
-      ) : (
-        <button onClick={handleSubmit}>Submit Test</button>
-      )}
+  if (loading) {
+    return <div>Loading test data...</div>;
+  }
+
+  return (
+    <div className="flex flex-col">
+      <Header
+        testData={testData}
+        currentSkillIndex={currentSkillIndex}
+        handleNextSkill={handleNextSkill} // Pass handleNextSkill to Header
+        handleSubmit={handleSubmit}
+      />
+
+      <TestView skillData={testData[currentSkillIndex]} />
     </div>
   );
 };

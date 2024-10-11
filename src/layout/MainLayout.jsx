@@ -3,9 +3,11 @@ import Header from "../components/common/Header";
 
 const MainLayout = ({ children }) => {
   return (
-    <div className="w-full">
+    <div className="flex flex-col">
       <Header />
-      <main className="container mt-10 mx-auto">{children}</main>
+      <main className="container mx-auto overflow-y-auto mt-20">
+        {children}
+      </main>
     </div>
   );
 };

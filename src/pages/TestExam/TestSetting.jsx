@@ -76,7 +76,7 @@ const TestSetting = () => {
 
     console.log("Test Data to send:", testData); // For debugging purpose
 
-    navigate("/test-setting/test-exam", { state: testData });
+    navigate("/testing/1", { state: testData });
   };
 
   const handleTimeLimitChange = (event) => {
@@ -89,100 +89,98 @@ const TestSetting = () => {
 
   return (
     <MainLayout>
-      <div className="mt-36">
-        <div className="flex mt-5 justify-center items-center ">
-          <div className="bg-white border shadow-lg rounded-lg p-6 w-full max-w-4xl">
-            <h2 className="text-2xl font-semibold text-center text-green-700 mb-4">
-              Choose a mode
-            </h2>
-            <div className="flex flex-col md:flex-row justify-between">
-              {/* Practice mode */}
-              <div className="bg-gray-50 p-4 rounded-lg flex-1 md:mr-4 mb-4 md:mb-0">
-                <h3 className="text-xl font-semibold mb-2">Practice mode</h3>
-                <p className="text-gray-500 mb-4">
-                  Practice mode is suitable for improving accuracy and time
-                  spent on each part.
-                </p>
-                <h4 className="text-lg font-medium mb-2">
-                  1. Choose part/task(s) you want to practice:
-                </h4>
-                <div className="space-y-2 mb-4">
-                  <div>
+      <div className="flex mt-5 justify-center items-center ">
+        <div className="bg-white border shadow-lg rounded-lg p-6 w-full max-w-4xl">
+          <h2 className="text-2xl font-semibold text-center text-green-700 mb-4">
+            Choose a mode
+          </h2>
+          <div className="flex flex-col md:flex-row justify-between">
+            {/* Practice mode */}
+            <div className="bg-gray-50 p-4 rounded-lg flex-1 md:mr-4 mb-4 md:mb-0">
+              <h3 className="text-xl font-semibold mb-2">Practice mode</h3>
+              <p className="text-gray-500 mb-4">
+                Practice mode is suitable for improving accuracy and time spent
+                on each part.
+              </p>
+              <h4 className="text-lg font-medium mb-2">
+                1. Choose part/task(s) you want to practice:
+              </h4>
+              <div className="space-y-2 mb-4">
+                <div>
+                  <label className="inline-flex items-center">
+                    <input
+                      type="checkbox"
+                      checked={selectedParts.fullParts}
+                      onChange={() => handlePartSelection("fullParts")}
+                      className="form-checkbox text-green-600"
+                    />
+                    <span className="ml-2">
+                      Full parts ({selectedSkill.parts.length} parts -{" "}
+                      {selectedSkill.parts.length * 13} questions)
+                    </span>
+                  </label>
+                </div>
+                {selectedSkill.parts.map((part) => (
+                  <div key={part}>
                     <label className="inline-flex items-center">
                       <input
                         type="checkbox"
-                        checked={selectedParts.fullParts}
-                        onChange={() => handlePartSelection("fullParts")}
+                        checked={selectedParts[part]}
+                        onChange={() => handlePartSelection(part)}
                         className="form-checkbox text-green-600"
                       />
-                      <span className="ml-2">
-                        Full parts ({selectedSkill.parts.length} parts -{" "}
-                        {selectedSkill.parts.length * 13} questions)
-                      </span>
+                      <span className="ml-2">Part {part} (13 questions)</span>
                     </label>
                   </div>
-                  {selectedSkill.parts.map((part) => (
-                    <div key={part}>
-                      <label className="inline-flex items-center">
-                        <input
-                          type="checkbox"
-                          checked={selectedParts[part]}
-                          onChange={() => handlePartSelection(part)}
-                          className="form-checkbox text-green-600"
-                        />
-                        <span className="ml-2">Part {part} (13 questions)</span>
-                      </label>
-                    </div>
-                  ))}
-                </div>
-                <h4 className="text-lg font-medium mb-2">
-                  2. Choose a time limit:
-                </h4>
-                <select
-                  value={timeLimit}
-                  onChange={handleTimeLimitChange}
-                  className="form-select w-full p-2 border border-gray-300 rounded-md"
-                >
-                  <option value={60}>60 mins</option>
-                  <option value={45}>45 mins</option>
-                  <option value={30}>30 mins</option>
-                  <option value={15}>15 mins</option>
-                </select>
-                <button
-                  onClick={handleStartTest}
-                  className="mt-6 w-full bg-green-600 text-white font-medium py-2 rounded-lg hover:bg-green-700"
-                >
-                  Start Now
-                  <span>
-                    <FontAwesomeIcon icon={faBolt} className="ml-2 " />
-                  </span>
-                </button>
+                ))}
               </div>
+              <h4 className="text-lg font-medium mb-2">
+                2. Choose a time limit:
+              </h4>
+              <select
+                value={timeLimit}
+                onChange={handleTimeLimitChange}
+                className="form-select w-full p-2 border border-gray-300 rounded-md"
+              >
+                <option value={60}>60 mins</option>
+                <option value={45}>45 mins</option>
+                <option value={30}>30 mins</option>
+                <option value={15}>15 mins</option>
+              </select>
+              <button
+                onClick={handleStartTest}
+                className="mt-6 w-full bg-green-600 text-white font-medium py-2 rounded-lg hover:bg-green-700"
+              >
+                Start Now
+                <span>
+                  <FontAwesomeIcon icon={faBolt} className="ml-2 " />
+                </span>
+              </button>
+            </div>
 
-              {/* Simulation test mode */}
-              <div className="bg-gray-50 p-4 rounded-lg flex-1 md:ml-4">
-                <h3 className="text-xl font-semibold mb-2">
-                  Simulation test mode
-                </h3>
-                <p className="text-gray-500 mb-4">
-                  Simulation test mode is the best option to experience the real
-                  IELTS on the computer.
-                </p>
-                <h4 className="text-lg font-medium mb-2">Test information</h4>
-                <p className="text-gray-500 mb-4">
-                  Full parts (60 minutes - {selectedSkill.parts.length} parts -{" "}
-                  {selectedSkill.parts.length * 13} questions)
-                </p>
-                <button
-                  onClick={handleStartTest}
-                  className="mt-6 w-full bg-green-600 text-white font-medium py-2 rounded-lg hover:bg-green-700"
-                >
-                  Start Now
-                  <span>
-                    <FontAwesomeIcon icon={faBolt} className="ml-2 " />
-                  </span>
-                </button>
-              </div>
+            {/* Simulation test mode */}
+            <div className="bg-gray-50 p-4 rounded-lg flex-1 md:ml-4">
+              <h3 className="text-xl font-semibold mb-2">
+                Simulation test mode
+              </h3>
+              <p className="text-gray-500 mb-4">
+                Simulation test mode is the best option to experience the real
+                IELTS on the computer.
+              </p>
+              <h4 className="text-lg font-medium mb-2">Test information</h4>
+              <p className="text-gray-500 mb-4">
+                Full parts (60 minutes - {selectedSkill.parts.length} parts -{" "}
+                {selectedSkill.parts.length * 13} questions)
+              </p>
+              <button
+                onClick={handleStartTest}
+                className="mt-6 w-full bg-green-600 text-white font-medium py-2 rounded-lg hover:bg-green-700"
+              >
+                Start Now
+                <span>
+                  <FontAwesomeIcon icon={faBolt} className="ml-2 " />
+                </span>
+              </button>
             </div>
           </div>
         </div>

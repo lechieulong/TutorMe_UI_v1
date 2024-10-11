@@ -62,19 +62,20 @@ const TestView = ({ skillData }) => {
   }
 
   return (
-    <div className="relative flex flex-col h-screen">
-      <div className="flex justify-between h-full">
-        <h3 className="font-semibold text-2xl mt-2">Skill ... </h3>
-
-        {/* Show the side view and topic when applicable */}
+    <div
+      className=" flex flex-col h-full "
+      style={{
+        height: "calc(100vh - 80px)",
+      }}
+    >
+      <div className="flex h-full ">
         {isOpenSideView && partDatas.length > 0 && (
           <>
             <div
               className="overflow-auto"
               style={{
                 width: `${leftWidth}%`,
-                height: "calc(100% - 112px)",
-                marginTop: "60px",
+                height: "100%",
               }}
             >
               {/* Render Topic based on selectedPart */}
@@ -85,35 +86,28 @@ const TestView = ({ skillData }) => {
               className="cursor-ew-resize w-2 bg-black"
               style={{
                 width: "4px",
-                height: "calc(100% - 112px)",
-                marginTop: "70px",
               }}
               onMouseDown={startResizing} // Handle resizing logic
             />
           </>
         )}
-
         <div
-          className="overflow-auto flex-grow"
+          className="overflow-auto flex-grow p-2"
           style={{
             width: `${100 - leftWidth}%`,
-            height: "calc(100% - 112px)",
-            marginTop: "70px",
           }}
         >
-          {/* Render AnswerView for the selected part */}
           <AnswerView partData={partDatas[selectedPart]} refs={questionRef} />
         </div>
+      </div>
 
-        {/* NavigationPart component for navigating between parts */}
-        <div className="flex flex-col">
-          {isOpenSideView && partDatas.length > 0 && (
-            <NavigationPart
-              partDatas={partDatas} // Pass all part data
-              handlePartClick={handlePartClick} // Handle part click to update selected part
-            />
-          )}
-        </div>
+      <div className="flex flex-col">
+        {partDatas.length > 0 && (
+          <NavigationPart
+            partDatas={partDatas} // Pass all part data
+            handlePartClick={handlePartClick} // Handle part click to update selected part
+          />
+        )}
       </div>
     </div>
   );

@@ -81,7 +81,7 @@ const SkillPart = () => {
         </Link>
 
         {/* Name Test */}
-        <div className="bg-white mt-10 border rounded-xl h-56 shadow-sm sm:flex dark:bg-neutral-900 dark:border-neutral-700 dark:shadow-neutral-700/70">
+        <div className="bg-white  mt-10 border rounded-xl h-56 shadow-sm sm:flex dark:bg-neutral-900 dark:border-neutral-700 dark:shadow-neutral-700/70">
           <div className="shrink-0 relative w-full rounded-t-xl overflow-hidden sm:rounded-s-xl sm:max-w-60 md:rounded-se-none md:max-w-xs">
             <img
               className="absolute top-0 left-0 w-full h-full object-cover"

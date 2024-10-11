@@ -46,7 +46,7 @@ const CreateTest = () => {
     <form onSubmit={handleSubmit(onSubmit)}>
       <Header />
 
-      <div className="mt-20 p-10 ">
+      <div className="mt-16 p-10 ">
         {/* Stepper */}
         <div className="">
           <ul className="relative flex flex-row justify-between gap-x-2  ">

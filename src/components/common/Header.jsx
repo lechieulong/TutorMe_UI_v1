@@ -38,7 +38,7 @@ const Header = () => {
   };
 
   return (
-    <header className="fixed top-0 left-0 right-0 w-full bg-white text-sm pt-3 shadow-lg z-50">
+    <header className=" top-0 left-0 right-0 w-full bg-white text-sm pt-3 shadow-lg z-50">
       <nav className="mx-auto pb-2 px-4 flex flex-wrap basis-full items-center shadow-lg justify-between">
         <a
           className="sm:order-1 flex-none text-xl font-semibold focus:outline-none focus:opacity-80"

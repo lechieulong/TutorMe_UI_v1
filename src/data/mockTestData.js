@@ -1,100 +1,69 @@
-const mockTestData = [
-    {
-      duration: 1000, // Duration in minutes for the test skill
-      type: 0, // 0: Reading, 1: Listening, 2: Writing, 3: Speaking
+const mockTestData = {
+    reading: {
+      id: 1,
+      duration: 1, // Duration in minutes for the reading skill
+      type: 0, // 0: Reading
       parts: [
         {
-          contentText: "<p>Sample reading text for the test.</p>",
+          id: 1,
+          partNumber: 1,
+          contentText: "<p>Sample reading text for the testI’ve started too many failed businesses to count. .</p>",
           audio: null,
           image: null,
           questionName: "Reading Section",
           sections: [
             {
+              id: 1,
               sectionGuide: "Answer the following questions:",
               sectionType: "3", // Example type
               image: "",
               questions: [
                 {
+                  id: 1,
                   questionName: "What is the main idea?",
                   answers: [
-                    { answerText: "Correct answer", isCorrect: true },
-                    { answerText: "Incorrect answer", isCorrect: false },
+                    { id: 1, answerText: "Correct answer", isCorrect: true },
+                    { id: 2, answerText: "Incorrect answer", isCorrect: false },
                   ],
-                  isFromQuestionBank: false,
                 },
                 {
+                  id: 2,
                   questionName: "What is the author's opinion?",
                   answers: [
-                    { answerText: "Correct opinion", isCorrect: true },
-                    { answerText: "Incorrect opinion", isCorrect: false },
+                    { id: 3, answerText: "Correct answer", isCorrect: true },
+                    { id: 4, answerText: "Incorrect answer", isCorrect: false },
                   ],
-                  isFromQuestionBank: false,
                 },
               ],
             },
           ],
         },
-        {
-            contentText: "<p>Sample reading text for the test.</p>",
-            audio: null,
-            image: null,
-            questionName: "Reading Section",
-            sections: [
-              {
-                sectionGuide: "Answer the following questions:",
-                sectionType: "3", // Example type
-                image: "",
-                questions: [
-                  {
-                    questionName: "What is the main idea?",
-                    answers: [
-                      { answerText: "Correct answer", isCorrect: true },
-                      { answerText: "Incorrect answer", isCorrect: false },
-                    ],
-                    isFromQuestionBank: false,
-                  },
-                  {
-                    questionName: "What is the author's opinion?",
-                    answers: [
-                      { answerText: "Correct opinion", isCorrect: true },
-                      { answerText: "Incorrect opinion", isCorrect: false },
-                    ],
-                    isFromQuestionBank: false,
-                  },
-                  {
-                    questionName: "What is the author's opinion?",
-                    answers: [
-                      { answerText: "Correct opinion", isCorrect: true },
-                      { answerText: "Incorrect opinion", isCorrect: false },
-                    ],
-                    isFromQuestionBank: false,
-                  },
-                ],
-              },
-            ],
-          },
       ],
     },
-    {
+    listening: {
+      id: 2,
       duration: 1,
-      type: 1, // Listening
+      type: 1, // 1: Listening
       parts: [
         {
+          id: 2,
           contentText: "",
           audio: "audio_sample.mp3", // Audio file for listening
           image: null,
           questionName: "Listening Section",
           sections: [
             {
+              id: 2,
               sectionGuide: "Listen carefully and answer the following questions:",
               sectionType: "2", // Example type
               image: "",
               questions: [
                 {
+                  id: 3,
                   questionName: "What was the speaker talking about?",
                   answers: [
-                    { answerText: "Correct answer", isCorrect: true },
-                    { answerText: "Incorrect answer", isCorrect: false },
+                    { id: 5, answerText: "Correct answer", isCorrect: true },
+                    { id: 6, answerText: "Incorrect answer", isCorrect: false },
                   ],
                   isFromQuestionBank: false,
                 },
@@ -104,9 +73,107 @@ const mockTestData = [
         },
       ],
     },
-    // Add more mock data for Writing and Speaking sections if needed
-  ];
+    writing: {
+      id: 3,
+      duration: 40, // Duration in minutes for the Writing skill
+      type: 2, // 2: Writing
+      parts: [
+        {
+          id: 3,
+          partNumber: 1,
+          contentText: "<p>Write about the following topic.</p>",
+          audio: null,
+          image: null,
+          questionName: "Writing Section",
+          sections: [
+            {
+              id: 3,
+              sectionGuide: "Write at least 250 words on the following topic:",
+              sectionType: "1", // Example type
+              image: "",
+              questions: [
+                {
+                  id: 4,
+                  questionName: "Describe the advantages and disadvantages of using technology in education.",
+                  answers: [],
+                },
+              ],
+            },
+          ],
+        },
+      ],
+    },
+    speaking: {
+      id: 4,
+      duration: 20, // Duration in minutes for the Speaking skill
+      type: 3, // 3: Speaking
+      parts: [
+        {
+          id: 4,
+          partNumber: 1,
+          contentText: "<p>Speaking prompt: Talk about your favorite book.</p>",
+          audio: null,
+          image: null,
+          questionName: "Speaking Section",
+          sections: [
+            {
+              id: 4,
+              sectionGuide: "Answer the following questions:",
+              sectionType: "4", // Example type
+              image: "",
+              questions: [
+                {
+                  id: 5,
+                  questionName: "What is the title of the book?",
+                  answers: [],
+                },
+                {
+                  id: 6,
+                  questionName: "Why do you like this book?",
+                  answers: [],
+                },
+              ],
+            },
+          ],
+        },
+      ],
+    },
+    vocabulary: {
+      id: 5,
+      duration: 30, // Duration in minutes for the Vocabulary skill
+      type: 4, // 4: Vocabulary
+      parts: [
+        {
+          id: 5,
+          partNumber: 1,
+          contentText: "<p>Learn the following vocabulary words.</p>",
+          audio: null,
+          image: null,
+          questionName: "Vocabulary Section",
+          sections: [
+            {
+              id: 5,
+              sectionGuide: "Define the following words:",
+              sectionType: "5", // Example type
+              image: "",
+              questions: [
+                {
+                  id: 7,
+                  questionName: "What does 'ephemeral' mean?",
+                  answers: [],
+                },
+                {
+                  id: 8,
+                  questionName: "What does 'ubiquitous' mean?",
+                  answers: [],
+                },
+              ],
+            },
+          ],
+        },
+      ],
+    },
+  };
   
-
+  export default mockTestData;
   
-export default mockTestData;

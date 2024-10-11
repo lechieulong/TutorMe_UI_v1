@@ -1,7 +1,7 @@
+// Header.jsx
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faClock,
-  faExchangeAlt,
   faLanguage,
   faPaperPlane,
   faPen,
@@ -16,7 +16,7 @@ const Header = ({
   handleNextSkill,
   handleSubmit,
 }) => {
-  const [timeLeft, setTimeLeft] = useState(1);
+  const [timeLeft, setTimeLeft] = useState(0);
   const timerRef = useRef(null);
   const [isNoteOpen, setIsNoteOpen] = useState(false);
   const answer = useSelector((state) => state.answer);
@@ -35,15 +35,17 @@ const Header = ({
 
   // Manage timer logic
   useEffect(() => {
-    if (testData.length > 0) {
-      setTimeLeft(testData[currentSkillIndex].duration * 10); // Set time for the current skill
+    if (Object.keys(testData).length > 0) {
+      // Check if testData is populated
+      const currentSkillData = Object.values(testData)[currentSkillIndex];
+      setTimeLeft(currentSkillData.duration * 60); // Set time in seconds for the current skill
+
       timerRef.current = setInterval(() => {
         setTimeLeft((prevTimeLeft) => {
           if (prevTimeLeft <= 0) {
             clearInterval(timerRef.current);
-
             setTimeout(() => {
-              if (currentSkillIndex < testData.length - 1) {
+              if (currentSkillIndex < Object.keys(testData).length - 1) {
                 handleNextSkill(); // Call the handleNextSkill after render
               } else {
                 handleSubmit();
@@ -60,7 +62,7 @@ const Header = ({
   }, [currentSkillIndex, testData, handleNextSkill, handleSubmit]);
 
   return (
-    <div className="flex-1 flex justify-between items-center p-4  bg-green-400 shadow-md">
+    <div className="flex-1 flex justify-between items-center p-4 bg-green-400 shadow-md">
       <p className="text-lg font-semibold">
         IELTS
         <span className="ml-2 text-white">
@@ -87,7 +89,7 @@ const Header = ({
         </span>
 
         {/* Render "Next Skill" or "Submit Test" buttons */}
-        {currentSkillIndex < testData.length - 1 ? (
+        {currentSkillIndex < Object.keys(testData).length - 1 ? (
           <button
             onClick={handleNextSkill} // Call handleNextSkill
             className="cursor-pointer inline-flex items-center gap-x-2 text-sm font-medium rounded-lg border border-transparent bg-blue-500 text-white px-4 py-2"

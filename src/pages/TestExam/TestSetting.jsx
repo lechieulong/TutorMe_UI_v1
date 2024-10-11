@@ -76,7 +76,7 @@ const TestSetting = () => {
 
     console.log("Test Data to send:", testData); // For debugging purpose
 
-    navigate("/test-setting/test-exam", { state: testData });
+    navigate("/testing/1", { state: testData });
   };
 
   const handleTimeLimitChange = (event) => {

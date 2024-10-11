@@ -23,10 +23,10 @@ const NavigationPart = ({
   };
 
   return (
-    <div className="absolute bottom-0 left-0 right-0">
+    <div className=" bottom-0 left-0 right-0">
       <div className="flex gap-3">
         {partDatas.map((part, index) => {
-          const partName = part.questionName || `Part ${index + 1}`; // Use questionName or fallback
+          const partName = `Part ${index + 1}`; // Use questionName or fallback
           const questions = part.sections.flatMap(
             (section) => section.questions
           ); // Flatten questions from sections
@@ -56,7 +56,7 @@ const NavigationPart = ({
                 {questions.map((question, questionIndex) => (
                   <li
                     className="border text-sm border-green-600 w-6 text-black rounded-full cursor-pointer"
-                    key={question.id} // Use a unique identifier, such as question.id
+                    key={questionIndex} // Use a unique identifier, such as question.id
                     onClick={
                       (event) => handleQuestionClickWrapper(event, question.id) // Pass question.id as identifier
                     }

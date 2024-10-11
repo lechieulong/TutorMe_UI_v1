@@ -65,17 +65,17 @@ const SkillPart = () => {
 
   const handleTakeTest = (id) => {
     // navigate(`/test/${id}/settings`);
-    console.log("single test");
+    navigate(`/test/1/settings`);
   };
   const handleTakeFullTest = (id) => {
     console.log("full test");
     //  navigate(`/testing/${testId}`);
+    navigate(`/testing/1`);
   };
 
   return (
     <>
       <MainLayout>
-        <Breadcrumbs />
         <button className="bg-green-500 text-white">
           <a href="create-test">Create test</a>
         </button>

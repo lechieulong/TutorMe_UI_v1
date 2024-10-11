@@ -95,31 +95,39 @@ const Header = () => {
               </span>
               Home
             </a>
-            <a
+            <Link
               className="font-medium text-black focus:outline-none"
-              href="live-stream"
+              to="/live-stream"
             >
               <span className="mr-2">
                 <FontAwesomeIcon icon={faTv} />
               </span>
               Livestreams
-            </a>
-            <Link className="font-medium text-black focus:outline-none" to="/course" >
+            </Link>
+            <Link
+              className="font-medium text-black focus:outline-none"
+              to="/course"
+            >
               <span className="mr-2">
                 <FontAwesomeIcon icon={faBook} />
               </span>
               Course
             </Link>
-            <a
+
+            <Link
               className="font-medium text-black focus:outline-none"
-              href="skill-part"
+              to="/testDetail/1"
             >
               <span className="mr-2">
                 <FontAwesomeIcon icon={faPenNib} />
               </span>
               Test
-            </a>
-            <Link className="font-medium text-black focus:outline-none" to="/mylearning">
+            </Link>
+
+            <Link
+              className="font-medium text-black focus:outline-none"
+              to="/mylearning"
+            >
               <span className="mr-2">
                 <FontAwesomeIcon icon={faGraduationCap} />
               </span>

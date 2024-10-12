@@ -62,12 +62,14 @@ const App = () => {
           <Route path="*" element={<NotFound />} />
           <Route path="/gemini" element={<SpeakingGemini />} />
 
-            {/* Test  exam*/}
-            <Route path="/test-setting/test-exam" element={<TestLayout />} />
-            <Route path="/live-stream" element={<LiveStream />} />
-            <Route path="/skill-part/test-setting" element={<TestSetting />} />
-            <Route path="/skill-part" element={<SkillPart />} />
-            <Route path="/create-test" element={<CreateTest />} />
+          {/* Test  exam*/}
+          <Route path="/testing/:testId" element={<TestLayout />} />
+          <Route path="/test/:skillId/settings" element={<TestSetting />} />
+          <Route path="/testDetail/:testId" element={<SkillPart />} />
+          <Route path="/create-test" element={<CreateTest />} />
+
+          {/* LiveStream  exam*/}
+          <Route path="/live-stream" element={<LiveStream />} />
 
           {/* Test  class*/}
           <Route path="/classes" element={<ClassesList />} />
@@ -80,30 +82,30 @@ const App = () => {
           
           {/* Test Mentor */}
 
-            {/* Mentor */}
-            <Route path="/metorinfor" element={<MetorInfor />} />
-            <Route path="/mentorCourstList" element={<MentorCourseList />} />
+          {/* Mentor */}
+          <Route path="/metorinfor" element={<MetorInfor />} />
+          <Route path="/mentorCourstList" element={<MentorCourseList />} />
 
-            {/* Course */}
-            <Route path="/course" element={<CourseList />} />
-            <Route path="/createCourse" element={<CreateCourse />} />
-            <Route path="/courseDetail/:courseId" element={<CourseDetail />} />
-            <Route
-              path="/courseDetail/:courseId/classes"
-              element={<ClassOfCourse />}
-            />
-            <Route path="/course-timeline" element={<CourseTimeline />} />
-            {/* <Route path="/courses/:courseId" element={<CourseDetail />} /> */}
+          {/* Course */}
+          <Route path="/course" element={<CourseList />} />
+          <Route path="/createCourse" element={<CreateCourse />} />
+          <Route path="/courseDetail/:courseId" element={<CourseDetail />} />
+          <Route
+            path="/courseDetail/:courseId/classes"
+            element={<ClassOfCourse />}
+          />
+          <Route path="/course-timeline" element={<CourseTimeline />} />
+          {/* <Route path="/courses/:courseId" element={<CourseDetail />} /> */}
 
           {/* Class */}
           <Route path="/mylearning" element={<MyLearning />} />
 
-            {/* List test that User did */}
-            <Route path="/testlist" element={<TestList />} />
+          {/* List test that User did */}
+          <Route path="/testlist" element={<TestList />} />
 
-            <Route path="/404" element={<Error404 />} />
-          </Routes>
-        </Router>
+          <Route path="/404" element={<Error404 />} />
+        </Routes>
+      </Router>
     </div>
   );
 };

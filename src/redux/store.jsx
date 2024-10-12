@@ -7,6 +7,7 @@ import courseTimelineDetailReducer from "./courses/CourseTimelineDetailSlice";
 import testReducer from "./testExam/TestSlice";
 import userReducer from "./users/UserSlice";
 import eventReducer from "./event/EventSlice";
+import answerReducer from "./answer/answerSlice";
 import scheduleReducer from "./Schedule/ScheduleSlice";
 
 export const store = configureStore({
@@ -19,6 +20,7 @@ export const store = configureStore({
     test: testReducer,
     user: userReducer,
     event: eventReducer,
+    answer: answerReducer,
     schedule: scheduleReducer,
   },
 });

@@ -4,6 +4,8 @@ import PropTypes from "prop-types";
 import CryptoJS from "crypto-js";
 import { useState, useEffect } from "react";
 import React from "react";
+import { getUser } from '../../service/GetUser';
+
 
 // Accessing environment variables
 const appID = Number(import.meta.env.VITE_APP_ID);
@@ -27,7 +29,7 @@ function getUrlParams(url = window.location.href) {
   return new URLSearchParams(urlStr);
 }
 
-async function GetIdByMostView() {
+async function GetListIdIsLiveStream() {
   const bytesToHex = (bytes) => {
     return Array.from(bytes, (byte) => {
       return ("0" + (byte & 0xff).toString(16)).slice(-2);
@@ -63,8 +65,7 @@ async function GetIdByMostView() {
     );
 
     const baseURL = `https://rtc-api.zego.im/?Action=DescribeUserNum`;
-
-    const roomIds = ["12345", "12323"]; // Define room IDs here
+    const roomIds = ["0194bc0a-37b6-4c7a-a8b1-e51592978f06", "12335"]; // Define room IDs here
 
     const roomIdParams = roomIds.map((id) => `RoomId[]=${id}`).join("&");
     const generatedUrl = `${baseURL}&${roomIdParams}&AppId=${appID}&SignatureNonce=${signatureNonce}&Timestamp=${timestamp}&Signature=${encodeURIComponent(
@@ -78,15 +79,18 @@ async function GetIdByMostView() {
       }
       const data = await response.json();
       console.log("API Response:", data);
-
+    
       if (data.Code === 0) {
         // API success
-        // Find room with the highest number of users
-        const roomWithMostViews = data.Data.UserCountList.reduce(
-          (max, room) => (room.UserCount > max.UserCount ? room : max),
-          data.Data.UserCountList[0]
+        // Sort rooms by UserCount in descending order
+        const sortedRooms = data.Data.UserCountList.sort(
+          (a, b) => b.UserCount - a.UserCount
         );
-        return roomWithMostViews.RoomId; // Return room ID with the most users
+    
+        // Return the list of RoomIds in descending order of UserCount
+        const roomIds = sortedRooms.map((room) => room.RoomId);
+        console.log(roomIds[0]);
+        return roomIds;
       } else {
         console.error("API Error:", data.Message);
         return null;
@@ -109,8 +113,8 @@ const LiveStreamFrame = ({ width, height, className }) => {
   useEffect(() => {
     const fetchRoomData = async () => {
       try {
-        const id = await GetIdByMostView();
-        setRoomID(id);
+        const Listid = await GetListIdIsLiveStream();
+        setRoomID(getUrlParams().get('roomID')||Listid[0]);
       } catch (error) {
         console.error("Error fetching room data:", error);
       } finally {
@@ -130,8 +134,10 @@ const LiveStreamFrame = ({ width, height, className }) => {
 
   // Information about the user from backend
   const url = window.location.href;
-  const UserId = url === "http://localhost:5173/" ? randomID(5) : "12345";
-  const UserName = "guest";
+  const user = getUser();
+  console.log(user);
+  const UserId =user?user.sub:randomID(10);
+  const UserName = user?user.userName:"guest";
   const role_str = UserId === roomID ? "Host" : "Audience";
   const role =
     role_str === "Host"
@@ -174,9 +180,9 @@ const LiveStreamFrame = ({ width, height, className }) => {
         },
       },
       sharedLinks,
-      showTextChat: role_str === "Host",
+      showTextChat: role_str === "Host"||window.location.pathname==="/live-stream"?true:false,
       showPreJoinView: role_str === "Host",
-      showRoomDetailsButton: role_str === "Host",
+      showRoomDetailsButton: role_str === "Host"||window.location.pathname==="/live-stream"?true:false,
       showLeavingView: false,
     });
 

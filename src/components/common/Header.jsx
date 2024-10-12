@@ -97,7 +97,7 @@ const Header = () => {
             </a>
             <Link
               className="font-medium text-black focus:outline-none"
-              to="/live-stream"
+              href={`/live-stream${user===null||user.role==="USER"?'':`?RoomId=${user.sub}`}`}
             >
               <span className="mr-2">
                 <FontAwesomeIcon icon={faTv} />

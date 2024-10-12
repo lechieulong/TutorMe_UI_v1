@@ -139,47 +139,61 @@ const MentorCourseList = () => {
         </div>
 
         {/* Course List */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mt-6">
-          {currentCourses.map((course) => (
-            <CourseCard
-              key={course.id}
-              courseName={course.courseName}
-              content={course.content}
-              title={course.title}
-              description={course.description}
-              category={course.category}
-              icon={getIcon(course.category)}
-              teacher={user.name}
-              courseId={course.id}
-              onDelete={handleDelete}
-            />
-          ))}
-        </div>
+        {currentCourses.length === 0 ? (
+          <div className="text-center text-gray-500 mt-10">
+            <p>No courses available to display at the moment.</p>
+            <button
+              className="mt-4 px-4 py-2 bg-blue-600 text-white rounded-lg"
+              onClick={() => navigate("/createCourse")}
+            >
+              Create Your First Course
+            </button>
+          </div>
+        ) : (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mt-6">
+            {currentCourses.map((course) => (
+              <CourseCard
+                key={course.id}
+                courseName={course.courseName}
+                content={course.content}
+                title={course.title}
+                description={course.description}
+                category={course.category}
+                icon={getIcon(course.category)}
+                teacher={user.name}
+                courseId={course.id}
+                onDelete={handleDelete}
+              />
+            ))}
+          </div>
+        )}
 
         {/* Pagination */}
-        <div className="flex justify-center items-center mt-4">
-          <button
-            onClick={handlePrevPage}
-            disabled={currentPage === 1}
-            className={`px-3 py-1.5 mx-1 text-sm font-medium ${
-              currentPage === 1 ? "bg-gray-300" : "bg-blue-600"
-            } text-white border border-blue-600 rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-400`}
-          >
-            Previous
-          </button>
-          <span className="text-sm mx-2">
-            Page {currentPage} of {totalPages}
-          </span>
-          <button
-            onClick={handleNextPage}
-            disabled={currentPage === totalPages}
-            className={`px-3 py-1.5 mx-1 text-sm font-medium ${
-              currentPage === totalPages ? "bg-gray-300" : "bg-blue-600"
-            } text-white border border-blue-600 rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-400`}
-          >
-            Next
-          </button>
-        </div>
+        {currentCourses.length > 0 && (
+          <div className="flex justify-center items-center mt-4">
+            <button
+              onClick={handlePrevPage}
+              disabled={currentPage === 1}
+              className={`px-3 py-1.5 mx-1 text-sm font-medium ${
+                currentPage === 1 ? "bg-gray-300" : "bg-blue-600"
+              } text-white border border-blue-600 rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-400`}
+            >
+              Previous
+            </button>
+            <span className="text-sm mx-2">
+              Page {currentPage} of {totalPages}
+            </span>
+            <button
+              onClick={handleNextPage}
+              disabled={currentPage === totalPages}
+              className={`px-3 py-1.5 mx-1 text-sm font-medium ${
+                currentPage === totalPages ? "bg-gray-300" : "bg-blue-600"
+              } text-white border border-blue-600 rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-400`}
+            >
+              Next
+            </button>
+          </div>
+        )}
       </div>
     </MainLayout>
   );

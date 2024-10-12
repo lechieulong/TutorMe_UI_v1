@@ -6,6 +6,7 @@ const CourseTimelineDetail = ({ timelineId }) => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [activeIndex, setActiveIndex] = useState(null); // Trạng thái để quản lý index đang mở
+  const [timelineName, setTimelineName] = useState(""); // Thêm state để lưu tên lộ trình
 
   useEffect(() => {
     const fetchTimelineDetails = async () => {
@@ -14,15 +15,23 @@ const CourseTimelineDetail = ({ timelineId }) => {
           `https://localhost:7030/api/CourseTimelineDetail/CourseTimeline/${timelineId}`
         );
         setDetails(response.data);
+
+        // Nếu có thông tin chi tiết, lấy tên lộ trình từ phần tử đầu tiên
+        if (response.data.length > 0) {
+          setTimelineName(response.data[0].topic); // Giả sử topic là tên lộ trình
+        }
+        console.log(timelineName);
         setLoading(false);
       } catch (error) {
-        setError("Không thể lấy thông tin chi tiết của lộ trình.");
+        setError(
+          `Không thể lấy thông tin chi tiết của lộ trình ${timelineName}.`
+        );
         setLoading(false);
       }
     };
 
     fetchTimelineDetails();
-  }, [timelineId]);
+  }, [timelineId, timelineName]); // Thêm timelineName vào dependencies
 
   const toggleCollapse = (index) => {
     setActiveIndex(activeIndex === index ? null : index); // Đổi trạng thái khi click

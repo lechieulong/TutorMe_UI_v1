@@ -1,13 +1,40 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
 import MentorHeader from "../../components/Mentor/MentorHeader";
 import MentorSidebar from "../../components/Mentor/MentorSideBar";
 import CourseTimeline from "./components/CourseTimeline";
 import CourseTimelineDetail from "./components/CourseTimelineDetail";
+import ButtonAddCourseTimeline from "./components/ButtonAddCourseTimeline";
+import ButtonAddCourseTimelineDetail from "./components/ButtonAddCourseTimelineDetail"; // Import nút thêm chi tiết
+import axios from "axios";
 
 const CourseDetail = () => {
   const { className, courseId } = useParams();
   const [timelineIds, setTimelineIds] = useState([]);
+
+  // Fetch danh sách timeline
+  const fetchTimelines = async () => {
+    try {
+      const response = await axios.get(
+        `https://localhost:7030/api/CourseTimeline?courseId=${courseId}`
+      );
+      setTimelineIds(response.data.map((timeline) => timeline.id));
+    } catch (error) {
+      console.error("Failed to fetch timelines", error);
+    }
+  };
+
+  useEffect(() => {
+    fetchTimelines();
+  }, [courseId]);
+
+  const handleTimelineAdded = () => {
+    fetchTimelines();
+  };
+
+  const handleDetailAdded = () => {
+    fetchTimelines(); // Cập nhật sau khi thêm chi tiết
+  };
 
   return (
     <div className="flex flex-col min-h-screen w-full">
@@ -18,28 +45,24 @@ const CourseDetail = () => {
           <ol className="flex items-center whitespace-nowrap">
             <li className="inline-flex items-center">
               <a
-                className="flex items-center text-sm text-gray-500 hover:text-blue-600 focus:outline-none focus:text-blue-600"
+                className="flex items-center text-sm text-gray-500 hover:text-blue-600"
                 href="#"
               >
                 Home
               </a>
               <svg
-                className="shrink-0 mx-2 size-4 text-gray-400"
+                className="mx-2 h-4 w-4 text-gray-400"
                 xmlns="http://www.w3.org/2000/svg"
-                width="24"
-                height="24"
-                viewBox="0 0 24 24"
                 fill="none"
+                viewBox="0 0 24 24"
                 stroke="currentColor"
-                strokeWidth="2"
-                strokeLinecap="round"
-                strokeLinejoin="round"
               >
-                <path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"></path>
-                <polyline points="14 2 14 8 20 8"></polyline>
-                <line x1="16" x2="8" y1="13" y2="13"></line>
-                <line x1="16" x2="8" y1="17" y2="17"></line>
-                <line x1="10" x2="8" y1="9" y2="9"></line>
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M14 3v8H3v5a2 2 0 002 2h14a2 2 0 002-2V7.5L14 3z"
+                />
               </svg>
               {className}
             </li>
@@ -51,21 +74,31 @@ const CourseDetail = () => {
 
           <div className="flex gap-4">
             <div className="w-2/5">
+              <ButtonAddCourseTimeline
+                courseId={courseId}
+                onTimelineAdded={handleTimelineAdded}
+              />
               <CourseTimeline
                 courseId={courseId}
-                onSelectTimeline={setTimelineIds} // Lưu danh sách ID
+                onSelectTimeline={setTimelineIds}
               />
             </div>
             <div className="w-3/5">
               {timelineIds.length > 0 ? (
                 timelineIds.map((timelineId) => (
-                  <CourseTimelineDetail
-                    key={timelineId}
-                    timelineId={timelineId}
-                  />
+                  <div key={timelineId} className="mb-4">
+                    {/* Chi tiết lộ trình */}
+                    <CourseTimelineDetail timelineId={timelineId} />
+                    {/* Nút thêm chi tiết cho mỗi timeline */}
+                    <ButtonAddCourseTimelineDetail
+                      courseId={courseId}
+                      timelineId={timelineId} // Truyền ID timeline
+                      onDetailAdded={handleDetailAdded} // Xử lý khi thêm chi tiết
+                    />
+                  </div>
                 ))
               ) : (
-                <p>Vui lòng chọn một lộ trình để xem chi tiết.</p>
+                <p className="text-red-500">Hiện chưa có lộ trình nào.</p>
               )}
             </div>
           </div>

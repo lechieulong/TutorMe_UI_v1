@@ -36,7 +36,7 @@ import CreateCourse from "./pages/Course/components/CreateCourse";
 import SpeakingGemini from "./service/SpeakingGemini";
 
 import MyLearning from "./pages/Class/MyLearning";
-import PayOS from "./pages/User/PayOS";
+// import PayOS from "./pages/User/PayOS";
 // import TestForm from "./pages/ExamTest/TestForm";
 // import TestFormDetail from "./pages/ExamTest/TestFormDetail";
 import CreateTest from "./pages/ExamTest/CreateTest";

@@ -10,6 +10,7 @@ import { GetTopTeachers } from '../../redux/users/UserSlice';
 import { getUser } from '../../service/GetUser';
 import { Roles } from '../../utils/config';
 import { SetSchedule } from '../../redux/Schedule/ScheduleSlice';
+import Search from './components/Search';
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
@@ -20,6 +21,7 @@ const CoachingSchedule = () => {
 
     const [userFromToken, setUser] = useState(null);
     const [isModalOpen, setIsModalOpen] = useState(false);
+    const [isSearchVisible, setIsSearchVisible] = useState(false);
 
     useEffect(() => {
         const fetchUser = async () => {
@@ -42,6 +44,10 @@ const CoachingSchedule = () => {
 
     const toggleModal = () => {
         setIsModalOpen(!isModalOpen);
+    };
+
+    const toggleSearch = () => {
+        setIsSearchVisible(!isSearchVisible);
     };
 
     const now = new Date();
@@ -87,7 +93,11 @@ const CoachingSchedule = () => {
         return errors;
     };
 
-    const handleSubmit = async  (e) => {
+    const handleSearch = (term) => {
+        console.log("Search term:", term);
+    };
+
+    const handleSubmit = async (e) => {
         e.preventDefault();
         const errors = validateForm();
 
@@ -153,10 +163,14 @@ const CoachingSchedule = () => {
                             <p className="text-gray-600">No teachers available.</p>
                         )}
                         <div className="flex items-center">
-                            <button className="bg-slate-100 text-blue-500 px-4 py-2 ml-2 rounded">
+                            <button onClick={toggleSearch} className="bg-slate-100 text-blue-500 px-4 py-2 ml-2 rounded">
                                 <FaSearch className="text-2xl" />
                             </button>
                         </div>
+                        {/* Display Search Component if search is visible */}
+                        {isSearchVisible && (
+                            <Search onSearch={handleSearch} />
+                        )}
                     </div>
 
                     {/* Tabs */}

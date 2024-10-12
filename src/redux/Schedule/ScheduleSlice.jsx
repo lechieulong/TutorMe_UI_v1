@@ -8,7 +8,6 @@ import Cookies from "js-cookie";
 export const SetSchedule = createAsyncThunk(
     `${SLICE_NAMES.SCHEDULE}/${ACTIONS.SetSchedule}`,
     async (scheduleData, { rejectWithValue }) => {
-        console.log("Data: ", scheduleData);
         try {
             const token = Cookies.get("authToken");
             const response = await axios.post(
@@ -30,11 +29,38 @@ export const SetSchedule = createAsyncThunk(
     }
 );
 
+// Action to get teacher schedule for the next 7 days
+export const GetSchedule7Days = createAsyncThunk(
+    `${SLICE_NAMES.SCHEDULE}/${ACTIONS.GET_SCHEDULE_7DAYS}`,
+    async (username, { rejectWithValue }) => {
+        try {
+            const token = Cookies.get("authToken"); // Ensure token is included
+            const response = await axios.get(
+                `${apiURLConfig.baseURL}/teacheravailableschedule/${username}/7days`,
+                {
+                    headers: {
+                        'Authorization': `Bearer ${token}`, // Include token in the request headers
+                    },
+                }
+            );
+            return response.data.result;
+        } catch (error) {
+            console.error("API Error: ", error);
+            return rejectWithValue(
+                error.response?.data?.message || "Failed to get schedule"
+            );
+        }
+    }
+);
+
 const initialState = {
     schedule: null,
-    status: STATUS.IDLE, // Default status
+    schedules: [],
+    scheduleStatus: STATUS.IDLE, // Default status
     setStatus: STATUS.IDLE,
+    get7daysStatus: STATUS.IDLE,
     error: null, // Error message if any
+    scheduleError: null, // Error message if any
 };
 
 const ScheduleSlice = createSlice({
@@ -56,6 +82,18 @@ const ScheduleSlice = createSlice({
                 state.error = action.payload || action.error.message; // Set error message
             })
 
+            // Handle get 7 days schedule
+            .addCase(GetSchedule7Days.pending, (state) => {
+                state.scheduleStatus = STATUS.PENDING;
+            })
+            .addCase(GetSchedule7Days.fulfilled, (state, action) => {
+                state.scheduleStatus = STATUS.SUCCESS;
+                state.schedules = action.payload;
+            })
+            .addCase(GetSchedule7Days.rejected, (state, action) => {
+                state.scheduleStatus = STATUS.FAILED;
+                state.scheduleError = action.payload || action.error.message; // Set error message
+            })
     },
 });
 

@@ -38,8 +38,27 @@ export const GetTopTeachers = createAsyncThunk(
     }
 );
 
+// Action to search top 5 teachers
+export const SearchTeacher = createAsyncThunk(
+    `${SLICE_NAMES.USER}/${ACTIONS.SEARCH_TEACHER}`,
+    async (searchText, { rejectWithValue }) => {
+        try {
+            const response = await axios.get(
+                `${apiURLConfig.baseURL}/user/search/${searchText}` ,
+                searchText
+            );
+            return response.result.result;
+        } catch (error) {
+            return rejectWithValue(
+                error.response?.data?.message || "Failed to get teachers."
+            );
+        }
+    }
+);
+
 const initialState = {
     teachers: [],
+    searchTeachers: [],
     userInfor: null, // Thông tin người dùng
     status: STATUS.IDLE, // Trạng thái mặc định
     error: null, // Thông báo lỗi nếu có
@@ -79,7 +98,20 @@ const UserSlice = createSlice({
                 state.loadingTopTeachers = false; // Reset loading state
                 state.status = STATUS.FAILED;
                 state.error = action.payload || action.error.message;
-            });
+            })
+
+            // Handle search top teachers
+            .addCase(SearchTeacher.pending, (state) => {
+                state.status = STATUS.PENDING;
+            })
+            .addCase(SearchTeacher.fulfilled, (state, action) => {
+                state.status = STATUS.SUCCESS;
+                state.searchTeachers = action.payload;
+            })
+            .addCase(SearchTeacher.rejected, (state, action) => {
+                state.status = STATUS.FAILED;
+                state.error = action.payload || action.error.message;
+            })
     },
 });
 

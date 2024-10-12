@@ -18,6 +18,7 @@ import ChangePassword from "./pages/User/ChangePassword";
 
 import Calendar from "./pages/Calendar/Calendar";
 import CoachingSchedule from "./pages/Teacher/CoachingSchedule";
+import ConfirmBook from "./pages/Schedule/ConfirmBook";
 
 import SkillPart from "./pages/TestExam/SkillPart";
 import LiveStream from "./pages/LiveStream";
@@ -75,6 +76,7 @@ const App = () => {
           <Route path="/calendar" element={<Calendar />} />
           <Route path="/coachingschedule" element={<CoachingSchedule />} />
           <Route path="/coachingschedule/:teachername" element={<CoachingSchedule />} />
+          <Route path="/schedulepaymentmethod" element={<ConfirmBook />} />
           
           {/* Test Mentor */}
 

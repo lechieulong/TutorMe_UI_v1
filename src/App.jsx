@@ -37,6 +37,7 @@ import CreateCourse from "./pages/Course/components/CreateCourse";
 import SpeakingGemini from "./service/SpeakingGemini";
 
 import MyLearning from "./pages/Class/MyLearning";
+// import PayOS from "./pages/User/PayOS";
 // import TestForm from "./pages/ExamTest/TestForm";
 // import TestFormDetail from "./pages/ExamTest/TestFormDetail";
 import CreateTest from "./pages/ExamTest/CreateTest";
@@ -57,6 +58,7 @@ const App = () => {
           <Route path="/changepassword" element={<ChangePassword />} />
           <Route path="/reset-password" element={<ResetPassword />} />
           <Route path="/beteacher" element={<BeTeacher />} />
+          {/* <Route path="/Payment" element={<PayOS />} /> */}
 
           {/* Test  common*/}
           <Route path="/" element={<Home />} />

@@ -8,14 +8,10 @@ const LiveStream = () => {
     <MainLayout>
       <div className="flex flex-col h-min mt-16">
         {/* Div cha chứa LiveStreamFrame và div chat */}
-        <div className="flex w-full">
+        <div className="flex justify-center items-center">
           {/* Div chứa LiveStreamFrame chiếm 80% chiều rộng */}
-          <div className="w-[80%] p-2">
+          <div className=" p-2  w-8/12">
             <LiveStreamFrame height="500px" />
-          </div>
-          {/* Div chứa chat box chiếm 20% chiều rộng */}
-          <div className="w-[20%] text-white p-2">
-            <div className="bg-black h-[500px]">123</div>
           </div>
         </div>
 

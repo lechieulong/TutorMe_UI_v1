@@ -13,8 +13,8 @@ import ResetPassword from "./pages/Authentication/ResetPassword";
 
 import UserDetail from "./pages/User/UserDetail";
 import ProfileEdit from "./pages/User/ProfileEdit";
-
 import ChangePassword from "./pages/User/ChangePassword";
+import BeTeacher from "./pages/User/Beteacher";
 
 import Calendar from "./pages/Calendar/Calendar";
 import CoachingSchedule from "./pages/Teacher/CoachingSchedule";
@@ -56,6 +56,7 @@ const App = () => {
           <Route path="/user/edit/:username" element={<ProfileEdit />} />
           <Route path="/changepassword" element={<ChangePassword />} />
           <Route path="/reset-password" element={<ResetPassword />} />
+          <Route path="/beteacher" element={<BeTeacher />} />
 
           {/* Test  common*/}
           <Route path="/" element={<Home />} />

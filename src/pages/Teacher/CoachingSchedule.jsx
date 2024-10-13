@@ -127,7 +127,7 @@ const CoachingSchedule = () => {
 
     return (
         <MainLayout>
-            <div className="pt-5 bg-slate-100">
+            <div className="bg-slate-100">
                 <div className="max-w-5xl mx-auto p-4">
                     <header className="flex items-center justify-between mb-4">
                         <div>

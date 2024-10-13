@@ -31,11 +31,11 @@ const Search = ({ onSearch }) => {
     return (
         <div className="absolute top-16 right-0 mt-20 transform -translate-x-1/2 w-full max-w-md">
             <div className="relative">
-                <form onSubmit={handleSubmit} className="flex items-center">
+                <form onSubmit={handleSubmit} className="flex items-center mt-6">
                     <input
                         type="text"
                         name="searchTerm"
-                        className="w-full border border-gray-300 rounded-full py-2 pl-4 pr-10 mt-2 text-sm"
+                        className="w-[90%] border border-gray-300 rounded-full py-2 pl-4 pr-10 text-sm"
                         placeholder="Search...(Sorry! Not available now)"
                         value={searchTerm}
                         onChange={(e) => setSearchTerm(e.target.value)}

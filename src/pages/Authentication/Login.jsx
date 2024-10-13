@@ -64,7 +64,7 @@ const SignIn = () => {
 
       const userData = formData;
       try {
-         // unwrap để lấy dữ liệu trực tiếp từ action
+        // unwrap để lấy dữ liệu trực tiếp từ action
         const response = await dispatch(LoginApi(userData)).unwrap();
 
         if (response.isSuccess) {
@@ -98,8 +98,6 @@ const SignIn = () => {
         toast.error(response.message || "Google login failed.");
       }
     } catch (error) {
-      console.log("Fail");
-      console.log(error);
       toast.error(error || "Google login failed. Please try again.");
     }
   };
@@ -171,6 +169,8 @@ const SignIn = () => {
               <GoogleLogin
                 onSuccess={handleGoogleLoginSuccess}
                 onError={handleGoogleLoginFailure}
+                // size="large"
+                // ux_mode="popup"
               />
             </GoogleOAuthProvider>
             <button className="group h-12 px-4 border-2 border-gray-300 rounded-full transition duration-300 hover:border-blue-400 focus:bg-blue-50 active:bg-blue-100">

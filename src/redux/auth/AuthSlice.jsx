@@ -132,7 +132,6 @@ export const requestForgotAPI = createAsyncThunk(
 export const resetPasswordAPI = createAsyncThunk(
   `${SLICE_NAMES.AUTH}/${ACTIONS.RESET_PASSWORD}`,
   async (userData, { rejectWithValue }) => {
-    console.log(userData);
     try {
       const response = await axios.post(
         `${apiURLConfig.baseURL}/auth/reset-password`,

@@ -45,7 +45,7 @@ const UserDetail = () => {
 
   return (
     <MainLayout>
-      <div className="flex h-screen w-full pt-5 bg-gray-100">
+      <div className="flex h-screen w-full bg-gray-100">
         <Sidebar userInfor={userInfor} />
         <main className="flex-1">
           <div className="w-full max-w-full mx-auto bg-gray-100 pt-10 flex flex-col">
@@ -85,7 +85,7 @@ const UserDetail = () => {
                       </p>
                     </div>
                     <div className="italic flex items-center text-sm text-amber-200">
-                      <FaEnvelope className="mr-2 text-stone-400" />
+                      <FaEnvelope className="mt-1 mr-2 text-stone-400" />
                       <p>{userInfor?.email}</p>
                     </div>
                   </div>

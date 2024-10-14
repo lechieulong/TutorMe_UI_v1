@@ -8,6 +8,7 @@ export const SLICE_NAMES = {
   TEST: "test",
   USER: "user",
   EVENT: "event",
+  SCHEDULE: "schedule"
 };
 
 export const ACTIONS = {
@@ -32,8 +33,14 @@ export const ACTIONS = {
 
   GET_USER_INFORMATION: "getProfile",
   GET_TOP10_TEACHERS: "getTop10Teachers",
+  SEARCH_TEACHER: "searchteacher",
+  
   //Event
-  GET_EVENT_BY_USERID: "geteventbyuserid"
+  GET_EVENT_BY_USERID: "geteventbyuserid",
+
+  //Schedule
+  SET_SCHEDULE: "setschedule",
+  GET_SCHEDULE_7DAYS: "getschedule7days",
 };
 
 export const STATUS = {

@@ -88,7 +88,7 @@ const ProfileSection = () => {
 
     return (
         <MainLayout>
-            <div className="flex h-screen w-full pt-5">
+            <div className="flex h-screen w-full">
                 <Sidebar userInfor={userInfor} />
                 <div className="flex-1 p-12">
                     <div className="flex gap-8 bg-gray-100 p-6 px-12">

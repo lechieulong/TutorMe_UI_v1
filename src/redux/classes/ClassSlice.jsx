@@ -17,7 +17,6 @@ export const fetchClassesWithStudents = createAsyncThunk(
 export const CreateClassAPI = createAsyncThunk(
   `${SLICE_NAMES.CLASSES}/${ACTIONS.CREATE_CLASS}`,
   async (classData, { rejectWithValue }) => {
-    console.log(classData);
     try {
       const response = await axios.post(
         `${apiURLConfig.baseURL}/class`,

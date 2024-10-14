@@ -13,11 +13,12 @@ import ResetPassword from "./pages/Authentication/ResetPassword";
 
 import UserDetail from "./pages/User/UserDetail";
 import ProfileEdit from "./pages/User/ProfileEdit";
-
 import ChangePassword from "./pages/User/ChangePassword";
+import BeTeacher from "./pages/User/Beteacher";
 
 import Calendar from "./pages/Calendar/Calendar";
 import CoachingSchedule from "./pages/Teacher/CoachingSchedule";
+import ConfirmBook from "./pages/Schedule/ConfirmBook";
 
 import SkillPart from "./pages/TestExam/SkillPart";
 import LiveStream from "./pages/LiveStream";
@@ -57,6 +58,7 @@ const App = () => {
           <Route path="/user/edit/:username" element={<ProfileEdit />} />
           <Route path="/changepassword" element={<ChangePassword />} />
           <Route path="/reset-password" element={<ResetPassword />} />
+          <Route path="/beteacher" element={<BeTeacher />} />
           {/* <Route path="/Payment" element={<PayOS />} /> */}
 
           {/* Test  common*/}
@@ -80,11 +82,9 @@ const App = () => {
           {/* Calender */}
           <Route path="/calendar" element={<Calendar />} />
           <Route path="/coachingschedule" element={<CoachingSchedule />} />
-          <Route
-            path="/coachingschedule/:teachername"
-            element={<CoachingSchedule />}
-          />
-
+          <Route path="/coachingschedule/:teachername" element={<CoachingSchedule />} />
+          <Route path="/schedulepaymentmethod" element={<ConfirmBook />} />
+          
           {/* Test Mentor */}
 
           {/* Mentor */}

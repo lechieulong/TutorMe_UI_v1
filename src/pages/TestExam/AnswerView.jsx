@@ -1,16 +1,32 @@
 import React from "react";
-import { useDispatch } from "react-redux";
+import AudioPlayer from "./AudioPlayer"; // Adjust the import based on your file structure
 
 const AnswerView = ({ partData }) => {
-  const dispatch = useDispatch();
-
   // Ensure partData is defined before accessing its properties
   if (!partData) return <div>No data available</div>;
 
   return (
     <div>
       {/* Display the content text */}
-      <p>{partData.contentText}</p>
+      <div dangerouslySetInnerHTML={{ __html: partData.contentText }} />
+
+      {/* Check if there is an audio file and display the audio player */}
+      {partData.audio && (
+        <div className="my-4">
+          <AudioPlayer src={partData.audio} />
+        </div>
+      )}
+
+      {/* Check if there is an image and display it */}
+      {partData.image && (
+        <div className="my-4">
+          <img
+            src={partData.image}
+            alt="Section Visual"
+            style={{ maxWidth: "100%", height: "auto" }}
+          />
+        </div>
+      )}
 
       {/* Render sections */}
       {partData.sections.map((section, sectionIndex) => (

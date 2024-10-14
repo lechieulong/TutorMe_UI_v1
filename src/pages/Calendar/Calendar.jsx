@@ -41,7 +41,7 @@ const MyCalendar = () => {
     return (
         <div className="relative bg-gray-100 flex-1">
             <MainLayout>
-                <div className="pt-5">
+                <div className="">
                     <div className="myCustomHeight">
                         <Calendar
                             localizer={localizer}

@@ -1,18 +1,32 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
+import { useParams } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
+import { Profile } from '../../../redux/users/UserSlice';
 
 const About = () => {
+    const dispatch = useDispatch();
+    const { teachername } = useParams();
+    // Dispatch to fetch teacher profile and schedule
+    useEffect(() => {
+        if (teachername) {
+            dispatch(Profile(teachername));
+        }
+    }, [dispatch, teachername]);
+
+    const { userInfor } = useSelector((state) => state.user);
+
     return (
         <div className="flex space-x-4 mb-4">
             <div className="flex-1">
                 <div className="bg-white p-4 rounded shadow mb-4">
                     <div className="flex items-center space-x-2 mb-2">
                         <img
-                            src="https://placehold.co/40x40"
+                            src={userInfor?.imageURL || "https://placehold.co/40x40"}
                             alt="Anne Tran profile"
-                            className="rounded-full"
+                            className="rounded-full w-10 h-10"
                         />
                         <div>
-                            <p className="font-semibold">Nguyen Van Sy</p>
+                            <p className="font-semibold">{userInfor?.name || "User Name"}</p>
                             <p className="text-gray-500 text-xs">
                                 Be teacher · Aug 10, 2024<i className="fas fa-globe"></i>
                             </p>
@@ -20,16 +34,17 @@ const About = () => {
                     </div>
                     <div className="flex justify-center">
                         <img
-                            src="https://placehold.co/300x300"
+                            src={userInfor?.imageURL || "https://placehold.co/300x300"}
                             alt="Teacher avatar"
                             className="rounded"
+                            style={{ maxWidth: "100%", height: "auto" }}
                         />
                     </div>
                 </div>
 
                 <div className="bg-white p-4 rounded shadow">
                     <div className="flex items-center space-x-2 mb-2">
-                        <img src="https://placehold.co/40x40" alt="User profile" className="rounded-full" />
+                        <img src={userInfor?.imageURL || "https://placehold.co/40x40"} alt="User profile" className="rounded-full w-10 h-10" />
                         <input
                             type="text"
                             placeholder="Sent message to teacher..."

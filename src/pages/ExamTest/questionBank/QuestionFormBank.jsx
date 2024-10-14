@@ -13,6 +13,7 @@ const QuestionFormBank = ({ setIsModalOpen, question }) => {
               answers: [],
               skill: 1,
               questionType: 1,
+              part: 1, // Thêm trường part
             },
           ],
     },
@@ -114,6 +115,23 @@ const QuestionFormBank = ({ setIsModalOpen, question }) => {
                     )}
                   />
                 </div>
+                <div>
+                  <label className="block mb-1">Part</label>{" "}
+                  {/* Nhãn cho trường Part */}
+                  <Controller
+                    name={`questions.${index}.part`} // Thêm trường part
+                    control={control}
+                    defaultValue={question.part || 1}
+                    render={({ field }) => (
+                      <select {...field} className="border p-1 mb-2 w-full">
+                        <option value="1">Part 1</option>
+                        <option value="2">Part 2</option>
+                        <option value="3">Part 3</option>
+                        <option value="4">Part 4</option>
+                      </select>
+                    )}
+                  />
+                </div>
               </div>
 
               <AnswerForm control={control} questionIndex={index} />
@@ -128,6 +146,7 @@ const QuestionFormBank = ({ setIsModalOpen, question }) => {
                   answers: [],
                   skill: 1,
                   questionType: 1,
+                  part: 1, // Thêm trường part khi thêm câu hỏi mới
                 })
               }
               className="bg-green-500 text-white p-2 rounded"

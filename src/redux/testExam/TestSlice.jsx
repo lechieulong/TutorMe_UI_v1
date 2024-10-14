@@ -1,6 +1,7 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import axios from "axios";
 import { SLICE_NAMES, ACTIONS, STATUS } from "../../constant/SliceName";
+import Cookies from "js-cookie";
 
 const API_BASE_URL = "https://localhost:7030/api";
 
@@ -57,6 +58,27 @@ export const deleteTest = createAsyncThunk(
     } catch (error) {
       return rejectWithValue(
         error.response?.data?.message || "Failed to delete test"
+      );
+    }
+  }
+);
+
+// Updated importQuestion action to accept FormData
+export const importQuestion = createAsyncThunk(
+  `${SLICE_NAMES.TEST}/${ACTIONS.IMPORT_QUESTION}`,
+  async (formData, { rejectWithValue }) => {
+    try {
+      const token = Cookies.get("authToken");
+      await axios.post(`${API_BASE_URL}/test/questionsBank/`, formData, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "multipart/form-data", // Ensure correct content type is set
+        },
+      });
+      return formData;
+    } catch (error) {
+      return rejectWithValue(
+        error.response?.data?.message || "Failed to import questions"
       );
     }
   }

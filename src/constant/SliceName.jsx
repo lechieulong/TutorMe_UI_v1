@@ -32,6 +32,10 @@ export const ACTIONS = {
   DELETE_TEST: "deleteTest",
 
   IMPORT_QUESTION: "importQuestion",
+  GET_QUESTIONS_BANK: "getQuestionsBank",
+  ADD_QUESTIONS: "addQuestions",
+  DELETE_QUESTION: "deleteQuestion",
+  UPDATE_QUESTION: "updateQuestion",
 
   GET_USER_INFORMATION: "getProfile",
   GET_TOP10_TEACHERS: "getTop10Teachers",

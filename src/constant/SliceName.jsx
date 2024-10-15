@@ -9,7 +9,7 @@ export const SLICE_NAMES = {
   USER: "user",
   EVENT: "event",
   SCHEDULE: "schedule",
-  SPECIALIZATION: "specialization"
+  SPECIALIZATION: "specialization",
 };
 
 export const ACTIONS = {
@@ -19,7 +19,7 @@ export const ACTIONS = {
   CREATE_CLASS: "createClass",
 
   LOGIN: "login",
-  REGIS: "register",  
+  REGIS: "register",
   CHECK_EMAIL: "check-email",
   REGISTER_GOOGLE: "register-google",
   LOGIN_GOOGLE: "login-google",
@@ -31,6 +31,12 @@ export const ACTIONS = {
   CREATE_TEST: "createTest",
   UPDATE_TEST: "updateTest",
   DELETE_TEST: "deleteTest",
+
+  IMPORT_QUESTION: "importQuestion",
+  GET_QUESTIONS_BANK: "getQuestionsBank",
+  ADD_QUESTIONS: "addQuestions",
+  DELETE_QUESTION: "deleteQuestion",
+  UPDATE_QUESTION: "updateQuestion",
 
   GET_USER_INFORMATION: "getProfile",
   GET_TOP10_TEACHERS: "getTop10Teachers",

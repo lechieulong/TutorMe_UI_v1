@@ -79,6 +79,9 @@ const SkillPart = () => {
         <Link to="create-test">
           <p>Create Test</p>
         </Link>
+        <Link to="questionbank">
+          <p>Question Bank</p>
+        </Link>
 
         {/* Name Test */}
         <div className="bg-white  mt-10 border rounded-xl h-56 shadow-sm sm:flex dark:bg-neutral-900 dark:border-neutral-700 dark:shadow-neutral-700/70">

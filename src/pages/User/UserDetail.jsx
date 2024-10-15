@@ -21,7 +21,7 @@ const UserDetail = () => {
   const userFromToken = getUser();
   useEffect(() => {
     if (userFromToken?.userName) {
-      dispatch(Profile(userFromToken.userName)); // Fetch profile based on the username from token and save state User
+      dispatch(Profile(userFromToken.userName));
     }
   }, [dispatch]);
 
@@ -32,7 +32,7 @@ const UserDetail = () => {
   useEffect(() => {
     const token = Cookies.get("authToken");
     if (!token) {
-      navigate("/"); // Nếu ko có token, chuyển hướng đến Landing Page
+      navigate("/");
     }
   }, [navigate]);
 

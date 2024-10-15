@@ -2,7 +2,7 @@ import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import axios from "axios";
 import { SLICE_NAMES, ACTIONS, STATUS } from "../../constant/SliceName";
 import apiURLConfig from "../common/apiURLConfig";
-import { act } from "react";
+import Cookies from "js-cookie";
 
 // Action profile
 export const Profile = createAsyncThunk(
@@ -44,13 +44,36 @@ export const SearchTeacher = createAsyncThunk(
     async (searchText, { rejectWithValue }) => {
         try {
             const response = await axios.get(
-                `${apiURLConfig.baseURL}/user/search/${searchText}` ,
+                `${apiURLConfig.baseURL}/user/search/${searchText}`,
                 searchText
             );
             return response.result.result;
         } catch (error) {
             return rejectWithValue(
                 error.response?.data?.message || "Failed to get teachers."
+            );
+        }
+    }
+);
+
+//Action to reagister teacher
+export const BeTeacher = createAsyncThunk(
+    `${SLICE_NAMES.USER}/${ACTIONS.BE_TEACHER}`,
+    async (userData, { rejectWithValue }) => {
+        try {
+            const token = Cookies.get("authToken");
+            const response = await axios.post(
+                `${apiURLConfig.baseURL}/usereducation`, userData,
+                {
+                    headers: {
+                        'Authorization': `Bearer ${token}`, // Include token in the request headers
+                    },
+                }
+            );
+            return response.result;
+        } catch (error) {
+            return rejectWithValue(
+                error.response?.data?.message || "Failed to be teacher."
             );
         }
     }
@@ -63,6 +86,9 @@ const initialState = {
     status: STATUS.IDLE, // Trạng thái mặc định
     error: null, // Thông báo lỗi nếu có
     loadingTopTeachers: false,
+    beTeacherResponse: null,
+    beTeacherStatus: STATUS.IDLE,
+    beTeacherError: null,
 };
 
 const UserSlice = createSlice({
@@ -111,6 +137,19 @@ const UserSlice = createSlice({
             .addCase(SearchTeacher.rejected, (state, action) => {
                 state.status = STATUS.FAILED;
                 state.error = action.payload || action.error.message;
+            })
+
+            // Handle be teacher
+            .addCase(BeTeacher.pending, (state) => {
+                state.beTeacherStatus = STATUS.PENDING;
+            })
+            .addCase(BeTeacher.fulfilled, (state, action) => {
+                state.beTeacherStatus = STATUS.SUCCESS;
+                state.beTeacherResponse = action.payload;
+            })
+            .addCase(BeTeacher.rejected, (state, action) => {
+                state.beTeacherStatus = STATUS.FAILED;
+                state.beTeacherError = action.payload || action.error.message;
             })
     },
 });

@@ -9,6 +9,7 @@ import userReducer from "./users/UserSlice";
 import eventReducer from "./event/EventSlice";
 import answerReducer from "./answer/answerSlice";
 import scheduleReducer from "./Schedule/ScheduleSlice";
+import specializationReducer from "./specialization/SpecializationSlice";
 
 export const store = configureStore({
   reducer: {
@@ -22,6 +23,7 @@ export const store = configureStore({
     event: eventReducer,
     answer: answerReducer,
     schedule: scheduleReducer,
+    specialization: specializationReducer,
   },
 });
 

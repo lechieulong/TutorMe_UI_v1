@@ -54,7 +54,7 @@ const MyLearning = () => {
     return (
         <MainLayout>
             <nav className="bg-gray-800 text-white flex flex-col h-full">
-                <div className="px-24 pt-20 pb-2">
+                <div className="px-24 pt-10 pb-2">
                     <h1 className="text-3xl font-bold">My Learning Platform</h1>
                 </div>
                 <ul className="flex space-x-10 px-24 pt-10 border-t border-gray-700">

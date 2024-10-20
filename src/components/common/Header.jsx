@@ -95,7 +95,7 @@ const Header = () => {
               </span>
               Home
             </a>
-            <Link
+            <a
               className="font-medium text-black focus:outline-none"
               href={`/live-stream${user===null||user.role==="USER"?'':`?RoomId=${user.sub}`}`}
             >
@@ -103,7 +103,7 @@ const Header = () => {
                 <FontAwesomeIcon icon={faTv} />
               </span>
               Livestreams
-            </Link>
+            </a>
             <Link
               className="font-medium text-black focus:outline-none"
               to="/course"

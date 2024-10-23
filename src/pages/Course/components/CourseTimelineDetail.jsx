@@ -6,44 +6,45 @@ const CourseTimelineDetail = ({ timelineId }) => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [activeIndex, setActiveIndex] = useState(null); // Trạng thái để quản lý index đang mở
-  const [timelineName, setTimelineName] = useState(""); // Thêm state để lưu tên lộ trình
 
   useEffect(() => {
     const fetchTimelineDetails = async () => {
+      setLoading(true); // Bắt đầu trạng thái tải
+      setError(null); // Reset lỗi trước khi tải lại
+
       try {
+        // Gọi API để lấy chi tiết của CourseTimeline cụ thể
         const response = await axios.get(
           `https://localhost:7030/api/CourseTimelineDetail/CourseTimeline/${timelineId}`
         );
-        setDetails(response.data);
 
-        // Nếu có thông tin chi tiết, lấy tên lộ trình từ phần tử đầu tiên
-        if (response.data.length > 0) {
-          setTimelineName(response.data[0].topic); // Giả sử topic là tên lộ trình
+        // Kiểm tra nếu response.data không phải là một mảng rỗng
+        if (Array.isArray(response.data) && response.data.length > 0) {
+          setDetails(response.data); // Lưu thông tin chi tiết
+        } else {
+          setError("Không có phần học nào cho lộ trình này."); // Thiết lập thông báo lỗi
         }
-        console.log(timelineName);
-        setLoading(false);
       } catch (error) {
-        setError(
-          `Không thể lấy thông tin chi tiết của lộ trình ${timelineName}.`
-        );
-        setLoading(false);
+        setError("Không thể lấy thông tin chi tiết của lộ trình."); // Thiết lập thông báo lỗi
+      } finally {
+        setLoading(false); // Kết thúc trạng thái tải
       }
     };
 
     fetchTimelineDetails();
-  }, [timelineId, timelineName]); // Thêm timelineName vào dependencies
+  }, [timelineId]); // Chỉ phụ thuộc vào timelineId
 
   const toggleCollapse = (index) => {
     setActiveIndex(activeIndex === index ? null : index); // Đổi trạng thái khi click
   };
 
   if (loading) return <div>Đang tải...</div>;
-  if (error) return <div>{error}</div>;
+  if (error) return <div className="text-red-500">{error}</div>;
 
   return (
     <div className="flex-1 w-60% p-2">
       {details.length === 0 ? (
-        <p>Không tìm thấy chi tiết nào cho lộ trình này.</p>
+        <p>Không có phần học nào cho lộ trình này.</p> // Thông báo khi không có chi tiết
       ) : (
         details.map((detail, index) => (
           <div key={detail.id} className="mb-4">
@@ -69,14 +70,14 @@ const CourseTimelineDetail = ({ timelineId }) => {
               <div
                 style={{
                   position: "relative",
-                  paddingBottom: "56.25%", // 16:9 aspect ratio (9/16 = 0.5625 or 56.25%)
+                  paddingBottom: "56.25%", // 16:9 aspect ratio
                   height: 0,
                   overflow: "hidden",
                   width: "100%",
                 }}
               >
                 <iframe
-                  src={`https://www.youtube.com/embed/ew-fVQyMZSo`}
+                  src={`https://www.youtube.com/embed/ew-fVQyMZSo`} // Thay thế bằng URL video động nếu cần
                   title="Youtube Video"
                   style={{
                     position: "absolute",
@@ -88,7 +89,8 @@ const CourseTimelineDetail = ({ timelineId }) => {
                   allowFullScreen
                 ></iframe>
               </div>
-              <p className="text-gray-700 mt-2">{detail.topic}</p>
+              <p className="text-gray-700 mt-2">{detail.description}</p>{" "}
+              {/* Thay thế bằng mô tả nếu có */}
             </div>
           </div>
         ))

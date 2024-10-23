@@ -8,20 +8,28 @@ import {
   faMicrophone,
   faCalendarAlt,
   faUser,
-  faBorderAll,
   faPlay,
+  faThunderstorm,
 } from "@fortawesome/free-solid-svg-icons";
 import Breadcrumbs from "../../components/common/Breadcrumbs";
+import { useEffect } from "react";
+import { getUser } from "../../service/GetUser";
+import { useDispatch } from "react-redux";
+import { useParams, Link } from "react-router-dom";
 
 const SkillPart = () => {
   const navigate = useNavigate();
+  const dispatch = useDispatch();
+  const { testId } = useParams();
+
+  const user = getUser();
+
   const iconMap = {
     headPhone: faHeadphones,
     book: faBookOpen,
     pen: faPen,
     microphone: faMicrophone,
   };
-
   const skillParts = [
     {
       id: 0,
@@ -49,20 +57,34 @@ const SkillPart = () => {
     },
   ];
 
+  useEffect(() => {
+    // const test = dispatch(getTestDetail(testId));
+    // const skillDatas = dispatch(getSkillDatas(testId));
+    console.log("hello");
+  }, []);
+
   const handleTakeTest = (id) => {
-    navigate("/skill-part/test-setting", { state: id });
+    // navigate(`/test/${id}/settings`);
+    navigate(`/test/1/settings`);
+  };
+  const handleTakeFullTest = (id) => {
+    console.log("full test");
+    //  navigate(`/testing/${testId}`);
+    navigate(`/testing/1`);
   };
 
   return (
     <>
       <MainLayout>
-        <Breadcrumbs />
-        <button className="bg-green-500 text-white">
-          <a href="create-test">Create test</a>
-        </button>
+        <Link to="create-test">
+          <p>Create Test</p>
+        </Link>
+        <Link to="questionbank">
+          <p>Question Bank</p>
+        </Link>
 
         {/* Name Test */}
-        <div className="bg-white mt-10 border rounded-xl h-56 shadow-sm sm:flex dark:bg-neutral-900 dark:border-neutral-700 dark:shadow-neutral-700/70">
+        <div className="bg-white  mt-10 border rounded-xl h-56 shadow-sm sm:flex dark:bg-neutral-900 dark:border-neutral-700 dark:shadow-neutral-700/70">
           <div className="shrink-0 relative w-full rounded-t-xl overflow-hidden sm:rounded-s-xl sm:max-w-60 md:rounded-se-none md:max-w-xs">
             <img
               className="absolute top-0 left-0 w-full h-full object-cover"
@@ -100,28 +122,14 @@ const SkillPart = () => {
         </div>
 
         {/* Skill Part  */}
-        <div className="p-4 border mt-2 border-gray-400  shadow-sm rounded-xl dark:bg-neutral-900 dark:border-neutral-700 dark:shadow-neutral-700/70">
-          <div className="border bg-green-600 text-white shadow-md border-gray-300 p-2 flex justify-between mt-2 rounded-xl items-center">
-            <div className="flex  items-center justify-start gap-9">
-              <h4 className="text-2xl font-semibold">
-                <span>
-                  <FontAwesomeIcon icon={faBorderAll} className="mr-2 " />
-                </span>
-                Overal score
-              </h4>
-              <p className="text-xl font-semibold border border-gray-600  p-2 rounded-full bg-white text-gray-700  ">
-                {" "}
-                7.5
-              </p>
-            </div>
-          </div>
+        <div className=" mt-2 border-gray-400  shadow-sm rounded-xl dark:bg-neutral-900 dark:border-neutral-700 dark:shadow-neutral-700/70">
           <div className="flex gap-4 justify-center mt-6">
             {/* fullPart */}
 
             {skillParts.map((skill, index) => (
               <div
                 key={index}
-                className="p-4 md:p-5 flex flex-col gap-6 items-center border shadow-lg rounded-xl dark:bg-neutral-900 dark:border-neutral-700 dark:shadow-neutral-700/70"
+                className="p-4 h-[300px] md:p-5 flex flex-col gap-6 items-center justify-center border shadow-lg rounded-xl dark:bg-neutral-900 dark:border-neutral-700 dark:shadow-neutral-700/70"
                 style={{ flex: "1 1 300px" }} // Ensures cards are responsive and grow/shrink as needed
               >
                 <p className="text-2xl text-green-800">
@@ -130,9 +138,6 @@ const SkillPart = () => {
                 <h3 className="text-lg font-bold text-gray-800 dark:text-white">
                   {skill.name}
                 </h3>
-                <div className="mt-1 px-6 py-5 text-gray-500 dark:text-neutral-400 rounded-full border border-green-300">
-                  {skill.scorePercent}
-                </div>
                 <button
                   onClick={() => handleTakeTest(skill.id)} // Gửi id vào hàm
                   className="mt-2 py-2 px-3 inline-flex justify-center items-center gap-x-2 text-sm font-medium rounded-lg border border-transparent bg-green-600 text-white hover:bg-green-700 focus:outline-none focus:bg-green-700 disabled:opacity-50 disabled:pointer-events-none"
@@ -143,6 +148,20 @@ const SkillPart = () => {
                 </button>
               </div>
             ))}
+          </div>
+
+          <div className="border  text-gray-700 shadow-md  border-gray-300 p-2 flex justify-between mt-2 rounded-xl items-center">
+            <div className="flex  items-center justify-start gap-9">
+              <button
+                className="text-2xl font-semibold border-green-500"
+                onClick={() => handleTakeFullTest(testId)} // Gửi id vào hàm
+              >
+                <span>
+                  <FontAwesomeIcon icon={faThunderstorm} className="mr-2 " />
+                </span>
+                Take Full Test
+              </button>
+            </div>
           </div>
         </div>
       </MainLayout>

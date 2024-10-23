@@ -1,24 +1,29 @@
 import React, { useState, useRef, useEffect } from "react";
-import Answer from "../../components/Test/Answer";
+import AnswerView from "./AnswerView";
 import Topic from "../../components/Test/Topic";
 import NavigationPart from "../../components/Test/NavigationPart";
 
-const TestView = ({ receivedData, isPreview, skillName }) => {
+const TestView = ({ skillData }) => {
   const questionRef = useRef({});
+  const [isLoading, setIsLoading] = useState(true);
   const [isOpenSideView, setOpenSideView] = useState(false);
-  const [partData, setPartData] = useState([]); // Store parts data
-  const [selectedPart, setSelectedPart] = useState(0); // Store the index of the selected part
-  const [leftWidth, setLeftWidth] = useState(50); // Width of the side view
+  const [partDatas, setPartDatas] = useState([]);
+  const [selectedPart, setSelectedPart] = useState(0);
+  const [leftWidth, setLeftWidth] = useState(50);
 
   useEffect(() => {
-    if (receivedData && receivedData.parts) {
-      setPartData(receivedData.parts); // Set partData from receivedData
-      setSelectedPart(0); // Initially select the first part
-      setOpenSideView(skillName !== "Listening" && skillName !== "Speaking"); // Show side view if skill is not Listening or Speaking
+    setIsLoading(true);
+    setOpenSideView(skillData.type !== 1 && skillData.type !== 3);
+
+    if (skillData && skillData.parts) {
+      setPartDatas(skillData.parts);
+      setSelectedPart(0);
     } else {
-      setPartData([]); // Reset partData if no parts found
+      setPartDatas([]);
     }
-  }, [receivedData, skillName]);
+
+    setIsLoading(false);
+  }, [skillData]);
 
   const startResizing = (e) => {
     document.addEventListener("mousemove", handleMouseMove);
@@ -44,68 +49,65 @@ const TestView = ({ receivedData, isPreview, skillName }) => {
     }
   };
 
-  // Handle when a part is clicked, update selectedPart state
   const handlePartClick = (partNumber) => {
     setSelectedPart(partNumber); // Update selected part index
   };
 
+  if (isLoading) {
+    return <div>Loading...</div>;
+  }
+
+  if (!partDatas || partDatas.length === 0) {
+    return <div>No parts available for this test.</div>;
+  }
+
   return (
-    <div className="relative flex flex-col h-screen">
-      <div className="flex justify-between h-full">
-        <h3 className="font-semibold text-2xl mt-2">{skillName}</h3>
+    <div
+      className=" flex flex-col h-full "
+      style={{
+        height: "calc(100vh - 80px)",
+      }}
+    >
+      <div className="flex h-full ">
+        {isOpenSideView && partDatas.length > 0 && (
+          <>
+            <div
+              className="overflow-auto"
+              style={{
+                width: `${leftWidth}%`,
+                height: "100%",
+              }}
+            >
+              {/* Render Topic based on selectedPart */}
+              <Topic partData={partDatas[selectedPart]} />
+            </div>
 
-        {isOpenSideView && partData.length > 0 && (
-          <div
-            className="overflow-auto"
-            style={{
-              width: `${leftWidth}%`,
-              height: "calc(100% - 112px)",
-              marginTop: "60px",
-            }}
-          >
-            {/* Render Topic based on selectedPart */}
-            <Topic partData={partData[selectedPart]} />
-          </div>
+            <div
+              className="cursor-ew-resize w-2 bg-black"
+              style={{
+                width: "4px",
+              }}
+              onMouseDown={startResizing} // Handle resizing logic
+            />
+          </>
         )}
-
-        {isOpenSideView && partData.length > 0 && (
-          <div
-            className="cursor-ew-resize w-2 bg-black"
-            style={{
-              width: "4px",
-              height: "calc(100% - 112px)",
-              marginTop: "70px",
-            }}
-            onMouseDown={startResizing} // Placeholder for resizing logic
-          />
-        )}
-
         <div
-          className="overflow-auto flex-grow"
+          className="overflow-auto flex-grow p-2"
           style={{
             width: `${100 - leftWidth}%`,
-            height: "calc(100% - 112px)",
-            marginTop: "70px",
           }}
         >
-          {/* Pass selected part data to the Answer component */}
-          {/* <Answer
-            skillPart={skillName}
-            part={selectedPart}
-            partData={partData[selectedPart]} // Pass selected part data
-            refs={questionRef}
-          /> */}
+          <AnswerView partData={partDatas[selectedPart]} refs={questionRef} />
         </div>
+      </div>
 
-        {/* NavigationPart component for navigating between parts */}
-        <div className="flex flex-col">
-          {isOpenSideView && partData.length > 0 && (
-            <NavigationPart
-              partData={partData} // Pass all part data
-              handlePartClick={handlePartClick} // Pass click handler to update selected part
-            />
-          )}
-        </div>
+      <div className="flex flex-col">
+        {partDatas.length > 0 && (
+          <NavigationPart
+            partDatas={partDatas} // Pass all part data
+            handlePartClick={handlePartClick} // Handle part click to update selected part
+          />
+        )}
       </div>
     </div>
   );

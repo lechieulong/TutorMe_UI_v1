@@ -3,8 +3,10 @@ import { Link } from "react-router-dom";
 import useAuthToken from "../../hooks/useAuthToken"; // Import useAuthToken
 import Cookies from "js-cookie"; // Import js-cookie
 import { getUser } from "../../service/GetUser";
+import { Roles } from "../../utils/config";
 import defaulAvatar from "../../assets/images/defaul-avatar.jpg";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { FaGraduationCap } from "react-icons/fa";
 import {
   faHouse,
   faTv,
@@ -29,12 +31,14 @@ const Header = () => {
   }, [authToken]);
 
   const handleLogout = () => {
-    Cookies.remove("authToken"); // Xoá cookie khi logout
-    window.location.reload(); // Reload trang để cập nhật trạng thái
+    Cookies.remove("authToken");
+    localStorage.clear();
+    sessionStorage.clear();
+    window.location.reload();
   };
 
   return (
-    <header className="fixed top-0 left-0 right-0 w-full bg-white text-sm pt-3 shadow-lg z-50">
+    <header className=" top-0 left-0 right-0 w-full bg-white text-sm pt-3 shadow-lg z-50">
       <nav className="mx-auto pb-2 px-4 flex flex-wrap basis-full items-center shadow-lg justify-between">
         <a
           className="sm:order-1 flex-none text-xl font-semibold focus:outline-none focus:opacity-80"
@@ -60,7 +64,7 @@ const Header = () => {
               </button>
               <Link to={`/user/${user?.userName}`}>
                 <img
-                  className="inline-block size-[38px] rounded-full"
+                  className="inline-block w-[38px] h-[38px] rounded-full transition-transform duration-300 transform hover:scale-110 hover:bg-gray-50 focus:outline-none focus:bg-gray-50"
                   src={user?.imageURL || defaulAvatar}
                   alt="Avatar"
                 />
@@ -91,44 +95,50 @@ const Header = () => {
               </span>
               Home
             </a>
-            <a
+            <Link
               className="font-medium text-black focus:outline-none"
-              href="live-stream"
+              href={`/live-stream${user===null||user.role==="USER"?'':`?RoomId=${user.sub}`}`}
             >
               <span className="mr-2">
                 <FontAwesomeIcon icon={faTv} />
               </span>
               Livestreams
-            </a>
-            <Link className="font-medium text-black focus:outline-none" to="/course">
+            </Link>
+            <Link
+              className="font-medium text-black focus:outline-none"
+              to="/course"
+            >
               <span className="mr-2">
                 <FontAwesomeIcon icon={faBook} />
               </span>
               Course
             </Link>
-            <a
+
+            <Link
               className="font-medium text-black focus:outline-none"
-              href="skill-part"
+              to="/testDetail/1"
             >
               <span className="mr-2">
                 <FontAwesomeIcon icon={faPenNib} />
               </span>
               Test
-            </a>
-            {authToken && (
-              <a className="font-medium text-black focus:outline-none" href="mylearning">
-                <span className="mr-2">
-                  <FontAwesomeIcon icon={faGraduationCap} />
-                </span>
-                My Learning
-              </a>
-            )}
-            <a className="font-medium text-black focus:outline-none" href="#">
+            </Link>
+
+            <Link
+              className="font-medium text-black focus:outline-none"
+              to="/mylearning"
+            >
+              <span className="mr-2">
+                <FontAwesomeIcon icon={faGraduationCap} />
+              </span>
+              MyLearning
+            </Link>
+            {/* <a className="font-medium text-black focus:outline-none" href="#">
               <span className="mr-2">
                 <FontAwesomeIcon icon={faUserGraduate} />
               </span>
               Mentor register
-            </a>
+            </a> */}
           </div>
         </div>
       </nav>

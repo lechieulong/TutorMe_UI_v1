@@ -1,18 +1,11 @@
 import React from "react";
-import TestView from "../TestExam/TestView";
+import TestLayout from "../TestExam/TestLayout";
 
 const PreviewTest = ({ data }) => {
   return (
     <div className="p-4">
       {data && data.skills ? (
-        Object.keys(data.skills).map((skillName) => (
-          <TestView
-            key={skillName}
-            receivedData={data.skills[skillName]}
-            isPreview={true}
-            skillName={skillName}
-          />
-        ))
+        <TestLayout skillsData={data.skills} />
       ) : (
         <p className="">No data available. Please fill out the form.</p>
       )}

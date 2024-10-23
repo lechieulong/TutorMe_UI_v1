@@ -4,15 +4,17 @@ import MentorHeader from "../../components/Mentor/MentorHeader";
 import MentorSidebar from "../../components/Mentor/MentorSideBar";
 import CourseTimeline from "./components/CourseTimeline";
 import CourseTimelineDetail from "./components/CourseTimelineDetail";
-import ButtonAddCourseTimeline from "./components/ButtonAddCourseTimeline";
-import ButtonAddCourseTimelineDetail from "./components/ButtonAddCourseTimelineDetail"; // Import nút thêm chi tiết
 import axios from "axios";
+import { getUser } from "../../service/GetUser";
 
 const CourseDetail = () => {
   const { className, courseId } = useParams();
   const [timelineIds, setTimelineIds] = useState([]);
+  const [isEnrolled, setIsEnrolled] = useState(false);
+  const [userId, setUserId] = useState(null);
+  const [errorMessage, setErrorMessage] = useState(""); // State mới để lưu thông báo lỗi
 
-  // Fetch danh sách timeline
+  // Hàm fetch timelines từ API
   const fetchTimelines = async () => {
     try {
       const response = await axios.get(
@@ -24,16 +26,75 @@ const CourseDetail = () => {
     }
   };
 
-  useEffect(() => {
-    fetchTimelines();
-  }, [courseId]);
+  // Hàm kiểm tra trạng thái ghi danh từ API
+  const checkEnrollment = async (userId) => {
+    try {
+      const response = await axios.get(
+        `https://localhost:7030/api/Enrollment/check?courseId=${courseId}&userId=${userId}`
+      );
 
-  const handleTimelineAdded = () => {
-    fetchTimelines();
+      setIsEnrolled(response.data.isEnrolled); // Cập nhật trạng thái isEnrolled dựa trên API response
+
+      // Kiểm tra classId và thiết lập thông báo nếu là null
+      if (response.data.classId === null) {
+        setErrorMessage("Bạn chưa gia nhập lớp nào. Hãy đăng ký tại"); // Cập nhật thông báo lỗi
+      } else {
+        setErrorMessage(""); // Xóa thông báo nếu đã có classId
+      }
+    } catch (error) {
+      console.error("Failed to check enrollment", error);
+    }
   };
 
-  const handleDetailAdded = () => {
-    fetchTimelines(); // Cập nhật sau khi thêm chi tiết
+  // Lấy userId từ token và kiểm tra ghi danh
+  const initializeUser = () => {
+    const userFromToken = getUser(); // Lấy thông tin người dùng từ token
+    const userIdFromToken = userFromToken?.sub;
+
+    if (userIdFromToken) {
+      setUserId(userIdFromToken); // Lưu userId vào trạng thái
+      checkEnrollment(userIdFromToken); // Kiểm tra trạng thái ghi danh ngay sau khi có userId
+    }
+  };
+
+  // useEffect để thực hiện các tác vụ khởi tạo
+  useEffect(() => {
+    initializeUser(); // Gọi hàm khởi tạo người dùng
+    fetchTimelines(); // Gọi hàm fetch timeline
+  }, [courseId]); // Chạy lại khi courseId thay đổi
+
+  // Xử lý ghi danh
+  const handleEnroll = async () => {
+    console.log("Course ID:", courseId);
+    console.log("User ID:", userId);
+
+    try {
+      if (userId) {
+        const enrollmentData = {
+          courseId: courseId,
+          userId: userId,
+        };
+
+        const response = await axios.post(
+          "https://localhost:7030/api/Enrollment",
+          enrollmentData
+        );
+
+        if (response.status === 200) {
+          alert("Bạn đã ghi danh thành công!");
+          setIsEnrolled(true); // Cập nhật trạng thái sau khi ghi danh thành công
+        }
+      } else {
+        alert("Người dùng chưa đăng nhập.");
+      }
+    } catch (error) {
+      console.error("Không thể ghi danh", error);
+      alert(
+        `Không thể ghi danh vào khóa học. Chi tiết lỗi: ${
+          error.response?.data || error.message
+        }`
+      );
+    }
   };
 
   return (
@@ -44,62 +105,41 @@ const CourseDetail = () => {
         <div className="flex-1 p-4">
           <ol className="flex items-center whitespace-nowrap">
             <li className="inline-flex items-center">
-              <a
-                className="flex items-center text-sm text-gray-500 hover:text-blue-600"
-                href="#"
+              <button
+                type="button"
+                onClick={handleEnroll}
+                className="py-2 px-3 inline-flex items-center gap-x-2 text-sm font-medium rounded-lg border border-gray-200 bg-green-400 text-gray-800 shadow-sm hover:bg-gray-50 focus:outline-none focus:bg-gray-50 disabled:opacity-50 disabled:pointer-events-none dark:border-neutral-700 transition-hover transition-transform duration-500 dark:hover:scale-110"
+                disabled={isEnrolled} // Nếu đã ghi danh, làm mờ nút
               >
-                Home
-              </a>
-              <svg
-                className="mx-2 h-4 w-4 text-gray-400"
-                xmlns="http://www.w3.org/2000/svg"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M14 3v8H3v5a2 2 0 002 2h14a2 2 0 002-2V7.5L14 3z"
-                />
-              </svg>
+                {isEnrolled ? "Enrolled" : "Enroll"}
+              </button>
               {className}
             </li>
           </ol>
-
+          {errorMessage && (
+            <p className="text-red-500">
+              {errorMessage}{" "}
+              <a
+                href={`http://localhost:5173/courseDetail/${courseId}/classes`}
+                className="text-blue-500 underline"
+              >
+                đây
+              </a>
+            </p>
+          )}{" "}
+          {/* Hiển thị thông báo lỗi nếu có */}
           <div className="flex justify-start items-center mb-4">
             <p className="text-black font-bold text-4xl">{className}</p>
           </div>
-
           <div className="flex gap-4">
             <div className="w-2/5">
-              <ButtonAddCourseTimeline
-                courseId={courseId}
-                onTimelineAdded={handleTimelineAdded}
-              />
               <CourseTimeline
                 courseId={courseId}
-                onSelectTimeline={setTimelineIds}
+                onSelectTimeline={setTimelineIds} // Cập nhật danh sách timelineIds
               />
             </div>
             <div className="w-3/5">
-              {timelineIds.length > 0 ? (
-                timelineIds.map((timelineId) => (
-                  <div key={timelineId} className="mb-4">
-                    {/* Chi tiết lộ trình */}
-                    <CourseTimelineDetail timelineId={timelineId} />
-                    {/* Nút thêm chi tiết cho mỗi timeline */}
-                    <ButtonAddCourseTimelineDetail
-                      courseId={courseId}
-                      timelineId={timelineId} // Truyền ID timeline
-                      onDetailAdded={handleDetailAdded} // Xử lý khi thêm chi tiết
-                    />
-                  </div>
-                ))
-              ) : (
-                <p className="text-red-500">Hiện chưa có lộ trình nào.</p>
-              )}
+              <CourseTimelineDetail timelineIds={timelineIds} />
             </div>
           </div>
         </div>

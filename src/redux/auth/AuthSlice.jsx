@@ -12,7 +12,7 @@ export const LoginApi = createAsyncThunk(
         `${apiURLConfig.baseURL}/auth/login`,
         loginData
       );
-      return response.data.result;
+      return response.data;
     } catch (error) {
       return rejectWithValue(
         error.response?.data?.message || "Failed to login"
@@ -132,7 +132,6 @@ export const requestForgotAPI = createAsyncThunk(
 export const resetPasswordAPI = createAsyncThunk(
   `${SLICE_NAMES.AUTH}/${ACTIONS.RESET_PASSWORD}`,
   async (userData, { rejectWithValue }) => {
-    console.log(userData);
     try {
       const response = await axios.post(
         `${apiURLConfig.baseURL}/auth/reset-password`,

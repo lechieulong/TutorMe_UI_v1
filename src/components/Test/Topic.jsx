@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from "react";
-import Highlighter from "react-highlight-words";
 
 const Topic = ({ partData }) => {
   const [content, setContent] = useState("");
@@ -27,7 +26,7 @@ const Topic = ({ partData }) => {
       const range = window.getSelection().getRangeAt(0);
       const rect = range.getBoundingClientRect();
       setButtonPosition({
-        top: rect.bottom + window.scrollY - 120,
+        top: rect.bottom + window.scrollY - 50,
         left: rect.left + window.scrollX,
       });
       setSelection(selectedText);
@@ -53,19 +52,32 @@ const Topic = ({ partData }) => {
     setShowButtons(false); // Hide buttons after removing highlight
   };
 
+  // Render highlighted content with highlights
+  const getHighlightedContent = (content, highlightedWords) => {
+    let highlightedContent = content;
+
+    highlightedWords.forEach((word) => {
+      const regex = new RegExp(`(${word})`, "gi");
+      highlightedContent = highlightedContent.replace(
+        regex,
+        `<span class="bg-yellow-300">$1</span>`
+      );
+    });
+
+    return highlightedContent;
+  };
+
   return (
     <div className="p-5" onMouseUp={handleMouseUp}>
       <h2 className="text-lg mb-4">
         {partData.questionName || "Reading Part"}
       </h2>
-      <div className="font-semibold">
-        <Highlighter
-          highlightClassName="bg-yellow-300" // Highlight color
-          searchWords={highlightedWords}
-          autoEscape={true}
-          textToHighlight={content || ""}
-        />
-      </div>
+      <div
+        className="mt-4 font-semibold"
+        dangerouslySetInnerHTML={{
+          __html: getHighlightedContent(content, highlightedWords),
+        }}
+      />
 
       {/* Buttons for highlighting */}
       {showButtons && selection && (

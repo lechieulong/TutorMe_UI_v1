@@ -26,6 +26,7 @@ import MetorInfor from "./pages/Mentor/MentorInforTest";
 import CourseList from "./pages/Course/CourseList";
 import ClassOfCourse from "./pages/Course/ClassList";
 import TestList from "./pages/User/TestList";
+import MentorCourseDetail from "./pages/Mentor/MentorCourseDetail";
 // import MyLearning from "./pages/Class/MyLearning";
 // import CourseDetail from './CourseDetail';
 
@@ -42,7 +43,6 @@ import TestForm from "./pages/ExamTest/TestForm";
 // import TestFormDetail from "./pages/ExamTest/TestFormDetail";
 import CreateTest from "./pages/ExamTest/CreateTest";
 import MentorCourseList from "./pages/Mentor/MentorCourseList";
-
 import Error404 from "./pages/Error/Error404";
 import QuestionBank from "./pages/ExamTest/questionBank/QuestionBank";
 
@@ -93,12 +93,16 @@ const App = () => {
 
           {/* Mentor */}
           <Route path="/metorinfor" element={<MetorInfor />} />
-          <Route path="/mentorCourstList" element={<MentorCourseList />} />
+          <Route path="/mentorCourseList" element={<MentorCourseList />} />
 
           {/* Course */}
           <Route path="/course" element={<CourseList />} />
           <Route path="/createCourse" element={<CreateCourse />} />
           <Route path="/courseDetail/:courseId" element={<CourseDetail />} />
+          <Route
+            path="/mentorCourseDetail/:courseId"
+            element={<MentorCourseDetail />}
+          />
           <Route
             path="/courseDetail/:courseId/classes"
             element={<ClassOfCourse />}

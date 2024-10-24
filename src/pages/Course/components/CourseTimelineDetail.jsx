@@ -54,7 +54,7 @@ const CourseTimelineDetail = ({ timelineIds }) => {
   if (error) return <div className="text-red-500">{error}</div>;
 
   return (
-    <div className="flex-1 w-60% p-2">
+    <div className="flex-1 w-60% p-12">
       {details.length === 0 ? (
         <p>Không có phần học nào cho lộ trình này.</p>
       ) : (
@@ -106,7 +106,7 @@ const CourseTimelineDetail = ({ timelineIds }) => {
                 className="py-2 px-3 inline-flex items-center gap-x-2 text-sm font-medium rounded-lg border border-gray-200 bg-white text-gray-800 shadow-sm hover:bg-gray-50 focus:outline-none focus:bg-gray-50"
                 onClick={() => handleCreateTest(detail.id)} // Gọi hàm và truyền ID chi tiết
               >
-                Create Course
+                Create Test
               </button>
             </div>
           </div>

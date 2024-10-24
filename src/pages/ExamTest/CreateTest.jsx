@@ -3,6 +3,8 @@ import { useForm } from "react-hook-form";
 import TestFormDetail from "./TestFormDetail";
 import Header from "../../components/common/Header";
 import PreviewTest from "./PreviewTest";
+import { useDispatch } from "react-redux";
+import { addSkills } from "../../redux/testExam/TestSlice";
 
 const CreateTest = () => {
   const { control, resetField, handleSubmit, setValue, getValues } = useForm();
@@ -10,6 +12,7 @@ const CreateTest = () => {
   const [activeStep, setActiveStep] = useState(0); // Active step index
   const [formData, setFormData] = useState(null); // To hold form data from TestFormDetail
   const [selectedSkills, setSelectedSkills] = useState([]); // Move selectedSkills to parent
+  const dispatch = useDispatch();
 
   const steps = [
     {
@@ -30,8 +33,10 @@ const CreateTest = () => {
   ];
 
   const handleFinish = () => {
+    console.log("formData", formData);
+
     if (formData) {
-      console.log("Final Submission Data:", formData);
+      dispatch(addSkills(formData));
       alert("Test Created!"); // You can replace this with your actual submission logic
     } else {
       alert("Please fill out the form before finishing.");

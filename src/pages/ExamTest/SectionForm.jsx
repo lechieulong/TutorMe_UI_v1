@@ -1,8 +1,9 @@
 import React from "react";
-import { useFieldArray, Controller } from "react-hook-form";
+import { useFieldArray, Controller, useWatch } from "react-hook-form";
 import QuestionForm from "./QuestionForm";
 import { faMultiply } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+
 const sectionTypes = [
   { value: 1, label: "Heading Matching" },
   { value: 2, label: "Filling" },
@@ -17,112 +18,152 @@ const SectionForm = ({ skill, partIndex, control }) => {
     control,
   });
 
+  // Watch sectionType for each section
+  const sectionTypeValues = useWatch({
+    name: `skills.${skill}.parts.${partIndex}.sections`,
+    control,
+  });
+
   return (
     <div>
       <h4 className="font-medium">Sections</h4>
-      {fields.map((section, index) => (
-        <div key={section.id} className="mb-4 space-y-4 border p-4 rounded">
-          <div className="flex justify-between items-center">
-            <h5 className="font-extrabold">Section {index + 1}</h5>{" "}
-            <button
-              type="button"
-              onClick={() => remove(index)}
-              className="bg-red-500 text-white p-1 rounded mt-2 w-10"
-            >
-              <FontAwesomeIcon icon={faMultiply} />
-            </button>
-          </div>
-          {/* Section Type Dropdown */}
-          <Controller
-            name={`skills.${skill}.parts.${partIndex}.sections.${index}.sectionType`}
-            control={control}
-            rules={{ required: "Section Type is required" }} // Validation for sectionType
-            render={({ field, fieldState }) => (
-              <div className="mb-2">
-                <label className="block text-gray-700 font-medium mb-2">
-                  Section Type
-                </label>
-                <select {...field} className="border p-1 w-full">
-                  <option value="">Select Section Type</option>
-                  {sectionTypes.map((type) => (
-                    <option key={type.value} value={type.value}>
-                      {type.label}
-                    </option>
-                  ))}
-                </select>
-                {fieldState.error && (
-                  <p className="text-red-500">{fieldState.error.message}</p>
-                )}
-              </div>
-            )}
-          />
-          <Controller
-            name={`skills.${skill}.parts.${partIndex}.sections.${index}.image`}
-            control={control}
-            render={({ field }) => (
-              <div className="mb-4">
-                <label className="block text-gray-700 font-medium mb-2">
-                  Upload Image
-                </label>
-                <input
-                  type="file"
-                  accept="image/*"
-                  onChange={(e) => {
-                    const file = e.target.files[0];
-                    if (file) {
-                      const reader = new FileReader();
-                      reader.onloadend = () => {
-                        field.onChange(reader.result); // Store image data (base64)
-                      };
-                      reader.readAsDataURL(file); // Convert file to base64
-                    } else {
-                      field.onChange(null); // Reset if no file
-                    }
-                  }}
-                  className="border p-1 w-full"
-                />
-              </div>
-            )}
-          />
-          {/* Section Guide Input */}
-          <Controller
-            name={`skills.${skill}.parts.${partIndex}.sections.${index}.sectionGuide`}
-            control={control}
-            rules={{ required: "Section Guide is required" }} // Validation for sectionGuide
-            render={({ field, fieldState }) => (
-              <div className="mb-2">
-                <label className="block text-gray-700 font-medium mb-2">
-                  Section Guide
-                </label>
-                <input
-                  {...field}
-                  className="border p-1 w-full"
-                  placeholder="Section Guide"
-                />
-                {fieldState.error && (
-                  <p className="text-red-500">{fieldState.error.message}</p>
-                )}
-              </div>
-            )}
-          />
-          {/* Image Upload Input */}
+      {fields.map((section, index) => {
+        const sectionType = sectionTypeValues?.[index]?.sectionType;
 
-          {/* Question Form */}
-          <QuestionForm
-            skill={skill}
-            partIndex={partIndex}
-            sectionIndex={index}
-            control={control}
-          />
-        </div>
-      ))}
+        return (
+          <div key={section.id} className="mb-4 space-y-4 border p-4 rounded">
+            <div className="flex justify-between items-center">
+              <h5 className="font-extrabold">Section {index + 1}</h5>
+              <button
+                type="button"
+                onClick={() => remove(index)}
+                className="bg-red-500 text-white p-1 rounded mt-2 w-10"
+              >
+                <FontAwesomeIcon icon={faMultiply} />
+              </button>
+            </div>
+
+            {/* Conditional rendering based on skill type */}
+            {(skill === "Reading" || skill === "Listening") && (
+              <div>
+                {/* Section Type Dropdown */}
+                <Controller
+                  name={`skills.${skill}.parts.${partIndex}.sections.${index}.sectionType`}
+                  control={control}
+                  rules={{ required: "Section Type is required" }}
+                  render={({ field, fieldState }) => (
+                    <div className="mb-2">
+                      <label className="block text-gray-700 font-medium mb-2">
+                        Section Type
+                      </label>
+                      <select
+                        {...field}
+                        className="border p-1 w-full"
+                        onChange={(e) => field.onChange(Number(e.target.value))}
+                        value={sectionType || ""}
+                      >
+                        <option value="">Select Section Type</option>
+                        {sectionTypes.map((type) => (
+                          <option key={type.value} value={type.value}>
+                            {type.label}
+                          </option>
+                        ))}
+                      </select>
+                      {fieldState.error && (
+                        <p className="text-red-500">
+                          {fieldState.error.message}
+                        </p>
+                      )}
+                    </div>
+                  )}
+                />
+
+                {/* Image upload */}
+                <Controller
+                  name={`skills.${skill}.parts.${partIndex}.sections.${index}.image`}
+                  control={control}
+                  render={({ field }) => (
+                    <div className="mb-4">
+                      <label className="block text-gray-700 font-medium mb-2">
+                        Upload Image
+                      </label>
+                      <input
+                        type="file"
+                        accept="image/*"
+                        onChange={(e) => {
+                          const file = e.target.files[0];
+                          field.onChange(file || null); // Set to null if no file selected
+                        }}
+                        className="border p-1 w-full"
+                      />
+                      {field.value && (
+                        <p className="text-gray-700">
+                          Image file: {field.value.name}
+                        </p>
+                      )}
+                    </div>
+                  )}
+                />
+              </div>
+            )}
+
+            {/* Section Guide Input for all skills */}
+            <Controller
+              name={`skills.${skill}.parts.${partIndex}.sections.${index}.sectionGuide`}
+              control={control}
+              rules={{ required: "Section Guide is required" }}
+              render={({ field, fieldState }) => (
+                <div className="mb-2">
+                  <label className="block text-gray-700 font-medium mb-2">
+                    Section Guide
+                  </label>
+                  <input
+                    {...field}
+                    className="border p-1 w-full"
+                    placeholder="Section Guide"
+                  />
+                  {fieldState.error && (
+                    <p className="text-red-500">{fieldState.error.message}</p>
+                  )}
+                </div>
+              )}
+            />
+
+            {/* Render QuestionForm only for Reading and Listening */}
+            {skill === "Reading" || skill === "Listening" ? (
+              sectionType ? (
+                <QuestionForm
+                  skill={skill}
+                  partIndex={partIndex}
+                  sectionIndex={index}
+                  control={control}
+                  sectionType={Number(sectionType)}
+                />
+              ) : (
+                <p className="text-red-500">
+                  Please select a Section Type before adding questions.
+                </p>
+              )
+            ) : (
+              // Always render QuestionForm for Writing and Speaking
+              <QuestionForm
+                skill={skill}
+                partIndex={partIndex}
+                sectionIndex={index}
+                control={control}
+                sectionType={0} // Assuming a default value for sectionType
+              />
+            )}
+          </div>
+        );
+      })}
       <button
         type="button"
         onClick={() =>
           append({
             sectionGuide: "",
-            sectionType: "",
-            image: "",
+            sectionType: 0, // Set the default sectionType to 0
+            image: null,
             questions: [],
           })
         }

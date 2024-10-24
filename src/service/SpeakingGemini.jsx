@@ -16,22 +16,28 @@ const SpeakingGemini = () => {
   const generateSpeakingQuestion = async () => {
     try {
       const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
-      const prompt = "Generate an IELTS speaking part 2 question.";
+      const prompt =
+        "Create a question in German for the speaking section of the Goethe B1 exam.";
       const result = await model.generateContent(prompt);
 
       const generatedQuestion =
         result.response.candidates[0].content.parts[0].text.trim();
       setQuestion(generatedQuestion);
 
-      // Speak the question
-      if ("speechSynthesis" in window) {
-        const utterance = new SpeechSynthesisUtterance(generatedQuestion);
-        window.speechSynthesis.speak(utterance);
-      } else {
-        console.error("Speech synthesis not supported.");
-      }
+      // Speak the question in German
+      speakText(generatedQuestion);
     } catch (error) {
       console.error("Error generating question:", error);
+    }
+  };
+
+  const speakText = (text) => {
+    if ("speechSynthesis" in window) {
+      const utterance = new SpeechSynthesisUtterance(text);
+      utterance.lang = "de-DE"; // Set the language to German
+      window.speechSynthesis.speak(utterance);
+    } else {
+      console.error("Speech synthesis not supported.");
     }
   };
 
@@ -39,7 +45,7 @@ const SpeakingGemini = () => {
     try {
       setThinking(true);
       const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
-      const prompt = `Give an overall score and scores for grammar, vocabulary, fluency, coherence on the IELTS score scale, and provide feedback based on this corrected answer: "${userAnswer}"`;
+      const prompt = `Give an overall score and scores for grammar, vocabulary, fluency, coherence on the B1 Goethe score scale, and provide feedback based on this corrected answer: "${userAnswer}"`;
 
       const result = await model.generateContent(prompt);
       setAiText(result.response.candidates[0].content.parts[0].text.trim());
@@ -64,8 +70,7 @@ const SpeakingGemini = () => {
             result.response?.candidates?.[0]?.content?.parts?.[0]?.text;
           if (resultText) {
             console.log("AI response: ", resultText);
-            const utterance = new SpeechSynthesisUtterance(resultText);
-            window.speechSynthesis.speak(utterance);
+            speakText(resultText); // Speak the AI's response
             setAiText(resultText);
           } else {
             console.error("No valid response to speak.");

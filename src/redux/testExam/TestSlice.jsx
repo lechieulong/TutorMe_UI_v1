@@ -107,8 +107,6 @@ export const addQuestions = createAsyncThunk(
   `${SLICE_NAMES.TEST}/${ACTIONS.ADD_QUESTIONS}`,
   async (questions, { rejectWithValue }) => {
     try {
-      console.log("questions", questions);
-
       const token = Cookies.get("authToken");
 
       await axios.post(
@@ -161,16 +159,99 @@ export const updateQuestion = createAsyncThunk(
   }
 );
 
+export const addSkills = createAsyncThunk(
+  `${SLICE_NAMES.TEST}/${ACTIONS.ADD_SKILLS}`,
+  async (skillsData, { rejectWithValue }) => {
+    try {
+      console.log("slice ", skillsData);
+
+      const formData = new FormData();
+
+      const isEmptyObject = (obj) =>
+        obj && Object.keys(obj).length === 0 && obj.constructor === Object;
+
+      Object.keys(skillsData.skills).forEach((skillName) => {
+        const skill = skillsData.skills[skillName];
+
+        // Loop through parts
+        skill.parts.forEach((part, partIndex) => {
+          // Reset image to null if it's an empty object
+          if (isEmptyObject(part.image)) {
+            part.image = null;
+          }
+
+          if (part.image) {
+            formData.append(`partImage_${skillName}_${partIndex}`, part.image);
+          }
+
+          // Loop through sections
+          part.sections.forEach((section, sectionIndex) => {
+            // Reset image to null if it's an empty object
+            if (isEmptyObject(section.image)) {
+              section.image = null;
+            }
+
+            if (section.image) {
+              formData.append(
+                `sectionImage_${skillName}_${partIndex}_${sectionIndex}`,
+                section.image
+              );
+            }
+          });
+        });
+      });
+
+      const token = Cookies.get("authToken");
+
+      const response = await axios.post(
+        `${API_BASE_URL}/test/skills/${"13d41641-4e51-449e-91b2-b08ff2f59bf6"}`, // Adjust API endpoint if needed
+        formData,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "multipart/form-data",
+          },
+        }
+      );
+
+      return response.data;
+    } catch (error) {
+      return rejectWithValue(
+        error.response?.data?.message || "Failed to add skills"
+      );
+    }
+  }
+);
+
 const initialState = {
   tests: [],
   status: STATUS.IDLE,
   error: null,
+  questions: [],
 };
 
 const TestSlice = createSlice({
   name: SLICE_NAMES.TEST,
   initialState,
-  reducers: {},
+  reducers: {
+    addQuestion: (state, action) => {
+      action.payload.forEach((newQuestion) => {
+        const questionId = newQuestion.id;
+        if (!state.questions.some((question) => question.id === questionId)) {
+          state.questions.push(newQuestion);
+        }
+      });
+    },
+
+    removeQuestion: (state, action) => {
+      state.questions = state.questions.filter(
+        (question) => question.id !== action.payload
+      );
+    },
+    clearQuestions: (state) => {
+      state.questions = [];
+    },
+  },
   extraReducers: (builder) => {
     builder
       // Fetch tests
@@ -232,5 +313,7 @@ const TestSlice = createSlice({
       });
   },
 });
-
+export const { addQuestion, removeQuestion, clearQuestions } =
+  TestSlice.actions;
+export const selectQuestions = (state) => state[SLICE_NAMES.TEST].questions;
 export default TestSlice.reducer;

@@ -133,22 +133,7 @@ const PartForm = ({ skill, control }) => {
               />
             )}
 
-            {(skill === "Writing" || skill === "Speaking") && (
-              <>
-                {/* Questions Field Array */}
-                <h5 className="font-semibold mt-4">Questions</h5>
-                <QuestionsFieldArray
-                  partIndex={index}
-                  skill={skill}
-                  control={control}
-                />
-              </>
-            )}
-
-            {/* Render SectionForm only for Reading and Listening */}
-            {(skill === "Reading" || skill === "Listening") && (
-              <SectionForm skill={skill} partIndex={index} control={control} />
-            )}
+            <SectionForm skill={skill} partIndex={index} control={control} />
           </div>
         ))}
       </div>
@@ -160,8 +145,6 @@ const PartForm = ({ skill, control }) => {
             contentText: "",
             audio: null,
             image: null,
-            questionName: "",
-            questions: [],
           })
         }
         className="border border-green-400 text-gray-600 p-2 rounded"
@@ -170,58 +153,6 @@ const PartForm = ({ skill, control }) => {
           <FontAwesomeIcon icon={faPlusSquare} />
         </span>
         Add Part
-      </button>
-    </div>
-  );
-};
-
-const QuestionsFieldArray = ({ partIndex, skill, control }) => {
-  const {
-    fields: questionFields,
-    append: appendQuestion,
-    remove: removeQuestion,
-  } = useFieldArray({
-    name: `skills.${skill}.parts.${partIndex}.questions`,
-    control,
-  });
-
-  return (
-    <div className="mt-2">
-      {questionFields.map((question, qIndex) => (
-        <div
-          key={question.id}
-          className="flex items-center mb-2 border p-2 rounded"
-        >
-          <p className="mr-4"> {qIndex + 1}</p>
-          <Controller
-            name={`skills.${skill}.parts.${partIndex}.questions.${qIndex}.questionText`}
-            control={control}
-            render={({ field }) => (
-              <input
-                {...field}
-                className="border p-1 w-full"
-                placeholder="Question Text"
-              />
-            )}
-          />
-          <button
-            type="button"
-            onClick={() => removeQuestion(qIndex)}
-            className="bg-red-500 text-white p-1 ml-2 rounded"
-          >
-            <FontAwesomeIcon icon={faTrash} />
-          </button>
-        </div>
-      ))}
-      <button
-        type="button"
-        onClick={() => appendQuestion({ questionText: "" })}
-        className="border border-blue-400 text-gray-600 p-2 rounded mt-2"
-      >
-        <span className="mr-3">
-          <FontAwesomeIcon icon={faPlusSquare} />
-        </span>
-        Add Question
       </button>
     </div>
   );

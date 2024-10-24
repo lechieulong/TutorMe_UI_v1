@@ -121,27 +121,32 @@ const AudioPlayer = ({ src }) => {
   }, []);
 
   return (
-    <div>
+    <div className="flex p-2 gap-16 items-center ">
       <audio ref={audioRef} src={src} />
-      <div>
+      <div className="flex  justify-center items-center ">
         <span>{formatTime(currentTime)}</span>
         <button onClick={seekBackward}>
-          <FontAwesomeIcon icon={faRotateLeft} />
+          <FontAwesomeIcon icon={faRotateLeft} /> 10s
         </button>
         <button onClick={togglePlay}>
           <FontAwesomeIcon icon={isPlaying ? faPause : faPlay} />
         </button>
         <button onClick={seekForward}>
+          10s
           <FontAwesomeIcon icon={faRotateRight} />
         </button>
       </div>
-      <input
-        type="range"
-        value={(currentTime / duration) * 100 || 0}
-        onInput={handleSeek}
-        onMouseDown={handleSeekStart}
-        onMouseUp={commitSeek}
-      />
+      <div className="flex-1">
+        <input
+          type="range"
+          value={(currentTime / duration) * 100 || 0}
+          onInput={handleSeek}
+          onMouseDown={handleSeekStart}
+          onMouseUp={commitSeek}
+          className="w-full"
+        />
+      </div>
+
       <div>
         <button
           onClick={() =>

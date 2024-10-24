@@ -11,7 +11,7 @@ const TestLayout = ({ skillsData }) => {
   const [loading, setLoading] = useState(true);
 
   const { testId } = useParams();
-  console.log(skillsData);
+  // const testId = null;
 
   const fetchTestData = async () => {
     try {
@@ -36,7 +36,6 @@ const TestLayout = ({ skillsData }) => {
       setLoading(false);
     }
   }, [testId]);
-  console.log("testData", testData);
 
   const handleSubmit = () => {
     console.log("Submit test");

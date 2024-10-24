@@ -7,7 +7,8 @@ const mockTestData = {
       {
         id: 1,
         partNumber: 1,
-        contentText: "<h1> hhahhaha </h1><p>Sample reading text for the testI’ve started too many failed businesses to count. .</p>",
+        contentText:
+          "<h1> hhahhaha </h1><p>Sample reading text for the testI’ve started too many failed businesses to count. .</p>",
         audio: null, // No audio for reading section
         image: "https://unsplash.com/photos/0z-KH_8mUHs", // Example image
         questionName: "Reading Section",
@@ -54,7 +55,8 @@ const mockTestData = {
         sections: [
           {
             id: 2,
-            sectionGuide: "Listen carefully and answer the following questions:",
+            sectionGuide:
+              "Listen carefully and answer the following questions:",
             sectionType: "2", // Example type
             image: "",
             questions: [
@@ -94,7 +96,8 @@ const mockTestData = {
             questions: [
               {
                 id: 4,
-                questionName: "Describe the advantages and disadvantages of using technology in education.",
+                questionName:
+                  "Describe the advantages and disadvantages of using technology in education.",
                 answers: [],
               },
             ],

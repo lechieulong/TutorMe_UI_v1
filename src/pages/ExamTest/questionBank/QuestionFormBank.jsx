@@ -1,7 +1,7 @@
 import { useForm, useFieldArray, Controller } from "react-hook-form";
+
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faMultiply, faPlus } from "@fortawesome/free-solid-svg-icons";
-import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import {
   addQuestions,
@@ -68,9 +68,9 @@ const QuestionFormBank = ({ setIsModalOpen, question }) => {
     if (question) {
       dispatch(
         updateQuestion({ id: question.id, updatedQuestion: payload[0] })
-      ); // Send the correct payload structure for updating
+      );
     } else {
-      dispatch(addQuestions(payload)); // Send the correct payload structure for adding
+      dispatch(addQuestions(payload));
     }
     setIsModalOpen(false);
   };

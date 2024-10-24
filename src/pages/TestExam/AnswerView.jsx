@@ -2,22 +2,16 @@ import React from "react";
 import AudioPlayer from "./AudioPlayer"; // Adjust the import based on your file structure
 
 const AnswerView = ({ partData }) => {
-  // Ensure partData is defined before accessing its properties
   if (!partData) return <div>No data available</div>;
 
   return (
     <div>
-      {/* Display the content text */}
-      <div dangerouslySetInnerHTML={{ __html: partData.contentText }} />
-
-      {/* Check if there is an audio file and display the audio player */}
       {partData.audio && (
         <div className="my-4">
           <AudioPlayer src={partData.audio} />
         </div>
       )}
 
-      {/* Check if there is an image and display it */}
       {partData.image && (
         <div className="my-4">
           <img

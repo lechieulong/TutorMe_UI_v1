@@ -36,6 +36,7 @@ export const ACTIONS = {
   ADD_QUESTIONS: "addQuestions",
   DELETE_QUESTION: "deleteQuestion",
   UPDATE_QUESTION: "updateQuestion",
+  ADD_SKILLS: "addSkills",
 
   GET_USER_INFORMATION: "getProfile",
   GET_TOP10_TEACHERS: "getTop10Teachers",

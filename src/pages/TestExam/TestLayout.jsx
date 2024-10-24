@@ -8,7 +8,6 @@ const TestLayout = ({ skillsData }) => {
   const [currentSkillIndex, setCurrentSkillIndex] = useState(0); // Track the current skill index
   const [testData, setTestData] = useState({}); // Initialize as an empty object
   const [userAnswers, setUserAnswers] = useState([]);
-  console.log("🚀 ~ TestLayout ~ userAnswers:", userAnswers);
   const [loading, setLoading] = useState(true);
 
   const { testId } = useParams();
@@ -37,31 +36,21 @@ const TestLayout = ({ skillsData }) => {
     }
   }, [testId]);
 
-  const handleAnswerChange = ({ index, answerData }) => {
-    setUserAnswers((prevAnswers) => {
-      // Tìm xem đã có câu trả lời cho index này hay chưa
-      const existingAnswerIndex = prevAnswers.findIndex(
-        (ans) => ans && ans.index === index
-      );
-
-      if (existingAnswerIndex !== -1) {
-        // Nếu đã có, cập nhật câu trả lời
-        const updatedAnswers = [...prevAnswers];
-        updatedAnswers[existingAnswerIndex] = { index, answerData };
-        return updatedAnswers;
-      } else {
-        // Nếu chưa có, thêm câu trả lời mới
-        return [...prevAnswers, { index, answerData }];
-      }
-    });
-  };
+  const handleAnswerChange = useCallback(({ questionId, answerData }) => {
+    setUserAnswers((prevAnswers) => ({
+      ...prevAnswers,
+      [questionId]: answerData,
+    }));
+  }, []);
 
   const handleSubmit = (e) => {
-    e.preventDefault(); // Prevent the form from refreshing the page
+    e.preventDefault();
+    console.log("haha");
+
     console.log("userAnswers", userAnswers);
   };
 
-  const handleNextSkill = () => {
+  const handleNextSkill = useCallback(() => {
     const skillKeys = Object.keys(testData);
     setCurrentSkillIndex((prevIndex) => {
       const nextIndex = prevIndex + 1;
@@ -70,13 +59,12 @@ const TestLayout = ({ skillsData }) => {
       }
       return prevIndex;
     });
-  };
+  }, [testData]);
 
   if (loading) {
     return <div>Loading test data...</div>;
   }
 
-  // Retrieve current skill based on index
   const currentSkillKey = Object.keys(testData)[currentSkillIndex];
   const currentSkillData = testData[currentSkillKey];
 

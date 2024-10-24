@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 
-const Topic = ({ partData }) => {
+const Topic = ({ partData, currentSkillKey }) => {
   const [content, setContent] = useState("");
   const [highlightedWords, setHighlightedWords] = useState([]);
   const [buttonPosition, setButtonPosition] = useState({ top: 0, left: 0 });
@@ -9,9 +9,8 @@ const Topic = ({ partData }) => {
 
   useEffect(() => {
     if (partData && partData.contentText) {
-      setContent(partData.contentText); // Ensure content is set when partData changes
-    } else {
-      setContent(""); // Reset content if partData is invalid
+      setContent(partData.contentText);
+      setContent("");
     }
   }, [partData]);
 
@@ -49,10 +48,9 @@ const Topic = ({ partData }) => {
     setHighlightedWords((prev) =>
       prev.filter((highlight) => highlight !== word)
     );
-    setShowButtons(false); // Hide buttons after removing highlight
+    setShowButtons(false);
   };
 
-  // Render highlighted content with highlights
   const getHighlightedContent = (content, highlightedWords) => {
     let highlightedContent = content;
 
@@ -69,43 +67,51 @@ const Topic = ({ partData }) => {
 
   return (
     <div className="p-5" onMouseUp={handleMouseUp}>
-      <h2 className="text-lg mb-4">
-        {partData.questionName || "Reading Part"}
-      </h2>
-      <div
-        className="mt-4 font-semibold"
-        dangerouslySetInnerHTML={{
-          __html: getHighlightedContent(content, highlightedWords),
-        }}
-      />
-
-      {/* Buttons for highlighting */}
-      {showButtons && selection && (
-        <div
-          className="absolute"
-          style={{
-            top: buttonPosition.top,
-            left: buttonPosition.left,
-          }}
-        >
-          <button
-            onClick={handleHighlight}
-            className="bg-green-500 text-white px-1 py-1 rounded text-xs mr-1"
-          >
-            Highlight
-          </button>
-          <button
-            onClick={() => handleRemoveHighlight(selection)}
-            className="bg-red-500 text-white px-1 py-1 rounded text-xs"
-          >
-            Remove
-          </button>
-        </div>
+      {currentSkillKey === "writing" && (
+        <>
+          {partData.sections.map((section, index) => (
+            <div key={index}>
+              <p>{section.sectionGuide}</p>
+            </div>
+          ))}
+        </>
       )}
 
-      <p className="text-sm text-gray-600 mt-2">
-        Select text to highlight or remove highlights.
-      </p>
+      {currentSkillKey === "reading" && (
+        <>
+          <div
+            className="mt-4 font-semibold"
+            dangerouslySetInnerHTML={{
+              __html: getHighlightedContent(content, highlightedWords),
+            }}
+          />
+          {showButtons && selection && (
+            <div
+              className="absolute"
+              style={{
+                top: buttonPosition.top,
+                left: buttonPosition.left,
+              }}
+            >
+              <button
+                onClick={handleHighlight}
+                className="bg-green-500 text-white px-1 py-1 rounded text-xs mr-1"
+              >
+                Highlight
+              </button>
+              <button
+                onClick={() => handleRemoveHighlight(selection)}
+                className="bg-red-500 text-white px-1 py-1 rounded text-xs"
+              >
+                Remove
+              </button>
+            </div>
+          )}
+          <p className="text-sm text-gray-600 mt-2">
+            Select text to highlight or remove highlights.
+          </p>
+        </>
+      )}
     </div>
   );
 };

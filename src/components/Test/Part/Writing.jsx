@@ -1,13 +1,7 @@
 import React, { useState } from "react";
 
-const Writing = ({ partData, part }) => {
-  const writing = partData.find((_, index) => index === part);
-
+const Writing = ({ partData, currentSkillKey, handleAnswerChange }) => {
   const [text, setText] = useState("");
-
-  const handleChange = (e) => {
-    setText(e.target.value);
-  };
 
   const countWords = (text) => {
     return text
@@ -16,12 +10,27 @@ const Writing = ({ partData, part }) => {
       .filter((word) => word.length > 0).length;
   };
 
+  const handleChange = (e) => {
+    const value = e.target.value;
+    setText(value);
+
+    const answerData = {
+      skill: currentSkillKey,
+      part: partData.partId,
+      questionId: partData.sections[0]?.questions[0]?.id,
+      answerText: value,
+      answerId: "",
+    };
+
+    handleAnswerChange({ index: 0, answerData });
+  };
+
   return (
     <div
       style={{
-        height: "calc(100vh - 112px)",
+        height: "calc(100vh - 100px)",
       }}
-      className="flex flex-col  bg-yellow-50"
+      className="flex flex-col"
     >
       <header className="flex justify-between items-center bg-gray-800 text-white p-4 shadow-md">
         <h1 className="text-xl font-semibold">Task 1</h1>

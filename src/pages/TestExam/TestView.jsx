@@ -79,8 +79,10 @@ const TestView = React.memo(
                   height: "100%",
                 }}
               >
-                {/* Render Topic based on selectedPart */}
-                <Topic partData={partDatas[selectedPart]} />
+                <Topic
+                  partData={partDatas[selectedPart]}
+                  currentSkillKey={currentSkillKey}
+                />
               </div>
 
               <div

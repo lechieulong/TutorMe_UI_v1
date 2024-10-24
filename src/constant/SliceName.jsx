@@ -9,6 +9,7 @@ export const SLICE_NAMES = {
   USER: "user",
   EVENT: "event",
   SCHEDULE: "schedule",
+  COMMON: "common",
 };
 
 export const ACTIONS = {

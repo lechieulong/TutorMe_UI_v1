@@ -16,7 +16,7 @@ const CourseTimeline = ({ courseId, onSelectTimeline }) => {
         onSelectTimeline(response.data.map((t) => t.id)); // Gọi onSelectTimeline với tất cả ID
         setLoading(false);
       } catch (error) {
-        setError("Không thể lấy thông tin lộ trình của khóa học.");
+        setError("Hiện chưa có lịch học nào");
         setLoading(false);
       }
     };
@@ -25,12 +25,14 @@ const CourseTimeline = ({ courseId, onSelectTimeline }) => {
   }, [courseId, onSelectTimeline]);
 
   if (loading) return <div>Đang tải...</div>;
-  if (error) return <div>{error}</div>;
+  if (error) return <div className="text-red-500">{error}</div>;
 
   return (
     <div className="flex-1 w-40% p-2">
       {timelines.length === 0 ? (
-        <p>Không tìm thấy lộ trình nào cho khóa học này.</p>
+        <p className="text-red-500">
+          Không tìm thấy lộ trình nào cho khóa học này.
+        </p>
       ) : (
         timelines.map((timeline) => (
           <div key={timeline.id} className="mb-4">

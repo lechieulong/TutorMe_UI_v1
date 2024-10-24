@@ -3,7 +3,7 @@ import Header from "../components/common/Header";
 
 const MainLayout = ({ children }) => {
   return (
-    <div style={{ height: "100vh" }} className="flex flex-col ">
+    <div style={{ height: "100vh" }} className="flex flex-col w-screen">
       <Header />
       <main
         style={{

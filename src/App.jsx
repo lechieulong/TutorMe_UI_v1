@@ -26,6 +26,7 @@ import MetorInfor from "./pages/Mentor/MentorInforTest";
 import CourseList from "./pages/Course/CourseList";
 import ClassOfCourse from "./pages/Course/ClassList";
 import TestList from "./pages/User/TestList";
+import MentorCourseDetail from "./pages/Mentor/MentorCourseDetail";
 // import MyLearning from "./pages/Class/MyLearning";
 // import CourseDetail from './CourseDetail';
 
@@ -38,11 +39,10 @@ import SpeakingGemini from "./service/SpeakingGemini";
 
 import MyLearning from "./pages/Class/MyLearning";
 // import PayOS from "./pages/User/PayOS";
-// import TestForm from "./pages/ExamTest/TestForm";
+import TestForm from "./pages/ExamTest/TestForm";
 // import TestFormDetail from "./pages/ExamTest/TestFormDetail";
 import CreateTest from "./pages/ExamTest/CreateTest";
 import MentorCourseList from "./pages/Mentor/MentorCourseList";
-
 import Error404 from "./pages/Error/Error404";
 import QuestionBank from "./pages/ExamTest/questionBank/QuestionBank";
 
@@ -70,7 +70,8 @@ const App = () => {
           <Route path="/testing/:testId" element={<TestLayout />} />
           <Route path="/test/:skillId/settings" element={<TestSetting />} />
           <Route path="/testDetail/:testId" element={<SkillPart />} />
-          <Route path="/create-test" element={<CreateTest />} />
+          <Route path="/create-skill" element={<CreateTest />} />
+          <Route path="/create-test/:sectionCourseId" element={<TestForm />} />
           <Route path="/questionbank" element={<QuestionBank />} />
 
           {/* LiveStream  exam*/}
@@ -82,19 +83,26 @@ const App = () => {
           {/* Calender */}
           <Route path="/calendar" element={<Calendar />} />
           <Route path="/coachingschedule" element={<CoachingSchedule />} />
-          <Route path="/coachingschedule/:teachername" element={<CoachingSchedule />} />
+          <Route
+            path="/coachingschedule/:teachername"
+            element={<CoachingSchedule />}
+          />
           <Route path="/schedulepaymentmethod" element={<ConfirmBook />} />
-          
+
           {/* Test Mentor */}
 
           {/* Mentor */}
           <Route path="/metorinfor" element={<MetorInfor />} />
-          <Route path="/mentorCourstList" element={<MentorCourseList />} />
+          <Route path="/mentorCourseList" element={<MentorCourseList />} />
 
           {/* Course */}
           <Route path="/course" element={<CourseList />} />
           <Route path="/createCourse" element={<CreateCourse />} />
           <Route path="/courseDetail/:courseId" element={<CourseDetail />} />
+          <Route
+            path="/mentorCourseDetail/:courseId"
+            element={<MentorCourseDetail />}
+          />
           <Route
             path="/courseDetail/:courseId/classes"
             element={<ClassOfCourse />}

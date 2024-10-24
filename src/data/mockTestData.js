@@ -43,7 +43,7 @@ const mockTestData = {
   },
   listening: {
     id: 2,
-    duration: 50,
+    duration: 1,
     type: 1, // 1: Listening
     parts: [
       {
@@ -77,7 +77,7 @@ const mockTestData = {
   },
   writing: {
     id: 3,
-    duration: 40, // Duration in minutes for the Writing skill
+    duration: 1, // Duration in minutes for the Writing skill
     type: 2, // 2: Writing
     parts: [
       {
@@ -108,7 +108,7 @@ const mockTestData = {
   },
   speaking: {
     id: 4,
-    duration: 20, // Duration in minutes for the Speaking skill
+    duration: 1, // Duration in minutes for the Speaking skill
     type: 3, // 3: Speaking
     parts: [
       {
@@ -143,7 +143,7 @@ const mockTestData = {
   },
   vocabulary: {
     id: 5,
-    duration: 30, // Duration in minutes for the Vocabulary skill
+    duration: 1, // Duration in minutes for the Vocabulary skill
     type: 4, // 4: Vocabulary
     parts: [
       {

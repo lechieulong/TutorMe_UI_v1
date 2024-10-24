@@ -4,6 +4,9 @@ import QuestionForm from "./QuestionForm";
 import { faMultiply } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
+import { useDispatch } from "react-redux";
+import { uploadFile } from "../../redux/testExam/TestSlice";
+
 const sectionTypes = [
   { value: 1, label: "Heading Matching" },
   { value: 2, label: "Filling" },
@@ -23,6 +26,19 @@ const SectionForm = ({ skill, partIndex, control }) => {
     name: `skills.${skill}.parts.${partIndex}.sections`,
     control,
   });
+  const dispatch = useDispatch();
+
+  const handleFileChange = async (e, field) => {
+    const file = e.target.files[0];
+    if (file) {
+      try {
+        const uri = dispatch(uploadFile(file));
+        field.onChange(uri);
+      } catch (error) {
+        console.error("Error uploading image:", error);
+      }
+    }
+  };
 
   return (
     <div>
@@ -90,10 +106,7 @@ const SectionForm = ({ skill, partIndex, control }) => {
                       <input
                         type="file"
                         accept="image/*"
-                        onChange={(e) => {
-                          const file = e.target.files[0];
-                          field.onChange(file || null); // Set to null if no file selected
-                        }}
+                        onChange={(e) => handleFileChange(e, field)}
                         className="border p-1 w-full"
                       />
                       {field.value && (

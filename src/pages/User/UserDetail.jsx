@@ -105,7 +105,7 @@ const UserDetail = () => {
                   <div className="flex justify-between items-center mb-4">
                     <p className="text-lg font-semibold">Your Courses</p>
                     <Link
-                      to="/mentorCourstList"
+                      to="/mentorCourseList"
                       className="text-sm text-blue-500 hover:underline"
                     >
                       Show All

@@ -62,7 +62,6 @@ const NavigationPart = ({
                     }
                   >
                     {questionIndex + 1}{" "}
-                    {/* Display the question index (1-based) */}
                   </li>
                 ))}
               </ul>

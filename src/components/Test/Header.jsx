@@ -46,7 +46,7 @@ const Header = ({
             clearInterval(timerRef.current);
             setTimeout(() => {
               if (currentSkillIndex < Object.keys(testData).length - 1) {
-                handleNextSkill(); // Call the handleNextSkill after render
+                handleNextSkill();
               } else {
                 handleSubmit();
               }
@@ -91,6 +91,7 @@ const Header = ({
         {/* Render "Next Skill" or "Submit Test" buttons */}
         {currentSkillIndex < Object.keys(testData).length - 1 ? (
           <button
+            type="button"
             onClick={handleNextSkill} // Call handleNextSkill
             className="cursor-pointer inline-flex items-center gap-x-2 text-sm font-medium rounded-lg border border-transparent bg-blue-500 text-white px-4 py-2"
           >

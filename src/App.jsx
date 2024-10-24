@@ -39,7 +39,7 @@ import SpeakingGemini from "./service/SpeakingGemini";
 
 import MyLearning from "./pages/Class/MyLearning";
 // import PayOS from "./pages/User/PayOS";
-// import TestForm from "./pages/ExamTest/TestForm";
+import TestForm from "./pages/ExamTest/TestForm";
 // import TestFormDetail from "./pages/ExamTest/TestFormDetail";
 import CreateTest from "./pages/ExamTest/CreateTest";
 import MentorCourseList from "./pages/Mentor/MentorCourseList";
@@ -70,7 +70,8 @@ const App = () => {
           <Route path="/testing/:testId" element={<TestLayout />} />
           <Route path="/test/:skillId/settings" element={<TestSetting />} />
           <Route path="/testDetail/:testId" element={<SkillPart />} />
-          <Route path="/create-test" element={<CreateTest />} />
+          <Route path="/create-skill" element={<CreateTest />} />
+          <Route path="/create-test" element={<TestForm />} />
           <Route path="/questionbank" element={<QuestionBank />} />
 
           {/* LiveStream  exam*/}

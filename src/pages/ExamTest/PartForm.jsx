@@ -10,12 +10,28 @@ import {
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { CKEditor } from "@ckeditor/ckeditor5-react";
 import ClassicEditor from "@ckeditor/ckeditor5-build-classic";
+import { useDispatch } from "react-redux";
+import { uploadFile } from "../../redux/testExam/TestSlice";
 
 const PartForm = ({ skill, control }) => {
+  const dispatch = useDispatch();
+
   const { fields, append, remove } = useFieldArray({
     name: `skills.${skill}.parts`,
     control,
   });
+
+  const handleFileChange = async (e, field) => {
+    const file = e.target.files[0];
+    if (file) {
+      try {
+        const uri = dispatch(uploadFile(file));
+        field.onChange(uri);
+      } catch (error) {
+        console.error("Error uploading image:", error);
+      }
+    }
+  };
 
   return (
     <div>
@@ -91,7 +107,7 @@ const PartForm = ({ skill, control }) => {
                     <input
                       type="file"
                       accept="audio/*"
-                      onChange={(e) => field.onChange(e.target.files[0])}
+                      onChange={(e) => handleFileChange(e, field)}
                       className="border p-1 w-full"
                     />
                     {field.value && (
@@ -120,7 +136,7 @@ const PartForm = ({ skill, control }) => {
                     <input
                       type="file"
                       accept="image/*"
-                      onChange={(e) => field.onChange(e.target.files[0])}
+                      onChange={(e) => handleFileChange(e, field)}
                       className="border p-1 w-full"
                     />
                     {field.value && (

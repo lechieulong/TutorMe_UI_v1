@@ -1,18 +1,31 @@
 import React from "react";
 import AudioPlayer from "./AudioPlayer"; // Adjust the import based on your file structure
+import Writing from "../../components/Test/Part/Writing";
 
-const AnswerView = ({ partData }) => {
+const AnswerView = ({ partData, currentSkillKey, handleAnswerChange }) => {
   if (!partData) return <div>No data available</div>;
 
+  const handleChangeWrap = (e, skill, partId, questionId) => {
+    const answerText = e.target.value;
+    const answerData = {
+      skill,
+      part: partId,
+      questionId,
+      answerText,
+      answerId: "",
+    };
+
+    handleAnswerChange({ questionId, answerData }); // Pass questionId as a unique identifier
+  };
+
   return (
-    <div>
-      {partData.audio && (
+    <form>
+      {currentSkillKey === "listening" && (
         <div className="my-4">
           <AudioPlayer src={partData.audio} />
         </div>
       )}
-
-      {partData.image && (
+      {currentSkillKey === "listening" && partData.image && (
         <div className="my-4">
           <img
             src={partData.image}
@@ -22,27 +35,41 @@ const AnswerView = ({ partData }) => {
         </div>
       )}
 
-      {/* Render sections */}
-      {partData.sections.map((section, sectionIndex) => (
-        <div key={sectionIndex}>
-          <p>{section.sectionGuide}</p>
-
-          {/* Render questions within each section */}
-          {section.questions.map((question, questionIndex) => (
-            <div key={questionIndex}>
-              <p>{question.questionName}</p>
-
-              {/* Render answers within each question */}
-              {question.answers.map((answer, answerIndex) => (
-                <div key={answerIndex}>
-                  <p>{answer.answerText}</p>
+      {currentSkillKey !== "writing" && (
+        <>
+          {partData.sections.map((section, sectionIndex) => (
+            <div key={sectionIndex}>
+              <p>{section.sectionGuide}</p>
+              {section.questions.map((question, index) => (
+                <div key={question.id}>
+                  <p>{question.questionName}</p>
+                  <input
+                    type="text"
+                    onChange={(e) =>
+                      handleChangeWrap(
+                        e,
+                        currentSkillKey,
+                        partData.partId,
+                        question.id
+                      )
+                    }
+                    placeholder="Your answer"
+                  />
                 </div>
               ))}
             </div>
           ))}
-        </div>
-      ))}
-    </div>
+        </>
+      )}
+
+      {/* {currentSkillKey === "writing" && (
+        <Writing
+          partData={partData}
+          currentSkillKey={currentSkillKey}
+          handleAnswerChange={handleAnswerChange}
+        />
+      )} */}
+    </form>
   );
 };
 

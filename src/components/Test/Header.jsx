@@ -1,4 +1,3 @@
-// Header.jsx
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faClock,
@@ -19,7 +18,6 @@ const Header = ({
   const [timeLeft, setTimeLeft] = useState(0);
   const timerRef = useRef(null);
   const [isNoteOpen, setIsNoteOpen] = useState(false);
-  const answer = useSelector((state) => state.answer);
 
   const openNoteModal = () => setIsNoteOpen(true);
   const closeNoteModal = () => setIsNoteOpen(false);
@@ -36,17 +34,16 @@ const Header = ({
   // Manage timer logic
   useEffect(() => {
     if (Object.keys(testData).length > 0) {
-      // Check if testData is populated
       const currentSkillData = Object.values(testData)[currentSkillIndex];
-      setTimeLeft(currentSkillData.duration * 60); // Set time in seconds for the current skill
+      setTimeLeft(currentSkillData.duration * 10); // Set time in seconds for the current skill
 
-      timerRef.current = setInterval(() => {
+      const id = setInterval(() => {
         setTimeLeft((prevTimeLeft) => {
           if (prevTimeLeft <= 0) {
-            clearInterval(timerRef.current);
+            clearInterval(id);
             setTimeout(() => {
               if (currentSkillIndex < Object.keys(testData).length - 1) {
-                handleNextSkill(); // Call the handleNextSkill after render
+                handleNextSkill();
               } else {
                 handleSubmit();
               }
@@ -57,7 +54,7 @@ const Header = ({
         });
       }, 1000);
 
-      return () => clearInterval(timerRef.current); // Cleanup interval when component unmounts
+      return () => clearInterval(id); // Cleanup interval when component unmounts or currentSkillIndex changes
     }
   }, [currentSkillIndex, testData, handleNextSkill, handleSubmit]);
 
@@ -79,7 +76,7 @@ const Header = ({
       </p>
       <div className="flex gap-8 justify-center items-center">
         <span
-          onClick={openNoteModal} // Open the note modal
+          onClick={openNoteModal}
           className="text-md font-semibold text-white cursor-pointer"
         >
           <span className="mr-2 text-sm">
@@ -91,14 +88,15 @@ const Header = ({
         {/* Render "Next Skill" or "Submit Test" buttons */}
         {currentSkillIndex < Object.keys(testData).length - 1 ? (
           <button
-            onClick={handleNextSkill} // Call handleNextSkill
+            type="button"
+            onClick={handleNextSkill}
             className="cursor-pointer inline-flex items-center gap-x-2 text-sm font-medium rounded-lg border border-transparent bg-blue-500 text-white px-4 py-2"
           >
             Next Skill
           </button>
         ) : (
           <button
-            onClick={handleSubmit} // Call handleSubmit
+            onClick={handleSubmit}
             className="cursor-pointer inline-flex items-center gap-x-2 text-sm font-medium rounded-lg border border-transparent bg-red-500 text-white px-4 py-2"
           >
             <span className="mr-2 text-sm">

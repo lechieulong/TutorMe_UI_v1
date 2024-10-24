@@ -36,8 +36,6 @@ const CourseCard = ({
     destinationPath = `/courseDetail/${courseId}`;
   }
 
-  console.log(destinationPath);
-
   return (
     <div className="relative bg-white h-52 shadow-md rounded-lg p-4 flex flex-col items-center hover:bg-gray-100 transition-all">
       {onDelete && ( // Chỉ hiển thị nút delete nếu onDelete được truyền vào

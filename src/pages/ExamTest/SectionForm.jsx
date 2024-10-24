@@ -3,6 +3,9 @@ import { useFieldArray, Controller } from "react-hook-form";
 import QuestionForm from "./QuestionForm";
 import { faMultiply } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { useDispatch } from "react-redux";
+import { uploadFile } from "../../redux/testExam/TestSlice";
+
 const sectionTypes = [
   { value: 1, label: "Heading Matching" },
   { value: 2, label: "Filling" },
@@ -16,6 +19,20 @@ const SectionForm = ({ skill, partIndex, control }) => {
     name: `skills.${skill}.parts.${partIndex}.sections`,
     control,
   });
+
+  const dispatch = useDispatch();
+
+  const handleFileChange = async (e, field) => {
+    const file = e.target.files[0];
+    if (file) {
+      try {
+        const uri = dispatch(uploadFile(file));
+        field.onChange(uri);
+      } catch (error) {
+        console.error("Error uploading image:", error);
+      }
+    }
+  };
 
   return (
     <div>
@@ -67,18 +84,7 @@ const SectionForm = ({ skill, partIndex, control }) => {
                 <input
                   type="file"
                   accept="image/*"
-                  onChange={(e) => {
-                    const file = e.target.files[0];
-                    if (file) {
-                      const reader = new FileReader();
-                      reader.onloadend = () => {
-                        field.onChange(reader.result); // Store image data (base64)
-                      };
-                      reader.readAsDataURL(file); // Convert file to base64
-                    } else {
-                      field.onChange(null); // Reset if no file
-                    }
-                  }}
+                  onChange={(e) => handleFileChange(e, field)}
                   className="border p-1 w-full"
                 />
               </div>

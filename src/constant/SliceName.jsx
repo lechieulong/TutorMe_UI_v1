@@ -8,7 +8,8 @@ export const SLICE_NAMES = {
   TEST: "test",
   USER: "user",
   EVENT: "event",
-  SCHEDULE: "schedule"
+  SCHEDULE: "schedule",
+  COMMON: "common",
 };
 
 export const ACTIONS = {
@@ -18,7 +19,7 @@ export const ACTIONS = {
   CREATE_CLASS: "createClass",
 
   LOGIN: "login",
-  REGIS: "register",  
+  REGIS: "register",
   CHECK_EMAIL: "check-email",
   REGISTER_GOOGLE: "register-google",
   LOGIN_GOOGLE: "login-google",
@@ -30,11 +31,12 @@ export const ACTIONS = {
   CREATE_TEST: "createTest",
   UPDATE_TEST: "updateTest",
   DELETE_TEST: "deleteTest",
+  UPLOAD: "upload",
 
   GET_USER_INFORMATION: "getProfile",
   GET_TOP10_TEACHERS: "getTop10Teachers",
   SEARCH_TEACHER: "searchteacher",
-  
+
   //Event
   GET_EVENT_BY_USERID: "geteventbyuserid",
 

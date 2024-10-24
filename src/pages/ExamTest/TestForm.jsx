@@ -10,7 +10,7 @@ import {
 import { createTest } from "../../redux/testExam/TestSlice";
 import { useDispatch } from "react-redux";
 
-const TestForm = () => {
+const TestForm = ({ sectionCourseId }) => {
   const {
     register,
     handleSubmit,
@@ -21,9 +21,9 @@ const TestForm = () => {
   const dispatch = useDispatch();
 
   const onSubmit = (data) => {
-    console.log(data);
     try {
-      dispatch(createTest(data));
+      const payload = { ...data, sectionCourseId };
+      dispatch(createTest(payload));
       toast.success("Create test successful!");
     } catch (error) {
       console.error("Submission failed:", error);

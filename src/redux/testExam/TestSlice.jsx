@@ -18,7 +18,26 @@ export const fetchTests = createAsyncThunk(
   }
 );
 
-// Action to create a test
+export const uploadFile = createAsyncThunk(
+  `${SLICE_NAMES.TEST}/${ACTIONS.UPLOAD}`,
+  async (file, { rejectWithValue }) => {
+    const formData = new FormData();
+    formData.append("file", file);
+    try {
+      const response = await axios.post(`${API_BASE_URL}/upload`, formData, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      });
+      return response.data; // Return the response data
+    } catch (error) {
+      return rejectWithValue(
+        error.response?.data?.message || "Failed to upload file"
+      );
+    }
+  }
+);
+
 export const createTest = createAsyncThunk(
   `${SLICE_NAMES.TEST}/${ACTIONS.CREATE_TEST}`,
   async (testData, { rejectWithValue }) => {

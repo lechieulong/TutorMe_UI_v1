@@ -31,8 +31,6 @@ export const ACTIONS = {
   CREATE_TEST: "createTest",
   UPDATE_TEST: "updateTest",
   DELETE_TEST: "deleteTest",
-  UPLOAD: "upload",
-
   GET_USER_INFORMATION: "getProfile",
   GET_TOP10_TEACHERS: "getTop10Teachers",
   SEARCH_TEACHER: "searchteacher",

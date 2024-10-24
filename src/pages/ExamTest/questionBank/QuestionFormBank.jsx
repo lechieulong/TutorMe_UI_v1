@@ -1,6 +1,13 @@
 import { useForm, useFieldArray, Controller } from "react-hook-form";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faMultiply, faPlus } from "@fortawesome/free-solid-svg-icons";
+import { toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+import {
+  addQuestions,
+  updateQuestion,
+} from "../../../redux/testExam/TestSlice";
+import { useDispatch } from "react-redux";
 
 const QuestionFormBank = ({ setIsModalOpen, question }) => {
   const { control, handleSubmit } = useForm({
@@ -13,6 +20,7 @@ const QuestionFormBank = ({ setIsModalOpen, question }) => {
               answers: [],
               skill: 1,
               questionType: 1,
+              part: 1,
             },
           ],
     },
@@ -27,11 +35,42 @@ const QuestionFormBank = ({ setIsModalOpen, question }) => {
     control,
   });
 
+  const dispatch = useDispatch();
+
   const onSubmit = (data) => {
+    const payload = data.questions.map((question) => {
+      // If updating, include questionId and answerId
+      const updatedQuestion = {
+        questionName: question.questionName,
+        questionType: question.questionType,
+        skill: question.skill,
+        part: question.part,
+        answers: question.answers.map((answer) => ({
+          answerText: answer.answerText,
+          isCorrect: Number(answer.isCorrect), // Convert to number
+        })),
+      };
+
+      if (question.id) {
+        return {
+          ...updatedQuestion,
+          id: question.id,
+          answers: question.answers.map((answer) => ({
+            ...answer,
+            answerId: answer.id, // Include answerId if updating
+          })),
+        };
+      }
+
+      return updatedQuestion; // No questionId or answerId for adding
+    });
+
     if (question) {
-      console.log("update", data);
+      dispatch(
+        updateQuestion({ id: question.id, updatedQuestion: payload[0] })
+      ); // Send the correct payload structure for updating
     } else {
-      console.log("add: ", data);
+      dispatch(addQuestions(payload)); // Send the correct payload structure for adding
     }
     setIsModalOpen(false);
   };
@@ -114,6 +153,22 @@ const QuestionFormBank = ({ setIsModalOpen, question }) => {
                     )}
                   />
                 </div>
+                <div>
+                  <label className="block mb-1">Part</label>
+                  <Controller
+                    name={`questions.${index}.part`}
+                    control={control}
+                    defaultValue={question.part || 1}
+                    render={({ field }) => (
+                      <select {...field} className="border p-1 mb-2 w-full">
+                        <option value="1">Part 1</option>
+                        <option value="2">Part 2</option>
+                        <option value="3">Part 3</option>
+                        <option value="4">Part 4</option>
+                      </select>
+                    )}
+                  />
+                </div>
               </div>
 
               <AnswerForm control={control} questionIndex={index} />
@@ -128,6 +183,7 @@ const QuestionFormBank = ({ setIsModalOpen, question }) => {
                   answers: [],
                   skill: 1,
                   questionType: 1,
+                  part: 1,
                 })
               }
               className="bg-green-500 text-white p-2 rounded"
@@ -181,11 +237,19 @@ const AnswerForm = ({ control, questionIndex }) => {
           <Controller
             name={`questions.${questionIndex}.answers.${index}.isCorrect`}
             control={control}
-            defaultValue={answer.isCorrect || false}
+            defaultValue={answer.isCorrect || 0}
             render={({ field }) => (
-              <input type="checkbox" {...field} className="mr-2" />
+              <select
+                {...field}
+                className="border p-1 mb-2"
+                onChange={(e) => field.onChange(Number(e.target.value))} // Convert to number
+              >
+                <option value={0}>Incorrect</option>
+                <option value={1}>Correct</option>
+              </select>
             )}
           />
+
           <button
             type="button"
             onClick={() => remove(index)}
@@ -197,7 +261,7 @@ const AnswerForm = ({ control, questionIndex }) => {
       ))}
       <button
         type="button"
-        onClick={() => append({ answerText: "", isCorrect: false })}
+        onClick={() => append({ answerText: "", isCorrect: 0 })}
         className="bg-blue-500 text-white p-2 rounded"
       >
         Add Answer

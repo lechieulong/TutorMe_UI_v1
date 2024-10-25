@@ -174,6 +174,32 @@ const mockTestData = {
             image: "",
             questions: [
               {
+                id: 1,
+                questionName:
+                  "Discuss the impact of technology on communication.",
+                answers: [],
+              },
+            ],
+          },
+        ],
+      },
+      {
+        id: 2,
+        partNumber: 2,
+        contentText: "<p>Writing Task 2 prompt.</p>",
+        audio: null,
+        image:
+          "https://www.pexels.com/photo/close-up-photo-of-ballpoint-pen-on-paper-590582.jpeg",
+        questionName: "Writing Section 2",
+        sections: [
+          {
+            id: 2,
+            sectionGuide:
+              "Write a letter to your friend inviting them to your birthday party:",
+            sectionType: 1,
+            image: "",
+            questions: [
+              {
                 id: 2,
                 questionName:
                   "What details should you include in the invitation?",

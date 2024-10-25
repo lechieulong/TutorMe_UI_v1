@@ -8,9 +8,9 @@ import {
   FaPenAlt,
 } from "react-icons/fa";
 import MainLayout from "../../layout/MainLayout";
-import Filter from "../Course/components/Filter"; // Reuse Filter component
+import Filter from "../Course/components/Filter";
 import CourseCard from "../Course/components/CourseCard";
-import { fetchCoursesByUserId } from "../../redux/courses/CourseSlice"; // Import action
+import { fetchCoursesByUserId } from "../../redux/courses/CourseSlice";
 import axios from "axios";
 import { getUser } from "../../service/GetUser";
 
@@ -32,9 +32,10 @@ const MentorCourseList = () => {
 
   useEffect(() => {
     if (user?.sub) {
-      dispatch(fetchCoursesByUserId(user.sub)); // Fetch courses based on UserId
+      dispatch(fetchCoursesByUserId(user.sub));
     }
   }, [dispatch, user]);
+
   const categories = useMemo(
     () => ["All", "Listening", "Reading", "Writing", "Speaking"],
     []
@@ -76,7 +77,7 @@ const MentorCourseList = () => {
   const handleDelete = async (courseId) => {
     try {
       await axios.delete(`https://localhost:7030/api/Courses/${courseId}`);
-      dispatch(fetchCoursesByUserId(user.sub)); // Reload courses after deletion
+      dispatch(fetchCoursesByUserId(user.sub));
     } catch (error) {
       console.error("Error deleting course", error);
       alert("Failed to delete course.");
@@ -100,14 +101,9 @@ const MentorCourseList = () => {
     }
   };
 
-  if (!user) return <p>Loading user data...</p>;
-  if (status === "pending") return <p>Loading courses...</p>;
-  if (status === "failed") return <p>Error: {error}</p>;
-
   return (
     <MainLayout>
       <div className="px-4 py-6">
-        {/* Banner Section */}
         <div className="bg-blue-100 p-4 rounded-lg mb-6 text-center">
           <h2 className="text-2xl font-semibold text-blue-700">
             Manage Your Courses as a Mentor!
@@ -117,7 +113,6 @@ const MentorCourseList = () => {
           </p>
         </div>
 
-        {/* Filter Section */}
         <div className="flex items-center justify-between mb-4">
           <Filter
             categories={categories}
@@ -138,48 +133,61 @@ const MentorCourseList = () => {
           </button>
         </div>
 
-        {/* Course List */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mt-6">
-          {currentCourses.map((course) => (
-            <CourseCard
-              key={course.id}
-              courseName={course.courseName}
-              content={course.content}
-              title={course.title}
-              description={course.description}
-              category={course.category}
-              icon={getIcon(course.category)}
-              teacher={user.name}
-              courseId={course.id}
-              onDelete={handleDelete}
-            />
-          ))}
-        </div>
+        {status === "pending" && <p>Loading courses...</p>}
 
-        {/* Pagination */}
-        <div className="flex justify-center items-center mt-4">
-          <button
-            onClick={handlePrevPage}
-            disabled={currentPage === 1}
-            className={`px-3 py-1.5 mx-1 text-sm font-medium ${
-              currentPage === 1 ? "bg-gray-300" : "bg-blue-600"
-            } text-white border border-blue-600 rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-400`}
-          >
-            Previous
-          </button>
-          <span className="text-sm mx-2">
-            Page {currentPage} of {totalPages}
-          </span>
-          <button
-            onClick={handleNextPage}
-            disabled={currentPage === totalPages}
-            className={`px-3 py-1.5 mx-1 text-sm font-medium ${
-              currentPage === totalPages ? "bg-gray-300" : "bg-blue-600"
-            } text-white border border-blue-600 rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-400`}
-          >
-            Next
-          </button>
-        </div>
+        {currentCourses.length === 0 && status !== "pending" && (
+          <div className="flex justify-center items-center h-32">
+            <p className="text-red-500 text-lg font-semibold text-center">
+              Bạn chưa có khoá học nào
+            </p>
+          </div>
+        )}
+
+        {currentCourses.length > 0 && (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mt-6">
+            {currentCourses.map((course) => (
+              <CourseCard
+                key={course.id}
+                courseName={course.courseName}
+                content={course.content}
+                title={course.title}
+                description={course.description}
+                category={course.category}
+                icon={getIcon(course.category)}
+                teacher={user?.name}
+                courseId={course.id}
+                onDelete={handleDelete}
+                isEnabled={true}
+              />
+            ))}
+          </div>
+        )}
+
+        {currentCourses.length > 0 && (
+          <div className="flex justify-center items-center mt-4">
+            <button
+              onClick={handlePrevPage}
+              disabled={currentPage === 1}
+              className={`px-3 py-1.5 mx-1 text-sm font-medium ${
+                currentPage === 1 ? "bg-gray-300" : "bg-blue-600"
+              } text-white border border-blue-600 rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-400`}
+            >
+              Previous
+            </button>
+            <span className="text-sm mx-2">
+              Page {currentPage} of {totalPages}
+            </span>
+            <button
+              onClick={handleNextPage}
+              disabled={currentPage === totalPages}
+              className={`px-3 py-1.5 mx-1 text-sm font-medium ${
+                currentPage === totalPages ? "bg-gray-300" : "bg-blue-600"
+              } text-white border border-blue-600 rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-400`}
+            >
+              Next
+            </button>
+          </div>
+        )}
       </div>
     </MainLayout>
   );

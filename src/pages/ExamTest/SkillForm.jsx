@@ -41,11 +41,14 @@ const SkillForm = ({ skill, control }) => {
       </h2>
 
       {/* Duration Input */}
-      <div className="mb-4 ">
+      <div className="mb-4">
         <Controller
           name={`skills.${skill}.duration`}
           control={control}
-          rules={{ required: "Duration is required" }} // Validation for duration
+          rules={{
+            required: "Duration is required",
+            min: { value: 1, message: "Duration must be greater than 0" },
+          }} // Validation for duration
           render={({ field, fieldState }) => (
             <div className="mb-2">
               <label className="block text-gray-700 font-medium mb-2">
@@ -56,6 +59,7 @@ const SkillForm = ({ skill, control }) => {
                 type="number" // Set the input type to number
                 className="border p-2 rounded w-full focus:outline-none focus:ring-1 focus:ring-green-400"
                 placeholder="Duration"
+                onChange={(e) => field.onChange(Number(e.target.value))} // Convert string input to number
               />
               {fieldState.error && (
                 <p className="text-red-500">{fieldState.error.message}</p>

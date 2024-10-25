@@ -74,8 +74,6 @@ const TestSetting = () => {
       skillPart: selectedSkill.id,
     };
 
-    console.log("Test Data to send:", testData); // For debugging purpose
-
     navigate("/testing/1", { state: testData });
   };
 

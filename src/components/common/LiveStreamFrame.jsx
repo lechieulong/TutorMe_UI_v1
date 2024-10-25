@@ -65,7 +65,7 @@ async function GetListIdIsLiveStream() {
     );
 
     const baseURL = `https://rtc-api.zego.im/?Action=DescribeUserNum`;
-    const roomIds = ["0194bc0a-37b6-4c7a-a8b1-e51592978f06", "12335"]; // Define room IDs here
+    const roomIds = ["6d002102-ce92-46da-9e5d-f92c1544f1d0", "12335"]; // Define room IDs here
 
     const roomIdParams = roomIds.map((id) => `RoomId[]=${id}`).join("&");
     const generatedUrl = `${baseURL}&${roomIdParams}&AppId=${appID}&SignatureNonce=${signatureNonce}&Timestamp=${timestamp}&Signature=${encodeURIComponent(
@@ -89,7 +89,6 @@ async function GetListIdIsLiveStream() {
     
         // Return the list of RoomIds in descending order of UserCount
         const roomIds = sortedRooms.map((room) => room.RoomId);
-        console.log(roomIds[0]);
         return roomIds;
       } else {
         console.error("API Error:", data.Message);
@@ -135,7 +134,6 @@ const LiveStreamFrame = ({ width, height, className }) => {
   // Information about the user from backend
   const url = window.location.href;
   const user = getUser();
-  console.log(user);
   const UserId =user?user.sub:randomID(10);
   const UserName = user?user.userName:"guest";
   const role_str = UserId === roomID ? "Host" : "Audience";
@@ -168,26 +166,33 @@ const LiveStreamFrame = ({ width, height, className }) => {
   );
 
   const myMeeting = (element) => {
-    if (!element) return;
 
     const zp = ZegoUIKitPrebuilt.create(kitToken);
-    zp.joinRoom({
-      container: element,
-      scenario: {
-        mode: ZegoUIKitPrebuilt.LiveStreaming,
-        config: {
-          role,
+    const rom =sessionStorage.getItem('roomID');
+      zp.joinRoom({
+        onJoinRoom: () => {
+          // Get the roomID
+          const roomID = zp.getRoomID();
+          // Store it in sessionStorage
+          sessionStorage.setItem('roomID', roomID);
+          console.log("room:"+roomID);
         },
-      },
-      sharedLinks,
-      showTextChat: role_str === "Host"||window.location.pathname==="/live-stream"?true:false,
-      showPreJoinView: role_str === "Host",
-      showRoomDetailsButton: role_str === "Host"||window.location.pathname==="/live-stream"?true:false,
-      showLeavingView: false,
-    });
-
-    // Cleanup when component unmounts
-    return () => zp.leaveRoom();
+        onLeaveRoom: () =>{
+          sessionStorage.removeItem('roomID');
+        },
+        container: element,
+        scenario: {
+          mode: ZegoUIKitPrebuilt.LiveStreaming,
+          config: {
+            role,
+          },
+        },
+        sharedLinks,
+        showTextChat: role_str === "Host"||window.location.pathname==="/live-stream"?true:false,
+        showPreJoinView: role_str === "Host"&&rom==null?true:false,
+        showRoomDetailsButton: role_str === "Host"||window.location.pathname==="/live-stream"?true:false,
+        showLeavingView: false,
+      });  
   };
 
   return (

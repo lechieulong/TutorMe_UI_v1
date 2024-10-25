@@ -1,33 +1,43 @@
-import React, { useState } from "react";
-
-// Mock data for questions
-const mockQuestions = [
-  {
-    id: 1,
-    questionText: "What is the capital of France?",
-    answers: [],
-  },
-  {
-    id: 2,
-    questionText: "Explain the process of photosynthesis.",
-    answers: [],
-  },
-  {
-    id: 3,
-    questionText: "What is the boiling point of water?",
-    answers: [],
-  },
-];
+import React, { useState, useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { getQuestionsBank } from "../../redux/testExam/TestSlice";
+import { selectQuestions } from "../../redux/testExam/TestSlice"; // Import the selector
+import { getUser } from "../../service/GetUser";
+import { toast } from "react-toastify";
 
 const QuestionCard = ({
   onClose,
   onSelectQuestions,
   disabledQuestions = [],
 }) => {
-  const [questions, setQuestions] = useState(mockQuestions);
+  const questionsSelected = useSelector(selectQuestions); // Get selected questions from the Redux store
+  const [questions, setQuestions] = useState([]); // Initialize as an empty array
   const [selectedQuestions, setSelectedQuestions] = useState([]);
+  const dispatch = useDispatch();
 
-  // Toggle selection of questions
+  // Fetch questions from the backend
+  useEffect(() => {
+    const fetchQuestions = async () => {
+      try {
+        const user = await getUser();
+        const fetchedQuestions = await dispatch(
+          getQuestionsBank({ userId: user.sub })
+        ).unwrap();
+
+        console.log("fetchedQuestions", fetchedQuestions);
+        console.log("questionsSelected", questionsSelected);
+
+        // Update state with fetched questions
+        setQuestions(fetchedQuestions); // Set all fetched questions
+      } catch (error) {
+        console.error("Failed to fetch questions:", error);
+        toast.error("Failed to fetch questions");
+      }
+    };
+
+    fetchQuestions();
+  }, [dispatch]); // Removed questionsSelected from dependency array
+
   const toggleQuestionSelection = (question) => {
     setSelectedQuestions((prevSelected) =>
       prevSelected.includes(question)
@@ -37,7 +47,6 @@ const QuestionCard = ({
   };
 
   const handleAddQuestions = () => {
-    // Add the flag to indicate the questions are from the question bank
     const questionsWithFlag = selectedQuestions.map((question) => ({
       ...question,
       isFromQuestionBank: true,
@@ -50,19 +59,25 @@ const QuestionCard = ({
 
   return (
     <div className="right-0 bottom-0 bg-white z-10 p-4">
-      <h2 className="text-lg font-bold mb-4">Select Questions</h2>
-      <button onClick={onClose} className="bg-red-500 text-white p-2 mb-4">
-        Close
-      </button>
+      <div className="flex justify-between items-center">
+        <h2 className="text-lg font-bold mb-4">Select Questions</h2>
+        <button onClick={onClose} className="bg-red-500 text-white p-2 mb-4">
+          Close
+        </button>
+      </div>
+
       <div className="grid grid-cols-1 gap-4">
         {questions.map((question) => {
           const isAlreadySelected = disabledQuestions.some(
-            (q) => q.questionName === question.questionText // Ensure the comparison is correct
+            (q) => q.questionName === question.questionName // Ensure the comparison is correct
           );
           const isSelectedInCurrent = selectedQuestions.some(
             (q) => q.id === question.id
           );
-          const isDisabled = isAlreadySelected || isSelectedInCurrent;
+          const isDisabled =
+            isAlreadySelected ||
+            isSelectedInCurrent ||
+            questionsSelected.some((q) => q.id === question.id); // Disable if it's already selected in the Redux store
 
           return (
             <div
@@ -71,7 +86,8 @@ const QuestionCard = ({
                 isDisabled ? "opacity-50" : ""
               }`}
             >
-              <span>{question.questionText}</span>
+              <span>{question.questionName}</span> {/* Display questionName */}
+              <span>{question.questionType}</span> {/* Display questionType */}
               <button
                 type="button"
                 onClick={() => toggleQuestionSelection(question)}

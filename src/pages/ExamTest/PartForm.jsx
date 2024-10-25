@@ -10,12 +10,28 @@ import {
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { CKEditor } from "@ckeditor/ckeditor5-react";
 import ClassicEditor from "@ckeditor/ckeditor5-build-classic";
+import { useDispatch } from "react-redux";
+import { uploadFile } from "../../redux/testExam/TestSlice";
 
 const PartForm = ({ skill, control }) => {
+  const dispatch = useDispatch();
+
   const { fields, append, remove } = useFieldArray({
     name: `skills.${skill}.parts`,
     control,
   });
+
+  const handleFileChange = async (e, field) => {
+    const file = e.target.files[0];
+    if (file) {
+      try {
+        const uri = dispatch(uploadFile(file));
+        field.onChange(uri);
+      } catch (error) {
+        console.error("Error uploading image:", error);
+      }
+    }
+  };
 
   return (
     <div>
@@ -91,7 +107,7 @@ const PartForm = ({ skill, control }) => {
                     <input
                       type="file"
                       accept="audio/*"
-                      onChange={(e) => field.onChange(e.target.files[0])}
+                      onChange={(e) => handleFileChange(e, field)}
                       className="border p-1 w-full"
                     />
                     {field.value && (
@@ -104,8 +120,7 @@ const PartForm = ({ skill, control }) => {
               />
             )}
 
-            {/* Input for Image (Only for Writing) */}
-            {skill === "Writing" && (
+            {skill === "Writing" && index === 0 && (
               <Controller
                 name={`skills.${skill}.parts.${index}.image`}
                 control={control}
@@ -120,7 +135,7 @@ const PartForm = ({ skill, control }) => {
                     <input
                       type="file"
                       accept="image/*"
-                      onChange={(e) => field.onChange(e.target.files[0])}
+                      onChange={(e) => handleFileChange(e, field)}
                       className="border p-1 w-full"
                     />
                     {field.value && (
@@ -133,22 +148,7 @@ const PartForm = ({ skill, control }) => {
               />
             )}
 
-            {(skill === "Writing" || skill === "Speaking") && (
-              <>
-                {/* Questions Field Array */}
-                <h5 className="font-semibold mt-4">Questions</h5>
-                <QuestionsFieldArray
-                  partIndex={index}
-                  skill={skill}
-                  control={control}
-                />
-              </>
-            )}
-
-            {/* Render SectionForm only for Reading and Listening */}
-            {(skill === "Reading" || skill === "Listening") && (
-              <SectionForm skill={skill} partIndex={index} control={control} />
-            )}
+            <SectionForm skill={skill} partIndex={index} control={control} />
           </div>
         ))}
       </div>
@@ -158,10 +158,8 @@ const PartForm = ({ skill, control }) => {
         onClick={() =>
           append({
             contentText: "",
-            audio: null,
-            image: null,
-            questionName: "",
-            questions: [],
+            audio: "",
+            image: "",
           })
         }
         className="border border-green-400 text-gray-600 p-2 rounded"
@@ -170,58 +168,6 @@ const PartForm = ({ skill, control }) => {
           <FontAwesomeIcon icon={faPlusSquare} />
         </span>
         Add Part
-      </button>
-    </div>
-  );
-};
-
-const QuestionsFieldArray = ({ partIndex, skill, control }) => {
-  const {
-    fields: questionFields,
-    append: appendQuestion,
-    remove: removeQuestion,
-  } = useFieldArray({
-    name: `skills.${skill}.parts.${partIndex}.questions`,
-    control,
-  });
-
-  return (
-    <div className="mt-2">
-      {questionFields.map((question, qIndex) => (
-        <div
-          key={question.id}
-          className="flex items-center mb-2 border p-2 rounded"
-        >
-          <p className="mr-4"> {qIndex + 1}</p>
-          <Controller
-            name={`skills.${skill}.parts.${partIndex}.questions.${qIndex}.questionText`}
-            control={control}
-            render={({ field }) => (
-              <input
-                {...field}
-                className="border p-1 w-full"
-                placeholder="Question Text"
-              />
-            )}
-          />
-          <button
-            type="button"
-            onClick={() => removeQuestion(qIndex)}
-            className="bg-red-500 text-white p-1 ml-2 rounded"
-          >
-            <FontAwesomeIcon icon={faTrash} />
-          </button>
-        </div>
-      ))}
-      <button
-        type="button"
-        onClick={() => appendQuestion({ questionText: "" })}
-        className="border border-blue-400 text-gray-600 p-2 rounded mt-2"
-      >
-        <span className="mr-3">
-          <FontAwesomeIcon icon={faPlusSquare} />
-        </span>
-        Add Question
       </button>
     </div>
   );

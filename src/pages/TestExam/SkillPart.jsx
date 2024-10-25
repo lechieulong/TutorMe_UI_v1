@@ -76,14 +76,8 @@ const SkillPart = () => {
   return (
     <>
       <MainLayout>
-        <Link to="create-test">
-          <p>Create Test</p>
-        </Link>
-        <Link to="questionbank">
-          <p>Question Bank</p>
-        </Link>
-
         {/* Name Test */}
+
         <div className="bg-white  mt-10 border rounded-xl h-56 shadow-sm sm:flex dark:bg-neutral-900 dark:border-neutral-700 dark:shadow-neutral-700/70">
           <div className="shrink-0 relative w-full rounded-t-xl overflow-hidden sm:rounded-s-xl sm:max-w-60 md:rounded-se-none md:max-w-xs">
             <img
@@ -150,10 +144,10 @@ const SkillPart = () => {
             ))}
           </div>
 
-          <div className="border  text-gray-700 shadow-md  border-gray-300 p-2 flex justify-between mt-2 rounded-xl items-center">
+          <div className="border  text-gray-700 shadow-md  border-gray-300 p-6 flex justify-between mt-2 rounded-xl items-center">
             <div className="flex  items-center justify-start gap-9">
               <button
-                className="text-2xl font-semibold border-green-500"
+                className="text-2xl p-4 font-semibold border-green-500"
                 onClick={() => handleTakeFullTest(testId)} // Gửi id vào hàm
               >
                 <span>

@@ -126,6 +126,7 @@ const CourseList = () => {
               icon={getIcon(course.category)}
               teacher={course.userId}
               courseId={course.id}
+              isEnabled={course.isEnabled}
               // onDelete={handleDelete} // Pass the handleDelete function
             />
           ))}

@@ -1,5 +1,5 @@
 import React from "react";
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import { FaTrash } from "react-icons/fa";
 import axios from "axios";
 
@@ -12,8 +12,11 @@ const CourseCard = ({
   icon,
   teacher,
   courseId,
-  onDelete = null, // Thêm prop onDelete với giá trị mặc định là null
+  onDelete = null,
+  isEnabled,
 }) => {
+  const location = useLocation(); // Lấy thông tin về đường dẫn hiện tại
+
   const handleDelete = async () => {
     if (onDelete) {
       try {
@@ -25,6 +28,19 @@ const CourseCard = ({
       }
     }
   };
+
+  // Kiểm tra đường dẫn hiện tại và điều chỉnh link tương ứng
+  let destinationPath;
+  if (location.pathname === "/mentorCourseList") {
+    destinationPath = `/mentorCourseDetail/${courseId}`;
+  } else if (location.pathname === "/courseList") {
+    destinationPath = `/courseDetail/${courseId}`;
+  }
+
+  // Nếu isEnabled là false, không render component
+  if (!isEnabled) {
+    return null;
+  }
 
   return (
     <div className="relative bg-white h-52 shadow-md rounded-lg p-4 flex flex-col items-center hover:bg-gray-100 transition-all">
@@ -38,7 +54,7 @@ const CourseCard = ({
         </button>
       )}
       <Link
-        to={`/courseDetail/${courseId}`}
+        to={destinationPath} // Sử dụng destinationPath đã xác định ở trên
         className="flex-grow flex flex-col items-center"
       >
         <div className="text-2xl mb-1">{icon}</div>

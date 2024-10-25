@@ -1,13 +1,122 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
 import MentorHeader from "../../components/Mentor/MentorHeader";
 import MentorSidebar from "../../components/Mentor/MentorSideBar";
 import CourseTimeline from "./components/CourseTimeline";
 import CourseTimelineDetail from "./components/CourseTimelineDetail";
+import axios from "axios";
+import { getUser } from "../../service/GetUser";
 
 const CourseDetail = () => {
+  const [activeClassId, setActiveClassId] = useState(null);
   const { className, courseId } = useParams();
   const [timelineIds, setTimelineIds] = useState([]);
+  const [classes, setClasses] = useState([]);
+  const [isEnrolled, setIsEnrolled] = useState(false);
+  const [userId, setUserId] = useState(null);
+  const [errorMessage, setErrorMessage] = useState("");
+  const [currentSlide, setCurrentSlide] = useState(0);
+
+  // Fetch timelines from API
+  const fetchTimelines = async () => {
+    try {
+      const response = await axios.get(
+        `https://localhost:7030/api/CourseTimeline/Course?courseId=${courseId}`
+      );
+      setTimelineIds(response.data.map((timeline) => timeline.id));
+    } catch (error) {
+      console.error("Failed to fetch timelines", error);
+    }
+  };
+
+  // Fetch all classes for the course
+  const fetchClasses = async () => {
+    try {
+      const response = await axios.get(
+        `https://localhost:7030/api/class/course/${courseId}/classes`
+      );
+      setClasses(response.data.result);
+    } catch (error) {
+      console.error("Failed to fetch classes", error);
+    }
+  };
+
+  // Check enrollment status
+  const checkEnrollment = async (userId) => {
+    try {
+      const response = await axios.get(
+        `https://localhost:7030/api/Enrollment/check?courseId=${courseId}&userId=${userId}`
+      );
+      setIsEnrolled(response.data.isEnrolled);
+      if (response.data.classId === null) {
+        setErrorMessage("Bạn chưa gia nhập lớp nào. Hãy đăng ký tại");
+      } else {
+        setErrorMessage("");
+      }
+    } catch (error) {
+      console.error("Failed to check enrollment", error);
+    }
+  };
+
+  // Initialize user
+  const initializeUser = () => {
+    const userFromToken = getUser();
+    const userIdFromToken = userFromToken?.sub;
+
+    if (userIdFromToken) {
+      setUserId(userIdFromToken);
+      checkEnrollment(userIdFromToken);
+    }
+  };
+
+  // useEffect to initialize user and fetch data
+  useEffect(() => {
+    initializeUser();
+    fetchTimelines();
+    fetchClasses();
+  }, [courseId]);
+
+  // Handle enrollment
+  const handleEnroll = async () => {
+    try {
+      if (userId && activeClassId) {
+        const enrollmentData = {
+          courseId: courseId,
+          userId: userId,
+          classId: activeClassId, // Sử dụng classId của card đang active
+        };
+        const response = await axios.post(
+          "https://localhost:7030/api/Enrollment",
+          enrollmentData
+        );
+
+        if (response.status === 200) {
+          alert("Bạn đã ghi danh thành công!");
+          setIsEnrolled(true);
+        }
+      } else {
+        alert("Người dùng chưa đăng nhập hoặc chưa chọn lớp.");
+      }
+    } catch (error) {
+      console.error("Không thể ghi danh", error);
+      alert(
+        `Không thể ghi danh vào khóa học. Chi tiết lỗi: ${
+          error.response?.data || error.message
+        }`
+      );
+    }
+  };
+
+  // Functions to handle slideshow navigation
+  const handleNext = () => {
+    setCurrentSlide((prev) =>
+      Math.min(prev + 1, Math.ceil(classes.length / 3) - 1)
+    );
+  };
+
+  const handlePrev = () => {
+    setCurrentSlide((prev) => Math.max(prev - 1, 0));
+  };
 
   return (
     <div className="flex flex-col min-h-screen w-full">
@@ -17,56 +126,114 @@ const CourseDetail = () => {
         <div className="flex-1 p-4">
           <ol className="flex items-center whitespace-nowrap">
             <li className="inline-flex items-center">
-              <a
-                className="flex items-center text-sm text-gray-500 hover:text-blue-600 focus:outline-none focus:text-blue-600"
-                href="#"
+              <button
+                type="button"
+                onClick={handleEnroll}
+                className="py-2 px-3 inline-flex items-center gap-x-2 text-sm font-medium rounded-lg border border-gray-200 bg-green-400 text-gray-800 shadow-sm hover:bg-gray-50 focus:outline-none focus:bg-gray-50 disabled:opacity-50 disabled:pointer-events-none dark:border-neutral-700 transition-hover transition-transform duration-500 dark:hover:scale-110"
+                disabled={isEnrolled}
               >
-                Home
-              </a>
-              <svg
-                className="shrink-0 mx-2 size-4 text-gray-400"
-                xmlns="http://www.w3.org/2000/svg"
-                width="24"
-                height="24"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="2"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              >
-                <path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"></path>
-                <polyline points="14 2 14 8 20 8"></polyline>
-                <line x1="16" x2="8" y1="13" y2="13"></line>
-                <line x1="16" x2="8" y1="17" y2="17"></line>
-                <line x1="10" x2="8" y1="9" y2="9"></line>
-              </svg>
+                {isEnrolled ? "Enrolled" : "Enroll"}
+              </button>
               {className}
             </li>
           </ol>
+          {errorMessage && (
+            <p className="text-red-500">
+              {errorMessage}{" "}
+              <a
+                href={`http://localhost:5173/courseDetail/${courseId}/classes`}
+                className="text-blue-500 underline"
+              >
+                đây
+              </a>
+            </p>
+          )}
+          <div className="flex flex-col bg-white border w-full shadow-sm rounded-xl p-4 md:p-5 relative group">
+            {/* Title */}
 
+            {/* Card slider for classes */}
+            <div className="mt-4 relative">
+              <h4 className="text-md font-bold text-gray-800">Classes</h4>
+              <div className="overflow-hidden">
+                <div
+                  className="flex transition-transform duration-500"
+                  style={{ transform: `translateX(-${currentSlide * 100}%)` }}
+                >
+                  {classes.map((classItem) => (
+                    <div
+                      key={classItem.id}
+                      className={`flex-shrink-0 w-1/3 p-2 cursor-pointer transition-transform duration-300 ${
+                        activeClassId === classItem.id
+                          ? " border rounded-md border-green-500 shadow-lg" // Thêm border xanh lá khi active
+                          : "bg-white"
+                      }`}
+                      onClick={() => {
+                        setActiveClassId(classItem.id); // Khi click vào card
+                      }}
+                    >
+                      <div className="border rounded-md shadow-md overflow-hidden hover:shadow-2xl transition-shadow duration-300">
+                        <img
+                          src={classItem.imageUrl}
+                          alt={classItem.className}
+                          className="w-full h-32 object-cover"
+                        />
+                        <div className="p-4">
+                          <h5 className="font-bold text-gray-700">
+                            {classItem.className}
+                          </h5>
+                          <p className="text-gray-600">
+                            {classItem.classDescription}
+                          </p>
+                          <p className="text-gray-500">
+                            Thời gian: {classItem.startTime} -{" "}
+                            {classItem.endTime}
+                          </p>
+                          <p className="text-gray-500">
+                            Ngày bắt đầu:{" "}
+                            {new Date(classItem.startDate).toLocaleDateString()}
+                          </p>
+                          <p className="text-gray-500">
+                            Ngày kết thúc:{" "}
+                            {new Date(classItem.endDate).toLocaleDateString()}
+                          </p>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+              <div className="flex justify-between mt-2">
+                <button
+                  onClick={handlePrev}
+                  className="py-2 px-3 inline-flex items-center gap-x-2 text-sm font-medium rounded-lg border border-gray-200 bg-white text-gray-800 shadow-sm hover:bg-gray-50 focus:outline-none focus:bg-gray-50"
+                  disabled={currentSlide === 0}
+                >
+                  Prev
+                </button>
+                <button
+                  onClick={handleNext}
+                  className="py-2 px-3 inline-flex items-center gap-x-2 text-sm font-medium rounded-lg border border-gray-200 bg-white text-gray-800 shadow-sm hover:bg-gray-50 focus:outline-none focus:bg-gray-50"
+                  disabled={currentSlide >= Math.ceil(classes.length / 3) - 1}
+                >
+                  Next
+                </button>
+              </div>
+            </div>
+
+            {/* Popup for full text */}
+          </div>
           <div className="flex justify-start items-center mb-4">
             <p className="text-black font-bold text-4xl">{className}</p>
           </div>
-
           <div className="flex gap-4">
             <div className="w-2/5">
               <CourseTimeline
                 courseId={courseId}
-                onSelectTimeline={setTimelineIds} // Lưu danh sách ID
+                onSelectTimeline={setTimelineIds}
               />
             </div>
             <div className="w-3/5">
-              {timelineIds.length > 0 ? (
-                timelineIds.map((timelineId) => (
-                  <CourseTimelineDetail
-                    key={timelineId}
-                    timelineId={timelineId}
-                  />
-                ))
-              ) : (
-                <p>Vui lòng chọn một lộ trình để xem chi tiết.</p>
-              )}
+              <CourseTimelineDetail timelineIds={timelineIds} />
             </div>
           </div>
         </div>

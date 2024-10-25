@@ -19,7 +19,29 @@ export const fetchTests = createAsyncThunk(
   }
 );
 
-// Action to create a test
+export const uploadFile = createAsyncThunk(
+  `${SLICE_NAMES.TEST}/${ACTIONS.UPLOAD}`,
+  async (file, { rejectWithValue }) => {
+    const token = Cookies.get("authToken");
+    const formData = new FormData();
+    formData.append("file", file);
+
+    try {
+      const response = await axios.post(`${API_BASE_URL}/upload`, formData, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "multipart/form-data",
+        },
+      });
+      return response.data; // Return the response data
+    } catch (error) {
+      return rejectWithValue(
+        error.response?.data?.message || "Failed to upload file"
+      );
+    }
+  }
+);
+
 export const createTest = createAsyncThunk(
   `${SLICE_NAMES.TEST}/${ACTIONS.CREATE_TEST}`,
   async (testData, { rejectWithValue }) => {
@@ -107,8 +129,6 @@ export const addQuestions = createAsyncThunk(
   `${SLICE_NAMES.TEST}/${ACTIONS.ADD_QUESTIONS}`,
   async (questions, { rejectWithValue }) => {
     try {
-      console.log("questions", questions);
-
       const token = Cookies.get("authToken");
 
       await axios.post(
@@ -161,16 +181,59 @@ export const updateQuestion = createAsyncThunk(
   }
 );
 
+export const addSkills = createAsyncThunk(
+  `${SLICE_NAMES.TEST}/${ACTIONS.ADD_SKILLS}`,
+  async (skillsData, { rejectWithValue }) => {
+    try {
+      const token = Cookies.get("authToken");
+      const response = await axios.post(
+        `${API_BASE_URL}/test/skills/${"252A4406-F887-40E9-BF61-64B5F5804D46"}`,
+        skillsData,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
+      return response.data;
+    } catch (error) {
+      return rejectWithValue(
+        error.response?.data?.message || "Failed to add skills"
+      );
+    }
+  }
+);
+
 const initialState = {
   tests: [],
   status: STATUS.IDLE,
   error: null,
+  questions: [],
 };
 
 const TestSlice = createSlice({
   name: SLICE_NAMES.TEST,
   initialState,
-  reducers: {},
+  reducers: {
+    addQuestion: (state, action) => {
+      action.payload.forEach((newQuestion) => {
+        const questionId = newQuestion.id;
+        if (!state.questions.some((question) => question.id === questionId)) {
+          state.questions.push(newQuestion);
+        }
+      });
+    },
+
+    removeQuestion: (state, action) => {
+      state.questions = state.questions.filter(
+        (question) => question.id !== action.payload
+      );
+    },
+    clearQuestions: (state) => {
+      state.questions = [];
+    },
+  },
   extraReducers: (builder) => {
     builder
       // Fetch tests
@@ -232,5 +295,7 @@ const TestSlice = createSlice({
       });
   },
 });
-
+export const { addQuestion, removeQuestion, clearQuestions } =
+  TestSlice.actions;
+export const selectQuestions = (state) => state[SLICE_NAMES.TEST].questions;
 export default TestSlice.reducer;

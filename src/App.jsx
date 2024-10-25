@@ -96,7 +96,7 @@ const App = () => {
           <Route path="/mentorCourseList" element={<MentorCourseList />} />
 
           {/* Course */}
-          <Route path="/course" element={<CourseList />} />
+          <Route path="/courseList" element={<CourseList />} />
           <Route path="/createCourse" element={<CreateCourse />} />
           <Route path="/courseDetail/:courseId" element={<CourseDetail />} />
           <Route

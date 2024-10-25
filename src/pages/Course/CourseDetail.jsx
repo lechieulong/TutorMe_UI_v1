@@ -8,6 +8,7 @@ import axios from "axios";
 import { getUser } from "../../service/GetUser";
 
 const CourseDetail = () => {
+  const [activeClassId, setActiveClassId] = useState(null);
   const { className, courseId } = useParams();
   const [timelineIds, setTimelineIds] = useState([]);
   const [classes, setClasses] = useState([]);
@@ -78,10 +79,11 @@ const CourseDetail = () => {
   // Handle enrollment
   const handleEnroll = async () => {
     try {
-      if (userId) {
+      if (userId && activeClassId) {
         const enrollmentData = {
           courseId: courseId,
           userId: userId,
+          classId: activeClassId, // Sử dụng classId của card đang active
         };
         const response = await axios.post(
           "https://localhost:7030/api/Enrollment",
@@ -93,7 +95,7 @@ const CourseDetail = () => {
           setIsEnrolled(true);
         }
       } else {
-        alert("Người dùng chưa đăng nhập.");
+        alert("Người dùng chưa đăng nhập hoặc chưa chọn lớp.");
       }
     } catch (error) {
       console.error("Không thể ghi danh", error);
@@ -158,17 +160,43 @@ const CourseDetail = () => {
                   style={{ transform: `translateX(-${currentSlide * 100}%)` }}
                 >
                   {classes.map((classItem) => (
-                    <div key={classItem.id} className="flex-shrink-0 w-1/3 p-2">
-                      <div className="bg-gray-100 border rounded-md p-4">
-                        <h5 className="font-bold text-gray-700">
-                          {classItem.className}
-                        </h5>
-                        <p className="text-gray-600">
-                          {classItem.classDescription}
-                        </p>
-                        <p className="text-gray-500">
-                          Student Count: {classItem.count}
-                        </p>
+                    <div
+                      key={classItem.id}
+                      className={`flex-shrink-0 w-1/3 p-2 cursor-pointer transition-transform duration-300 ${
+                        activeClassId === classItem.id
+                          ? " border rounded-md border-green-500 shadow-lg" // Thêm border xanh lá khi active
+                          : "bg-white"
+                      }`}
+                      onClick={() => {
+                        setActiveClassId(classItem.id); // Khi click vào card
+                      }}
+                    >
+                      <div className="border rounded-md shadow-md overflow-hidden hover:shadow-2xl transition-shadow duration-300">
+                        <img
+                          src={classItem.imageUrl}
+                          alt={classItem.className}
+                          className="w-full h-32 object-cover"
+                        />
+                        <div className="p-4">
+                          <h5 className="font-bold text-gray-700">
+                            {classItem.className}
+                          </h5>
+                          <p className="text-gray-600">
+                            {classItem.classDescription}
+                          </p>
+                          <p className="text-gray-500">
+                            Thời gian: {classItem.startTime} -{" "}
+                            {classItem.endTime}
+                          </p>
+                          <p className="text-gray-500">
+                            Ngày bắt đầu:{" "}
+                            {new Date(classItem.startDate).toLocaleDateString()}
+                          </p>
+                          <p className="text-gray-500">
+                            Ngày kết thúc:{" "}
+                            {new Date(classItem.endDate).toLocaleDateString()}
+                          </p>
+                        </div>
                       </div>
                     </div>
                   ))}
@@ -177,14 +205,14 @@ const CourseDetail = () => {
               <div className="flex justify-between mt-2">
                 <button
                   onClick={handlePrev}
-                  className="px-4 py-2 bg-blue-500 text-white rounded-lg disabled:opacity-50"
+                  className="py-2 px-3 inline-flex items-center gap-x-2 text-sm font-medium rounded-lg border border-gray-200 bg-white text-gray-800 shadow-sm hover:bg-gray-50 focus:outline-none focus:bg-gray-50"
                   disabled={currentSlide === 0}
                 >
                   Prev
                 </button>
                 <button
                   onClick={handleNext}
-                  className="px-4 py-2 bg-blue-500 text-white rounded-lg disabled:opacity-50"
+                  className="py-2 px-3 inline-flex items-center gap-x-2 text-sm font-medium rounded-lg border border-gray-200 bg-white text-gray-800 shadow-sm hover:bg-gray-50 focus:outline-none focus:bg-gray-50"
                   disabled={currentSlide >= Math.ceil(classes.length / 3) - 1}
                 >
                   Next

@@ -24,10 +24,11 @@ const sectionTypesBySkill = {
     { value: 1, label: "Table/Note Completion" },
     { value: 2, label: "Sentence Completion" },
     { value: 3, label: "Summary Completion" },
-    { value: 4, label: "Labeling a Diagram/Map/Plan" },
-    { value: 5, label: "Matching Questions" },
-    { value: 6, label: "Short Answer Questions" },
-    { value: 7, label: "Multiple Choice Questions" },
+    { value: 4, label: "Labeling a Diagram/Map/Plan with filling" },
+    { value: 5, label: "Labeling a Diagram/Map/Plan with options" },
+    { value: 6, label: "Matching Questions" },
+    { value: 7, label: "Short Answer Questions" },
+    { value: 8, label: "Multiple Choice Questions" },
   ],
   Writing: [
     { value: 1, label: "Task 1" },
@@ -57,7 +58,6 @@ const SectionForm = ({ skill, partIndex, control }) => {
     const file = e.target.files[0];
     if (file) {
       try {
-        // Ensure uploadFile returns a promise and await its resolution
         const uri = await dispatch(uploadFile(file));
         field.onChange(uri);
       } catch (error) {
@@ -121,28 +121,32 @@ const SectionForm = ({ skill, partIndex, control }) => {
                   )}
                 />
 
-                <Controller
-                  name={`skills.${skill}.parts.${partIndex}.sections.${index}.image`}
-                  control={control}
-                  render={({ field }) => (
-                    <div className="mb-4">
-                      <label className="block text-gray-700 font-medium mb-2">
-                        Upload Image
-                      </label>
-                      <input
-                        type="file"
-                        accept="image/*"
-                        onChange={(e) => handleFileChange(e, field)}
-                        className="border p-1 w-full"
-                      />
-                      {field.value && (
-                        <p className="text-gray-700">
-                          Image file: {field.value.name}
-                        </p>
-                      )}
-                    </div>
-                  )}
-                />
+                {((skill === "Listening" &&
+                  (sectionType === 4 || sectionType === 5)) ||
+                  (skill === "Writing" && sectionType === 1)) && (
+                  <Controller
+                    name={`skills.${skill}.parts.${partIndex}.sections.${index}.image`}
+                    control={control}
+                    render={({ field }) => (
+                      <div className="mb-4">
+                        <label className="block text-gray-700 font-medium mb-2">
+                          Upload Image
+                        </label>
+                        <input
+                          type="file"
+                          accept="image/*"
+                          onChange={(e) => handleFileChange(e, field)}
+                          className="border p-1 w-full"
+                        />
+                        {field.value && (
+                          <p className="text-gray-700">
+                            Image file: {field.value.name}
+                          </p>
+                        )}
+                      </div>
+                    )}
+                  />
+                )}
               </div>
             )}
 
@@ -201,7 +205,7 @@ const SectionForm = ({ skill, partIndex, control }) => {
         onClick={() =>
           append({
             sectionGuide: "",
-            sectionType: 0, // Set the default sectionType to 0
+            sectionType: 0,
             image: null,
             questions: [],
           })

@@ -144,10 +144,10 @@ const SkillPart = () => {
             ))}
           </div>
 
-          <div className="border  text-gray-700 shadow-md  border-gray-300 p-2 flex justify-between mt-2 rounded-xl items-center">
+          <div className="border  text-gray-700 shadow-md  border-gray-300 p-6 flex justify-between mt-2 rounded-xl items-center">
             <div className="flex  items-center justify-start gap-9">
               <button
-                className="text-2xl font-semibold border-green-500"
+                className="text-2xl p-4 font-semibold border-green-500"
                 onClick={() => handleTakeFullTest(testId)} // Gửi id vào hàm
               >
                 <span>

@@ -25,7 +25,7 @@ const AnswerForm = ({
         sectionType === 7 ||
         sectionType === 8
           ? "Matching"
-          : sectionType === 2 || sectionType === 3
+          : skill === "Reading" && (sectionType === 2 || sectionType === 3)
           ? "True/False"
           : "Answer"}
       </h6>
@@ -50,7 +50,8 @@ const AnswerForm = ({
                     sectionType === 7 ||
                     sectionType === 8
                       ? "Matching"
-                      : sectionType === 2 || sectionType === 3
+                      : skill === "Reading" &&
+                        (sectionType === 2 || sectionType === 3)
                       ? "True or False answer"
                       : "Answer text"
                   }
@@ -67,8 +68,8 @@ const AnswerForm = ({
             sectionType !== 7 &&
             sectionType !== 8 && (
               <>
-                {sectionType === 2 || sectionType === 3 ? (
-                  // True/False Buttons
+                {skill === "Reading" &&
+                (sectionType === 2 || sectionType === 3) ? (
                   <Controller
                     name={`skills.${skill}.parts.${partIndex}.sections.${sectionIndex}.questions.${questionIndex}.answers.${index}.isCorrect`}
                     control={control}
@@ -87,11 +88,22 @@ const AnswerForm = ({
                           type="button"
                           onClick={() => field.onChange(0)} // Set to 0 (False)
                           className={`p-1 rounded ${
-                            field.value === 0 ? "bg-red-500" : "bg-gray-300"
+                            field.value === 0 ? "bg-green-500" : "bg-gray-300"
                           }`}
                         >
                           False
                         </button>
+                        {sectionType === 3 && (
+                          <button
+                            type="button"
+                            onClick={() => field.onChange(2)} // Set to 0 (False)
+                            className={`p-1 rounded ${
+                              field.value === 2 ? "bg-green-500" : "bg-gray-300"
+                            }`}
+                          >
+                            Not Given
+                          </button>
+                        )}
                       </div>
                     )}
                   />
@@ -126,19 +138,21 @@ const AnswerForm = ({
             )}
         </div>
       ))}
-      {sectionType !== 6 &&
-        sectionType !== 4 &&
-        sectionType !== 5 &&
-        sectionType !== 7 &&
-        sectionType !== 8 && (
-          <button
-            type="button"
-            onClick={() => append({ answerText: "", isCorrect: 0 })} // Default value is 0 (false)
-            className="bg-green-500 text-white p-2 rounded"
-          >
-            Add Answer
-          </button>
-        )}
+
+      {(skill === "Listening" && (sectionType === 7 || sectionType === 8)) ||
+        (skill === "Reading" &&
+          (sectionType === 1 ||
+            sectionType === 2 ||
+            sectionType === 3 ||
+            sectionType === 9) && (
+            <button
+              type="button"
+              onClick={() => append({ answerText: "", isCorrect: 0 })} // Default value is 0 (false)
+              className="bg-green-500 text-white p-2 rounded"
+            >
+              Add Answer
+            </button>
+          ))}
     </div>
   );
 };

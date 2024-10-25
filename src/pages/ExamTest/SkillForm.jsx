@@ -41,7 +41,7 @@ const SkillForm = ({ skill, control }) => {
       </h2>
 
       {/* Duration Input */}
-      <div className="mb-4 ">
+      <div className="mb-4">
         <Controller
           name={`skills.${skill}.duration`}
           control={control}
@@ -56,6 +56,7 @@ const SkillForm = ({ skill, control }) => {
                 type="number" // Set the input type to number
                 className="border p-2 rounded w-full focus:outline-none focus:ring-1 focus:ring-green-400"
                 placeholder="Duration"
+                onChange={(e) => field.onChange(Number(e.target.value))} // Convert string input to number
               />
               {fieldState.error && (
                 <p className="text-red-500">{fieldState.error.message}</p>

@@ -3,25 +3,50 @@ import { useFieldArray, Controller, useWatch } from "react-hook-form";
 import QuestionForm from "./QuestionForm";
 import { faMultiply } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-
 import { useDispatch } from "react-redux";
 import { uploadFile } from "../../redux/testExam/TestSlice";
 
-const sectionTypes = [
-  { value: 1, label: "Heading Matching" },
-  { value: 2, label: "Filling" },
-  { value: 3, label: "Multiple Choice" },
-  { value: 4, label: "Single Choice" },
-  { value: 5, label: "True/False" },
-];
+const sectionTypesBySkill = {
+  Reading: [
+    { value: 1, label: "Multiple Choice Questions" },
+    { value: 2, label: "True/False/Not Given Questions" },
+    { value: 3, label: "Yes/No/Not Given Questions" },
+    { value: 4, label: "Matching Headings" },
+    { value: 5, label: "Matching Information " },
+    { value: 6, label: "Matching Features" },
+    { value: 7, label: "Matching Sentence Endings" },
+    { value: 8, label: "Sentence Completion" },
+    { value: 9, label: "Short-answer Questions" },
+    { value: 10, label: "Diagram Completion" },
+    { value: 11, label: "Summary Completion" },
+  ],
+  Listening: [
+    { value: 1, label: "Table/Note Completion" },
+    { value: 2, label: "Sentence Completion" },
+    { value: 3, label: "Summary Completion" },
+    { value: 4, label: "Labeling a Diagram/Map/Plan" },
+    { value: 5, label: "Matching Questions" },
+    { value: 6, label: "Short Answer Questions" },
+    { value: 7, label: "Multiple Choice Questions" },
+  ],
+  Writing: [
+    { value: 1, label: "Task 1" },
+    { value: 2, label: "Task 2" },
+  ],
+  Speaking: [
+    { value: 1, label: "Part 1" },
+    { value: 2, label: "Part 2" },
+    { value: 3, label: "Part 3" },
+  ],
+};
 
 const SectionForm = ({ skill, partIndex, control }) => {
   const { fields, append, remove } = useFieldArray({
     name: `skills.${skill}.parts.${partIndex}.sections`,
     control,
   });
+  const sectionTypes = sectionTypesBySkill[skill] || [];
 
-  // Watch sectionType for each section
   const sectionTypeValues = useWatch({
     name: `skills.${skill}.parts.${partIndex}.sections`,
     control,
@@ -32,7 +57,8 @@ const SectionForm = ({ skill, partIndex, control }) => {
     const file = e.target.files[0];
     if (file) {
       try {
-        const uri = dispatch(uploadFile(file));
+        // Ensure uploadFile returns a promise and await its resolution
+        const uri = await dispatch(uploadFile(file));
         field.onChange(uri);
       } catch (error) {
         console.error("Error uploading image:", error);
@@ -77,6 +103,7 @@ const SectionForm = ({ skill, partIndex, control }) => {
                         className="border p-1 w-full"
                         onChange={(e) => field.onChange(Number(e.target.value))}
                         value={sectionType || ""}
+                        disabled={!!sectionType} // Disable the dropdown if sectionType is already selected
                       >
                         <option value="">Select Section Type</option>
                         {sectionTypes.map((type) => (
@@ -94,7 +121,6 @@ const SectionForm = ({ skill, partIndex, control }) => {
                   )}
                 />
 
-                {/* Image upload */}
                 <Controller
                   name={`skills.${skill}.parts.${partIndex}.sections.${index}.image`}
                   control={control}

@@ -7,7 +7,6 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 import { useState, useRef, useEffect } from "react";
 import NoteCard from "./NoteCard";
-import { useSelector } from "react-redux";
 
 const Header = ({
   testData,
@@ -16,13 +15,11 @@ const Header = ({
   handleSubmit,
 }) => {
   const [timeLeft, setTimeLeft] = useState(0);
-  const timerRef = useRef(null);
   const [isNoteOpen, setIsNoteOpen] = useState(false);
 
   const openNoteModal = () => setIsNoteOpen(true);
   const closeNoteModal = () => setIsNoteOpen(false);
 
-  // Format time display
   const formatTime = (seconds) => {
     const minutes = Math.floor(seconds / 60);
     const remainingSeconds = seconds % 60;
@@ -31,7 +28,6 @@ const Header = ({
     }`;
   };
 
-  // Manage timer logic
   useEffect(() => {
     if (Object.keys(testData).length > 0) {
       const currentSkillData = Object.values(testData)[currentSkillIndex];
@@ -40,15 +36,13 @@ const Header = ({
       const id = setInterval(() => {
         setTimeLeft((prevTimeLeft) => {
           if (prevTimeLeft <= 0) {
-            clearInterval(id);
-            setTimeout(() => {
-              if (currentSkillIndex < Object.keys(testData).length - 1) {
-                handleNextSkill();
-              } else {
-                handleSubmit();
-              }
-            }, 0);
-            return 0;
+            clearInterval(id); // Clear the interval when time runs out
+            if (currentSkillIndex === Object.keys(testData).length - 1) {
+              handleSubmit(); // Auto-submit only when time reaches zero on the last skill
+            } else {
+              handleNextSkill(); // Move to the next skill if there is one
+            }
+            return 0; // Ensure timeLeft doesn't go below zero
           }
           return prevTimeLeft - 1;
         });
@@ -56,7 +50,7 @@ const Header = ({
 
       return () => clearInterval(id); // Cleanup interval when component unmounts or currentSkillIndex changes
     }
-  }, [currentSkillIndex, testData, handleNextSkill, handleSubmit]);
+  }, [currentSkillIndex, testData, handleNextSkill]);
 
   return (
     <div className="flex-1 flex justify-between items-center p-4 bg-green-400 shadow-md">
@@ -96,6 +90,7 @@ const Header = ({
           </button>
         ) : (
           <button
+            type="button"
             onClick={handleSubmit}
             className="cursor-pointer inline-flex items-center gap-x-2 text-sm font-medium rounded-lg border border-transparent bg-red-500 text-white px-4 py-2"
           >

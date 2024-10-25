@@ -37,7 +37,6 @@ const QuestionForm = ({
       questionId: question.id, // Assuming `id` is the questionId you want to save
     }));
 
-    // Dispatch to Redux or whatever state management you're using
     dispatch(addQuestion(questionsToAdd));
 
     // Append questions to the form
@@ -83,7 +82,13 @@ const QuestionForm = ({
                       {...field}
                       className="border p-1 w-full"
                       placeholder={
-                        sectionType === 1 ? "Heading " : "Question Name"
+                        sectionType === 4 ||
+                        sectionType === 5 ||
+                        sectionType === 6 ||
+                        sectionType === 7 ||
+                        sectionType === 8
+                          ? "Heading "
+                          : "Question Name"
                       }
                     />
 
@@ -125,7 +130,7 @@ const QuestionForm = ({
           onClick={() =>
             append({
               questionName: "",
-              answers: [],
+              answers: [{ answerText: "", isCorrect: 0 }],
               isFromQuestionBank: false,
               questionType: sectionType,
             })

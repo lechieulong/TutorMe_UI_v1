@@ -43,8 +43,7 @@ const TestLayout = ({ skillsData }) => {
     }));
   }, []);
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
+  const handleSubmit = () => {
     console.log("haha");
 
     console.log("userAnswers", userAnswers);
@@ -69,21 +68,23 @@ const TestLayout = ({ skillsData }) => {
   const currentSkillData = testData[currentSkillKey];
 
   return (
-    <form onSubmit={handleSubmit}>
-      <div className="flex flex-col">
-        <Header
-          testData={testData}
-          currentSkillIndex={currentSkillIndex}
-          handleNextSkill={handleNextSkill}
-          handleSubmit={handleSubmit}
-        />
-        <TestView
-          skillData={currentSkillData}
-          currentSkillKey={currentSkillKey}
-          handleAnswerChange={handleAnswerChange}
-        />
-      </div>
-    </form>
+    <div className="w-screen">
+      <form onSubmit={handleSubmit}>
+        <div className="flex flex-col">
+          <Header
+            testData={testData}
+            currentSkillIndex={currentSkillIndex}
+            handleNextSkill={handleNextSkill}
+            handleSubmit={handleSubmit}
+          />
+          <TestView
+            skillData={currentSkillData}
+            currentSkillKey={currentSkillKey}
+            handleAnswerChange={handleAnswerChange}
+          />
+        </div>
+      </form>
+    </div>
   );
 };
 

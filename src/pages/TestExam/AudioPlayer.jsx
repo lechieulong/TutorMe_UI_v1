@@ -125,13 +125,13 @@ const AudioPlayer = ({ src }) => {
       <audio ref={audioRef} src={src} />
       <div className="flex  justify-center items-center ">
         <span>{formatTime(currentTime)}</span>
-        <button onClick={seekBackward}>
+        <button type="button" onClick={seekBackward}>
           <FontAwesomeIcon icon={faRotateLeft} /> 10s
         </button>
-        <button onClick={togglePlay}>
+        <button type="button" onClick={togglePlay}>
           <FontAwesomeIcon icon={isPlaying ? faPause : faPlay} />
         </button>
-        <button onClick={seekForward}>
+        <button type="button" onClick={seekForward}>
           10s
           <FontAwesomeIcon icon={faRotateRight} />
         </button>
@@ -149,6 +149,7 @@ const AudioPlayer = ({ src }) => {
 
       <div>
         <button
+          type="button"
           onClick={() =>
             handleVolumeChange({ target: { value: Math.max(0, volume - 0.1) } })
           }
@@ -164,6 +165,7 @@ const AudioPlayer = ({ src }) => {
           onChange={handleVolumeChange}
         />
         <button
+          type="button"
           onClick={() =>
             handleVolumeChange({ target: { value: Math.min(1, volume + 0.1) } })
           }

@@ -10,9 +10,9 @@ import MainLayout from "../../layout/MainLayout";
 const CreateTest = () => {
   const { control, resetField, handleSubmit, setValue, getValues } = useForm();
 
-  const [activeStep, setActiveStep] = useState(0); // Active step index
-  const [formData, setFormData] = useState(null); // To hold form data from TestFormDetail
-  const [selectedSkills, setSelectedSkills] = useState([]); // Move selectedSkills to parent
+  const [activeStep, setActiveStep] = useState(0);
+  const [formData, setFormData] = useState(null);
+  const [selectedSkills, setSelectedSkills] = useState([]);
   const dispatch = useDispatch();
 
   const steps = [
@@ -22,8 +22,8 @@ const CreateTest = () => {
         <TestFormDetail
           control={control}
           resetField={resetField}
-          setSelectedSkills={setSelectedSkills} // Pass down setSelectedSkills
-          selectedSkills={selectedSkills} // Pass down selectedSkills
+          setSelectedSkills={setSelectedSkills}
+          selectedSkills={selectedSkills}
         />
       ),
     },
@@ -38,7 +38,7 @@ const CreateTest = () => {
 
     if (formData) {
       dispatch(addSkills(formData));
-      alert("Test Created!"); // You can replace this with your actual submission logic
+      alert("Test Created!");
     } else {
       alert("Please fill out the form before finishing.");
     }
@@ -48,13 +48,20 @@ const CreateTest = () => {
     setFormData(data);
   };
 
+  const handleNext = () => {
+    // Validate the form before proceeding to the next step
+    handleSubmit((data) => {
+      setFormData(data);
+      setActiveStep((prev) => Math.min(prev + 1, steps.length - 1));
+    })();
+  };
+
   return (
     <MainLayout>
       <form onSubmit={handleSubmit(onSubmit)}>
         <div className="mt-16 p-10 ">
-          {/* Stepper */}
           <div className="">
-            <ul className="relative flex flex-row justify-between gap-x-2  ">
+            <ul className="relative flex flex-row justify-between gap-x-2">
               {steps.map((step, index) => (
                 <div
                   key={index}
@@ -82,13 +89,9 @@ const CreateTest = () => {
             </ul>
           </div>
 
-          {/* End Stepper */}
-
-          {/* Step Content */}
           <div>{steps[activeStep].content}</div>
 
-          {/* Navigation Buttons */}
-          <div className="flex justify-between ">
+          <div className="flex justify-between">
             <button
               className={`py-2 px-4 rounded bg-gray-200 text-gray-600 ${
                 activeStep === 0 ? "opacity-50 cursor-not-allowed" : ""
@@ -99,13 +102,11 @@ const CreateTest = () => {
               Previous
             </button>
             <button
-              type="submit"
+              type="button"
               className={`py-2 px-4 rounded bg-green-500 text-white ${
                 activeStep === steps.length - 1 ? "hidden" : ""
               }`}
-              onClick={() =>
-                setActiveStep((prev) => Math.min(prev + 1, steps.length - 1))
-              }
+              onClick={handleNext} // Validate and go to next step
             >
               Next
             </button>
@@ -113,7 +114,7 @@ const CreateTest = () => {
               className={`py-2 px-4 rounded bg-green-500 text-white ${
                 activeStep !== steps.length - 1 ? "hidden" : ""
               }`}
-              onClick={handleFinish} // Call handleFinish here
+              onClick={handleFinish}
             >
               Finish
             </button>

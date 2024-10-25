@@ -41,7 +41,7 @@ const AnswerView = ({ partData, currentSkillKey, handleAnswerChange }) => {
             <div key={sectionIndex}>
               <p>{section.sectionGuide}</p>
               {section.questions.map((question, index) => (
-                <div key={question.id}>
+                <div key={index}>
                   <p>{question.questionName}</p>
                   <input
                     type="text"
@@ -62,13 +62,13 @@ const AnswerView = ({ partData, currentSkillKey, handleAnswerChange }) => {
         </>
       )}
 
-      {/* {currentSkillKey === "writing" && (
+      {currentSkillKey === "writing" && (
         <Writing
           partData={partData}
           currentSkillKey={currentSkillKey}
           handleAnswerChange={handleAnswerChange}
         />
-      )} */}
+      )}
     </form>
   );
 };

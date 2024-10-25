@@ -303,6 +303,34 @@ const mockTestData = {
           },
         ],
       },
+      {
+        id: 2,
+        partNumber: 2,
+        contentText: "<p>Learn additional vocabulary words.</p>",
+        audio: null,
+        image: "https://unsplash.com/photos/jGm1kjkVp8I",
+        questionName: "Vocabulary Section 2",
+        sections: [
+          {
+            id: 2,
+            sectionGuide: "Use the following words in a sentence:",
+            sectionType: 5,
+            image: "",
+            questions: [
+              {
+                id: 3,
+                questionName: "Use 'ambiguous' in a sentence.",
+                answers: [],
+              },
+              {
+                id: 4,
+                questionName: "Use 'cognizant' in a sentence.",
+                answers: [],
+              },
+            ],
+          },
+        ],
+      },
     ],
   },
 };

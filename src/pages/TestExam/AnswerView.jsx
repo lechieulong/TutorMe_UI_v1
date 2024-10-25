@@ -112,6 +112,12 @@ const AnswerView = ({ partData, currentSkillKey, handleAnswerChange }) => {
               <p>{section.sectionGuide}</p>
               {section.sectionType === 4 && (
                 <div>
+                  <h4>Questions:</h4>
+                  {section.questions.map((question, index) => (
+                    <p key={index}>{question.questionName}</p>
+                  ))}
+
+                  <h4>Answers:</h4>
                   {section.questions.map((question, index) => (
                     <div key={index}>
                       <p>{question.questionName}</p>
@@ -123,6 +129,16 @@ const AnswerView = ({ partData, currentSkillKey, handleAnswerChange }) => {
                   ))}
                 </div>
               )}
+              {section.sectionType !== 4 &&
+                section.questions.map((question, index) => (
+                  <div key={index}>
+                    <p>{question.questionName}</p>
+                    {renderInputBasedOnSectionType(
+                      section.sectionType,
+                      question
+                    )}
+                  </div>
+                ))}
             </div>
           ))}
         </>

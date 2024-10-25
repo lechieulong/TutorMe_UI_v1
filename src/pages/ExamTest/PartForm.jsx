@@ -120,8 +120,7 @@ const PartForm = ({ skill, control }) => {
               />
             )}
 
-            {/* Input for Image (Only for Writing) */}
-            {/* {skill === "Writing" && (
+            {skill === "Writing" && index === 0 && (
               <Controller
                 name={`skills.${skill}.parts.${index}.image`}
                 control={control}
@@ -147,7 +146,7 @@ const PartForm = ({ skill, control }) => {
                   </div>
                 )}
               />
-            )} */}
+            )}
 
             <SectionForm skill={skill} partIndex={index} control={control} />
           </div>
@@ -159,7 +158,8 @@ const PartForm = ({ skill, control }) => {
         onClick={() =>
           append({
             contentText: "",
-            audio: null,
+            audio: "",
+            image: "",
           })
         }
         className="border border-green-400 text-gray-600 p-2 rounded"

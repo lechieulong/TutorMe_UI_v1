@@ -45,7 +45,10 @@ const SkillForm = ({ skill, control }) => {
         <Controller
           name={`skills.${skill}.duration`}
           control={control}
-          rules={{ required: "Duration is required" }} // Validation for duration
+          rules={{
+            required: "Duration is required",
+            min: { value: 1, message: "Duration must be greater than 0" },
+          }} // Validation for duration
           render={({ field, fieldState }) => (
             <div className="mb-2">
               <label className="block text-gray-700 font-medium mb-2">

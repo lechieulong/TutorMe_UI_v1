@@ -31,7 +31,7 @@ const Header = ({
   useEffect(() => {
     if (Object.keys(testData).length > 0) {
       const currentSkillData = Object.values(testData)[currentSkillIndex];
-      setTimeLeft(currentSkillData.duration * 10); // Set time in seconds for the current skill
+      setTimeLeft(currentSkillData.duration * 60); // Set time in seconds for the current skill
 
       const id = setInterval(() => {
         setTimeLeft((prevTimeLeft) => {

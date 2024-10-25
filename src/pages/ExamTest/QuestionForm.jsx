@@ -71,33 +71,40 @@ const QuestionForm = ({
           </div>
           {!question.isFromQuestionBank ? (
             <>
-              <Controller
-                name={`skills.${skill}.parts.${partIndex}.sections.${sectionIndex}.questions.${index}.questionName`}
-                control={control}
-                defaultValue={question.questionName || ""}
-                rules={{ required: "Question Name is required" }}
-                render={({ field, fieldState }) => (
-                  <div className="mb-2">
-                    <input
-                      {...field}
-                      className="border p-1 w-full"
-                      placeholder={
-                        sectionType === 4 ||
-                        sectionType === 5 ||
-                        sectionType === 6 ||
-                        sectionType === 7 ||
-                        sectionType === 8
-                          ? "Heading "
-                          : "Question Name"
-                      }
-                    />
+              {((skill === "Listening" && sectionType !== 5) ||
+                skill === "Reading" ||
+                skill === "Speaking" ||
+                skill === "Writing") && (
+                <Controller
+                  name={`skills.${skill}.parts.${partIndex}.sections.${sectionIndex}.questions.${index}.questionName`}
+                  control={control}
+                  defaultValue={question.questionName || ""}
+                  rules={{ required: "Question Name is required" }}
+                  render={({ field, fieldState }) => (
+                    <div className="mb-2">
+                      <input
+                        {...field}
+                        className="border p-1 w-full"
+                        placeholder={
+                          sectionType === 4 ||
+                          sectionType === 5 ||
+                          sectionType === 6 ||
+                          sectionType === 7
+                            ? "Heading "
+                            : "Question Name"
+                        }
+                      />
 
-                    {fieldState.error && (
-                      <p className="text-red-500">{fieldState.error.message}</p>
-                    )}
-                  </div>
-                )}
-              />
+                      {fieldState.error && (
+                        <p className="text-red-500">
+                          {fieldState.error.message}
+                        </p>
+                      )}
+                    </div>
+                  )}
+                />
+              )}
+
               {(skill === "Reading" || skill === "Listening") && (
                 <AnswerForm
                   skill={skill}

@@ -10,7 +10,6 @@ const Topic = ({ partData, currentSkillKey }) => {
   useEffect(() => {
     if (partData && partData.contentText) {
       setContent(partData.contentText);
-      setContent("");
     }
   }, [partData]);
 
@@ -31,7 +30,7 @@ const Topic = ({ partData, currentSkillKey }) => {
       setSelection(selectedText);
       setShowButtons(true); // Show buttons when text is selected
     } else {
-      setSelection(null); // Reset selection if nothing is selected
+      setSelection(null);
       setShowButtons(false); // Hide buttons if no selection
     }
   };
@@ -69,6 +68,12 @@ const Topic = ({ partData, currentSkillKey }) => {
     <div className="p-5" onMouseUp={handleMouseUp}>
       {currentSkillKey === "writing" && (
         <>
+          {partData.image}
+          <img
+            src={partData.image}
+            alt=" image"
+            style={{ width: "100%", height: "auto" }}
+          />
           {partData.sections.map((section, index) => (
             <div key={index}>
               <p>{section.sectionGuide}</p>
@@ -77,7 +82,7 @@ const Topic = ({ partData, currentSkillKey }) => {
         </>
       )}
 
-      {currentSkillKey === "reading" && (
+      {currentSkillKey.toLowerCase() === "reading" && (
         <>
           <div
             className="mt-4 font-semibold"

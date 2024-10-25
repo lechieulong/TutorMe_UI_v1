@@ -12,7 +12,8 @@ const CourseCard = ({
   icon,
   teacher,
   courseId,
-  onDelete = null, // Thêm prop onDelete với giá trị mặc định là null
+  onDelete = null,
+  isEnabled,
 }) => {
   const location = useLocation(); // Lấy thông tin về đường dẫn hiện tại
 
@@ -32,8 +33,13 @@ const CourseCard = ({
   let destinationPath;
   if (location.pathname === "/mentorCourseList") {
     destinationPath = `/mentorCourseDetail/${courseId}`;
-  } else if (location.pathname === "/course") {
+  } else if (location.pathname === "/courseList") {
     destinationPath = `/courseDetail/${courseId}`;
+  }
+
+  // Nếu isEnabled là false, không render component
+  if (!isEnabled) {
+    return null;
   }
 
   return (

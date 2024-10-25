@@ -97,7 +97,11 @@ const Header = () => {
             </a>
             <a
               className="font-medium text-black focus:outline-none"
-              href={`/live-stream${user===null||user.role==="USER"?'':`?RoomId=${user.sub}`}`}
+              href={`/live-stream${
+                user === null || user.role === "USER"
+                  ? ""
+                  : `?RoomId=${user.sub}`
+              }`}
             >
               <span className="mr-2">
                 <FontAwesomeIcon icon={faTv} />
@@ -106,7 +110,7 @@ const Header = () => {
             </a>
             <Link
               className="font-medium text-black focus:outline-none"
-              to="/course"
+              to="/courseList"
             >
               <span className="mr-2">
                 <FontAwesomeIcon icon={faBook} />

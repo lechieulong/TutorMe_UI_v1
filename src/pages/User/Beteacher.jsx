@@ -96,10 +96,10 @@ const EducationSection = () => {
     const handleSubmit = (e) => {
         e.preventDefault();
         const errors = validateForm();
-    
+
         if (Object.keys(errors).length === 0) {
             setFormErrors({});
-    
+
             const userData = {
                 teacherId: "",
                 aboutMe: formData.aboutMe,
@@ -110,8 +110,8 @@ const EducationSection = () => {
                 isApprove: false,
                 isReject: false,
                 specializationIds: Object.keys(formData.specialization)
-                .filter(key => formData.specialization[key]) // Extract checked specialization IDs
-                .filter(id => id !== "acceptedTerms"),
+                    .filter(key => formData.specialization[key]) // Extract checked specialization IDs
+                    .filter(id => id !== "acceptedTerms"),
             };
 
             dispatch(BeTeacher(userData));
@@ -248,15 +248,15 @@ const EducationSection = () => {
                                         </div>
 
                                         <div className="flex justify-end">
+                                            {beTeacherStatus === "pending" && (
+                                                <p className="font-mono px-4 py-2 text-xs text-yellow-500 text-center mt-2">checking...</p>
+                                            )}
+                                            {beTeacherStatus === "failed" && (
+                                                <p className="font-mono px-4 py-2 text-xs text-red-500 text-center mt-2">{beTeacherError}</p>
+                                            )}
                                             <button type="submit" className="px-4 py-2 bg-green-500 text-white rounded hover:bg-blue-500">
                                                 Next
                                             </button>
-                                            {beTeacherStatus === "pending" && (
-                                                <p className="font-mono text-xs text-yellow-500 text-center mt-2">checking...</p>
-                                            )}
-                                            {beTeacherStatus === "failed" && (
-                                                <p className="font-mono text-xs text-red-500 text-center mt-2">{beTeacherError}</p>
-                                            )}
                                         </div>
                                     </div>
                                 </form>

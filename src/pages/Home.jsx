@@ -4,7 +4,7 @@ import SubjectListCard from "../components/common/SubjectListCard";
 import idols from "../data/idols";
 import subjects from "../data/subjects";
 import MainLayout from "../layout/MainLayout";
-import Calendar from "../components/common/linkToCalendar";
+import LinkTo from "../components/common/linkToCalendar";
 
 const Home = () => {
   return (
@@ -54,7 +54,7 @@ const Home = () => {
           </div>
         </div>
       </div>
-      <Calendar/>
+      <LinkTo/>
     </MainLayout>
   );
 };

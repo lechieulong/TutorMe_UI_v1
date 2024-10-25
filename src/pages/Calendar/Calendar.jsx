@@ -29,9 +29,15 @@ const MyCalendar = () => {
     }, [navigate]);
 
     useEffect(() => {
-        dispatch(GetEventByUserId()); // Fetch events when component mounts
+        const fetchEvents = async () => {
+            await dispatch(GetEventByUserId()).unwrap()
+                .catch((error) => {
+                    console.error('Failed to fetch events:', error);
+                });
+        };
+        fetchEvents();
     }, [dispatch]);
-
+    
     useEffect(() => {
         if (eventsFromRedux) {
             setEvents(eventsFromRedux); // Update local events when redux events change

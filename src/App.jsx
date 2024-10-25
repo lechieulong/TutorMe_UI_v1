@@ -46,6 +46,9 @@ import MentorCourseList from "./pages/Mentor/MentorCourseList";
 import Error404 from "./pages/Error/Error404";
 import QuestionBank from "./pages/ExamTest/questionBank/QuestionBank";
 
+//ADMIN
+import AdminApp from "./pages/ADMIN/Index";
+
 const App = () => {
   return (
     <div className=" min-h-screen ">
@@ -109,6 +112,9 @@ const App = () => {
           <Route path="/testlist" element={<TestList />} />
 
           <Route path="/404" element={<Error404 />} />
+
+          {/* ADMIN */}
+          <Route path="/admin/app/*" element={<AdminApp />} />
         </Routes>
       </Router>
     </div>

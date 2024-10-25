@@ -63,7 +63,7 @@ export const BeTeacher = createAsyncThunk(
         try {
             const token = Cookies.get("authToken");
             const response = await axios.post(
-                `${apiURLConfig.baseURL}/usereducation`, userData,
+                `${apiURLConfig.baseURL}/teacherrequest/beteacher`, userData,
                 {
                     headers: {
                         'Authorization': `Bearer ${token}`, // Include token in the request headers

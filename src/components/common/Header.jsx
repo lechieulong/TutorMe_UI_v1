@@ -7,6 +7,7 @@ import { Roles } from "../../utils/config";
 import defaulAvatar from "../../assets/images/defaul-avatar.jpg";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { FaGraduationCap } from "react-icons/fa";
+import { FaInfinity } from "react-icons/fa";
 import {
   faHouse,
   faTv,
@@ -61,6 +62,15 @@ const Header = () => {
           <div className="sm:order-3 flex items-center gap-x-2">
             {authToken ? (
               <>
+                {user?.role?.includes(Roles.ADMIN) && (
+                  <Link
+                    to="/admin/app"
+                    type="button"
+                    className="py-2 px-3 inline-flex items-center gap-x-2 text-sm font-medium rounded-lg border border-gray-200 bg-white text-gray-800 shadow-sm hover:bg-gray-50 focus:outline-none focus:bg-gray-50 disabled:opacity-50 disabled:pointer-events-none dark:border-neutral-700 transition-hover transition-transform duration-500 dark:hover:scale-110"
+                  >
+                    <FaInfinity className="text-xl" />
+                  </Link>
+                )}
                 <button
                   type="button"
                   className="py-2 px-3 inline-flex items-center gap-x-2 text-sm font-medium rounded-lg border border-gray-200 bg-white text-gray-800 shadow-sm hover:bg-gray-50 focus:outline-none focus:bg-gray-50 disabled:opacity-50 disabled:pointer-events-none   dark:border-neutral-700 transition-hover transition-transform duration-500 dark:hover:scale-110"

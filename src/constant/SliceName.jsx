@@ -51,7 +51,10 @@ export const ACTIONS = {
   GET_SCHEDULE_7DAYS: "getschedule7days",
 
   //Specialization
-  GET_SPECIALIZATION: "getspecialization"
+  GET_SPECIALIZATION: "getspecialization",
+
+  //ADMIN
+  GET_ALL_USERS: "getallusers"
 };
 
 export const STATUS = {

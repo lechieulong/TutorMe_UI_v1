@@ -5,7 +5,7 @@ import { requestForgotAPI } from '../../redux/auth/AuthSlice';
 
 const ForgotPassword = () => {
     const dispatch = useDispatch();
-    const { status, error } = useSelector((state) => state.auth);
+    const { forgotPasswordStatus, error } = useSelector((state) => state.auth);
 
     const [formData, setFormData] = useState({
         email: '',
@@ -81,15 +81,15 @@ const ForgotPassword = () => {
                             <button className="w-full px-4 py-2 font-bold text-white bg-blue-500 rounded-full hover:bg-blue-700 focus:outline-none focus:shadow-outline" type="submit">
                                 Reset Password
                             </button>
-                            {status === "success" && (
+                            {forgotPasswordStatus === "success" && (
                                 <p className="font-mono text-xs text-green-500 text-center mt-2">
                                     Please <Link to="https://mail.google.com/" className="underline text-blue-500" target="_blank" rel="noopener noreferrer">Check your email</Link>.
                                 </p>
                             )}
-                            {status === "pending" && (
+                            {forgotPasswordStatus === "pending" && (
                                 <p className="font-mono text-xs text-yellow-500 text-center mt-2">Sending email...</p>
                             )}
-                            {status === "failed" && (
+                            {forgotPasswordStatus === "failed" && (
                                 <p className="font-mono text-xs text-red-500 text-center mt-2">{error}</p>
                             )}
                         </div>

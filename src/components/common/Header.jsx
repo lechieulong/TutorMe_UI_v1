@@ -141,7 +141,7 @@ const Header = () => {
               </Link>
               <Link
                 className="font-medium text-black focus:outline-none"
-                to="/course"
+                to="/courseList"
               >
                 <span className="mr-2">
                   <FontAwesomeIcon icon={faBook} />

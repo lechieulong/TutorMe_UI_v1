@@ -97,13 +97,13 @@ const Header = () => {
                   Logout
                 </button>
                 {!user?.role?.includes(Roles.ADMIN) && (
-                <Link to={`/user/${user?.userName}`}>
-                  <img
-                    className="inline-block w-[38px] h-[38px] rounded-full transition-transform duration-300 transform hover:scale-110 hover:bg-gray-50 focus:outline-none focus:bg-gray-50"
-                    src={user?.imageURL || defaulAvatar}
-                    alt="Avatar"
-                  />
-                </Link>
+                  <Link to={`/user/${user?.userName}`}>
+                    <img
+                      className="inline-block w-[38px] h-[38px] rounded-full transition-transform duration-300 transform hover:scale-110 hover:bg-gray-50 focus:outline-none focus:bg-gray-50"
+                      src={user?.imageURL || defaulAvatar}
+                      alt="Avatar"
+                    />
+                  </Link>
                 )}
               </>
             ) : (
@@ -130,15 +130,18 @@ const Header = () => {
                 </span>
                 Home
               </a>
-              <Link
+              <a
                 className="font-medium text-black focus:outline-none"
-                to={`/live-stream${user === null || user.role === "USER" ? '' : `?RoomId=${user.sub}`}`}
+                href={`/live-stream${user === null || user.role === "USER"
+                    ? ""
+                    : `?RoomId=${user.sub}`
+                  }`}
               >
                 <span className="mr-2">
                   <FontAwesomeIcon icon={faTv} />
                 </span>
                 Livestreams
-              </Link>
+              </a>
               <Link
                 className="font-medium text-black focus:outline-none"
                 to="/courseList"

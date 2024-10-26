@@ -39,7 +39,7 @@ const TestForm = ({ sectionCourseId }) => {
     <>
       <form
         onSubmit={handleSubmit(onSubmit)}
-        className="space-y-6 p-6 max-w-lg mt-20 mx-auto bg-white shadow-lg rounded-xl"
+        className="space-y-6 p-6 max-w-lg mx-auto bg-white shadow-lg rounded-xl"
       >
         {/* Test Name */}
         <div className="relative">

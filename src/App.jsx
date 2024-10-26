@@ -47,6 +47,10 @@ import MentorCourseList from "./pages/Mentor/MentorCourseList";
 import Error404 from "./pages/Error/Error404";
 import NotAuthorizedPage from "./pages/Error/NotAuthorizedPage"
 import QuestionBank from "./pages/ExamTest/questionBank/QuestionBank";
+import PayOS from "./pages/User/PayOS";
+import PaymentResult from "./pages/User/PayOSResult ";
+import CreateTestLayout from "./pages/course/CreateTestLayout";
+import CourseLayout from "./pages/course/CourseLayout";
 
 //ADMIN
 import AdminApp from "./pages/ADMIN/Index";
@@ -77,6 +81,7 @@ const App = () => {
           <Route path="/testDetail/:testId" element={<SkillPart />} />
           <Route path="/create-skill" element={<CreateTest />} />
           <Route path="/create-test/:sectionCourseId" element={<TestForm />} />
+          <Route path="/create-test" element={<CreateTestLayout />} />
           <Route path="/questionbank" element={<QuestionBank />} />
 
           {/* LiveStream  exam*/}
@@ -101,6 +106,8 @@ const App = () => {
           <Route path="/mentorCourseList" element={<MentorCourseList />} />
 
           {/* Course */}
+          <Route path="/courseLayout" element={<CourseLayout />} />
+
           <Route path="/courseList" element={<CourseList />} />
           <Route path="/createCourse" element={<CreateCourse />} />
           <Route path="/courseDetail/:courseId" element={<CourseDetail />} />
@@ -124,6 +131,9 @@ const App = () => {
           {/* Error page */}
           <Route path="/404" element={<Error404 />} />
           <Route path="/not-authorized" element={<NotAuthorizedPage />} />
+
+          <Route path="/Payment" element={<PayOS />} />
+          <Route path="/Paymentresult" element={<PaymentResult />} />
 
           {/* ADMIN */}
           <Route path="/admin/app/*" element={

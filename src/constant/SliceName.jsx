@@ -40,6 +40,7 @@ export const ACTIONS = {
   UPDATE_QUESTION: "updateQuestion",
   ADD_SKILLS: "addSkills",
 
+  GET_USER_BY_ID: "getuserbyid",
   GET_USER_INFORMATION: "getProfile",
   GET_TOP10_TEACHERS: "getTop10Teachers",
   SEARCH_TEACHER: "searchteacher",
@@ -56,7 +57,8 @@ export const ACTIONS = {
   GET_SPECIALIZATION: "getspecialization",
 
   //ADMIN
-  GET_ALL_USERS: "getallusers"
+  GET_ALL_USERS: "getallusers",
+  LOCK_USER: "lockuser",
 };
 
 export const STATUS = {

@@ -1,11 +1,16 @@
-// LockoutModal.js
 import React, { useState } from 'react';
 
 const LockoutModal = ({ isOpen, onClose, onLock }) => {
     const [duration, setDuration] = useState('');
 
     const handleLock = () => {
-        onLock(duration);
+        const parsedDuration = parseInt(duration, 10);
+        if (isNaN(parsedDuration) || parsedDuration <= 0) {
+            alert("Please enter a valid duration.");
+            return;
+        }
+        onLock(parsedDuration);
+        setDuration('');
         onClose();
     };
 

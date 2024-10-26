@@ -19,8 +19,10 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 import { useEffect, useState } from "react";
 import LoginModal from "./LoginModal";
+import { CheckAuthUser } from "../../service/checkAuth";
 
 const Header = () => {
+  const isAuthenticated = CheckAuthUser();
   const [isModalOpen, setModalOpen] = useState(false); // State to manage modal visibility
 
   const handleOpenModal = () => {
@@ -36,11 +38,21 @@ const Header = () => {
   const [user, setUser] = useState(null);
 
   useEffect(() => {
-    if (authToken) {
-      const fetchedUser = getUser(); // Fetch the user using getUser
-      setUser(fetchedUser); // Set user data in state
-    }
-  }, [authToken]);
+    const fetchUserData = async () => {
+      if (authToken) {
+        if (isAuthenticated) {
+          const fetchedUser = await getUser(); // Fetch user data
+          setUser(fetchedUser); // Set user data in state
+        } else {
+          setUser(null);
+        }
+      } else {
+        setUser(null);
+      }
+    };
+
+    fetchUserData();
+  }, [authToken, isAuthenticated]);
 
   const handleLogout = () => {
     Cookies.remove("authToken");
@@ -84,6 +96,7 @@ const Header = () => {
                 >
                   Logout
                 </button>
+                {!user?.role?.includes(Roles.ADMIN) && (
                 <Link to={`/user/${user?.userName}`}>
                   <img
                     className="inline-block w-[38px] h-[38px] rounded-full transition-transform duration-300 transform hover:scale-110 hover:bg-gray-50 focus:outline-none focus:bg-gray-50"
@@ -91,6 +104,7 @@ const Header = () => {
                     alt="Avatar"
                   />
                 </Link>
+                )}
               </>
             ) : (
               <button
@@ -154,12 +168,6 @@ const Header = () => {
                 </span>
                 MyLearning
               </Link>
-              {/* <a className="font-medium text-black focus:outline-none" href="#">
-              <span className="mr-2">
-                <FontAwesomeIcon icon={faUserGraduate} />
-              </span>
-              Mentor register
-            </a> */}
             </div>
           </div>
         </nav>

@@ -65,7 +65,7 @@ const MyCalendar = () => {
                                         {/* Hiển thị mô tả và liên kết nếu có */}
                                         {event.description && <p>{event.description}</p>}
                                         {event.link && (
-                                            <a href={event.link} target="_blank" rel="noopener noreferrer">
+                                            <a href={event.link} target="_blank" rel="noopener noreferrer" className="text-green-500" >
                                                 Join meet
                                             </a>
                                         )}
@@ -83,6 +83,11 @@ const MyCalendar = () => {
                                     event: ({ event }) => (
                                         <span>
                                             <strong>{event.title}</strong>
+                                            {event.link && (
+                                                <a href={event.link} target="_blank" rel="noopener noreferrer" className="text-green-500">
+                                                    Join meet
+                                                </a>
+                                            )}
                                             {/* Week view chỉ hiển thị tiêu đề */}
                                         </span>
                                     ),
@@ -92,6 +97,11 @@ const MyCalendar = () => {
                                         <span>
                                             <strong>{event.title}</strong>
                                             {/* Day view chỉ hiển thị tiêu đề */}
+                                            {event.link && (
+                                                <a href={event.link} target="_blank" rel="noopener noreferrer" className="text-green-500">
+                                                    Join meet
+                                                </a>
+                                            )}
                                         </span>
                                     ),
                                 },
@@ -102,7 +112,7 @@ const MyCalendar = () => {
                                             {/* Agenda view hiển thị đầy đủ thông tin */}
                                             {event.description && <p>{event.description}</p>}
                                             {event.link && (
-                                                <a href={event.link} target="_blank" rel="noopener noreferrer">
+                                                <a href={event.link} target="_blank" rel="noopener noreferrer" className="text-green-500">
                                                     Join meet
                                                 </a>
                                             )}

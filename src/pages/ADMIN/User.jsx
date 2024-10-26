@@ -1,18 +1,24 @@
 import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { Admin_GetUsers } from '../../redux/ADMIN/UserSlice';
+import { Admin_GetUsers, Admin_LockUser } from '../../redux/ADMIN/UserSlice';
 import { FaLock, FaLockOpen } from 'react-icons/fa';
 import LockoutModal from '../../components/ADMIN/LockoutModal';
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+import { FaAngleLeft, FaAngleRight } from "react-icons/fa";
+import Pagination from '../../components/ADMIN/Pagination';
 
 const Users = () => {
     const dispatch = useDispatch();
-    const { users, getuserstatus } = useSelector((state) => state.ADMIN_userslice);
+    const { users, getuserstatus, totalUsers, totalPages } = useSelector((state) => state.ADMIN_userslice); // totalUsers để biết tổng số người dùng
     const [isModalOpen, setModalOpen] = useState(false);
     const [currentUser, setCurrentUser] = useState(null);
+    const [currentPage, setCurrentPage] = useState(1);
+    const pageSize = 1; // Số lượng người dùng trên mỗi trang
 
     useEffect(() => {
-        dispatch(Admin_GetUsers({ page: 1, pageSize: 10 }));
-    }, [dispatch]);
+        dispatch(Admin_GetUsers({ page: currentPage, pageSize }));
+    }, [dispatch, currentPage]);
 
     const handleLockClick = (user) => {
         setCurrentUser(user);
@@ -20,10 +26,25 @@ const Users = () => {
     };
 
     const handleLock = (duration) => {
-        // Implement your lock logic here
-        console.log(`Locking user ${currentUser.name} for ${duration} minutes.`);
-        // Call your lockout action here with the duration and user ID
+        if (currentUser) {
+            dispatch(Admin_LockUser({
+                userId: currentUser.id,
+                durationInMinutes: duration,
+            }))
+                .unwrap()
+                .then(() => {
+                    toast.success(`User locked for ${duration} minutes`);
+                    // Gọi lại danh sách người dùng
+                    dispatch(Admin_GetUsers({ page: currentPage, pageSize }));
+                })
+                .catch((error) => {
+                    toast.error("Failed to lock user");
+                    console.error("Failed to lock user:", error);
+                });
+        }
     };
+
+    // const totalPages = totalUsers > pageSize ? Math.ceil(totalUsers / pageSize) : 1;
 
     return (
         <section className="bg-white p-6 rounded-lg shadow-md">
@@ -85,7 +106,7 @@ const Users = () => {
                                 <td className="py-3 px-6">{user.phoneNumber || 'N/A'}</td>
                                 <td className="py-3 px-6">{user.lockoutEnd ? new Date(user.lockoutEnd).toLocaleString() : 'N/A'}</td>
                                 <td className="py-3 px-6 text-center">
-                                    {!user.lockoutEnabled ? (
+                                    {user.lockoutEnd && new Date(user.lockoutEnd) > new Date() ? (
                                         <button onClick={() => handleLockClick(user)}>
                                             <FaLock className="text-red-500 cursor-pointer" />
                                         </button>
@@ -100,6 +121,36 @@ const Users = () => {
                     )}
                 </tbody>
             </table>
+
+            {/* Pagination Component */}
+            {/* <div className="flex justify-between items-center mt-6 px-4">
+                <button
+                    onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
+                    disabled={currentPage === 1}
+                    className="bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600 transition duration-200 disabled:bg-gray-300 disabled:text-gray-700 disabled:opacity-50 flex items-center"
+                >
+                    <FaAngleLeft className="mr-2" />
+                    Prev
+                </button>
+                <span className="text-gray-700 text-lg">
+                    Page {currentPage} of {totalPages}
+                </span>
+                <button
+                    onClick={() => setCurrentPage((prev) => Math.min(prev + 1, totalPages))}
+                    disabled={currentPage === totalPages}
+                    className="bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600 transition duration-200 disabled:bg-gray-300 disabled:text-gray-700 disabled:opacity-50 flex items-center"
+                >
+                    Next
+                    <FaAngleRight className="ml-2" />
+                </button>
+            </div> */}
+            <Pagination
+                currentPage={currentPage}
+                totalPages={totalPages}
+                onPageChange={setCurrentPage} // Set the current page directly
+            />
+
+            <ToastContainer autoClose={3000} newestOnTop closeOnClick />
         </section>
     );
 };

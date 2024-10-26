@@ -205,7 +205,7 @@ const Sidebar = () => {
                     </li>
                     <li>
                         <NavLink
-                            to="back"
+                            to="/"
                             className={({ isActive }) =>
                                 `flex items-center p-3 text-gray-700 hover:bg-gray-200 transition duration-200 ease-in-out ${isActive ? 'bg-gray-200' : ''}`
                             }

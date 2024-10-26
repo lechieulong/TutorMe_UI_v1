@@ -4,6 +4,23 @@ import { SLICE_NAMES, ACTIONS, STATUS } from "../../constant/SliceName";
 import apiURLConfig from "../common/apiURLConfig";
 import Cookies from "js-cookie";
 
+// Action get user by ID
+export const GetUserByID = createAsyncThunk(
+    `${SLICE_NAMES.USER}/${ACTIONS.GET_USER_BY_ID}`,
+    async (userId, { rejectWithValue }) => {
+        try {
+            const response = await axios.get(
+                `${apiURLConfig.baseURL}/user/${userId}`,
+            );
+            return response.data.result;
+        } catch (error) {
+            return rejectWithValue(
+                error.response?.data?.message || "Failed to load user!"
+            );
+        }
+    }
+);
+
 // Action profile
 export const Profile = createAsyncThunk(
     `${SLICE_NAMES.USER}/${ACTIONS.GET_USER_INFORMATION}`,
@@ -26,8 +43,14 @@ export const GetTopTeachers = createAsyncThunk(
     `${SLICE_NAMES.USER}/${ACTIONS.GET_TOP10_TEACHERS}`,
     async (_, { rejectWithValue }) => {
         try {
+            const token = Cookies.get("authToken");
             const { data } = await axios.get(
-                `${apiURLConfig.baseURL}/user/top-teachers` // API endpoint
+                `${apiURLConfig.baseURL}/user/top-teachers`,
+                {
+                    headers: {
+                        Authorization: `Bearer ${token}`, // Include the token in headers
+                    },
+                }
             );
             return data.result; // Return the result from the response
         } catch (error) {
@@ -80,10 +103,12 @@ export const BeTeacher = createAsyncThunk(
 );
 
 const initialState = {
+    user: null,
     teachers: [],
     searchTeachers: [],
     userInfor: null, // Thông tin người dùng
     status: STATUS.IDLE, // Trạng thái mặc định
+    getuserstatus: STATUS.IDLE, // Trạng thái mặc định
     error: null, // Thông báo lỗi nếu có
     loadingTopTeachers: false,
     beTeacherResponse: null,
@@ -97,6 +122,20 @@ const UserSlice = createSlice({
     reducers: {},
     extraReducers: (builder) => {
         builder
+
+            // Handle get User ny ID
+            .addCase(GetUserByID.pending, (state) => {
+                state.getuserstatus = STATUS.PENDING;
+            })
+            .addCase(GetUserByID.fulfilled, (state, action) => {
+                state.getuserstatus = STATUS.SUCCESS;
+                state.user = action.payload;
+            })
+            .addCase(GetUserByID.rejected, (state, action) => {
+                state.getuserstatus = STATUS.FAILED;
+                state.error = action.payload || action.error.message;
+            })
+
             //Hanlde get User Information
             .addCase(Profile.pending, (state) => {
                 state.status = STATUS.PENDING;

@@ -45,6 +45,8 @@ import CreateTest from "./pages/ExamTest/CreateTest";
 import MentorCourseList from "./pages/Mentor/MentorCourseList";
 import Error404 from "./pages/Error/Error404";
 import QuestionBank from "./pages/ExamTest/questionBank/QuestionBank";
+import CreateTestLayout from "./pages/course/CreateTestLayout";
+import CourseLayout from "./pages/course/CourseLayout";
 
 const App = () => {
   return (
@@ -72,6 +74,7 @@ const App = () => {
           <Route path="/testDetail/:testId" element={<SkillPart />} />
           <Route path="/create-skill" element={<CreateTest />} />
           <Route path="/create-test/:sectionCourseId" element={<TestForm />} />
+          <Route path="/create-test" element={<CreateTestLayout />} />
           <Route path="/questionbank" element={<QuestionBank />} />
 
           {/* LiveStream  exam*/}
@@ -96,6 +99,8 @@ const App = () => {
           <Route path="/mentorCourseList" element={<MentorCourseList />} />
 
           {/* Course */}
+          <Route path="/courseLayout" element={<CourseLayout />} />
+
           <Route path="/courseList" element={<CourseList />} />
           <Route path="/createCourse" element={<CreateCourse />} />
           <Route path="/courseDetail/:courseId" element={<CourseDetail />} />

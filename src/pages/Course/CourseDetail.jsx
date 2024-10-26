@@ -119,10 +119,8 @@ const CourseDetail = () => {
   };
 
   return (
-    <div className="flex flex-col min-h-screen w-full">
-      <MentorHeader />
-      <div className="flex flex-1 mt-16 w-full">
-        <MentorSidebar />
+    <div className="  w-full">
+      <div className="flex flex-1  w-full">
         <div className="flex-1 p-4">
           <ol className="flex items-center whitespace-nowrap">
             <li className="inline-flex items-center">

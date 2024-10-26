@@ -1,23 +1,27 @@
-import { Link } from 'react-router-dom';
+import { Link } from "react-router-dom";
 import { useParams } from "react-router-dom";
 
-const MentorSidebar = () => {
+const MentorSidebar = ({ setSelectedComponent }) => {
   const { courseId } = useParams();
   return (
     <div>
       <div
         id="hs-offcanvas-example"
-        className="block h-screen top-0 left-0 transition-all duration-300 transform w-64 bg-white border-e border-gray-200 pb-10 overflow-y-auto [&::-webkit-scrollbar]:w-2 [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-track]:bg-gray-100 [&::-webkit-scrollbar-thumb]:bg-gray-300"
+        className="block shadow-lg top-0 left-0 transition-all duration-300 transform w-64 bg-white border-e border-gray-200 pb-10 overflow-y-auto [&::-webkit-scrollbar]:w-2 [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-track]:bg-gray-100 [&::-webkit-scrollbar-thumb]:bg-gray-300"
         role="dialog"
         tabIndex="-1"
         aria-label="Sidebar"
+        style={{
+          height: "calc(100vh - 67px)",
+        }}
       >
         <nav className="p-6 w-full flex flex-col flex-wrap">
           <ul className="space-y-1.5">
             <li>
-              <a
+              <button
+                type="button"
+                onClick={() => setSelectedComponent("CourseDetail")}
                 className="flex items-center gap-x-3.5 py-2 px-2.5 bg-gray-100 text-sm text-gray-700 rounded-lg hover:bg-gray-100"
-                href="#"
               >
                 <svg
                   className="size-4"
@@ -35,7 +39,7 @@ const MentorSidebar = () => {
                   <polyline points="9 22 9 12 15 12 15 22" />
                 </svg>
                 Information
-              </a>
+              </button>
             </li>
             <li>
               <Link
@@ -87,9 +91,10 @@ const MentorSidebar = () => {
             </li>
 
             <li>
-              <a
+              <button
+                type="button"
                 className="flex items-center gap-x-3.5 py-2 px-2.5 text-sm text-gray-700 rounded-lg hover:bg-gray-100 focus:outline-none focus:bg-gray-100"
-                href="#"
+                onClick={() => setSelectedComponent("TestForm")}
               >
                 <svg
                   className="size-4"
@@ -108,7 +113,7 @@ const MentorSidebar = () => {
                   <path d="M15 2v5h5" />
                 </svg>
                 Test
-              </a>
+              </button>
             </li>
 
             <li>

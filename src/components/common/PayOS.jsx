@@ -118,7 +118,6 @@ export async function GiveMeMyMoney(money,Message){
     Message:Message,
     signature:"signature"
   }
-  console.log(model);
   try {
       const res = await axios({
         method: "PUT",
@@ -132,6 +131,26 @@ export async function GiveMeMyMoney(money,Message){
     } catch (error) {
       return error.response.data;
     }
+}
+export async function GetBanlance(){
+  const user=getUser();
+  try {
+      const res = await axios({
+        method: "GET",
+        url: `${import.meta.env.VITE_Backend_URL}/api/AccountBalance/${user.sub}`,
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+      return res.data;
+    } catch (error) {
+      return error.response.data;
+    }
+}
+export async function CheckBanlance(money){
+  const balance= await GetBanlance();
+  return balance>=money?true:false;
+  
 }
 
 

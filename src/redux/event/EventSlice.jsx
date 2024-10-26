@@ -7,7 +7,7 @@ import Cookies from "js-cookie";
 // Action to get events by user ID
 export const GetEventByUserId = createAsyncThunk(
   `${SLICE_NAMES.EVENT}/${ACTIONS.GET_EVENT_BY_USERID}`,
-  async ({ rejectWithValue }) => {
+  async (_, { rejectWithValue }) => {
     try {
       // Retrieve the token from the Redux state (or wherever it's stored)
       const token = Cookies.get("authToken");
@@ -19,7 +19,7 @@ export const GetEventByUserId = createAsyncThunk(
           },
         }
       );
-
+      console.log("Event response: ", response);
       return response.data.result; // Return the result from the response
     } catch (error) {
       return rejectWithValue(

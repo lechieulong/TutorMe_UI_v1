@@ -2,7 +2,7 @@ import React from 'react';
 import Sidebar from './components/Sidebar';
 import MainLayout from '../../layout/MainLayout';
 import defaulAvatar from "../../assets/images/defaul-avatar.jpg";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useLocation } from "react-router-dom";
 import Cookies from "js-cookie";
 import { useDispatch, useSelector } from "react-redux";
 

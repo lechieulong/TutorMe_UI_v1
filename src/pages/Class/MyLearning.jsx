@@ -48,13 +48,13 @@ const MyLearning = () => {
         }
     };
 
-    if (loading) return <p className="text-center py-4">Loading...</p>;
-    if (error) return <p className="text-center text-red-500 py-4">Error: {error}</p>;
+    // if (loading) return <p className="text-center py-4">Loading...</p>;
+    // if (error) return <p className="text-center text-red-500 py-4">Error: {error}</p>;
 
     return (
         <MainLayout>
-            <nav className="bg-gray-800 text-white flex flex-col h-full">
-                <div className="px-24 pt-20 pb-2">
+            <nav className="bg-gray-600 text-white flex flex-col">
+                <div className="px-24 pt-10 pb-2">
                     <h1 className="text-3xl font-bold">My Learning Platform</h1>
                 </div>
                 <ul className="flex space-x-10 px-24 pt-10 border-t border-gray-700">
@@ -105,6 +105,12 @@ const MyLearning = () => {
                 </ul>
             </nav>
             <div className="flex-1 p-12">
+                {loading && (
+                <p className="font-mono text-xs text-yellow-500 text-center mt-2">Loading...</p>
+                )}
+                {error && (
+                <p className="font-mono text-xs text-red-500 text-center mt-2">{error}</p>
+                )}
                 <div className="relative flex items-center">
                     <button
                         className="absolute left-0 z-10 bg-gray-700 text-white p-2 rounded-full focus:outline-none"

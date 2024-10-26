@@ -120,7 +120,7 @@ const Header = () => {
 
             <Link
               className="font-medium text-black focus:outline-none"
-              to="/testDetail/1"
+              to="/listTest"
             >
               <span className="mr-2">
                 <FontAwesomeIcon icon={faPenNib} />

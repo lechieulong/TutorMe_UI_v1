@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
@@ -19,6 +19,10 @@ const TestForm = ({ sectionCourseId }) => {
   } = useForm();
 
   const dispatch = useDispatch();
+
+  // useEffect(() => {
+  //   dispatch(createTest(payload));
+  // }, []);
 
   const onSubmit = (data) => {
     try {

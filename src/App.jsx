@@ -47,6 +47,7 @@ import Error404 from "./pages/Error/Error404";
 import QuestionBank from "./pages/ExamTest/questionBank/QuestionBank";
 import CreateTestLayout from "./pages/course/CreateTestLayout";
 import CourseLayout from "./pages/course/CourseLayout";
+import ListTest from "./pages/ExamTest/ListTest";
 
 const App = () => {
   return (
@@ -70,8 +71,12 @@ const App = () => {
 
           {/* Test  exam*/}
           <Route path="/testing/:testId" element={<TestLayout />} />
-          <Route path="/test/:skillId/settings" element={<TestSetting />} />
+          <Route
+            path="/test/:testId/settings/:skillId"
+            element={<TestSetting />}
+          />
           <Route path="/testDetail/:testId" element={<SkillPart />} />
+          <Route path="/listTest" element={<ListTest />} />
           <Route path="/create-skill" element={<CreateTest />} />
           <Route path="/create-test/:sectionCourseId" element={<TestForm />} />
           <Route path="/create-test" element={<CreateTestLayout />} />

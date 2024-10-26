@@ -28,6 +28,9 @@ export const ACTIONS = {
   RESET_PASSWORD: "reset-password",
 
   FETCH_TESTS: "getTests",
+  GET_TEST: "getTest",
+  GET_SKILLS: "getSkills",
+  GET_PARTS: "getParts",
   CREATE_TEST: "createTest",
   UPDATE_TEST: "updateTest",
   DELETE_TEST: "deleteTest",

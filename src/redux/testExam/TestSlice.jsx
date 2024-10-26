@@ -7,9 +7,54 @@ const API_BASE_URL = "https://localhost:7030/api";
 
 export const fetchTests = createAsyncThunk(
   `${SLICE_NAMES.TEST}/${ACTIONS.FETCH_TESTS}`,
-  async (_, { rejectWithValue }) => {
+  async (userId, { rejectWithValue }) => {
     try {
-      const response = await axios.get(`${API_BASE_URL}/test`);
+      const response = await axios.get(`${API_BASE_URL}/test/${userId}`);
+
+      return response.data;
+    } catch (error) {
+      return rejectWithValue(
+        error.response?.data?.message || "Failed to fetch tests"
+      );
+    }
+  }
+);
+
+export const getTest = createAsyncThunk(
+  `${SLICE_NAMES.TEST}/${ACTIONS.GET_TEST}`,
+  async (id, { rejectWithValue }) => {
+    try {
+      const response = await axios.get(`${API_BASE_URL}/test/${id}/testDetail`);
+      console.log(response.data);
+
+      return response.data;
+    } catch (error) {
+      return rejectWithValue(
+        error.response?.data?.message || "Failed to fetch tests"
+      );
+    }
+  }
+);
+
+export const getParts = createAsyncThunk(
+  `${SLICE_NAMES.TEST}/${ACTIONS.GET_PARTS}`,
+  async (skillId, { rejectWithValue }) => {
+    try {
+      const response = await axios.get(`${API_BASE_URL}/test/${skillId}/parts`);
+      return response.data;
+    } catch (error) {
+      return rejectWithValue(
+        error.response?.data?.message || "Failed to fetch tests"
+      );
+    }
+  }
+);
+
+export const getSkills = createAsyncThunk(
+  `${SLICE_NAMES.TEST}/${ACTIONS.GET_SKILLS}`,
+  async (id, { rejectWithValue }) => {
+    try {
+      const response = await axios.get(`${API_BASE_URL}/test/${id}/skills`);
       return response.data;
     } catch (error) {
       return rejectWithValue(
@@ -46,7 +91,13 @@ export const createTest = createAsyncThunk(
   `${SLICE_NAMES.TEST}/${ACTIONS.CREATE_TEST}`,
   async (testData, { rejectWithValue }) => {
     try {
-      const response = await axios.post(`${API_BASE_URL}/test`, testData);
+      const token = Cookies.get("authToken");
+      const response = await axios.post(`${API_BASE_URL}/test`, testData, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json", //
+        },
+      });
       return response.data;
     } catch (error) {
       return rejectWithValue(
@@ -91,16 +142,12 @@ export const importQuestion = createAsyncThunk(
   async (formData, { rejectWithValue }) => {
     try {
       const token = Cookies.get("authToken");
-      await axios.post(
-        `${API_BASE_URL}/test/questionsBank/questionsBank/import`,
-        formData,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-            "Content-Type": "multipart/form-data", // Ensure correct content type is set
-          },
-        }
-      );
+      await axios.post(`${API_BASE_URL}/test/questionsBank/import`, formData, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "multipart/form-data", // Ensure correct content type is set
+        },
+      });
       return formData;
     } catch (error) {
       return rejectWithValue(
@@ -187,7 +234,7 @@ export const addSkills = createAsyncThunk(
     try {
       const token = Cookies.get("authToken");
       const response = await axios.post(
-        `${API_BASE_URL}/test/skills/${"252A4406-F887-40E9-BF61-64B5F5804D46"}`,
+        `${API_BASE_URL}/test/skills/${"3a8b39e8-d254-4630-b2d9-ecaf1943d11d"}`,
         skillsData,
         {
           headers: {

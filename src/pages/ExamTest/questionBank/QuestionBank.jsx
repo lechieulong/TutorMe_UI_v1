@@ -73,7 +73,6 @@ const QuestionBank = () => {
     formData.append("file", file); // Add file to form data
 
     try {
-      // Send the file to backend
       dispatch(importQuestion(formData));
       toast.success("Questions imported successfully");
     } catch (error) {
@@ -84,8 +83,6 @@ const QuestionBank = () => {
 
   return (
     <div className="p-4">
-      <h1>Question Bank</h1>
-
       {loading ? (
         <div className="flex justify-center my-4">
           <span>Loading...</span>
@@ -95,7 +92,7 @@ const QuestionBank = () => {
           <div className="mb-4 flex justify-end items-center space-x-2">
             <button
               onClick={addNewQuestion}
-              className="flex items-center text-[12px] bg-blue-500 text-white rounded"
+              className="flex items-center text-[12px] p-2 bg-blue-500 text-white rounded"
             >
               <FontAwesomeIcon icon={faPlus} className="mr-2" />
               Add New Question

@@ -1,7 +1,6 @@
 import React, { useEffect } from 'react';
 import { useSearchParams,useNavigate  } from 'react-router-dom';
-import { getOrder_Backend ,UpdateOrder_backend,GiveMeMyMoney} from '../../components/common/PayOS';
-
+import { getOrder_Backend ,UpdateOrder_backend,GiveMeMyMoney,CheckBanlance} from '../../components/common/PayOS';
 
 const PaymentResult = () => {
   const [searchParams] = useSearchParams();
@@ -22,7 +21,7 @@ const PaymentResult = () => {
         try {
           const order = await getOrder_Backend(orderCode);
           order.paymentStatus='CANCELLED';
-          const update=await UpdateOrder_backend(order);
+          const update=await UpdateOrder_backend(order);        
           navigate('/');
           // Handle payment cancellation with order details
         } catch (error) {

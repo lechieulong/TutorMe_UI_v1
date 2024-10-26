@@ -66,10 +66,16 @@ const SignIn = () => {
       try {
         // unwrap để lấy dữ liệu trực tiếp từ action
         const response = await dispatch(LoginApi(userData)).unwrap();
-
         if (response.isSuccess) {
           Cookies.set("authToken", response.result.token, { expires: 7 });
-          navigate("/"); // Chuyển hướng sau khi đăng nhập thành công
+          const redirectUrl = sessionStorage.getItem("redirectUrl");
+          if (redirectUrl) {
+            sessionStorage.removeItem("redirectUrl"); // Xóa URL sau khi sử dụng
+            navigate(redirectUrl);
+          }
+          else {
+            navigate("/");
+          }
           // Chuyển hướng đến trang Home mà hông cần reload
           // window.location.href = "/";
         } else {
@@ -87,12 +93,18 @@ const SignIn = () => {
   // Handle Google login success
   const handleGoogleLoginSuccess = async (credentialResponse) => {
     const token = credentialResponse.credential;
-    // Store the token in cookies or localStorage
     try {
       const response = await dispatch(loginWithGoogleApi({ token })).unwrap();
       if (response.isSuccess) {
         Cookies.set("authToken", response.result.token, { expires: 7 });
-        navigate("/");
+        const redirectUrl = sessionStorage.getItem("redirectUrl");
+        if (redirectUrl) {
+          sessionStorage.removeItem("redirectUrl"); // Xóa URL sau khi sử dụng
+          navigate(redirectUrl);
+        }
+        else {
+          navigate("/"); // Hoặc chuyển hướng đến trang mặc định
+        }
         // window.location.href = "/";
       } else {
         toast.error(response.message || "Google login failed.");
@@ -169,8 +181,8 @@ const SignIn = () => {
               <GoogleLogin
                 onSuccess={handleGoogleLoginSuccess}
                 onError={handleGoogleLoginFailure}
-                // size="large"
-                // ux_mode="popup"
+              // size="large"
+              // ux_mode="popup"
               />
             </GoogleOAuthProvider>
             <button className="group h-12 px-4 border-2 border-gray-300 rounded-full transition duration-300 hover:border-blue-400 focus:bg-blue-50 active:bg-blue-100">

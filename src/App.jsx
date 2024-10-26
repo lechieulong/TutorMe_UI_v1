@@ -1,6 +1,7 @@
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import "regenerator-runtime/runtime";
 import { GoogleOAuthProvider } from "@react-oauth/google";
+import { AdminRoute } from "./service/checkAuth";
 
 import Home from "./pages/Home";
 import NotFound from "./components/common/NotFound";
@@ -44,11 +45,15 @@ import TestForm from "./pages/ExamTest/TestForm";
 import CreateTest from "./pages/ExamTest/CreateTest";
 import MentorCourseList from "./pages/Mentor/MentorCourseList";
 import Error404 from "./pages/Error/Error404";
+import NotAuthorizedPage from "./pages/Error/NotAuthorizedPage"
 import QuestionBank from "./pages/ExamTest/questionBank/QuestionBank";
 import PayOS from "./pages/User/PayOS";
 import PaymentResult from "./pages/User/PayOSResult ";
 import CreateTestLayout from "./pages/course/CreateTestLayout";
 import CourseLayout from "./pages/course/CourseLayout";
+
+//ADMIN
+import AdminApp from "./pages/ADMIN/Index";
 
 const App = () => {
   return (
@@ -123,9 +128,19 @@ const App = () => {
           {/* List test that User did */}
           <Route path="/testlist" element={<TestList />} />
 
+          {/* Error page */}
           <Route path="/404" element={<Error404 />} />
+          <Route path="/not-authorized" element={<NotAuthorizedPage />} />
+
           <Route path="/Payment" element={<PayOS />} />
           <Route path="/Paymentresult" element={<PaymentResult />} />
+
+          {/* ADMIN */}
+          <Route path="/admin/app/*" element={
+            <AdminRoute>
+              <AdminApp />
+            </AdminRoute>
+          } />
         </Routes>
       </Router>
     </div>

@@ -45,6 +45,8 @@ import CreateTest from "./pages/ExamTest/CreateTest";
 import MentorCourseList from "./pages/Mentor/MentorCourseList";
 import Error404 from "./pages/Error/Error404";
 import QuestionBank from "./pages/ExamTest/questionBank/QuestionBank";
+import PayOS from "./pages/User/PayOS";
+import PaymentResult from "./pages/User/PayOSResult ";
 import CreateTestLayout from "./pages/course/CreateTestLayout";
 import CourseLayout from "./pages/course/CourseLayout";
 
@@ -122,6 +124,8 @@ const App = () => {
           <Route path="/testlist" element={<TestList />} />
 
           <Route path="/404" element={<Error404 />} />
+          <Route path="/Payment" element={<PayOS />} />
+          <Route path="/Paymentresult" element={<PaymentResult />} />
         </Routes>
       </Router>
     </div>

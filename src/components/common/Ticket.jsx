@@ -1,11 +1,12 @@
 import React, { useState } from 'react';
 import Modal from 'react-modal';
+import axios from 'axios';
 
 const CreateTicketButton = () => {
   const [isPopupOpen, setIsPopupOpen] = useState(false);
   const [privacy, setPrivacy] = useState('Public'); // Default to 'Public'
+  const url= import.meta.env.VITE_Backend_URL;
   const [formData, setFormData] = useState({
-    id: '',
     SubjectName: '',
     LiveStreamId: '',
     Price: '',
@@ -26,11 +27,20 @@ const CreateTicketButton = () => {
     setFormData({ ...formData, [name]: value });
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async  (e) => {
     e.preventDefault();
-    console.log('Form Data:', formData);
-    closePopup();
-    // Add logic to send form data to API or handle as required
+    try {
+      console.log(formData);
+      const response = await axios.post(`${url}/api/Ticket`, formData, {
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
+      console.log('Form submitted successfully:', response.data);
+      closePopup();
+    } catch (error) {
+      console.error('Error submitting form:', error);
+    }
   };
 
   const handlePrivacyChange = (e) => {
@@ -81,7 +91,7 @@ const CreateTicketButton = () => {
           <div className="mb-4">
             <label className="block">Live Stream ID:</label>
             <input
-              type="number"
+              type="text"
               name="LiveStreamId"
               value={formData.LiveStreamId}
               onChange={handleChange}

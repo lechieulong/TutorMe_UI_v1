@@ -46,6 +46,7 @@ import MentorCourseList from "./pages/Mentor/MentorCourseList";
 import Error404 from "./pages/Error/Error404";
 import QuestionBank from "./pages/ExamTest/questionBank/QuestionBank";
 
+import CreateClass from "./pages/Class/CreateClass";
 const App = () => {
   return (
     <div className=" min-h-screen ">
@@ -112,6 +113,7 @@ const App = () => {
 
           {/* Class */}
           <Route path="/mylearning" element={<MyLearning />} />
+          <Route path="/createClass" element={<CreateClass />} />
 
           {/* List test that User did */}
           <Route path="/testlist" element={<TestList />} />

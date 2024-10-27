@@ -34,12 +34,15 @@ const CourseList = () => {
   const filteredCourses = useMemo(() => {
     if (status === STATUS.SUCCESS) {
       return courses
-        .filter(
-          (course) =>
-            selectedCategory === "All" || course.category === selectedCategory
-        )
         .filter((course) => {
-          const courseTitle = course.title || "";
+          // Kiểm tra xem selectedCategory có phải là "All" không
+          if (selectedCategory === "All") return true;
+
+          // Kiểm tra xem category của khóa học có nằm trong danh sách categories không
+          return course.categories.includes(selectedCategory);
+        })
+        .filter((course) => {
+          const courseTitle = course.courseName || ""; // Sử dụng courseName thay vì title
           const term = searchTerm || "";
           return courseTitle.toLowerCase().includes(term.toLowerCase());
         });

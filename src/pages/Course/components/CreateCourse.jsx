@@ -8,12 +8,9 @@ const CreateCourse = () => {
     content: "",
     hours: 0,
     days: 0,
-    category: "",
+    categories: [], // Danh sách danh mục
     price: 0,
-    createdAt: new Date().toISOString(), // Lấy ngày giờ hiện tại
-    updatedAt: new Date().toISOString(), // Lấy ngày giờ hiện tại
-    imageUrl: "", // URL ảnh cho khoá học
-    userId: "", // ID người dùng
+    userId: "", // Chỉ cần userId
   });
 
   useEffect(() => {
@@ -21,13 +18,23 @@ const CreateCourse = () => {
     if (userFromToken?.sub) {
       setCourse((prevCourse) => ({
         ...prevCourse,
-        userId: userFromToken.sub, // Lấy userId từ token
+        userId: userFromToken.sub,
       }));
     }
   }, []);
 
   const handleChange = (e) => {
     setCourse({ ...course, [e.target.name]: e.target.value });
+  };
+
+  const handleCheckboxChange = (e) => {
+    const { value, checked } = e.target;
+    setCourse((prevCourse) => {
+      const newCategories = checked
+        ? [...prevCourse.categories, value] // Thêm danh mục nếu được chọn
+        : prevCourse.categories.filter((category) => category !== value); // Loại bỏ nếu không được chọn
+      return { ...prevCourse, categories: newCategories };
+    });
   };
 
   const handleSubmit = async (e) => {
@@ -39,25 +46,17 @@ const CreateCourse = () => {
       return;
     }
 
-    const courseData = {
-      ...course,
-      updatedAt: new Date().toISOString(), // Cập nhật ngày giờ hiện tại khi gửi form
-    };
-
     try {
-      await axios.post("https://localhost:7030/api/Courses", courseData);
+      await axios.post("https://localhost:7030/api/Courses", course);
       // Reset form
       setCourse({
         courseName: "",
         content: "",
         hours: 0,
         days: 0,
-        category: "",
+        categories: [], // Đặt lại danh mục về mảng rỗng
         price: 0,
-        createdAt: new Date().toISOString(),
-        updatedAt: new Date().toISOString(),
-        imageUrl: "",
-        userId: course.userId, // Giữ userId cho lần tạo tiếp theo
+        userId: course.userId,
       });
       alert("Tạo khoá học thành công!");
     } catch (error) {
@@ -98,7 +97,7 @@ const CreateCourse = () => {
             name="hours"
             value={course.hours}
             onChange={handleChange}
-            min="0" // Đảm bảo giá trị không âm
+            min="0"
             required
             className="mt-1 block w-full border border-gray-300 rounded-md p-2"
           />
@@ -110,26 +109,51 @@ const CreateCourse = () => {
             name="days"
             value={course.days}
             onChange={handleChange}
-            min="0" // Đảm bảo giá trị không âm
+            min="0"
             required
             className="mt-1 block w-full border border-gray-300 rounded-md p-2"
           />
         </div>
         <div className="mb-4">
           <label className="block text-gray-700">Danh Mục</label>
-          <select
-            name="category"
-            value={course.category}
-            onChange={handleChange}
-            required
-            className="mt-1 block w-full border border-gray-300 rounded-md p-2"
-          >
-            <option value="">Chọn danh mục</option>
-            <option value="Listening">Listening</option>
-            <option value="Reading">Reading</option>
-            <option value="Writing">Writing</option>
-            <option value="Speaking">Speaking</option>
-          </select>
+          <div className="mt-2">
+            <label className="inline-flex items-center">
+              <input
+                type="checkbox"
+                value="Listening"
+                onChange={handleCheckboxChange}
+                className="mr-2"
+              />
+              Listening
+            </label>
+            <label className="inline-flex items-center">
+              <input
+                type="checkbox"
+                value="Reading"
+                onChange={handleCheckboxChange}
+                className="mr-2"
+              />
+              Reading
+            </label>
+            <label className="inline-flex items-center">
+              <input
+                type="checkbox"
+                value="Writing"
+                onChange={handleCheckboxChange}
+                className="mr-2"
+              />
+              Writing
+            </label>
+            <label className="inline-flex items-center">
+              <input
+                type="checkbox"
+                value="Speaking"
+                onChange={handleCheckboxChange}
+                className="mr-2"
+              />
+              Speaking
+            </label>
+          </div>
         </div>
         <div className="mb-4">
           <label className="block text-gray-700">Giá</label>
@@ -138,37 +162,14 @@ const CreateCourse = () => {
             name="price"
             value={course.price}
             onChange={handleChange}
-            min="0" // Đảm bảo giá trị không âm
-            required
-            className="mt-1 block w-full border border-gray-300 rounded-md p-2"
-          />
-        </div>
-        <div className="mb-4">
-          <label className="block text-gray-700">URL Ảnh</label>
-          <input
-            type="text"
-            name="imageUrl"
-            value={course.imageUrl}
-            onChange={handleChange}
+            min="0"
             required
             className="mt-1 block w-full border border-gray-300 rounded-md p-2"
           />
         </div>
 
-        {/* Trường UserId và thời gian ẩn đi */}
+        {/* Trường UserId ẩn đi */}
         <input type="hidden" name="userId" value={course.userId} readOnly />
-        <input
-          type="hidden"
-          name="createdAt"
-          value={course.createdAt}
-          readOnly
-        />
-        <input
-          type="hidden"
-          name="updatedAt"
-          value={course.updatedAt}
-          readOnly
-        />
 
         <button
           type="submit"

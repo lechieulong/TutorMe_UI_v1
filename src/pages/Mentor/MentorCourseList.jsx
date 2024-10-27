@@ -157,7 +157,7 @@ const MentorCourseList = () => {
                 teacher={user?.name}
                 courseId={course.id}
                 onDelete={handleDelete}
-                isEnabled={true}
+                isEnabled={course.isEnabled}
               />
             ))}
           </div>

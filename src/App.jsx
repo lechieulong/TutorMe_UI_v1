@@ -56,6 +56,7 @@ import ListTest from "./pages/ExamTest/ListTest";
 //ADMIN
 import AdminApp from "./pages/ADMIN/Index";
 
+import CreateClass from "./pages/Class/CreateClass";
 const App = () => {
   return (
     <div className=" min-h-screen ">
@@ -131,6 +132,7 @@ const App = () => {
 
           {/* Class */}
           <Route path="/mylearning" element={<MyLearning />} />
+          <Route path="/createClass" element={<CreateClass />} />
 
           {/* List test that User did */}
           <Route path="/testlist" element={<TestList />} />

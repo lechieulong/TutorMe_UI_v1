@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { FaTrash } from "react-icons/fa";
 import axios from "axios";
@@ -15,13 +15,26 @@ const CourseCard = ({
   onDelete = null,
   isEnabled,
 }) => {
-  const location = useLocation(); // Lấy thông tin về đường dẫn hiện tại
+  const location = useLocation();
+
+  // Kiểm tra xem có phải trang mentorCourseList không
+  const isMentorCourseList = location.pathname === "/mentorCourseList";
+
+  // Nếu là mentorCourseList thì switch sẽ lấy trạng thái từ isEnabled, ngược lại mặc định là true
+  const [isSwitchOn, setIsSwitchOn] = useState(
+    isMentorCourseList ? isEnabled : true
+  );
+
+  // Nếu không phải mentorCourseList và isEnabled là false, không hiển thị CourseCard
+  if (!isMentorCourseList && !isEnabled) {
+    return null;
+  }
 
   const handleDelete = async () => {
     if (onDelete) {
       try {
         await axios.delete(`https://localhost:7030/api/Courses/${courseId}`);
-        onDelete(courseId); // Gọi hàm onDelete để cập nhật trạng thái ở component cha
+        onDelete(courseId);
       } catch (error) {
         console.error("Error deleting course", error);
         alert("Failed to delete course.");
@@ -29,7 +42,30 @@ const CourseCard = ({
     }
   };
 
-  // Kiểm tra đường dẫn hiện tại và điều chỉnh link tương ứng
+  const handleSwitchChange = async () => {
+    const newStatus = !isSwitchOn;
+    const confirmationMessage = newStatus
+      ? "Bạn có chắc muốn bật hiển thị course không?"
+      : "Bạn có chắc muốn tắt hiển thị course không?";
+
+    if (window.confirm(confirmationMessage)) {
+      try {
+        await axios.put(
+          `https://localhost:7030/api/Courses/${courseId}/enabled`,
+          newStatus,
+          {
+            headers: { "Content-Type": "application/json" },
+          }
+        );
+        setIsSwitchOn(newStatus);
+        alert(`Course đã được ${newStatus ? "hiển thị" : "ẩn"} thành công.`);
+      } catch (error) {
+        console.error("Error updating course status", error);
+        alert("Cập nhật trạng thái course thất bại.");
+      }
+    }
+  };
+
   let destinationPath;
   if (location.pathname === "/mentorCourseList") {
     destinationPath = `/mentorCourseDetail/${courseId}`;
@@ -37,24 +73,37 @@ const CourseCard = ({
     destinationPath = `/courseDetail/${courseId}`;
   }
 
-  // Nếu isEnabled là false, không render component
-  if (!isEnabled) {
-    return null;
-  }
-
   return (
     <div className="relative bg-white h-52 shadow-md rounded-lg p-4 flex flex-col items-center hover:bg-gray-100 transition-all">
-      {onDelete && ( // Chỉ hiển thị nút delete nếu onDelete được truyền vào
-        <button
-          onClick={handleDelete}
-          className="absolute bg-transparent top-1 right-1 text-red-400 hover:text-red-700"
-          aria-label="Delete Course"
-        >
-          <FaTrash />
-        </button>
-      )}
+      <div className="absolute top-1 right-1 flex items-center space-x-2">
+        {/* Chỉ hiển thị nút delete và switch nếu đang ở trang mentorCourseList */}
+        {isMentorCourseList && (
+          <>
+            <button
+              onClick={handleDelete}
+              className="bg-transparent text-red-400 hover:text-red-700"
+              aria-label="Delete Course"
+            >
+              <FaTrash />
+            </button>
+            <input
+              type="checkbox"
+              id={`switch-${courseId}`}
+              checked={isSwitchOn}
+              onChange={handleSwitchChange}
+              className="hidden peer"
+            />
+            <label
+              htmlFor={`switch-${courseId}`}
+              className="cursor-pointer w-10 h-6 flex items-center bg-gray-200 rounded-full p-1 transition-colors duration-300 ease-in-out peer-checked:bg-green-400"
+            >
+              <div className="bg-white w-4 h-4 rounded-full shadow-md transform transition-transform duration-300 ease-in-out peer-checked:translate-x-4"></div>
+            </label>
+          </>
+        )}
+      </div>
       <Link
-        to={destinationPath} // Sử dụng destinationPath đã xác định ở trên
+        to={destinationPath}
         className="flex-grow flex flex-col items-center"
       >
         <div className="text-2xl mb-1">{icon}</div>

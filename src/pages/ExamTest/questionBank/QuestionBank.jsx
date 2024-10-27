@@ -12,6 +12,7 @@ import {
   importQuestion,
   getQuestionsBank,
   deleteQuestion,
+  downloadTemplate,
 } from "../../../redux/testExam/TestSlice";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
@@ -65,6 +66,32 @@ const QuestionBank = () => {
     }
   };
 
+  const handleDownloadTemplate = async () => {
+    setLoading(true);
+    try {
+      const resultAction = await dispatch(downloadTemplate());
+      if (resultAction.payload && resultAction.payload.fileUrl) {
+        const fileUrl = resultAction.payload.fileUrl;
+        console.log("File URL:", fileUrl);
+        const link = document.createElement("a");
+        link.href = fileUrl;
+        link.download = "QuestionTemplate.xlsx";
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+      } else {
+        console.error(
+          "Download failed:",
+          resultAction.error?.message || "No payload"
+        );
+      }
+    } catch (error) {
+      console.error("Error downloading template:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   const handleImportFile = async (event) => {
     const file = event.target.files[0];
 
@@ -97,18 +124,27 @@ const QuestionBank = () => {
               <FontAwesomeIcon icon={faPlus} className="mr-2" />
               Add New Question
             </button>
-            <label className="flex items-center cursor-pointer">
-              <input
-                type="file"
-                accept=".json,.xlsx" // Accept both JSON and Excel files
-                className="hidden"
-                onChange={handleImportFile}
-              />
-              <span className="flex items-center px-4 py-2 bg-green-500 text-white rounded">
-                <FontAwesomeIcon icon={faFileImport} className="mr-2" />
-                Import Questions
-              </span>
-            </label>
+            <div>
+              <label className="flex items-center cursor-pointer">
+                <input
+                  type="file"
+                  accept=".json,.xlsx" // Accept both JSON and Excel files
+                  className="hidden"
+                  onChange={handleImportFile}
+                />
+                <span className="flex items-center px-4 py-2 bg-green-500 text-white rounded">
+                  <FontAwesomeIcon icon={faFileImport} className="mr-2" />
+                  Import Questions
+                </span>
+              </label>
+
+              <button
+                onClick={handleDownloadTemplate}
+                className="p-2 bg-red-50"
+              >
+                Download Template
+              </button>
+            </div>
           </div>
           <table className="min-w-full bg-white border border-gray-200">
             <thead>

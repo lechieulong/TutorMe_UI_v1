@@ -64,13 +64,54 @@ export const getSkills = createAsyncThunk(
   }
 );
 
+export const getSkill = createAsyncThunk(
+  `${SLICE_NAMES.TEST}/${ACTIONS.GET_SKILL}`,
+  async (id, { rejectWithValue }) => {
+    try {
+      const response = await axios.get(`${API_BASE_URL}/test/${id}/skill`);
+      return response.data;
+    } catch (error) {
+      return rejectWithValue(
+        error.response?.data?.message || "Failed to fetch tests"
+      );
+    }
+  }
+);
+
+export const getTesting = createAsyncThunk(
+  `${SLICE_NAMES.TEST}/${ACTIONS.GET_TESTING}`,
+  async (id, { rejectWithValue }) => {
+    try {
+      const response = await axios.get(`${API_BASE_URL}/test/${id}/testing`);
+      return response.data;
+    } catch (error) {
+      return rejectWithValue(
+        error.response?.data?.message || "Failed to fetch tests"
+      );
+    }
+  }
+);
+
+export const downloadTemplate = createAsyncThunk(
+  `${SLICE_NAMES.TEST}/${ACTIONS.DOWNLOAD_TEMPLATE}`,
+  async (id, { rejectWithValue }) => {
+    try {
+      const response = await axios.get(`${API_BASE_URL}/template`);
+      return response.data;
+    } catch (error) {
+      return rejectWithValue(
+        error.response?.data?.message || "Failed to fetch tests"
+      );
+    }
+  }
+);
+
 export const uploadFile = createAsyncThunk(
   `${SLICE_NAMES.TEST}/${ACTIONS.UPLOAD}`,
   async (file, { rejectWithValue }) => {
     const token = Cookies.get("authToken");
     const formData = new FormData();
     formData.append("file", file);
-
     try {
       const response = await axios.post(`${API_BASE_URL}/upload`, formData, {
         headers: {

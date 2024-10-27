@@ -45,7 +45,7 @@ import TestForm from "./pages/ExamTest/TestForm";
 import CreateTest from "./pages/ExamTest/CreateTest";
 import MentorCourseList from "./pages/Mentor/MentorCourseList";
 import Error404 from "./pages/Error/Error404";
-import NotAuthorizedPage from "./pages/Error/NotAuthorizedPage"
+import NotAuthorizedPage from "./pages/Error/NotAuthorizedPage";
 import QuestionBank from "./pages/ExamTest/questionBank/QuestionBank";
 import PayOS from "./pages/User/PayOS";
 import PaymentResult from "./pages/User/PayOSResult ";
@@ -78,6 +78,8 @@ const App = () => {
 
           {/* Test  exam*/}
           <Route path="/testing/:testId" element={<TestLayout />} />
+          <Route path="/testing/:skillId/skill" element={<TestLayout />} />
+
           <Route
             path="/test/:testId/settings/:skillId"
             element={<TestSetting />}
@@ -141,11 +143,14 @@ const App = () => {
           <Route path="/Paymentresult" element={<PaymentResult />} />
 
           {/* ADMIN */}
-          <Route path="/admin/app/*" element={
-            <AdminRoute>
-              <AdminApp />
-            </AdminRoute>
-          } />
+          <Route
+            path="/admin/app/*"
+            element={
+              <AdminRoute>
+                <AdminApp />
+              </AdminRoute>
+            }
+          />
         </Routes>
       </Router>
     </div>

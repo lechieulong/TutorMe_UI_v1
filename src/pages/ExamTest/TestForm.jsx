@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
@@ -20,6 +20,10 @@ const TestForm = ({ sectionCourseId }) => {
 
   const dispatch = useDispatch();
 
+  // useEffect(() => {
+  //   dispatch(createTest(payload));
+  // }, []);
+
   const onSubmit = (data) => {
     try {
       const payload = { ...data, sectionCourseId };
@@ -39,7 +43,7 @@ const TestForm = ({ sectionCourseId }) => {
     <>
       <form
         onSubmit={handleSubmit(onSubmit)}
-        className="space-y-6 p-6 max-w-lg mt-20 mx-auto bg-white shadow-lg rounded-xl"
+        className="space-y-6 p-6 max-w-lg mx-auto bg-white shadow-lg rounded-xl"
       >
         {/* Test Name */}
         <div className="relative">

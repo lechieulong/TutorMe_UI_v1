@@ -1,20 +1,25 @@
-import React from 'react';
-import { Link } from 'react-router-dom';
+import React, { useEffect, useState } from 'react';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import Sidebar from './components/Sidebar';
 import MainLayout from '../../layout/MainLayout';
-import { useLocation, useNavigate } from "react-router-dom";
 import Cookies from "js-cookie";
-import { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { changePasswordAPI } from "../../redux/auth/AuthSlice";
+import { BeTeacher } from '../../redux/users/UserSlice';
+import { GetSpecialization } from '../../redux/specialization/SpecializationSlice';
 
-const ProfileSection = () => {
-    const location = useLocation();
-    const userInfor = location.state?.userInfor;
+const EducationSection = () => {
     const navigate = useNavigate();
-    const dispatch = useDispatch(); // Initialize dispatch
-    const { error, changePasswordStatus } = useSelector((state) => state.auth);
+    const dispatch = useDispatch();
 
+    // Extracting specializations from Redux state
+    const { specializations, getspecializationstatus, error } = useSelector((state) => state.specialization);
+    const { beTeacherResponse, beTeacherStatus, beTeacherError } = useSelector((state) => state.user);
+
+    useEffect(() => {
+        dispatch(GetSpecialization());
+    }, [dispatch]);
+
+    // Effect to check authentication token
     useEffect(() => {
         const token = Cookies.get("authToken");
         if (!token) {
@@ -23,64 +28,68 @@ const ProfileSection = () => {
     }, [navigate]);
 
     const [formData, setFormData] = useState({
-        email: "",
-        currentPassword: "",
-        newpassword: "",
-        confirmPassword: "",
+        aboutMe: "",
+        career: "",
+        degreeURL: "",
         yearsOfExperience: "",
-        ieltsGrade: "",
-        specialization: {
-            listening: false,
-            speaking: false,
-            reading: false,
-            writing: false
-        }
+        grade: "",
+        specialization: {},
     });
 
-    const [formErrors, setFormErrors] = useState({
-        email: "",
-        currentPassword: "",
-        newpassword: "",
-        confirmPassword: ""
-    });
+    const [formErrors, setFormErrors] = useState({});
 
+    // Handle form input changes
     const handleChange = (e) => {
-        const { name, value, type, checked } = e.target;
+        const { name, type, checked, value } = e.target;
+
+        // Handle specialization checkboxes
         if (type === "checkbox") {
-            setFormData({
-                ...formData,
+            setFormData((prevData) => ({
+                ...prevData,
                 specialization: {
-                    ...formData.specialization,
+                    ...prevData.specialization,
                     [name]: checked
                 }
-            });
+            }));
         } else {
-            setFormData({
-                ...formData,
-                [name]: value,
-            });
+            setFormData((prevData) => ({
+                ...prevData,
+                [name]: value
+            }));
+        }
+
+        // Handle terms acceptance checkbox
+        if (name === "acceptedTerms") {
+            setFormData((prevData) => ({
+                ...prevData,
+                acceptedTerms: checked
+            }));
         }
     };
 
+    const handleFileChange = (e) => {
+        const file = e.target.files[0]; // Get the first file (assuming single upload)
+        if (file) {
+            setFormData((prevData) => ({
+                ...prevData,
+                degreeURL: file.name // Or you can upload the file using FormData later
+            }));
+        }
+    };
+
+    // Validate form data
     const validateForm = () => {
         const errors = {};
-        const passwordRegex = /^(?=.*[A-Z])(?=.*[!@#$%^&*]).{8,}$/;
-
-        if (!formData.email) errors.email = "Email is required";
-        if (!formData.currentPassword) {
-            errors.currentPassword = "Current password is required";
+        if (!formData.aboutMe) errors.aboutMe = "Bio is required";
+        if (!formData.career) errors.career = "Career is required";
+        if (!formData.degreeURL) errors.degreeURL = "IELTS Certificate is required";
+        if (!formData.yearsOfExperience || formData.yearsOfExperience <= 0) {
+            errors.yearsOfExperience = "Years of Experience must be a positive number";
         }
-        if (!formData.newpassword) {
-            errors.newpassword = "New password is required";
-        } else if (!passwordRegex.test(formData.newpassword)) {
-            errors.newpassword = "Password must be at least 8 characters long and contain at least one uppercase letter and one special character";
+        if (!formData.grade || formData.grade <= 0) {
+            errors.grade = "IELTS Grade must be a positive number";
         }
-        if (formData.newpassword == formData.currentPassword) {
-            errors.newpassword = "Current password is the same as old password";
-        }
-        if (formData.newpassword !== formData.confirmPassword) {
-            errors.confirmPassword = "Passwords do not match";
-        }
+        if (!formData.acceptedTerms) errors.acceptedTerms = "You must accept the terms and policies";
         return errors;
     };
 
@@ -89,17 +98,23 @@ const ProfileSection = () => {
         const errors = validateForm();
 
         if (Object.keys(errors).length === 0) {
-            setFormErrors({
-                email: "",
-                currentPassword: "",
-                newpassword: "",
-                confirmPassword: ""
-            });
+            setFormErrors({});
 
-            // Remove confirmPassword before dispatching
-            const { confirmPassword, ...userData } = formData;
+            const userData = {
+                teacherId: "",
+                aboutMe: formData.aboutMe,
+                grade: Number(formData.grade),
+                degreeURL: formData.degreeURL,
+                career: formData.career,
+                yearExperience: Number(formData.yearsOfExperience),
+                isApprove: false,
+                isReject: false,
+                specializationIds: Object.keys(formData.specialization)
+                    .filter(key => formData.specialization[key]) // Extract checked specialization IDs
+                    .filter(id => id !== "acceptedTerms"),
+            };
 
-            dispatch(changePasswordAPI(userData)); // Call your Redux action
+            dispatch(BeTeacher(userData));
         } else {
             setFormErrors(errors);
         }
@@ -108,19 +123,29 @@ const ProfileSection = () => {
     return (
         <MainLayout>
             <div className="flex h-screen w-full">
-                <Sidebar userInfor={userInfor} />
-                <div className="flex-1 p-12">
+                <Sidebar />
+                <div className="flex-1 p-6">
                     <div className="flex gap-8 bg-gray-100 p-6 px-12">
                         <div className="hidden md:flex md:w-1/3 flex-col items-start">
-                            <div className="mb-6 text-base text-red-600 shadow-sm italic">
+                            <div className="mb-3 text-base text-red-600 shadow-sm italic">
                                 <p>Make sure all information you provide is true.</p>
                             </div>
                             <label className="text-sm">
-                                <input type="checkbox" /> Accept our <Link>terms and policies</Link>
+                                <input
+                                    type="checkbox"
+                                    name="acceptedTerms"
+                                    required
+                                    checked={formData.acceptedTerms}
+                                    onChange={handleChange}
+                                />
+                                Accept our <Link to="/terms">terms and policies</Link>
                             </label>
+                            {formErrors.acceptedTerms && (
+                                <p className="font-mono text-red-500 text-xs mt-1">{formErrors.acceptedTerms}</p>
+                            )}
                         </div>
                         <div className="flex-1 border-2 border-gray-500 rounded-lg p-6">
-                            <ul className="mt-2 flex space-x-4 border-b border-gray-300">
+                            <ul className="flex space-x-4 border-b border-gray-300">
                                 <li>
                                     <p className="py-3 px-6 text-blue-800 border-b-2 border-blue-800 font-bold text-lg">
                                         MORE INFORMATION ABOUT YOU
@@ -136,130 +161,102 @@ const ProfileSection = () => {
                                                     <label className="block text-gray-700">Bio</label>
                                                     <textarea
                                                         className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-1 focus:ring-blue-500"
-                                                        type="email"
-                                                        name="email"
-                                                        value={formData.email}
+                                                        name="aboutMe"
+                                                        value={formData.aboutMe}
                                                         onChange={handleChange}
                                                         placeholder="Enter your Bio"
                                                     />
-                                                    {formErrors.email && <p className="font-mono text-red-500 text-xs mt-1">{formErrors.email}</p>}
+                                                    {formErrors.aboutMe && <p className="font-mono text-red-500 text-xs mt-1">{formErrors.aboutMe}</p>}
                                                 </div>
 
-                                                {/* Current career and Ielts Certificate */}
+                                                {/* Current career and IELTS Certificate */}
                                                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                                     <div>
                                                         <label className="block text-gray-700">Current career</label>
                                                         <input
                                                             className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-1 focus:ring-blue-500"
                                                             type="text"
-                                                            name="yearsOfExperience"
-                                                            value={formData.yearsOfExperience}
+                                                            name="career"
+                                                            value={formData.career}
                                                             onChange={handleChange}
                                                             placeholder="Your current career..."
                                                         />
+                                                        {formErrors.career && <p className="font-mono text-red-500 text-xs mt-1">{formErrors.career}</p>}
                                                     </div>
                                                     <div>
-                                                        <label className="block text-gray-700">Ielts Certificate</label>
+                                                        <label className="block text-gray-700">IELTS Certificate</label>
                                                         <input
                                                             className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-1 focus:ring-blue-500"
                                                             type="file"
-                                                            name="ieltsGrade"
-                                                            value={formData.ieltsGrade}
-                                                            onChange={handleChange}
+                                                            name="degreeURL"
+                                                            onChange={handleFileChange} // Updated to handle file change separately
                                                         />
+                                                        {formErrors.degreeURL && <p className="font-mono text-red-500 text-xs mt-1">{formErrors.degreeURL}</p>}
                                                     </div>
                                                 </div>
 
-                                                {/* Number of Year Experience and IELTS grade on one row */}
+                                                {/* Number of Years Experience and IELTS grade on one row */}
                                                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                                     <div>
                                                         <label className="block text-gray-700">Number of Years Experience</label>
                                                         <input
                                                             className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-1 focus:ring-blue-500"
-                                                            type="text"
+                                                            type="number"
                                                             name="yearsOfExperience"
                                                             value={formData.yearsOfExperience}
                                                             onChange={handleChange}
                                                             placeholder="Number of years experience..."
                                                         />
+                                                        {formErrors.yearsOfExperience && <p className="font-mono text-red-500 text-xs mt-1">{formErrors.yearsOfExperience}</p>}
                                                     </div>
                                                     <div>
                                                         <label className="block text-gray-700">IELTS Grade</label>
                                                         <input
                                                             className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-1 focus:ring-blue-500"
-                                                            type="text"
-                                                            name="ieltsGrade"
-                                                            value={formData.ieltsGrade}
+                                                            type="number"
+                                                            name="grade"
+                                                            value={formData.grade}
                                                             onChange={handleChange}
                                                             placeholder="Your IELTS grade..."
                                                         />
+                                                        {formErrors.grade && <p className="font-mono text-red-500 text-xs mt-1">{formErrors.grade}</p>}
                                                     </div>
                                                 </div>
 
-                                                {/* Specialization checkboxes */}
+                                                {/* Specialization checkboxes from Redux state */}
                                                 <div>
                                                     <label className="block text-gray-700">Specialization</label>
                                                     <div className="flex space-x-4">
-                                                        <label className="flex items-center">
-                                                            <input
-                                                                type="checkbox"
-                                                                name="listening"
-                                                                checked={formData.specialization.listening}
-                                                                onChange={handleChange}
-                                                            />
-                                                            <span className="ml-2">Listening</span>
-                                                        </label>
-                                                        <label className="flex items-center">
-                                                            <input
-                                                                type="checkbox"
-                                                                name="speaking"
-                                                                checked={formData.specialization.speaking}
-                                                                onChange={handleChange}
-                                                            />
-                                                            <span className="ml-2">Speaking</span>
-                                                        </label>
-                                                        <label className="flex items-center">
-                                                            <input
-                                                                type="checkbox"
-                                                                name="reading"
-                                                                checked={formData.specialization.reading}
-                                                                onChange={handleChange}
-                                                            />
-                                                            <span className="ml-2">Reading</span>
-                                                        </label>
-                                                        <label className="flex items-center">
-                                                            <input
-                                                                type="checkbox"
-                                                                name="writing"
-                                                                checked={formData.specialization.writing}
-                                                                onChange={handleChange}
-                                                            />
-                                                            <span className="ml-2">Writing</span>
-                                                        </label>
+                                                        {getspecializationstatus === 'pending' ? (
+                                                            <p>Loading specializations...</p>
+                                                        ) : (
+                                                            specializations?.map((specialization) => (
+                                                                <label className="flex items-center" key={specialization.id}>
+                                                                    <input
+                                                                        type="checkbox"
+                                                                        name={specialization.id}
+                                                                        checked={formData.specialization[specialization.id] || false}
+                                                                        onChange={handleChange}
+                                                                    />
+                                                                    <span className="ml-2">{specialization.name}</span>
+                                                                </label>
+                                                            ))
+                                                        )}
                                                     </div>
                                                 </div>
                                             </div>
                                         </div>
 
-                                        <div className="text-right">
-                                            <button
-                                                type="submit"
-                                                className="px-4 py-2 bg-blue-600 text-white rounded-lg"
-                                            >
-                                                Save Changes
+                                        <div className="flex justify-end">
+                                            {beTeacherStatus === "pending" && (
+                                                <p className="font-mono px-4 py-2 text-xs text-yellow-500 text-center mt-2">checking...</p>
+                                            )}
+                                            {beTeacherStatus === "failed" && (
+                                                <p className="font-mono px-4 py-2 text-xs text-red-500 text-center mt-2">{beTeacherError}</p>
+                                            )}
+                                            <button type="submit" className="px-4 py-2 bg-green-500 text-white rounded hover:bg-blue-500">
+                                                Next
                                             </button>
-                                            {/* Success, Pending, and Error messages */}
-                                            {changePasswordStatus === "success" && (
-                                                <p className="font-mono text-xs text-green-500 text-center mt-2">
-                                                    Change password successful!
-                                                </p>
-                                            )}
-                                            {changePasswordStatus === "pending" && (
-                                                <p className="font-mono text-xs text-yellow-500 text-center mt-2">Changing...</p>
-                                            )}
-                                            {changePasswordStatus === "failed" && (
-                                                <p className="font-mono text-xs text-red-500 text-center mt-2">{error}</p>
-                                            )}
                                         </div>
                                     </div>
                                 </form>
@@ -272,4 +269,4 @@ const ProfileSection = () => {
     );
 };
 
-export default ProfileSection;
+export default EducationSection;

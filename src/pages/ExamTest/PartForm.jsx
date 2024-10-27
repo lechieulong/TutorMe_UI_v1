@@ -25,8 +25,13 @@ const PartForm = ({ skill, control }) => {
     const file = e.target.files[0];
     if (file) {
       try {
-        const uri = dispatch(uploadFile(file));
-        field.onChange(uri);
+        const resultAction = await dispatch(uploadFile(file));
+        if (uploadFile.fulfilled.match(resultAction)) {
+          const fileUrl = resultAction.payload.fileUrl;
+          field.onChange(fileUrl);
+        } else {
+          console.error("Upload failed:", resultAction.error.message);
+        }
       } catch (error) {
         console.error("Error uploading image:", error);
       }

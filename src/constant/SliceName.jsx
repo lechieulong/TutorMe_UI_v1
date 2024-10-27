@@ -10,6 +10,7 @@ export const SLICE_NAMES = {
   EVENT: "event",
   SCHEDULE: "schedule",
   COMMON: "common",
+  SPECIALIZATION: "specialization",
 };
 
 export const ACTIONS = {
@@ -28,6 +29,9 @@ export const ACTIONS = {
   RESET_PASSWORD: "reset-password",
 
   FETCH_TESTS: "getTests",
+  GET_TEST: "getTest",
+  GET_SKILLS: "getSkills",
+  GET_PARTS: "getParts",
   CREATE_TEST: "createTest",
   UPDATE_TEST: "updateTest",
   DELETE_TEST: "deleteTest",
@@ -39,16 +43,25 @@ export const ACTIONS = {
   UPDATE_QUESTION: "updateQuestion",
   ADD_SKILLS: "addSkills",
 
+  GET_USER_BY_ID: "getuserbyid",
   GET_USER_INFORMATION: "getProfile",
   GET_TOP10_TEACHERS: "getTop10Teachers",
   SEARCH_TEACHER: "searchteacher",
-
+  BE_TEACHER: "beteacher",
+  
   //Event
   GET_EVENT_BY_USERID: "geteventbyuserid",
 
   //Schedule
   SET_SCHEDULE: "setschedule",
   GET_SCHEDULE_7DAYS: "getschedule7days",
+
+  //Specialization
+  GET_SPECIALIZATION: "getspecialization",
+
+  //ADMIN
+  GET_ALL_USERS: "getallusers",
+  LOCK_USER: "lockuser",
 };
 
 export const STATUS = {

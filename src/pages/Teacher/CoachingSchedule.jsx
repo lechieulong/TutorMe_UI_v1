@@ -12,6 +12,8 @@ import { Roles } from '../../utils/config';
 import { SetSchedule } from '../../redux/Schedule/ScheduleSlice';
 import Search from './components/Search';
 import { ToastContainer, toast } from "react-toastify";
+import { Link, useNavigate } from "react-router-dom";
+
 import "react-toastify/dist/ReactToastify.css";
 
 const CoachingSchedule = () => {
@@ -22,6 +24,7 @@ const CoachingSchedule = () => {
     const [userFromToken, setUser] = useState(null);
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [isSearchVisible, setIsSearchVisible] = useState(false);
+    const navigate = useNavigate();
 
     useEffect(() => {
         const fetchUser = async () => {
@@ -113,7 +116,10 @@ const CoachingSchedule = () => {
                     isBooked: false,
                     teacherId: ""
                 });
+
                 toast.success("Set schedule successful");
+                navigate("/coachingschedule"/{teachername});
+
                 toggleModal();
             } catch (error) {
                 console.log(error);

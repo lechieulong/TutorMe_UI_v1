@@ -23,14 +23,14 @@ const ProfileSection = () => {
   const [formData, setFormData] = useState({
     email: "",
     currentPassword: "",
-    newpassword: "",
+    newPassword: "",
     confirmPassword: "",
   });
 
   const [formErrors, setFormErrors] = useState({
     email: "",
     currentPassword: "",
-    newpassword: "",
+    newPassword: "",
     confirmPassword: "",
   });
 
@@ -50,16 +50,16 @@ const ProfileSection = () => {
     if (!formData.currentPassword) {
       errors.currentPassword = "Current password is required";
     }
-    if (!formData.newpassword) {
-      errors.newpassword = "New password is required";
-    } else if (!passwordRegex.test(formData.newpassword)) {
-      errors.newpassword =
+    if (!formData.newPassword) {
+      errors.newPassword = "New password is required";
+    } else if (!passwordRegex.test(formData.newPassword)) {
+      errors.newPassword =
         "Password must be at least 8 characters long and contain at least one uppercase letter and one special character";
     }
-    if (formData.newpassword == formData.currentPassword) {
-      errors.newpassword = "Current password is the same as old password";
+    if (formData.newPassword == formData.currentPassword) {
+      errors.newPassword = "Current password is the same as old password";
     }
-    if (formData.newpassword !== formData.confirmPassword) {
+    if (formData.newPassword !== formData.confirmPassword) {
       errors.confirmPassword = "Passwords do not match";
     }
     return errors;
@@ -73,7 +73,7 @@ const ProfileSection = () => {
       setFormErrors({
         email: "",
         currentPassword: "",
-        newpassword: "",
+        newPassword: "",
         confirmPassword: "",
       });
 
@@ -89,7 +89,7 @@ const ProfileSection = () => {
   return (
     <MainLayout>
       <div className="flex h-screen w-full">
-        <Sidebar userInfor={userInfor} />
+        <Sidebar />
         <div className="flex-1 p-12">
           <div className="flex gap-8 bg-gray-100 p-6 px-12">
             <div className="flex-1 border-2 border-gray-500 rounded-lg p-6">
@@ -146,14 +146,14 @@ const ProfileSection = () => {
                           <input
                             className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-1 focus:ring-blue-500"
                             type="password"
-                            name="newpassword"
-                            value={formData.newpassword}
+                            name="newPassword"
+                            value={formData.newPassword}
                             onChange={handleChange}
                             placeholder="••••••"
                           />
-                          {formErrors.newpassword && (
+                          {formErrors.newPassword && (
                             <p className="font-mono text-red-500 text-xs mt-1">
-                              {formErrors.newpassword}
+                              {formErrors.newPassword}
                             </p>
                           )}
                         </div>

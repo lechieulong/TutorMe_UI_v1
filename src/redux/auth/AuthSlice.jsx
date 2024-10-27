@@ -2,6 +2,7 @@ import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import axios from "axios";
 import { SLICE_NAMES, ACTIONS, STATUS } from "../../constant/SliceName";
 import apiURLConfig from "../common/apiURLConfig";
+import Cookies from "js-cookie";
 
 // Action login
 export const LoginApi = createAsyncThunk(
@@ -96,13 +97,21 @@ export const loginWithGoogleApi = createAsyncThunk(
 export const changePasswordAPI = createAsyncThunk(
   `${SLICE_NAMES.AUTH}/${ACTIONS.CHANGE_PASSWORD}`,
   async (data, { rejectWithValue }) => {
+    console.log("Change data: ", data);
     try {
+      const token = Cookies.get("authToken");
       const response = await axios.post(
         `${apiURLConfig.baseURL}/auth/change-password`,
-        data
+        data,
+        {
+          headers: {
+            'Authorization': `Bearer ${token}`,
+          }
+        }
       );
       return response.data;
     } catch (error) {
+      console.log(error);
       return rejectWithValue(
         error.response?.data?.message || "Failed to change password."
       );
@@ -110,14 +119,14 @@ export const changePasswordAPI = createAsyncThunk(
   }
 );
 
-// Action change password
+// Action request forgot password
 export const requestForgotAPI = createAsyncThunk(
   `${SLICE_NAMES.AUTH}/${ACTIONS.REQUEST_FORGOT}`,
   async (data, { rejectWithValue }) => {
     try {
       const response = await axios.post(
         `${apiURLConfig.baseURL}/auth/forgot-password`,
-        data
+        data,
       );
       return response.data;
     } catch (error) {

@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { resetPasswordAPI } from '../../redux/auth/AuthSlice';
+import { Link } from 'react-router-dom';
 
 const ResetPassword = () => {
     const [searchParams] = useSearchParams(); // Access the search parameters
@@ -10,7 +11,7 @@ const ResetPassword = () => {
 
     const dispatch = useDispatch();
 
-    const { status, error } = useSelector((state) => state.auth);
+    const { resetPassworStatus, error } = useSelector((state) => state.auth);
 
     const [formData, setFormData] = useState({
         email: email,
@@ -59,7 +60,7 @@ const ResetPassword = () => {
     };
 
     return (
-        <div className="flex items-center justify-center min-h-screen bg-gray-100">
+        <div className="flex items-center justify-center min-h-screen w-screen bg-gray-100">
             <div className="container mx-auto my-10 p-5 border rounded shadow-lg bg-white max-w-sm">
                 <h1 className="text-2xl font-bold mb-5 text-center">Reset Password</h1>
                 <form onSubmit={handleSubmit}>
@@ -73,7 +74,7 @@ const ResetPassword = () => {
                             required
                             className="w-full p-2 border border-gray-300 rounded"
                         />
-                        {formErrors.newPassword && <p className="text-red-500">{formErrors.newPassword}</p>}
+                        {formErrors.newPassword && <p className="font-mono text-xs text-red-500 text-center mt-2">{formErrors.newPassword}</p>}
                     </div>
                     <div className="mb-4">
                         <label className="block text-gray-700">Confirm Password:</label>
@@ -85,17 +86,19 @@ const ResetPassword = () => {
                             required
                             className="w-full p-2 border border-gray-300 rounded"
                         />
-                        {formErrors.confirmPassword && <p className="text-red-500">{formErrors.confirmPassword}</p>}
+                        {formErrors.confirmPassword && <p className="font-mono text-xs text-red-500 text-center mt-2">{formErrors.confirmPassword}</p>}
                     </div>
-                    {status === 'failed' && <p className="text-red-500">{error}</p>}
-                    {status === 'success' && <p className="text-green-500">Reset successfully.</p>}
-                    <button
-                        type="submit"
-                        className="bg-blue-500 text-white p-2 rounded"
-                        disabled={status === 'pending'}
-                    >
-                        {status === 'pending' ? 'Resetting...' : 'Reset Password'}
-                    </button>
+                    {resetPassworStatus === 'failed' && <p className="font-mono text-xs text-red-500 text-center mt-2">{error}</p>}
+                    {resetPassworStatus === 'success' && <p className="font-mono text-xs text-green-500 text-center mt-2">Reset successfully. <Link to="/login" className="underline">Login</Link></p>}
+                    <div className="text-center mt-2">
+                        <button
+                            type="submit"
+                            className=" bg-blue-500 text-white p-2 rounded"
+                            disabled={resetPassworStatus === 'pending'}
+                        >
+                            {resetPassworStatus === 'pending' ? 'Resetting...' : 'Reset Password'}
+                        </button>
+                    </div>
                 </form>
             </div>
         </div>

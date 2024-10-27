@@ -10,6 +10,8 @@ const TestLayout = ({ skillsData }) => {
   const [userAnswers, setUserAnswers] = useState([]);
   const [loading, setLoading] = useState(true);
 
+  console.log("test layout");
+
   const { testId } = useParams();
 
   const fetchTestData = async () => {

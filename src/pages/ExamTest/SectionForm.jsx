@@ -58,14 +58,19 @@ const SectionForm = ({ skill, partIndex, control }) => {
     const file = e.target.files[0];
     if (file) {
       try {
-        const uri = await dispatch(uploadFile(file));
-        field.onChange(uri);
+        const resultAction = await dispatch(uploadFile(file));
+        if (uploadFile.fulfilled.match(resultAction)) {
+          const fileUrl = resultAction.payload.fileUrl;
+
+          field.onChange(fileUrl);
+        } else {
+          console.error("Upload failed:", resultAction.error.message);
+        }
       } catch (error) {
         console.error("Error uploading image:", error);
       }
     }
   };
-
   return (
     <div>
       <h4 className="font-medium">Sections</h4>

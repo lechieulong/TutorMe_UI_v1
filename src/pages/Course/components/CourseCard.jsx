@@ -104,6 +104,7 @@ const CourseCard = ({
       </div>
       <Link
         to={destinationPath}
+        state={{ category }} // Truyền category vào state
         className="flex-grow flex flex-col items-center"
       >
         <div className="text-2xl mb-1">{icon}</div>

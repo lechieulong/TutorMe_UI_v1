@@ -45,7 +45,7 @@ import TestForm from "./pages/ExamTest/TestForm";
 import CreateTest from "./pages/ExamTest/CreateTest";
 import MentorCourseList from "./pages/Mentor/MentorCourseList";
 import Error404 from "./pages/Error/Error404";
-import NotAuthorizedPage from "./pages/Error/NotAuthorizedPage"
+import NotAuthorizedPage from "./pages/Error/NotAuthorizedPage";
 import QuestionBank from "./pages/ExamTest/questionBank/QuestionBank";
 import PayOS from "./pages/User/PayOS";
 import PaymentResult from "./pages/User/PayOSResult ";
@@ -54,7 +54,7 @@ import CourseLayout from "./pages/course/CourseLayout";
 import ListTest from "./pages/ExamTest/ListTest";
 
 //ADMIN
-import AdminApp from "./pages/ADMIN/Index";
+// import AdminApp from "./pages/ADMIN/Index";
 
 import CreateClass from "./pages/Class/CreateClass";
 const App = () => {
@@ -142,12 +142,15 @@ const App = () => {
           <Route path="/Payment" element={<PayOS />} />
           <Route path="/Paymentresult" element={<PaymentResult />} />
 
-          {/* ADMIN */}
-          <Route path="/admin/app/*" element={
-            <AdminRoute>
-              <AdminApp />
-            </AdminRoute>
-          } />
+          {/* ADMIN
+          <Route
+            path="/admin/app/*"
+            element={
+              <AdminRoute>
+                <AdminApp />
+              </AdminRoute>
+            }
+          /> */}
         </Routes>
       </Router>
     </div>

@@ -45,7 +45,8 @@ const MentorCourseList = () => {
     return courses
       .filter(
         (course) =>
-          selectedCategory === "All" || course.category === selectedCategory
+          selectedCategory === "All" ||
+          course.categories.includes(selectedCategory)
       )
       .filter((course) => {
         const courseTitle = course.title || "";
@@ -152,8 +153,16 @@ const MentorCourseList = () => {
                 content={course.content}
                 title={course.title}
                 description={course.description}
-                category={course.category}
-                icon={getIcon(course.category)}
+                category={course.categories
+                  .map((category) => {
+                    if (category === "Reading") return 0;
+                    if (category === "Listening") return 1;
+                    if (category === "Writing") return 2;
+                    if (category === "Speaking") return 3;
+                    return -1; // giá trị không hợp lệ
+                  })
+                  .join(", ")} // Hiển thị tất cả category dưới dạng số
+                icon={getIcon(course.categories[0])} // Lấy icon cho category đầu tiên
                 teacher={user?.name}
                 courseId={course.id}
                 onDelete={handleDelete}

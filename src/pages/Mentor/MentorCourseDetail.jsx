@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { useParams, useNavigate } from "react-router-dom";
+import { useParams, useNavigate, useLocation } from "react-router-dom";
 import MentorHeader from "../../components/Mentor/MentorHeader";
 import MentorSidebar from "../../components/Mentor/MentorSideBar";
 import CourseTimeline from "../Course/components/CourseTimeline";
@@ -12,11 +12,13 @@ import ClassCard from "../Class/components/ClassCard";
 
 const MentorCourseDetail = () => {
   const { className, courseId } = useParams();
+  const location = useLocation();
   const [timelineIds, setTimelineIds] = useState([]);
   const [userId, setUserId] = useState(null);
   const [currentSlide, setCurrentSlide] = useState(0);
   const [classes, setClasses] = useState([]);
   const [switchStates, setSwitchStates] = useState({});
+  const [category, setCategory] = useState(location.state); // State để lưu danh mục
   const navigate = useNavigate();
 
   const fetchTimelines = async () => {
@@ -40,10 +42,15 @@ const MentorCourseDetail = () => {
   };
 
   useEffect(() => {
+    const { category } = location.state || {}; // Lấy category từ location.state
+    if (category) {
+      console.log("Category passed:", category); // Log category
+      setCategory(category); // Cập nhật state category
+    }
     initializeUser();
     fetchTimelines();
     fetchClasses();
-  }, [courseId]);
+  }, [courseId, location.state]);
 
   const handleTimelineAdded = () => {
     fetchTimelines();
@@ -59,15 +66,12 @@ const MentorCourseDetail = () => {
         `https://localhost:7030/api/class/course/${courseId}/classes`
       );
 
-      // Log dữ liệu nhận được từ API
       console.log("Classes fetched:", response.data.result);
-
       setClasses(response.data.result);
 
-      // Khởi tạo trạng thái switch dựa vào giá trị Enabled
       const initialSwitchStates = {};
       response.data.result.forEach((classItem) => {
-        initialSwitchStates[classItem.id] = classItem.isEnabled; // Sử dụng isEnabled từ response
+        initialSwitchStates[classItem.id] = classItem.isEnabled;
       });
       setSwitchStates(initialSwitchStates);
     } catch (error) {
@@ -119,8 +123,6 @@ const MentorCourseDetail = () => {
                       key={classItem.id}
                       classItem={classItem}
                       switchState={switchStates[classItem.id] || false}
-
-                      // onSwitchChange={handleSwitchChange}
                     />
                   ))}
                 </div>
@@ -151,7 +153,7 @@ const MentorCourseDetail = () => {
               />
               <CourseTimeline
                 courseId={courseId}
-                onSelectTimeline={setTimelineIds}
+                categories={category} // Truyền category vào CourseTimeline
               />
               <div className="flex justify-center mt-4">
                 <button className="items-center p-2 bg-green-400">

@@ -3,6 +3,7 @@ import { useState, useEffect, useCallback } from "react";
 import { useParams } from "react-router-dom";
 import Header from "../../components/Test/Header";
 import TestView from "./TestView";
+import mockTestData from "../../data/mockTestData";
 import { getSkill, getTesting } from "../../redux/testExam/TestSlice";
 import { useDispatch } from "react-redux";
 import { useLocation } from "react-router-dom";
@@ -22,10 +23,10 @@ const TestLayout = ({ skillsData }) => {
   const fetchTestData = async () => {
     try {
       setLoading(true);
-      const result = await dispatch(getTesting(testId));
-      if (result.payload) {
-        setTestData(result.payload);
-      }
+      const fetchedTestData = await new Promise((resolve) => {
+        setTimeout(() => resolve(mockTestData), 1000); // Simulate network delay
+      });
+      setTestData(fetchedTestData);
     } catch (error) {
       console.error("Error fetching test data:", error);
     } finally {
@@ -73,7 +74,7 @@ const TestLayout = ({ skillsData }) => {
   const handleAnswerChange = useCallback(({ questionId, answerData }) => {
     setUserAnswers((prevAnswers) => ({
       ...prevAnswers,
-      [questionId]: answerData,
+      [questionId]: answerData === undefined ? undefined : answerData, // Set to undefined if cleared
     }));
   }, []);
 
@@ -115,6 +116,7 @@ const TestLayout = ({ skillsData }) => {
             skillData={currentSkillData}
             currentSkillKey={currentSkillKey}
             handleAnswerChange={handleAnswerChange}
+            userAnswers={userAnswers}
           />
         </div>
       </form>

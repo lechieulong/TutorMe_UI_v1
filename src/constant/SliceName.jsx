@@ -31,12 +31,15 @@ export const ACTIONS = {
   FETCH_TESTS: "getTests",
   GET_TEST: "getTest",
   GET_SKILLS: "getSkills",
+  GET_SKILL: "getSkill",
+  GET_TESTING: "getTesting",
   GET_PARTS: "getParts",
   CREATE_TEST: "createTest",
   UPDATE_TEST: "updateTest",
   DELETE_TEST: "deleteTest",
 
   IMPORT_QUESTION: "importQuestion",
+  DOWNLOAD_TEMPLATE: "downloadTemplate",
   GET_QUESTIONS_BANK: "getQuestionsBank",
   ADD_QUESTIONS: "addQuestions",
   DELETE_QUESTION: "deleteQuestion",
@@ -48,7 +51,7 @@ export const ACTIONS = {
   GET_TOP10_TEACHERS: "getTop10Teachers",
   SEARCH_TEACHER: "searchteacher",
   BE_TEACHER: "beteacher",
-  
+
   //Event
   GET_EVENT_BY_USERID: "geteventbyuserid",
 

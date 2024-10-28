@@ -22,6 +22,9 @@ const TestSetting = () => {
     const result = await dispatch(getParts(skillId));
     if (result.payload) {
       setParts(result.payload);
+      // Set selectedParts to include all partNumbers by default
+      const allParts = result.payload.map((p) => p.partNumber);
+      setSelectedParts(allParts);
     }
   };
 
@@ -56,12 +59,12 @@ const TestSetting = () => {
     const duration = timeLimit;
     const testData = {
       duration,
-      selectedParts: selectedParts.length ? selectedParts : [], // Use the selected parts
+      selectedParts: selectedParts.length ? selectedParts : [],
       skillPart: skillId,
     };
 
     setIsTestStarted(true); // Set test started to true
-    navigate("/testing/1", { state: testData });
+    navigate(`/testing/${skillId}/skill`, { state: testData });
   };
 
   const handleTimeLimitChange = (event) => {
@@ -74,7 +77,6 @@ const TestSetting = () => {
 
   console.log(selectedParts);
 
-  // Check if all parts are selected
   const isFullPartsChecked = selectedParts.length === parts.length;
 
   return (
@@ -141,7 +143,12 @@ const TestSetting = () => {
                 </select>
                 <button
                   onClick={handleStartTest}
-                  className="mt-6 w-full bg-green-600 text-white font-medium py-2 rounded-lg hover:bg-green-700"
+                  disabled={selectedParts.length === 0} // Disable if no parts are selected
+                  className={`mt-6 w-full text-white font-medium py-2 rounded-lg ${
+                    selectedParts.length === 0
+                      ? "bg-gray-400"
+                      : "bg-green-600 hover:bg-green-700"
+                  }`}
                 >
                   Start Now
                   <span>
@@ -164,15 +171,6 @@ const TestSetting = () => {
                   Full parts (60 minutes - {parts.length} parts -{" "}
                   {parts.length * 13} questions)
                 </p>
-                <button
-                  onClick={handleStartTest}
-                  className="mt-6 w-full bg-green-600 text-white font-medium py-2 rounded-lg hover:bg-green-700"
-                >
-                  Start Now
-                  <span>
-                    <FontAwesomeIcon icon={faBolt} className="ml-2 " />
-                  </span>
-                </button>
               </div>
             </div>
           </div>

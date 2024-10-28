@@ -3,13 +3,12 @@ import preline from "preline/plugin";
 /** @type {import('tailwindcss').Config} */
 export default {
   content: ["./src/**/*.{js,jsx,ts,tsx}", "./public/index.html"],
-  darkMode: false,
+  darkMode: "media",
   theme: {
     extend: {
       fontFamily: {
-        sans: ['"Segoe UI"', 'Roboto', 'Arial', 'sans-serif'], // GitHub-like font stack
+        sans: ['"Segoe UI"', "Roboto", "Arial", "sans-serif"], // GitHub-like font stack
       },
-
     },
   },
   plugins: [

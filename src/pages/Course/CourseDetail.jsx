@@ -6,6 +6,7 @@ import CourseTimeline from "./components/CourseTimeline";
 import CourseTimelineDetail from "./components/CourseTimelineDetail";
 import axios from "axios";
 import { getUser } from "../../service/GetUser";
+import ClassCard from "../Class/components/ClassCard";
 
 const CourseDetail = () => {
   const { className, courseId } = useParams();
@@ -15,12 +16,12 @@ const CourseDetail = () => {
   const [userId, setUserId] = useState(null);
   const [errorMessage, setErrorMessage] = useState("");
   const [currentSlide, setCurrentSlide] = useState(0);
+  const [selectedClassId, setSelectedClassId] = useState(null);
 
-  // Fetch timelines from API
   const fetchTimelines = async () => {
     try {
       const response = await axios.get(
-        `https://localhost:7030/api/CourseTimeline/Course?courseId=${courseId}`
+        `https://localhost:7030/api/CourseTimeline/Course/${courseId}`
       );
       setTimelineIds(response.data.map((timeline) => timeline.id));
     } catch (error) {
@@ -28,36 +29,34 @@ const CourseDetail = () => {
     }
   };
 
-  // Fetch all classes for the course
   const fetchClasses = async () => {
     try {
       const response = await axios.get(
         `https://localhost:7030/api/class/course/${courseId}/classes`
       );
-      setClasses(response.data.result);
+      const fetchedClasses = response.data.result;
+      setClasses(fetchedClasses);
     } catch (error) {
       console.error("Failed to fetch classes", error);
     }
   };
 
-  // Check enrollment status
   const checkEnrollment = async (userId) => {
     try {
       const response = await axios.get(
         `https://localhost:7030/api/Enrollment/check?courseId=${courseId}&userId=${userId}`
       );
       setIsEnrolled(response.data.isEnrolled);
-      if (response.data.classId === null) {
-        setErrorMessage("Bạn chưa gia nhập lớp nào. Hãy đăng ký tại");
-      } else {
-        setErrorMessage("");
-      }
+      setErrorMessage(
+        response.data.classId
+          ? ""
+          : "Bạn chưa gia nhập lớp nào. Hãy đăng ký tại"
+      );
     } catch (error) {
       console.error("Failed to check enrollment", error);
     }
   };
 
-  // Initialize user
   const initializeUser = () => {
     const userFromToken = getUser();
     const userIdFromToken = userFromToken?.sub;
@@ -68,20 +67,19 @@ const CourseDetail = () => {
     }
   };
 
-  // useEffect to initialize user and fetch data
   useEffect(() => {
     initializeUser();
     fetchTimelines();
     fetchClasses();
   }, [courseId]);
 
-  // Handle enrollment
   const handleEnroll = async () => {
     try {
-      if (userId) {
+      if (userId && selectedClassId) {
         const enrollmentData = {
           courseId: courseId,
           userId: userId,
+          classId: selectedClassId,
         };
         const response = await axios.post(
           "https://localhost:7030/api/Enrollment",
@@ -93,7 +91,7 @@ const CourseDetail = () => {
           setIsEnrolled(true);
         }
       } else {
-        alert("Người dùng chưa đăng nhập.");
+        alert("Người dùng chưa đăng nhập hoặc chưa chọn lớp.");
       }
     } catch (error) {
       console.error("Không thể ghi danh", error);
@@ -105,7 +103,14 @@ const CourseDetail = () => {
     }
   };
 
-  // Functions to handle slideshow navigation
+  const handleSelectClass = (classId) => {
+    if (classId === false) {
+      setSelectedClassId(null); // Không có lớp nào được chọn nếu classId là false
+    } else {
+      setSelectedClassId(classId); // Cập nhật selectedClassId với classId hợp lệ
+    }
+  };
+
   const handleNext = () => {
     setCurrentSlide((prev) =>
       Math.min(prev + 1, Math.ceil(classes.length / 3) - 1)
@@ -117,10 +122,8 @@ const CourseDetail = () => {
   };
 
   return (
-    <div className="flex flex-col min-h-screen w-full">
-      <MentorHeader />
-      <div className="flex flex-1 mt-16 w-full">
-        <MentorSidebar />
+    <div className="  w-full">
+      <div className="flex flex-1  w-full">
         <div className="flex-1 p-4">
           <ol className="flex items-center whitespace-nowrap">
             <li className="inline-flex items-center">
@@ -147,62 +150,45 @@ const CourseDetail = () => {
             </p>
           )}
           <div className="flex flex-col bg-white border w-full shadow-sm rounded-xl p-4 md:p-5 relative group">
-            {/* Title */}
-
-            {/* Card slider for classes */}
-            <div className="mt-4 relative">
-              <h4 className="text-md font-bold text-gray-800">Classes</h4>
-              <div className="overflow-hidden">
-                <div
-                  className="flex transition-transform duration-500"
-                  style={{ transform: `translateX(-${currentSlide * 100}%)` }}
-                >
-                  {classes.map((classItem) => (
-                    <div key={classItem.id} className="flex-shrink-0 w-1/3 p-2">
-                      <div className="bg-gray-100 border rounded-md p-4">
-                        <h5 className="font-bold text-gray-700">
-                          {classItem.className}
-                        </h5>
-                        <p className="text-gray-600">
-                          {classItem.classDescription}
-                        </p>
-                        <p className="text-gray-500">
-                          Student Count: {classItem.count}
-                        </p>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </div>
-              <div className="flex justify-between mt-2">
-                <button
-                  onClick={handlePrev}
-                  className="px-4 py-2 bg-blue-500 text-white rounded-lg disabled:opacity-50"
-                  disabled={currentSlide === 0}
-                >
-                  Prev
-                </button>
-                <button
-                  onClick={handleNext}
-                  className="px-4 py-2 bg-blue-500 text-white rounded-lg disabled:opacity-50"
-                  disabled={currentSlide >= Math.ceil(classes.length / 3) - 1}
-                >
-                  Next
-                </button>
+            <h4 className="text-md font-bold text-gray-800">Classes</h4>
+            <div className="overflow-hidden">
+              <div
+                className="flex transition-transform duration-500"
+                style={{ transform: `translateX(-${currentSlide * 100}%)` }}
+              >
+                {classes.map((classItem) => (
+                  <ClassCard
+                    key={classItem.id}
+                    classItem={classItem}
+                    isActive={selectedClassId === classItem.id}
+                    onSelect={handleSelectClass}
+                  />
+                ))}
               </div>
             </div>
-
-            {/* Popup for full text */}
+            <div className="flex justify-between mt-2">
+              <button
+                onClick={handlePrev}
+                className="py-2 px-3 inline-flex items-center gap-x-2 text-sm font-medium rounded-lg border border-gray-200 bg-white text-gray-800 shadow-sm hover:bg-gray-50 focus:outline-none focus:bg-gray-50"
+                disabled={currentSlide === 0}
+              >
+                Prev
+              </button>
+              <button
+                onClick={handleNext}
+                className="py-2 px-3 inline-flex items-center gap-x-2 text-sm font-medium rounded-lg border border-gray-200 bg-white text-gray-800 shadow-sm hover:bg-gray-50 focus:outline-none focus:bg-gray-50"
+                disabled={currentSlide >= Math.ceil(classes.length / 3) - 1}
+              >
+                Next
+              </button>
+            </div>
           </div>
           <div className="flex justify-start items-center mb-4">
             <p className="text-black font-bold text-4xl">{className}</p>
           </div>
           <div className="flex gap-4">
             <div className="w-2/5">
-              <CourseTimeline
-                courseId={courseId}
-                onSelectTimeline={setTimelineIds}
-              />
+              <CourseTimeline timelineIds={timelineIds} courseId={courseId} />
             </div>
             <div className="w-3/5">
               <CourseTimelineDetail timelineIds={timelineIds} />

@@ -1,6 +1,7 @@
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import "regenerator-runtime/runtime";
 import { GoogleOAuthProvider } from "@react-oauth/google";
+import { AdminRoute } from "./service/checkAuth";
 
 import Home from "./pages/Home";
 import NotFound from "./components/common/NotFound";
@@ -44,8 +45,18 @@ import TestForm from "./pages/ExamTest/TestForm";
 import CreateTest from "./pages/ExamTest/CreateTest";
 import MentorCourseList from "./pages/Mentor/MentorCourseList";
 import Error404 from "./pages/Error/Error404";
+import NotAuthorizedPage from "./pages/Error/NotAuthorizedPage";
 import QuestionBank from "./pages/ExamTest/questionBank/QuestionBank";
+import PayOS from "./pages/User/PayOS";
+import PaymentResult from "./pages/User/PayOSResult ";
+import CreateTestLayout from "./pages/course/CreateTestLayout";
+import CourseLayout from "./pages/course/CourseLayout";
+import ListTest from "./pages/ExamTest/ListTest";
 
+//ADMIN
+import AdminApp from "./pages/ADMIN/Index";
+
+import CreateClass from "./pages/Class/CreateClass";
 const App = () => {
   return (
     <div className=" min-h-screen ">
@@ -68,10 +79,17 @@ const App = () => {
 
           {/* Test  exam*/}
           <Route path="/testing/:testId" element={<TestLayout />} />
-          <Route path="/test/:skillId/settings" element={<TestSetting />} />
+          <Route path="/testing/:skillId/skill" element={<TestLayout />} />
+
+          <Route
+            path="/test/:testId/settings/:skillId"
+            element={<TestSetting />}
+          />
           <Route path="/testDetail/:testId" element={<SkillPart />} />
+          <Route path="/listTest" element={<ListTest />} />
           <Route path="/create-skill" element={<CreateTest />} />
           <Route path="/create-test/:sectionCourseId" element={<TestForm />} />
+          <Route path="/create-test" element={<CreateTestLayout />} />
           <Route path="/questionbank" element={<QuestionBank />} />
 
           {/* LiveStream  exam*/}
@@ -96,7 +114,9 @@ const App = () => {
           <Route path="/mentorCourseList" element={<MentorCourseList />} />
 
           {/* Course */}
-          <Route path="/course" element={<CourseList />} />
+          <Route path="/courseLayout" element={<CourseLayout />} />
+
+          <Route path="/courseList" element={<CourseList />} />
           <Route path="/createCourse" element={<CreateCourse />} />
           <Route path="/courseDetail/:courseId" element={<CourseDetail />} />
           <Route
@@ -112,11 +132,27 @@ const App = () => {
 
           {/* Class */}
           <Route path="/mylearning" element={<MyLearning />} />
+          <Route path="/createClass" element={<CreateClass />} />
 
           {/* List test that User did */}
           <Route path="/testlist" element={<TestList />} />
 
+          {/* Error page */}
           <Route path="/404" element={<Error404 />} />
+          <Route path="/not-authorized" element={<NotAuthorizedPage />} />
+
+          <Route path="/Payment" element={<PayOS />} />
+          <Route path="/Paymentresult" element={<PaymentResult />} />
+
+          {/* ADMIN */}
+          <Route
+            path="/admin/app/*"
+            element={
+              <AdminRoute>
+                <AdminApp />
+              </AdminRoute>
+            }
+          />
         </Routes>
       </Router>
     </div>

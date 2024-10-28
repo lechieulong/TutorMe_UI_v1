@@ -4,7 +4,7 @@ import React, { useState, useEffect } from 'react';
 import { getUser } from "../../service/GetUser";
 import { Roles } from "../../utils/config";
 
-const MainLayout = () => {
+const LinkTo = () => {
     const [showTextPeople, setShowTextPeople] = useState(false);
     const [showTextCalendar, setShowTextCalendar] = useState(false);
     const [userFromToken, setUser] = useState(null);
@@ -56,4 +56,4 @@ const MainLayout = () => {
     );
 };
 
-export default MainLayout;
+export default LinkTo;

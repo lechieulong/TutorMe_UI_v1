@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 
-const CourseTimeline = ({ courseId, onSelectTimeline }) => {
+const CourseTimeline = ({ courseId, onUpdateStatus }) => {
   const [timelines, setTimelines] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -12,17 +12,55 @@ const CourseTimeline = ({ courseId, onSelectTimeline }) => {
         const response = await axios.get(
           `https://localhost:7030/api/CourseTimeline/Course/${courseId}`
         );
+
+        // Log dữ liệu nhận được từ API
+        console.log("Dữ liệu timeline nhận được:", response.data);
+
+        // Đảm bảo dữ liệu được lưu vào state
         setTimelines(response.data);
-        onSelectTimeline(response.data.map((t) => t.id)); // Gọi onSelectTimeline với tất cả ID
-        setLoading(false);
       } catch (error) {
         setError("Hiện chưa có lịch học nào");
+        console.error("Error fetching timelines:", error); // Log lỗi để kiểm tra
+      } finally {
         setLoading(false);
       }
     };
 
     fetchTimelines();
-  }, [courseId, onSelectTimeline]);
+  }, [courseId]);
+
+  const handleSwitchChange = async (timelineId, currentState) => {
+    const newStatus = !currentState;
+    const confirmationMessage = newStatus
+      ? "Bạn có chắc muốn bật hiển thị timeline không?"
+      : "Bạn có chắc muốn tắt hiển thị timeline không?";
+
+    if (window.confirm(confirmationMessage)) {
+      try {
+        await axios.put(
+          `https://localhost:7030/api/CourseTimeline/${timelineId}/enabled`,
+          newStatus,
+          {
+            headers: { "Content-Type": "application/json" },
+          }
+        );
+        setTimelines((prevTimelines) =>
+          prevTimelines.map((t) =>
+            t.id === timelineId ? { ...t, isEnabled: newStatus } : t
+          )
+        );
+
+        if (onUpdateStatus) {
+          onUpdateStatus(timelineId, newStatus);
+        }
+
+        alert(`Timeline đã được ${newStatus ? "hiển thị" : "ẩn"} thành công.`);
+      } catch (error) {
+        console.error("Error updating timeline status", error);
+        alert("Cập nhật trạng thái timeline thất bại.");
+      }
+    }
+  };
 
   if (loading) return <div>Đang tải...</div>;
   if (error) return <div className="text-red-500">{error}</div>;
@@ -56,6 +94,25 @@ const CourseTimeline = ({ courseId, onSelectTimeline }) => {
                 <p className="mt-1 text-sm text-gray-600">
                   {timeline.description}
                 </p>
+              </div>
+
+              {/* Switch Button */}
+              <div className="flex items-center">
+                <input
+                  type="checkbox"
+                  className="hidden peer"
+                  id={`switch-${timeline.id}`}
+                  checked={timeline.isEnabled || false}
+                  onChange={() =>
+                    handleSwitchChange(timeline.id, timeline.isEnabled)
+                  }
+                />
+                <label
+                  htmlFor={`switch-${timeline.id}`}
+                  className="cursor-pointer w-10 h-6 flex items-center bg-gray-200 rounded-full p-1 transition-colors duration-300 ease-in-out peer-checked:bg-green-400"
+                >
+                  <div className="bg-white w-4 h-4 rounded-full shadow-md transform transition-transform duration-300 ease-in-out peer-checked:translate-x-4"></div>
+                </label>
               </div>
             </div>
           </div>

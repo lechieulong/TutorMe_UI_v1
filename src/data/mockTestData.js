@@ -56,7 +56,8 @@ const mockTestData = {
             questions: [
               {
                 id: 3,
-                questionName: "What strategies are suggested for time management?",
+                questionName:
+                  "What strategies are suggested for time management?",
                 answers: [
                   { id: 5, answerText: "Correct answer", isCorrect: true },
                   { id: 6, answerText: "Incorrect answer", isCorrect: false },
@@ -82,7 +83,8 @@ const mockTestData = {
         sections: [
           {
             id: 1,
-            sectionGuide: "Listen carefully and answer the following questions:",
+            sectionGuide:
+              "Listen carefully and answer the following questions:",
             sectionType: 2,
             image: "",
             questions: [
@@ -135,7 +137,8 @@ const mockTestData = {
         partNumber: 1,
         contentText: "<p>Write about the following topic.</p>",
         audio: null, // No audio for writing section
-        image: "https://www.pexels.com/photo/document-on-top-of-stationery-669619.jpeg", // Example image
+        image:
+          "https://www.pexels.com/photo/document-on-top-of-stationery-669619.jpeg", // Example image
         questionName: "Writing Section 1",
         sections: [
           {
@@ -159,18 +162,21 @@ const mockTestData = {
         partNumber: 2,
         contentText: "<p>Writing Task 2 prompt.</p>",
         audio: null,
-        image: "https://www.pexels.com/photo/close-up-photo-of-ballpoint-pen-on-paper-590582.jpeg",
+        image:
+          "https://www.pexels.com/photo/close-up-photo-of-ballpoint-pen-on-paper-590582.jpeg",
         questionName: "Writing Section 2",
         sections: [
           {
             id: 2,
-            sectionGuide: "Write a letter to your friend inviting them to your birthday party:",
+            sectionGuide:
+              "Write a letter to your friend inviting them to your birthday party:",
             sectionType: 1,
             image: "",
             questions: [
               {
                 id: 2,
-                questionName: "What details should you include in the invitation?",
+                questionName:
+                  "What details should you include in the invitation?",
                 answers: [],
               },
             ],
@@ -215,7 +221,8 @@ const mockTestData = {
       {
         id: 2,
         partNumber: 2,
-        contentText: "<p>Speaking prompt: Talk about a memorable experience.</p>",
+        contentText:
+          "<p>Speaking prompt: Talk about a memorable experience.</p>",
         audio: null,
         image: "https://unsplash.com/photos/qPpN4nSbeFw",
         questionName: "Speaking Section 2",
@@ -335,4 +342,4 @@ const mockTestData = {
   },
 };
 
-export default mockTestData
+export default mockTestData;

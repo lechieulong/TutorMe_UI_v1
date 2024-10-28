@@ -1,25 +1,57 @@
 // TestLayout.jsx
 import { useState, useEffect, useCallback } from "react";
 import { useParams } from "react-router-dom";
-import mockTestData from "../../data/mockTestData";
 import Header from "../../components/Test/Header";
 import TestView from "./TestView";
+import { getSkill, getTesting } from "../../redux/testExam/TestSlice";
+import { useDispatch } from "react-redux";
+import { useLocation } from "react-router-dom";
+
 const TestLayout = ({ skillsData }) => {
   const [currentSkillIndex, setCurrentSkillIndex] = useState(0); // Track the current skill index
   const [testData, setTestData] = useState({}); // Initialize as an empty object
   const [userAnswers, setUserAnswers] = useState([]);
   const [loading, setLoading] = useState(true);
 
-  const { testId } = useParams();
+  const location = useLocation();
+  const dispatch = useDispatch();
+  const { duration, selectedParts } = location.state || {};
+
+  const { testId, skillId } = useParams();
 
   const fetchTestData = async () => {
     try {
       setLoading(true);
-      const fetchedTestData = await new Promise((resolve) => {
-        setTimeout(() => resolve(mockTestData), 1000); // Simulate network delay
-      });
+      const result = await dispatch(getTesting(testId));
+      if (result.payload) {
+        setTestData(result.payload);
+      }
+    } catch (error) {
+      console.error("Error fetching test data:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
 
-      setTestData(fetchedTestData);
+  const fetchSkillData = async () => {
+    try {
+      setLoading(true);
+      const result = await dispatch(getSkill(skillId));
+
+      if (result.payload) {
+        const skillData = result.payload;
+        const skillKey = Object.keys(skillData)[0]; // Get the main skill key (e.g., "writing")
+        const skillDetails = skillData[skillKey];
+
+        skillDetails.duration = duration || skillDetails.duration;
+        skillDetails.parts = skillDetails.parts.filter((part) =>
+          selectedParts.includes(part.partNumber)
+        );
+
+        console.log("skillData", skillData);
+
+        setTestData(skillData);
+      }
     } catch (error) {
       console.error("Error fetching test data:", error);
     } finally {
@@ -30,6 +62,8 @@ const TestLayout = ({ skillsData }) => {
   useEffect(() => {
     if (testId) {
       fetchTestData();
+    } else if (skillId) {
+      fetchSkillData();
     } else {
       setTestData(skillsData);
       setLoading(false);
@@ -44,8 +78,6 @@ const TestLayout = ({ skillsData }) => {
   }, []);
 
   const handleSubmit = () => {
-    console.log("haha");
-
     console.log("userAnswers", userAnswers);
   };
 
@@ -63,6 +95,8 @@ const TestLayout = ({ skillsData }) => {
   if (loading) {
     return <div>Loading test data...</div>;
   }
+
+  console.log(testData, "testData");
 
   const currentSkillKey = Object.keys(testData)[currentSkillIndex];
   const currentSkillData = testData[currentSkillKey];

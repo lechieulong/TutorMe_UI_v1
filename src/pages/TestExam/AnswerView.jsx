@@ -28,7 +28,14 @@ const AnswerView = ({
       break;
   }
 
-  const handleChangeWrap = (e, skill, partId, questionId, answerId) => {
+  const handleChangeWrap = (
+    e,
+    skill,
+    partId,
+    questionId,
+    answerId,
+    sectionType
+  ) => {
     const { type, checked, value: answerText } = e.target;
 
     const existingAnswers = userAnswers[questionId]?.answers || [];
@@ -38,10 +45,22 @@ const AnswerView = ({
       if (checked) {
         updatedAnswers = [...existingAnswers, { answerText, answerId }];
       } else {
-        updatedAnswers = undefined;
+        // Remove the unchecked answer from existingAnswers
+        updatedAnswers = existingAnswers.filter(
+          (ans) => ans.answerId !== answerId
+        );
       }
     } else {
-      updatedAnswers = [{ answerText, answerId }];
+      if (sectionType === 7) {
+        if (!answerText) {
+          updatedAnswers = undefined;
+        } else {
+          updatedAnswers = [{ answerText, answerId }];
+        }
+      } else {
+        // Handle other section types if necessary
+        updatedAnswers = [{ answerText, answerId }];
+      }
     }
 
     const answerData = updatedAnswers
@@ -63,7 +82,7 @@ const AnswerView = ({
 
   const renderInputBasedOnSectionType = (sectionType, question) => {
     switch (sectionType) {
-      case 1: // Multiple Choice Questions
+      case 1:
         return (
           <div className="flex flex-col gap-2">
             {question.answers.map((answer, index) => (
@@ -98,26 +117,47 @@ const AnswerView = ({
             ))}
           </div>
         );
-      case 2: // Sentence Completion
-      case 8: // Short-answer Questions
+      case 9: // Single-choice Questions
         return (
-          <input
-            type="text"
-            placeholder="Your answer"
-            className="border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
-            onChange={(e) =>
-              handleChangeWrap(e, skill, partData.id, question.id)
-            }
-          />
+          <div className="flex flex-col gap-2">
+            {question.answers.map((answer, index) => (
+              <div
+                className="flex gap-2 justify-start items-center"
+                key={answer.id}
+              >
+                <p className="font-semibold">{renderLetter(index + 1)}</p>
+                <label className="flex items-center space-x-2">
+                  <input
+                    type="radio"
+                    name={`question_${question.id}`} // Ensures all radio buttons in this question belong to the same group
+                    value={answer.answerText}
+                    onChange={(e) =>
+                      handleChangeWrap(
+                        e,
+                        skill,
+                        partData.id,
+                        question.id,
+                        answer.id // Pass the answer ID to update state
+                      )
+                    }
+                    className="h-4 w-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
+                  />
+                  <span className="text-gray-800">{answer.answerText}</span>
+                </label>
+              </div>
+            ))}
+          </div>
         );
-      case 9: // True/False/Not Given
+
+      case 2: // True/False/Not Given
+      case 3:
         return (
           <div className="flex flex-col space-y-2">
             <label className="flex items-center space-x-2">
               <input
                 type="radio"
                 name={`question_${question.id}`}
-                value="True"
+                value={1}
                 className="h-4 w-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
                 onChange={(e) =>
                   handleChangeWrap(e, currentSkillKey, partData.id, question.id)
@@ -129,7 +169,7 @@ const AnswerView = ({
               <input
                 type="radio"
                 name={`question_${question.id}`}
-                value="False"
+                value={0}
                 className="h-4 w-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
                 onChange={(e) =>
                   handleChangeWrap(e, currentSkillKey, partData.id, question.id)
@@ -142,7 +182,7 @@ const AnswerView = ({
                 <input
                   type="radio"
                   name={`question_${question.id}`}
-                  value="Not Given"
+                  value={2}
                   className="h-4 w-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
                   onChange={(e) =>
                     handleChangeWrap(
@@ -157,6 +197,24 @@ const AnswerView = ({
               </label>
             )}
           </div>
+        );
+      case 7:
+        return (
+          <input
+            type="text"
+            placeholder="Your answer"
+            className="border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+            onChange={(e) =>
+              handleChangeWrap(
+                e,
+                skill,
+                partData.id,
+                question.id,
+                null,
+                sectionType
+              )
+            }
+          />
         );
       default:
         return (
@@ -187,6 +245,17 @@ const AnswerView = ({
             return partData.sections.map((section, sectionIndex) => (
               <div key={sectionIndex} className="mb-6">
                 <p className="font-bold text-lg mb-2">{section.sectionGuide}</p>
+                {skill === 1 &&
+                  (section.sectionType === 4 ||
+                    section.sectionType === 5 ||
+                    section.sectionType === 1) && (
+                    <img
+                      src={section.image}
+                      alt=" image"
+                      style={{ width: "100%", height: "auto" }}
+                    />
+                  )}
+
                 <div className="bg-gray-50 p-4 rounded-md shadow-sm">
                   {section.sectionType === 4 ? (
                     <>

@@ -6,16 +6,18 @@ const TestFormDetail = ({
   resetField,
   selectedSkills,
   setSelectedSkills,
+  skillsCourse,
 }) => {
-  const skills = ["Reading", "Listening", "Writing", "Speaking"];
+  let skills = ["Reading", "Listening", "Writing", "Speaking"];
+  skills = skillsCourse ? skillsCourse : skills;
 
   const toggleSkill = (skill) => {
     setSelectedSkills((prevSelected) => {
       if (prevSelected.includes(skill)) {
         resetField(`skills.${skill}`);
-        return prevSelected.filter((s) => s !== skill); // Remove skill
+        return prevSelected.filter((s) => s !== skill);
       } else {
-        return [...prevSelected, skill]; // Add skill
+        return [...prevSelected, skill];
       }
     });
   };

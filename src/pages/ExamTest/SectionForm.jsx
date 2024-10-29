@@ -90,10 +90,8 @@ const SectionForm = ({ skill, partIndex, control }) => {
               </button>
             </div>
 
-            {/* Conditional rendering based on skill type */}
             {(skill === "Reading" || skill === "Listening") && (
               <div>
-                {/* Section Type Dropdown */}
                 <Controller
                   name={`skills.${skill}.parts.${partIndex}.sections.${index}.sectionType`}
                   control={control}

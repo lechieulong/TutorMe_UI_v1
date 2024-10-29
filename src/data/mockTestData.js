@@ -15,7 +15,7 @@ const mockTestData = {
           {
             id: '31a0cf4d-e53a-41d2-bb5c-84c798eb2908', // GUID for section 1
             sectionGuide: "Answer the following questions:",
-            sectionType: 1,
+            sectionType: 9,
             image: "",
             questions: [
               {
@@ -75,7 +75,7 @@ const mockTestData = {
           {
             id: 'e6c70726-eeb9-439f-9ef9-134bb36ffbb0', // GUID for section 3
             sectionGuide: "Choose true or false answer for each question below:",
-            sectionType: 9,
+            sectionType: 7,
             image: "",
             questions: [
               {
@@ -83,7 +83,6 @@ const mockTestData = {
                 questionName: "What is the main idea?",
                 answers: [
                   { id: '3a527144-0b68-4524-81f2-86c6b4ae9d8d', answerText: "Real marid", isCorrect: 1 }, // Correct
-                  { id: '2f2985d4-28d3-4b64-8154-4c9abaf25652', answerText: "Mancity", isCorrect: 0 }, // Incorrect
                 ],
               },
               {
@@ -182,7 +181,7 @@ const mockTestData = {
           {
             id: '3f95e3c1-fd5b-4404-a4e0-23f843b940bc', // GUID for section 6
             sectionGuide: "Listen and fill in the blanks:",
-            sectionType: 2,
+            sectionType: 3,
             image: "",
             questions: [
               {

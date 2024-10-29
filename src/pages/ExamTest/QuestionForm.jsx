@@ -90,7 +90,7 @@ const QuestionForm = ({
                           sectionType === 5 ||
                           sectionType === 6 ||
                           sectionType === 7
-                            ? "Heading "
+                            ? "Heading"
                             : "Question Name"
                         }
                       />

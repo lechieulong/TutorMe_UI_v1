@@ -62,11 +62,13 @@ const AnswerForm = ({
               </div>
             )}
           />
+
           {sectionType !== 6 &&
             sectionType !== 4 &&
             sectionType !== 5 &&
             sectionType !== 7 &&
-            sectionType !== 8 && (
+            skill === "Listening" &&
+            sectionType !== 2 && (
               <>
                 {skill === "Reading" &&
                 (sectionType === 2 || sectionType === 3) ? (

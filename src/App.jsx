@@ -142,7 +142,7 @@ const App = () => {
           <Route path="/Payment" element={<PayOS />} />
           <Route path="/Paymentresult" element={<PaymentResult />} />
 
-          {/* ADMIN */}
+          {/* ADMIN
           <Route
             path="/admin/app/*"
             element={
@@ -150,7 +150,7 @@ const App = () => {
                 <AdminApp />
               </AdminRoute>
             }
-          />
+          /> */}
         </Routes>
       </Router>
     </div>

@@ -54,7 +54,7 @@ import CourseLayout from "./pages/course/CourseLayout";
 import ListTest from "./pages/ExamTest/ListTest";
 
 //ADMIN
-import AdminApp from "./pages/ADMIN/Index";
+// import AdminApp from "./pages/ADMIN/Index";
 
 import CreateClass from "./pages/Class/CreateClass";
 const App = () => {
@@ -79,8 +79,6 @@ const App = () => {
 
           {/* Test  exam*/}
           <Route path="/testing/:testId" element={<TestLayout />} />
-          <Route path="/testing/:skillId/skill" element={<TestLayout />} />
-
           <Route
             path="/test/:testId/settings/:skillId"
             element={<TestSetting />}

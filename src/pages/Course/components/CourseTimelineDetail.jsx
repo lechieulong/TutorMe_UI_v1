@@ -18,6 +18,7 @@ const CourseTimelineDetail = ({ timelineIds }) => {
         const params = timelineIds
           .map((id) => `courseTimelineIds=${id}`)
           .join("&");
+        console.log(timelineIds);
 
         const response = await axios.get(
           `https://localhost:7030/api/CourseTimelineDetail/CourseTimelines/Details?${params}`

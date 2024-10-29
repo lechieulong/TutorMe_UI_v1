@@ -24,7 +24,7 @@ const MentorCourseDetail = () => {
   const fetchTimelines = async () => {
     try {
       const response = await axios.get(
-        `https://localhost:7030/api/CourseTimeline/Course?courseId=${courseId}`
+        `https://localhost:7030/api/CourseTimeline/Course/${courseId}`
       );
       setTimelineIds(response.data.map((timeline) => timeline.id));
     } catch (error) {

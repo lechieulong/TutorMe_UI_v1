@@ -24,7 +24,7 @@ const TestLayout = ({ skillsData }) => {
     try {
       setLoading(true);
       const fetchedTestData = await new Promise((resolve) => {
-        setTimeout(() => resolve(mockTestData), 1000); // Simulate network delay
+        setTimeout(() => resolve(mockTestData), 1000);
       });
       setTestData(fetchedTestData);
     } catch (error) {

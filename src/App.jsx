@@ -54,7 +54,7 @@ import CourseLayout from "./pages/course/CourseLayout";
 import ListTest from "./pages/ExamTest/ListTest";
 
 //ADMIN
-// import AdminApp from "./pages/ADMIN/Index";
+import AdminApp from "./pages/ADMIN/Index";
 
 import CreateClass from "./pages/Class/CreateClass";
 const App = () => {

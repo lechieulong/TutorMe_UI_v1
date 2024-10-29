@@ -114,6 +114,7 @@ const TestView = React.memo(
             <NavigationPart
               partDatas={partDatas} // Pass all part data
               handlePartClick={handlePartClick} // Handle part click to update selected part
+              handleQuestionClick={handleQuestionClick}
               userAnswers={userAnswers}
             />
           )}

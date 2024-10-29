@@ -63,7 +63,7 @@ const Header = ({
   }, [currentSkillIndex, testData, handleNextSkill]);
 
   return (
-    <div className="flex-1 flex justify-between items-center p-4 bg-green-400 shadow-md">
+    <div className="flex-1 flex justify-between items-center p-4 bg-green-600 shadow-md">
       <p className="text-lg font-semibold">
         IELTS
         <span className="ml-2 text-white">

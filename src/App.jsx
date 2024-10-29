@@ -79,6 +79,7 @@ const App = () => {
 
           {/* Test  exam*/}
           <Route path="/testing/:testId" element={<TestLayout />} />
+          <Route path="/testing/:skillId/skill" element={<TestLayout />} />
           <Route
             path="/test/:testId/settings/:skillId"
             element={<TestSetting />}

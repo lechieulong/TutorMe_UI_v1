@@ -117,72 +117,48 @@ const AnswerView = ({
             ))}
           </div>
         );
-      case 9: // Single-choice Questions
-        return (
-          <div className="flex flex-col gap-2">
-            {question.answers.map((answer, index) => (
-              <div
-                className="flex gap-2 justify-start items-center"
-                key={answer.id}
-              >
-                <p className="font-semibold">{renderLetter(index + 1)}</p>
-                <label className="flex items-center space-x-2">
-                  <input
-                    type="radio"
-                    name={`question_${question.id}`} // Ensures all radio buttons in this question belong to the same group
-                    value={answer.answerText}
-                    onChange={(e) =>
-                      handleChangeWrap(
-                        e,
-                        skill,
-                        partData.id,
-                        question.id,
-                        answer.id // Pass the answer ID to update state
-                      )
-                    }
-                    className="h-4 w-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
-                  />
-                  <span className="text-gray-800">{answer.answerText}</span>
-                </label>
-              </div>
-            ))}
-          </div>
-        );
+      // case 9: // Single-choice Questions
+      //   return (
+      //     <div className="flex flex-col gap-2">
+      //       {question.answers.map((answer, index) => (
+      //         <div
+      //           className="flex gap-2 justify-start items-center"
+      //           key={answer.id}
+      //         >
+      //           <p className="font-semibold">{renderLetter(index + 1)}</p>
+      //           <label className="flex items-center space-x-2">
+      //             <input
+      //               type="radio"
+      //               name={`question_${question.id}`} // Ensures all radio buttons in this question belong to the same group
+      //               value={answer.answerText}
+      //               onChange={(e) =>
+      //                 handleChangeWrap(
+      //                   e,
+      //                   skill,
+      //                   partData.id,
+      //                   question.id,
+      //                   answer.id // Pass the answer ID to update state
+      //                 )
+      //               }
+      //               className="h-4 w-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
+      //             />
+      //             <span className="text-gray-800">{answer.answerText}</span>
+      //           </label>
+      //         </div>
+      //       ))}
+      //     </div>
+      //   );
 
-      case 2: // True/False/Not Given
+      case 2:
       case 3:
-        return (
-          <div className="flex flex-col space-y-2">
-            <label className="flex items-center space-x-2">
-              <input
-                type="radio"
-                name={`question_${question.id}`}
-                value={1}
-                className="h-4 w-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
-                onChange={(e) =>
-                  handleChangeWrap(e, currentSkillKey, partData.id, question.id)
-                }
-              />
-              <span>True</span>
-            </label>
-            <label className="flex items-center space-x-2">
-              <input
-                type="radio"
-                name={`question_${question.id}`}
-                value={0}
-                className="h-4 w-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
-                onChange={(e) =>
-                  handleChangeWrap(e, currentSkillKey, partData.id, question.id)
-                }
-              />
-              <span>False</span>
-            </label>
-            {sectionType === 3 && (
+        if (skill === 0)
+          return (
+            <div className="flex flex-col space-y-2">
               <label className="flex items-center space-x-2">
                 <input
                   type="radio"
                   name={`question_${question.id}`}
-                  value={2}
+                  value={1}
                   className="h-4 w-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
                   onChange={(e) =>
                     handleChangeWrap(
@@ -193,29 +169,101 @@ const AnswerView = ({
                     )
                   }
                 />
-                <span>Not Given</span>
+                <span>True</span>
               </label>
-            )}
-          </div>
-        );
+              <label className="flex items-center space-x-2">
+                <input
+                  type="radio"
+                  name={`question_${question.id}`}
+                  value={0}
+                  className="h-4 w-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
+                  onChange={(e) =>
+                    handleChangeWrap(
+                      e,
+                      currentSkillKey,
+                      partData.id,
+                      question.id
+                    )
+                  }
+                />
+                <span>False</span>
+              </label>
+              {sectionType === 3 && (
+                <label className="flex items-center space-x-2">
+                  <input
+                    type="radio"
+                    name={`question_${question.id}`}
+                    value={2}
+                    className="h-4 w-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
+                    onChange={(e) =>
+                      handleChangeWrap(
+                        e,
+                        currentSkillKey,
+                        partData.id,
+                        question.id
+                      )
+                    }
+                  />
+                  <span>Not Given</span>
+                </label>
+              )}
+            </div>
+          );
+        if (skill === 1) {
+          const questionParts = question.questionName.split("[]");
+          return (
+            <div className="flex flex-col space-y-2">
+              <span className="font-medium">
+                {questionParts[0]} {/* Part before [] */}
+                <input
+                  type="text"
+                  placeholder="Enter text here"
+                  className="border border-gray-300 rounded px-2 py-1 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  onChange={(e) =>
+                    handleChangeWrap(
+                      e,
+                      skill,
+                      partData.id,
+                      question.id,
+                      null,
+                      sectionType
+                    )
+                  }
+                />
+                {questionParts[1]} {/* Part after [] */}
+              </span>
+            </div>
+          );
+        }
       case 7:
-        return (
-          <input
-            type="text"
-            placeholder="Your answer"
-            className="border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
-            onChange={(e) =>
-              handleChangeWrap(
-                e,
-                skill,
-                partData.id,
-                question.id,
-                null,
-                sectionType
-              )
-            }
-          />
-        );
+      case 2:
+        if (skill === 0 || skill === 1) {
+          const questionParts = question.questionName.split("[]");
+          return (
+            <div className="flex flex-col space-y-2">
+              <span className="font-medium">
+                {questionParts[0]} {/* Part before [] */}
+                <input
+                  type="text"
+                  placeholder="Enter text here"
+                  className="border border-gray-300 rounded px-2 py-1 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  onChange={(e) =>
+                    handleChangeWrap(
+                      e,
+                      skill,
+                      partData.id,
+                      question.id,
+                      null,
+                      sectionType
+                    )
+                  }
+                />
+                {questionParts[1]} {/* Part after [] */}
+              </span>
+            </div>
+          );
+        }
+
       default:
         return (
           <input
@@ -329,7 +377,13 @@ const AnswerView = ({
                     section.questions.map((question, index) => (
                       <div key={index} className="mb-4">
                         <p className="font-medium">
-                          Question {questionCounter++}. {question.questionName}
+                          Question {questionCounter++}.
+                          {((skill === 1 &&
+                            section.sectionType !== 2 &&
+                            section.sectionType !== 7) ||
+                            (skill === 0 && section.sectionType !== 7)) && (
+                            <span>{question.questionName} </span>
+                          )}
                         </p>
                         {renderInputBasedOnSectionType(
                           section.sectionType,

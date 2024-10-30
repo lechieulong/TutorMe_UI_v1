@@ -60,6 +60,20 @@ const QuestionForm = ({
       {skill === "Listening" && sectionType === 3 && (
         <div className="mb-4 border p-4 rounded">
           <label className="block mb-2 font-bold">Enter Summary content:</label>
+          <p className="mb-2 text-gray-600">
+            Please summarize the listening content in a few sentences. You can
+            include key points, important themes, or your personal insights.
+            Example:{" "}
+            <em>
+              <b>
+                "The listening segment discussed the [ ]. of effective
+                communication, highlighting the key strategies for [] improving
+                interpersonal skills."
+              </b>
+            </em>
+            each <b>[] </b> represent for each question , and <b> [skill]</b>{" "}
+            the text in bracket is answer
+          </p>
           <Controller
             name={`skills.${skill}.parts.${partIndex}.sections.${sectionIndex}.summary`}
             control={control}
@@ -68,7 +82,7 @@ const QuestionForm = ({
               <textarea
                 {...field}
                 className="border p-2 w-full h-32 resize-none"
-                placeholder="Type your text here..."
+                placeholder="Type your summary here..."
               />
             )}
           />

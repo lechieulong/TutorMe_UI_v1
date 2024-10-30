@@ -140,7 +140,7 @@ const mockTestData = {
       },
     ],
   },
-  listening: {
+  listening:{
     id: '5f7b1253-0ae2-49c0-905f-10a59e92e982', // GUID for listening
     duration: 30,
     type: 1,
@@ -153,18 +153,49 @@ const mockTestData = {
         questionName: "Listening Section 1",
         sections: [
           {
-            id: 'a51a5a7b-0bb1-4d85-a174-8f0e51d049c1', // GUID for section 5
-            sectionGuide:
-              "Listen carefully and answer the following questions:",
+            id: 'a51a5a7b-0bb1-4d85-a174-8f0e51d049c1', // GUID for section 1
+            sectionGuide: "Listen carefully and answer the following questions:",
+            sectionType: 1,
+            image: "",
+            questions: [
+              {
+                id: '8bc6d57d-9c09-4485-b4af-67b9f1cd9c5c', // GUID for question 1
+                questionName: "What was the main topic of the discussion?",
+                answers: [
+                  { id: '44bdb90d-f6b5-4086-9f01-fdc2deaa7d73', answerText: "Correct answer", isCorrect: 1 },
+                  { id: '4c3d2e96-fb39-4658-9a56-5bcbab0281cc', answerText: "Incorrect answer", isCorrect: 0 },
+                ],
+              },
+            ],
+          },
+          {
+            id: 'b1234567-89ab-cdef-0123-456789abcdef', // GUID for section 2
+            sectionGuide: "Summarize the discussion in your own words.",
             sectionType: 2,
             image: "",
             questions: [
               {
-                id: '8bc6d57d-9c09-4485-b4af-67b9f1cd9c5c', // GUID for question 12
-                questionName: "What was the main topic of the discussion?",
+                id: '9bc6d57d-9c09-4485-b4af-67b9f1cd9c5d', // GUID for question 2
+                questionName: "Can you summarize the main points?",
                 answers: [
-                  { id: '44bdb90d-f6b5-4086-9f01-fdc2deaa7d73', answerText: "Correct answer", isCorrect: 1 }, // Correct
-                  { id: '4c3d2e96-fb39-4658-9a56-5bcbab0281cc', answerText: "Incorrect answer", isCorrect: 0 }, // Incorrect
+                  { id: '55bdb90d-f6b5-4086-9f01-fdc2deaa7d73', answerText: "Main points summary", isCorrect: 1 },
+                  { id: '6c3d2e96-fb39-4658-9a56-5bcbab0281cc', answerText: "Wrong summary", isCorrect: 0 },
+                ],
+              },
+            ],
+          },
+          {
+            id: 'c2345678-90ab-cdef-0123-456789abcdef', // GUID for section 3
+            sectionGuide: "Fill in the blanks as you listen.",
+            sectionType: 3,
+            image: "",
+            questions: [
+              {
+                id: '10ec2f83-66ec-4b83-b56b-5b44b6c54a75', // GUID for question 3
+                questionName: "What were the key points discussed?",
+                answers: [
+                  { id: '78c7a624-4e48-4e5d-8d37-e8d47b0e76f5', answerText: "Key point A", isCorrect: 1 },
+                  { id: 'd0d152ff-b4da-473b-b51c-95cb14bcce5d', answerText: "Incorrect key point", isCorrect: 0 },
                 ],
               },
             ],
@@ -179,17 +210,49 @@ const mockTestData = {
         questionName: "Listening Section 2",
         sections: [
           {
-            id: '3f95e3c1-fd5b-4404-a4e0-23f843b940bc', // GUID for section 6
-            sectionGuide: "Listen and fill in the blanks:",
+            id: 'd3456789-01ab-cdef-0123-456789abcdef', // GUID for section 4
+            sectionGuide: "Listen and answer the following questions:",
+            sectionType: 1,
+            image: "",
+            questions: [
+              {
+                id: '15fc2f83-66ec-4b83-b56b-5b44b6c54a76', // GUID for question 4
+                questionName: "What was the main topic discussed?",
+                answers: [
+                  { id: '90d152ff-b4da-473b-b51c-95cb14bcce5d', answerText: "Correct answer", isCorrect: 1 },
+                  { id: '21c7a624-4e48-4e5d-8d37-e8d47b0e76f5', answerText: "Incorrect answer", isCorrect: 0 },
+                ],
+              },
+            ],
+          },
+          {
+            id: 'e4567890-12ab-cdef-0123-456789abcdef', // GUID for section 5
+            sectionGuide: "Choose the correct option based on the audio.",
+            sectionType: 2,
+            image: "",
+            questions: [
+              {
+                id: '25fc2f83-66ec-4b83-b56b-5b44b6c54a77', // GUID for question 5
+                questionName: "What was mentioned about [] the topic?",
+              },
+              {
+                id: '25fc2f83-66ec-4b83-b56b-5b44b6c54a44', // GUID for question 5
+                questionName: "What was mentioned about [] the topic?",
+              },
+            ],
+          },
+          {
+            id: 'f5678901-23ab-cdef-0123-456789abcdef', // GUID for section 6
+            sectionGuide: "Answer the questions based on the audio.",
             sectionType: 3,
             image: "",
             questions: [
               {
-                id: '04ec2f83-66ec-4b83-b56b-5b44b6c54a74', // GUID for question 13
-                questionName: "What were the key points discussed?",
+                id: '35fc2f83-66ec-4b83-b56b-5b44b6c54a78', // GUID for question 6
+                questionName: "What strategies were discussed?",
                 answers: [
-                  { id: '28c7a624-4e48-4e5d-8d37-e8d47b0e76f5', answerText: "Correct answer", isCorrect: 1 }, // Correct
-                  { id: 'd0d152ff-b4da-473b-b51c-95cb14bcce5d', answerText: "Incorrect answer", isCorrect: 0 }, // Incorrect
+                  { id: '48d152ff-b4da-473b-b51c-95cb14bcce5d', answerText: "Correct strategy", isCorrect: 1 },
+                  { id: '55b7a624-4e48-4e5d-8d37-e8d47b0e76f5', answerText: "Incorrect strategy", isCorrect: 0 },
                 ],
               },
             ],

@@ -1,5 +1,5 @@
 /* eslint-disable react/prop-types */
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 const NavigationPart = ({
   partDatas,
@@ -8,6 +8,11 @@ const NavigationPart = ({
   userAnswers, // Add userAnswers prop
 }) => {
   const [openPart, setOpenPart] = useState(0);
+
+  // Reset openPart to 0 whenever partDatas changes
+  useEffect(() => {
+    setOpenPart(0);
+  }, [partDatas]);
 
   const handleAccordionClick = (partNumber) => {
     if (openPart === partNumber) {
@@ -20,17 +25,17 @@ const NavigationPart = ({
 
   const handleQuestionClickWrapper = (event, questionId) => {
     event.stopPropagation();
-    handleQuestionClick(questionId); // Call this to handle question selection
+    handleQuestionClick(questionId);
   };
 
   return (
     <div className="bottom-0 left-0 right-0">
       <div className="flex gap-3">
         {partDatas.map((part, index) => {
-          const partName = `Part ${index + 1}`; // Use questionName or fallback
+          const partName = `Part ${index + 1}`;
           const questions = part.sections.flatMap(
             (section) => section.questions
-          ); // Flatten questions from sections
+          );
 
           return (
             <div
@@ -67,7 +72,7 @@ const NavigationPart = ({
                       key={questionIndex} // Use a unique identifier, such as question.id
                       onClick={(event) =>
                         handleQuestionClickWrapper(event, question.id)
-                      } // Pass question.id as identifier
+                      }
                     >
                       <span>{questionIndex + 1}</span>
                       {isAnswered && <span>✔️</span>}

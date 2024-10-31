@@ -12,6 +12,7 @@ import Filter from "../Course/components/Filter";
 import CourseCard from "../Course/components/CourseCard";
 import { fetchCoursesByUserId } from "../../redux/courses/CourseSlice";
 import axios from "axios";
+import { STATUS } from "../../constant/SliceName";
 import { getUser } from "../../service/GetUser";
 
 const MentorCourseList = () => {

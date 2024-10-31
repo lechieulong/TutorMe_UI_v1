@@ -123,9 +123,9 @@ const AudioPlayer = ({ src }) => {
   return (
     <div className="flex p-2 gap-16 items-center ">
       <audio ref={audioRef} src={src} />
-      <div className="flex  justify-center items-center ">
+      <div className="flex gap-3 border p-2   justify-center items-center ">
         <span>{formatTime(currentTime)}</span>
-        <button type="button" onClick={seekBackward}>
+        <button type="button" className="p-2 border " onClick={seekBackward}>
           <FontAwesomeIcon icon={faRotateLeft} /> 10s
         </button>
         <button type="button" onClick={togglePlay}>

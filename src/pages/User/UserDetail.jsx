@@ -1,14 +1,15 @@
 import React from "react";
 import Sidebar from "./components/Sidebar";
 import MainLayout from "../../layout/MainLayout";
-import { FaLocationArrow, FaEnvelope, FaPhone } from "react-icons/fa";
-import defaulAvatar from "../../assets/images/defaul-avatar.jpg";
+import { FaLocationArrow, FaEnvelope, FaPhone, FaRegUser, FaCalendarDay } from "react-icons/fa";
+import defaulAvatar from "../../assets/images/default-avatar.jpg";
 import Cookies from "js-cookie";
 import { Link, useNavigate } from "react-router-dom";
 import { Profile } from "../../redux/users/UserSlice";
 import { useDispatch, useSelector } from "react-redux";
 import { useEffect, useState } from "react";
 import { getUser } from "../../service/GetUser";
+import { formatDOB } from "../../utils/Validator";
 
 const UserDetail = () => {
   const dispatch = useDispatch();
@@ -69,7 +70,7 @@ const UserDetail = () => {
                 <div className="bg-black text-white p-4 rounded-t-lg flex flex-col lg:flex-row items-start">
                   <div className="flex-1 lg:ml-6">
                     <h5 className="text-2xl font-bold">{userInfor?.name}</h5>
-                    <div className="flex items-center my-1 text-base text-amber-300">
+                    <div className="italic flex items-center my-1 text-sm text-amber-300">
                       <FaPhone className="mr-2 text-stone-400" />
                       <p>
                         {userInfor?.phoneNumber ? (
@@ -85,21 +86,25 @@ const UserDetail = () => {
                       </p>
                     </div>
                     <div className="italic flex items-center text-sm text-amber-200">
-                      <FaEnvelope className="mt-1 mr-2 text-stone-400" />
-                      <p>{userInfor?.email}</p>
+                      <FaRegUser className="mt-1 mr-2 text-stone-400" />
+                      <p>{userInfor?.userName}</p>
                     </div>
                   </div>
                 </div>
                 <div className="p-4 bg-gray-200 text-black rounded-b-lg flex-grow">
                   <div className="mb-5">
-                    <p className="text-lg font-semibold mb-2">About</p>
+                    <p className="text-lg font-semibold">About</p>
                     <div className="p-4 bg-gray-200 rounded-lg">
-                      <p className="italic mb-2">Web Developer</p>
+                      <p className="italic mb-2 flex items-center">
+                        <FaEnvelope className="mr-2 text-gray-400" /> {userInfor?.email}
+                      </p>
                       <p className="italic mb-2 flex items-center">
                         <FaLocationArrow className="mr-2 text-gray-400" /> Lives
                         in Quang Binh
                       </p>
-                      <p className="italic">Learner</p>
+                      <p className="italic mb-2 flex items-center">
+                        <FaCalendarDay  className="mr-2 text-gray-400" /> {formatDOB(userInfor?.dob)}
+                      </p>
                     </div>
                   </div>
                   <div className="flex justify-between items-center mb-4">

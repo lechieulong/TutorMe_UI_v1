@@ -5,6 +5,10 @@ import { useLocation } from 'react-router-dom';
 function PaymentMethod() {
     const location = useLocation();
     const { scheduleId, teacherName, startTime, endTime, price } = location.state || {};
+    const formattedAmount = new Intl.NumberFormat('vi-VI', {
+        style: 'currency',
+        currency: 'VND',
+    }).format(price);
 
     console.log(scheduleId);
 
@@ -55,7 +59,7 @@ function PaymentMethod() {
                                 </div>
                                 <div className="flex justify-between">
                                     <span className="font-semibold">Total:</span>
-                                    <span>{price || 'N/A'}</span>
+                                    <span>{formattedAmount || 'N/A'}</span>
                                 </div>
                             </div>
                         </div>

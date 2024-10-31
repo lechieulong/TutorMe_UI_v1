@@ -5,7 +5,7 @@ const AdminHeader = () => {
     return (
         <header className="flex justify-between items-center p-5 bg-purple-300 shadow-md"> {/* Increased padding */}
             <div className="flex items-center">
-                <span className="ml-3 text-xl font-semibold">DashWind</span>
+                <span className="ml-3 text-xl font-semibold"></span>
             </div>
             <div className="flex items-center">
                 <i className="fas fa-sun text-xl mr-4"></i>

@@ -54,16 +54,72 @@ export const Admin_LockUser = createAsyncThunk(
     }
 );
 
+// Action to lock user
+export const Admin_UnlockUser = createAsyncThunk(
+    `${SLICE_NAMES.USER}/${ACTIONS.UNLOCK_USER}`,
+    async (userId, { rejectWithValue }) => {
+        try {
+            const token = Cookies.get("authToken");
+            const response = await axios.post(
+                `${apiURLConfig.baseURL}/user/unlock/${userId}`,null,
+                {
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                    }
+                }
+            );
+            return response.data;
+        } catch (error) {
+            return rejectWithValue(
+                error.response?.data?.message || "Failed to lock user."
+            );
+        }
+    }
+);
+
+
+// Action to import user from file
+export const Admin_ImportUser = createAsyncThunk(
+    `${SLICE_NAMES.USER}/${ACTIONS.IMPORT_USER}`,
+    async (formData, { rejectWithValue }) => {
+        try {
+            const token = Cookies.get("authToken");
+            const response = await axios.post(
+                `${apiURLConfig.baseURL}/user/import-excel`, formData, 
+                {
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                        'Content-Type': 'multipart/form-data',
+                    }
+                }
+            );
+            // console.log("Import response: ", response.data.result);
+            return response.data.result;
+        } catch (error) {
+            console.log("Import error: ", error);
+            return rejectWithValue(
+                error.response?.data?.message || "Failed to import users."
+            );
+        }
+    }
+);
+
 const initialState = {
     users: [],
+    importedResponse: null,
     totalUsers: null,
     totalPages: null,
     lock: null,
+    unlock: null,
     status: STATUS.IDLE, // Trạng thái mặc định
     lockstatus: STATUS.IDLE, // Trạng thái mặc định
+    unlockStatus: STATUS.IDLE, // Trạng thái mặc định
     getuserstatus: STATUS.IDLE,
+    importUserStatus: STATUS.IDLE,
     error: null, // Thông báo lỗi nếu có
     lockerror: null, // Thông báo lỗi nếu có
+    unlockError: null, // Thông báo lỗi nếu có
+    importUserError: null, // Thông báo lỗi nếu có
 };
 
 const UserSlice = createSlice({
@@ -99,6 +155,33 @@ const UserSlice = createSlice({
             .addCase(Admin_LockUser.rejected, (state, action) => {
                 state.lockstatus = STATUS.FAILED;
                 state.lockerror = action.payload || action.error.message;
+            })
+
+            // Handle unlock User
+            .addCase(Admin_UnlockUser.pending, (state) => {
+                state.unlockStatus = STATUS.PENDING;
+            })
+            .addCase(Admin_UnlockUser.fulfilled, (state, action) => {
+                state.unlockStatus = STATUS.SUCCESS;
+                state.unlock = action.payload;
+            })
+            .addCase(Admin_UnlockUser.rejected, (state, action) => {
+                state.unlockStatus = STATUS.FAILED;
+                state.unlockError = action.payload || action.error.message;
+            })
+
+            // Handle import User
+            .addCase(Admin_ImportUser.pending, (state) => {
+                state.importUserStatus = STATUS.PENDING;
+            })
+            .addCase(Admin_ImportUser.fulfilled, (state, action) => {
+                state.importUserStatus = STATUS.SUCCESS;
+                state.importedResponse = action.payload;
+                state.importUserError = action.payload || action.error.message;
+            })
+            .addCase(Admin_ImportUser.rejected, (state, action) => {
+                state.importUserStatus = STATUS.FAILED;
+                state.importUserError = action.payload || action.error.message;
             })
     },
 });

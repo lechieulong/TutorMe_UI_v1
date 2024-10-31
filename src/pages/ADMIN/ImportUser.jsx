@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import * as XLSX from 'xlsx';
+import { FaFileDownload } from "react-icons/fa";
 
 const ImportUser = () => {
     const [data, setData] = useState([]);
@@ -18,9 +19,25 @@ const ImportUser = () => {
         fetchData();
     }, []);
 
+    // Function to download the Excel file
+    const downloadFile = () => {
+        const link = document.createElement('a');
+        link.href = '/src/assets/files/ImportUser.xlsx'; // Adjust the path if necessary
+        link.setAttribute('download', 'ImportUser.xlsx'); // Specify the file name
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link); // Remove the link after downloading
+    };
+
     return (
         <>
-            <button className="bg-red-500 text-white px-4 py-2 rounded-lg mb-2">Import User</button>
+            <div className="flex items-center justify-end space-x-2 mb-2">
+                <button className="p-2 rounded-lg hover:bg-gray-200 transition" onClick={downloadFile}>
+                    <FaFileDownload className="text-red-500 text-2xl" />
+                </button>
+                <button className="bg-red-500 text-white px-4 py-2 rounded-lg">Import User</button>
+            </div>
+
             <table className="min-w-full bg-white border border-gray-300">
                 <thead>
                     <tr>

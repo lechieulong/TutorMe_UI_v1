@@ -7,6 +7,7 @@ export const SLICE_NAMES = {
   AUTH: "auth",
   TEST: "test",
   USER: "user",
+  TEACHER: "teacher",
   EVENT: "event",
   SCHEDULE: "schedule",
   COMMON: "common",
@@ -48,10 +49,12 @@ export const ACTIONS = {
 
   GET_USER_BY_ID: "getuserbyid",
   GET_USER_INFORMATION: "getProfile",
+  GET_USER_UDUCATION: "getUserEducation",
   GET_TOP10_TEACHERS: "getTop10Teachers",
   SEARCH_TEACHER: "searchteacher",
   BE_TEACHER: "beteacher",
-
+  UPDATE_PROFILE: "updateprofile",
+  
   //Event
   GET_EVENT_BY_USERID: "geteventbyuserid",
 
@@ -64,7 +67,11 @@ export const ACTIONS = {
 
   //ADMIN
   GET_ALL_USERS: "getallusers",
+  GET_ALL_REQUESTS: "getallrequests",
+  GET_REQUEST_DETAILS: "getrequestdetails",
   LOCK_USER: "lockuser",
+  UNLOCK_USER: "unlockuser",
+  IMPORT_USER: "importuser",
 };
 
 export const STATUS = {

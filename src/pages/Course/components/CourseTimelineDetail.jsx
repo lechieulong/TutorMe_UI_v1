@@ -1,13 +1,12 @@
 import React, { useEffect, useState } from "react";
-import axios from "axios";
 import { useNavigate } from "react-router-dom"; // Nhập useNavigate từ react-router-dom
 
-const CourseTimelineDetail = ({ timelineIds, selectedTimelines }) => {
+const CourseTimelineDetail = ({ courseId, setCreateTest, setSkills }) => {
   const [details, setDetails] = useState([]); // State để lưu thông tin chi tiết
   const [loading, setLoading] = useState(true); // State để kiểm tra trạng thái tải
   const [error, setError] = useState(null); // State để lưu thông báo lỗi
-  const [activeIndex, setActiveIndex] = useState(null); // State để theo dõi mục đang mở
-  const navigate = useNavigate(); // Khởi tạo useNavigate để điều hướng
+  const [activeIndex, setActiveIndex] = useState(null);
+  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchTimelineDetails = async () => {
@@ -15,20 +14,30 @@ const CourseTimelineDetail = ({ timelineIds, selectedTimelines }) => {
       setError(null);
 
       try {
-        const params = timelineIds
-          .map((id) => `courseTimelineIds=${id}`)
-          .join("&");
-        console.log("Timeline IDs:", timelineIds); // Ghi lại timelineIds
+        // Mock data to replace API call
+        const mockData = [
+          {
+            id: 1,
+            topic: "Introduction to IELTS",
+            videoUrl: "dQw4w9WgXcQ", // Mock YouTube video ID
+            title: "Introduction Video",
+          },
+          {
+            id: 2,
+            topic: "Listening Skills",
+            videoUrl: "dQw4w9WgXcQ", // Mock YouTube video ID
+            title: "Listening Techniques",
+          },
+          {
+            id: 3,
+            topic: "Reading Techniques",
+            videoUrl: "dQw4w9WgXcQ", // Mock YouTube video ID
+            title: "Tips for Reading",
+          },
+        ];
 
-        const response = await axios.get(
-          `https://localhost:7030/api/CourseTimelineDetail/CourseTimelines/Details?${params}`
-        );
-
-        if (Array.isArray(response.data) && response.data.length > 0) {
-          setDetails(response.data);
-        } else {
-          setError("Không có phần học nào cho lộ trình này."); // Thông báo khi không có dữ liệu
-        }
+        // call api here and set to setDetails
+        setDetails(mockData); // Set mock data directly to state
       } catch (error) {
         setError("Không thể lấy thông tin chi tiết của lộ trình."); // Thiết lập thông báo lỗi
       } finally {
@@ -36,29 +45,25 @@ const CourseTimelineDetail = ({ timelineIds, selectedTimelines }) => {
       }
     };
 
-    if (timelineIds.length > 0) {
-      fetchTimelineDetails();
-    }
-  }, [timelineIds]);
-
-  // Ghi lại selectedTimelines
-  useEffect(() => {
-    console.log("Selected Timelines:", selectedTimelines);
-  }, [selectedTimelines]);
+    fetchTimelineDetails();
+  }, []);
 
   const toggleCollapse = (index) => {
     setActiveIndex(activeIndex === index ? null : index);
   };
 
   const handleCreateTest = (courseTimelineDetailId) => {
-    navigate(`/create-test/${courseTimelineDetailId}`);
+    setSkills(["Listening", "Reading"]); // truyen course zô đây, hiện tại đang fake
+    setCreateTest(true);
+  };
+
+  const handleAddSectionContent = (courseTimelineDetailId) => {
+    // handle call add content here
   };
 
   if (loading) return <div>Đang tải...</div>;
-  if (error) return <div className="text-red-500">{error}</div>;
-
   return (
-    <div className="flex-1 w-60% p-12">
+    <div className="flex-1  bg-green-50 p-4">
       {details.length === 0 ? (
         <p>Không có phần học nào cho lộ trình này.</p>
       ) : (
@@ -70,7 +75,7 @@ const CourseTimelineDetail = ({ timelineIds, selectedTimelines }) => {
                 onClick={() => toggleCollapse(index)}
                 className="focus:outline-none"
               >
-                {detail.topic}
+                {index + 1} {detail.topic}
               </button>
             </h2>
 
@@ -91,7 +96,7 @@ const CourseTimelineDetail = ({ timelineIds, selectedTimelines }) => {
                   width: "100%",
                 }}
               >
-                <iframe
+                {/* <iframe
                   src={`https://www.youtube.com/embed/${detail.videoUrl}`}
                   title="Youtube Video"
                   style={{
@@ -102,15 +107,26 @@ const CourseTimelineDetail = ({ timelineIds, selectedTimelines }) => {
                     height: "100%",
                   }}
                   allowFullScreen
-                ></iframe>
+                ></iframe> */}
               </div>
+
               <p className="text-gray-700 mt-2">{detail.title}</p>
+            </div>
+            <div className="flex gap-2">
+              {/* {isAdmin ? buttonCreateTest : button TakeTest} */}
               <button
                 type="button"
-                className="py-2 px-3 inline-flex items-center gap-x-2 text-sm font-medium rounded-lg border border-gray-200 bg-white text-gray-800 shadow-sm hover:bg-gray-50 focus:outline-none focus:bg-gray-50"
+                className="py-2 bg-red-200 px-3 inline-flex items-center gap-x-2 text-sm font-medium rounded-lg border border-gray-200  text-gray-800 shadow-sm hover:bg-gray-50 focus:outline-none focus:bg-gray-50"
                 onClick={() => handleCreateTest(detail.id)} // Gọi hàm và truyền ID chi tiết
               >
                 Create Test
+              </button>
+              <button
+                type="button"
+                className="py-2 bg-red-200 px-3 inline-flex items-center gap-x-2 text-sm font-medium rounded-lg border border-gray-200  text-gray-800 shadow-sm hover:bg-gray-50 focus:outline-none focus:bg-gray-50"
+                onClick={() => handleAddSectionContent(detail.id)} // Gọi hàm và truyền ID chi tiết
+              >
+                Add section content
               </button>
             </div>
           </div>

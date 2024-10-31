@@ -1,10 +1,12 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
+import { useForm } from "react-hook-form";
 
-const CourseTimeline = ({ courseId, onUpdateStatus, categories }) => {
+const CourseTimeline = ({ courseId }) => {
   const [timelines, setTimelines] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
+  const [isCreating, setIsCreating] = useState(false); // State to toggle form visibility
+  const { register, handleSubmit, reset } = useForm();
 
   useEffect(() => {
     const fetchTimelines = async () => {
@@ -14,7 +16,6 @@ const CourseTimeline = ({ courseId, onUpdateStatus, categories }) => {
         );
         setTimelines(response.data);
       } catch (error) {
-        setError("Hiện chưa có lịch học nào");
         console.error("Error fetching timelines:", error);
       } finally {
         setLoading(false);
@@ -24,120 +25,133 @@ const CourseTimeline = ({ courseId, onUpdateStatus, categories }) => {
     fetchTimelines();
   }, [courseId]);
 
-  useEffect(() => {
-    const categoryString =
-      typeof categories === "object" && categories !== null
-        ? JSON.stringify(categories)
-        : String(categories);
+  const onSubmit = async (formData) => {
+    const newTimeline = {
+      courseId: courseId,
+      eventDate: new Date(formData.eventDate).toISOString(), // Ensure correct date format
+      title: formData.title,
+      description: formData.description,
+      author: "YourAuthorName",
+      isEnabled: true,
+    };
 
-    console.log("Received categories:", categoryString);
-  }, [categories]);
-
-  const handleSwitchChange = async (timelineId, currentState) => {
-    const newStatus = !currentState;
-    const confirmationMessage = newStatus
-      ? "Bạn có chắc muốn bật hiển thị timeline không?"
-      : "Bạn có chắc muốn tắt hiển thị timeline không?";
-
-    if (window.confirm(confirmationMessage)) {
-      try {
-        await axios.put(
-          `https://localhost:7030/api/CourseTimeline/${timelineId}/enabled`,
-          newStatus,
-          {
-            headers: { "Content-Type": "application/json" },
-          }
+    try {
+      // Make sure the eventDate is valid before posting
+      if (!isNaN(new Date(formData.eventDate).getTime())) {
+        await axios.post(
+          `https://localhost:7030/api/CourseTimeline`,
+          newTimeline
         );
-        setTimelines((prevTimelines) =>
-          prevTimelines.map((t) =>
-            t.id === timelineId ? { ...t, isEnabled: newStatus } : t
-          )
+        // Fetch updated timelines after adding new one
+        const response = await axios.get(
+          `https://localhost:7030/api/CourseTimeline/Course/${courseId}`
         );
-
-        if (onUpdateStatus) {
-          onUpdateStatus(timelineId, newStatus);
-        }
-
-        alert(`Timeline đã được ${newStatus ? "hiển thị" : "ẩn"} thành công.`);
-      } catch (error) {
-        console.error("Error updating timeline status", error);
-        alert("Cập nhật trạng thái timeline thất bại.");
+        setTimelines(response.data);
+        reset(); // Reset the form
+        setIsCreating(false); // Hide form after submission
+      } else {
+        console.error(`Invalid date for timeline: ${formData.title}`);
       }
+    } catch (error) {
+      console.error("Error creating timeline:", error);
     }
   };
 
-  const handleCreateTest = (timelineId) => {
-    // Log categories và courseTimelineId khi nhấn nút "Create Test"
-    const categoryString =
-      typeof categories === "object" && categories !== null
-        ? JSON.stringify(categories)
-        : String(categories);
-
-    console.log("Category for test:", categoryString);
-    console.log("CourseTimeline ID:", timelineId);
-    alert(
-      `Category for test: ${categoryString}\nCourseTimeline ID: ${timelineId}`
-    );
-  };
-
-  if (loading) return <div>Đang tải...</div>;
-  if (error) return <div className="text-red-500">{error}</div>;
+  if (loading) return <div>Loading...</div>;
 
   return (
-    <div className="flex-1 w-40% p-2">
-      {timelines.length === 0 ? (
-        <p className="text-red-500">
-          Không tìm thấy lộ trình nào cho khóa học này.
-        </p>
-      ) : (
-        timelines.map((timeline) => (
-          <div key={timeline.id} className="mb-4">
-            <div className="flex gap-x-3">
-              <div className="w-16 text-end">
-                <span className="text-xs text-gray-500">
-                  {timeline.eventDateFormatted}
-                </span>
-              </div>
-              <div className="relative last:after:hidden after:absolute after:top-7 after:bottom-0 after:start-3.5 after:w-px after:-translate-x-[0.5px] after:bg-gray-200">
-                <div className="relative z-10 size-7 flex justify-center items-center">
-                  <div className="size-2 rounded-full bg-gray-400"></div>
-                </div>
-              </div>
-              <div className="grow pt-0.5 pb-8">
-                <h3 className="flex gap-x-1.5 font-semibold text-gray-800">
-                  {timeline.title}
-                </h3>
-                <p className="mt-1 text-sm text-gray-600">
-                  {timeline.description}
-                </p>
-                <button
-                  type="button"
-                  onClick={() => handleCreateTest(timeline.id)} // Thêm timeline.id
-                  className="py-2 px-3 inline-flex items-center gap-x-2 text-sm font-medium rounded-lg border border-gray-200 bg-white text-gray-800 shadow-sm hover:bg-gray-50 focus:outline-none focus:bg-gray-50"
-                >
-                  Create Test
-                </button>
-              </div>
-              <div className="flex items-center">
-                <input
-                  type="checkbox"
-                  className="hidden peer"
-                  id={`switch-${timeline.id}`}
-                  checked={timeline.isEnabled || false}
-                  onChange={() =>
-                    handleSwitchChange(timeline.id, timeline.isEnabled)
-                  }
-                />
-                <label
-                  htmlFor={`switch-${timeline.id}`}
-                  className="cursor-pointer w-10 h-6 flex items-center bg-gray-200 rounded-full p-1 transition-colors duration-300 ease-in-out peer-checked:bg-green-400"
-                >
-                  <div className="bg-white w-4 h-4 rounded-full shadow-md transform transition-transform duration-300 ease-in-out peer-checked:translate-x-4"></div>
-                </label>
-              </div>
-            </div>
+    <div className="w-4/12 bg-gray-50 p-6 rounded-md shadow-md">
+      {isCreating ? (
+        <form onSubmit={handleSubmit(onSubmit)} className="mb-6">
+          <div className="mb-4">
+            <label className="block text-gray-700">Event Date</label>
+            <input
+              type="date"
+              {...register("eventDate", { required: true })}
+              className="border p-2 rounded w-full"
+            />
           </div>
-        ))
+          <div className="mb-4">
+            <label className="block text-gray-700">Title</label>
+            <input
+              type="text"
+              {...register("title", { required: true })}
+              className="border p-2 rounded w-full"
+            />
+          </div>
+          <div className="mb-4">
+            <label className="block text-gray-700">Description</label>
+            <textarea
+              {...register("description", { required: true })}
+              className="border p-2 rounded w-full"
+            ></textarea>
+          </div>
+          <button
+            type="submit"
+            className="py-2 px-4 bg-blue-500 text-white rounded"
+          >
+            Create Timeline
+          </button>
+          <button
+            type="button"
+            onClick={() => setIsCreating(false)}
+            className="py-2 px-4 bg-gray-300 text-black rounded ml-2"
+          >
+            Cancel
+          </button>
+        </form>
+      ) : (
+        <>
+          {timelines.length === 0 ? (
+            <p className="text-red-500">No timeline found for this course.</p>
+          ) : (
+            timelines.map((timeline, index) => (
+              <div key={timeline.id} className="mb-6 flex items-start">
+                {index % 2 === 0 ? (
+                  <div className="w-full pl-4">
+                    <div className="flex items-center gap-2">
+                      <div className="pr-4 w-16 text-right text-sm font-semibold text-gray-500">
+                        {timeline.eventDateFormatted}
+                      </div>
+                      <div className="w-full bg-white p-4 rounded-lg shadow-lg relative">
+                        <h3 className="font-semibold text-gray-800">
+                          {timeline.title}
+                        </h3>
+                        <p className="text-sm text-gray-600 mt-2">
+                          {timeline.description}
+                        </p>
+                        <div className="absolute top-2 left-[-20px] w-2 h-2 rounded-full bg-gray-500"></div>
+                      </div>
+                    </div>
+                  </div>
+                ) : (
+                  <div className="w-full pr-4 text-left">
+                    <div className="flex items-center gap-2">
+                      <div className="w-full bg-white p-4 rounded-lg shadow-lg relative">
+                        <h3 className="font-semibold text-gray-800">
+                          {timeline.title}
+                        </h3>
+                        <p className="text-sm text-gray-600 mt-2">
+                          {timeline.description}
+                        </p>
+                        <div className="absolute top-2 right-[-20px] w-2 h-2 rounded-full bg-gray-500"></div>
+                      </div>
+                      <div className="pl-4 w-16 text-sm font-semibold text-gray-500">
+                        {timeline.eventDateFormatted}
+                      </div>
+                    </div>
+                  </div>
+                )}
+              </div>
+            ))
+          )}
+          <button
+            onClick={() => setIsCreating(true)}
+            className="py-2 px-4 bg-blue-500 text-white rounded mt-4"
+          >
+            Add Timeline
+          </button>
+        </>
       )}
     </div>
   );

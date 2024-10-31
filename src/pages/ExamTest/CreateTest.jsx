@@ -1,15 +1,12 @@
 import React, { useState } from "react";
 import { useForm } from "react-hook-form";
 import TestFormDetail from "./TestFormDetail";
-import Header from "../../components/common/Header";
 import PreviewTest from "./PreviewTest";
 import { useDispatch } from "react-redux";
 import { addSkills } from "../../redux/testExam/TestSlice";
-import MainLayout from "../../layout/MainLayout";
 
 const CreateTest = ({ skills }) => {
   const { control, resetField, handleSubmit, setValue, getValues } = useForm();
-
   const [activeStep, setActiveStep] = useState(0);
   const [formData, setFormData] = useState(null);
   const [selectedSkills, setSelectedSkills] = useState([]);

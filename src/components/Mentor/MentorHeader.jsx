@@ -4,7 +4,7 @@ import { faHouse, faTv, faBook } from "@fortawesome/free-solid-svg-icons";
 import useAuthToken from "../../hooks/useAuthToken"; // Import useAuthToken
 import Cookies from "js-cookie"; // Import js-cookie
 import { getUser } from "../../service/GetUser";
-import defaulAvatar from "../../assets/images/defaul-avatar.jpg";
+import defaulAvatar from "../../assets/images/default-avatar.jpg";
 import { Link } from "react-router-dom";
 
 const MentorHeader = () => {

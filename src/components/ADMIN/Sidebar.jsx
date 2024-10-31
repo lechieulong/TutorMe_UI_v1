@@ -171,22 +171,32 @@ const Sidebar = () => {
                             </li>
                             <li>
                                 <NavLink
+                                    to="docs/teacherrequest"
+                                    className={({ isActive }) =>
+                                        `flex items-center p-3 text-gray-700 hover:bg-gray-200 transition duration-200 ease-in-out ${isActive ? 'bg-gray-200' : ''}`
+                                    }
+                                >
+                                    <span className="ml-3">Request register teacher</span>
+                                </NavLink>
+                            </li>
+                            <li>
+                                <NavLink
+                                    to="docs/assignteacher"
+                                    className={({ isActive }) =>
+                                        `flex items-center p-3 text-gray-700 hover:bg-gray-200 transition duration-200 ease-in-out ${isActive ? 'bg-gray-200' : ''}`
+                                    }
+                                >
+                                    <span className="ml-3">Assign teacher</span>
+                                </NavLink>
+                            </li>
+                            <li>
+                                <NavLink
                                     to="docs/getting-started"
                                     className={({ isActive }) =>
                                         `flex items-center p-3 text-gray-700 hover:bg-gray-200 transition duration-200 ease-in-out ${isActive ? 'bg-gray-200' : ''}`
                                     }
                                 >
                                     <span className="ml-3">Request register course</span>
-                                </NavLink>
-                            </li>
-                            <li>
-                                <NavLink
-                                    to="docs/api-reference"
-                                    className={({ isActive }) =>
-                                        `flex items-center p-3 text-gray-700 hover:bg-gray-200 transition duration-200 ease-in-out ${isActive ? 'bg-gray-200' : ''}`
-                                    }
-                                >
-                                    <span className="ml-3">Request register teacher</span>
                                 </NavLink>
                             </li>
                             {/* Add more documentation links as needed */}

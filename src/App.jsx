@@ -52,6 +52,8 @@ import PaymentResult from "./pages/User/PayOSResult ";
 import CreateTestLayout from "./pages/course/CreateTestLayout";
 import CourseLayout from "./pages/course/CourseLayout";
 
+import Term from "./pages/Terms";
+
 //ADMIN
 import AdminApp from "./pages/ADMIN/Index";
 
@@ -60,6 +62,8 @@ const App = () => {
     <div className=" min-h-screen ">
       <Router>
         <Routes>
+          <Route path="/terms" element={<Term />} />
+
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
           <Route path="/forgotpass" element={<ForgotPassword />} />

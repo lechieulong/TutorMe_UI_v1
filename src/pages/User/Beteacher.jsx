@@ -6,20 +6,22 @@ import Cookies from "js-cookie";
 import { useDispatch, useSelector } from "react-redux";
 import { BeTeacher } from '../../redux/users/UserSlice';
 import { GetSpecialization } from '../../redux/specialization/SpecializationSlice';
+import { uploadFile } from '../../redux/testExam/TestSlice';
+import { GetUserEducation } from '../../redux/users/UserSlice';;
 
 const EducationSection = () => {
     const navigate = useNavigate();
     const dispatch = useDispatch();
 
-    // Extracting specializations from Redux state
-    const { specializations, getspecializationstatus, error } = useSelector((state) => state.specialization);
-    const { beTeacherResponse, beTeacherStatus, beTeacherError } = useSelector((state) => state.user);
+    // Extracting specializations and user data from Redux state
+    const { specializations, getspecializationstatus } = useSelector((state) => state.specialization);
+    const { beTeacherStatus, beTeacherError, userEducation, getUserEducationStatus } = useSelector((state) => state.user);
 
     useEffect(() => {
         dispatch(GetSpecialization());
+        dispatch(GetUserEducation());
     }, [dispatch]);
 
-    // Effect to check authentication token
     useEffect(() => {
         const token = Cookies.get("authToken");
         if (!token) {
@@ -34,16 +36,54 @@ const EducationSection = () => {
         yearsOfExperience: "",
         grade: "",
         specialization: {},
+        acceptedTerms: false,
     });
 
     const [formErrors, setFormErrors] = useState({});
 
-    // Handle form input changes
+    // Pre-fill formData if userEducation data is available
+    useEffect(() => {
+        if (userEducation) {
+            setFormData((prevData) => ({
+                ...prevData,
+                aboutMe: userEducation.aboutMe || "",
+                career: userEducation.career || "",
+                degreeURL: userEducation.degreeURL || "",
+                yearsOfExperience: userEducation.yearExperience || "",
+                grade: userEducation.grade || "",
+                specialization: userEducation.specializationIds?.reduce((acc, id) => {
+                    acc[id] = true;
+                    return acc;
+                }, {}),
+            }));
+        }
+    }, [userEducation]);
+
+    const handleFileChange = async (e) => {
+        const file = e.target.files[0];
+        if (file) {
+            try {
+                const resultAction = await dispatch(uploadFile(file));
+                if (uploadFile.fulfilled.match(resultAction)) {
+                    const fileUrl = resultAction.payload.fileUrl;
+                    setFormData((prevData) => ({ ...prevData, degreeURL: fileUrl }));
+                } else {
+                    console.error("Upload failed:", resultAction.error.message);
+                }
+            } catch (error) {
+                console.error("Error uploading image:", error);
+            }
+        }
+    };
+
     const handleChange = (e) => {
         const { name, type, checked, value } = e.target;
+        setFormData((prevData) => ({
+            ...prevData,
+            [name]: type === "checkbox" ? checked : value
+        }));
 
-        // Handle specialization checkboxes
-        if (type === "checkbox") {
+        if (type === "checkbox" && specializations.find((spec) => spec.id === name)) {
             setFormData((prevData) => ({
                 ...prevData,
                 specialization: {
@@ -51,33 +91,9 @@ const EducationSection = () => {
                     [name]: checked
                 }
             }));
-        } else {
-            setFormData((prevData) => ({
-                ...prevData,
-                [name]: value
-            }));
-        }
-
-        // Handle terms acceptance checkbox
-        if (name === "acceptedTerms") {
-            setFormData((prevData) => ({
-                ...prevData,
-                acceptedTerms: checked
-            }));
         }
     };
 
-    const handleFileChange = (e) => {
-        const file = e.target.files[0]; // Get the first file (assuming single upload)
-        if (file) {
-            setFormData((prevData) => ({
-                ...prevData,
-                degreeURL: file.name // Or you can upload the file using FormData later
-            }));
-        }
-    };
-
-    // Validate form data
     const validateForm = () => {
         const errors = {};
         if (!formData.aboutMe) errors.aboutMe = "Bio is required";
@@ -93,15 +109,14 @@ const EducationSection = () => {
         return errors;
     };
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
         const errors = validateForm();
 
         if (Object.keys(errors).length === 0) {
             setFormErrors({});
-
             const userData = {
-                teacherId: "",
+                teacherId: userEducation?.teacherId || "",
                 aboutMe: formData.aboutMe,
                 grade: Number(formData.grade),
                 degreeURL: formData.degreeURL,
@@ -110,11 +125,19 @@ const EducationSection = () => {
                 isApprove: false,
                 isReject: false,
                 specializationIds: Object.keys(formData.specialization)
-                    .filter(key => formData.specialization[key]) // Extract checked specialization IDs
-                    .filter(id => id !== "acceptedTerms"),
+                    .filter(key => formData.specialization[key]),
             };
-
-            dispatch(BeTeacher(userData));
+            try {
+                const resultAction = await dispatch(BeTeacher(userData));
+                if (BeTeacher.fulfilled.match(resultAction)) {
+                    window.location.reload();
+                } else {
+                    setFormErrors({ server: 'Failed to submit. Please try again.' });
+                }
+            } catch (error) {
+                console.error('Error during dispatch:', error);
+                setFormErrors({ server: 'An unexpected error occurred.' });
+            }
         } else {
             setFormErrors(errors);
         }
@@ -127,21 +150,39 @@ const EducationSection = () => {
                 <div className="flex-1 p-6">
                     <div className="flex gap-8 bg-gray-100 p-6 px-12">
                         <div className="hidden md:flex md:w-1/3 flex-col items-start">
-                            <div className="mb-3 text-base text-red-600 shadow-sm italic">
-                                <p>Make sure all information you provide is true.</p>
-                            </div>
-                            <label className="text-sm">
-                                <input
-                                    type="checkbox"
-                                    name="acceptedTerms"
-                                    required
-                                    checked={formData.acceptedTerms}
-                                    onChange={handleChange}
-                                />
-                                Accept our <Link to="/terms">terms and policies</Link>
-                            </label>
-                            {formErrors.acceptedTerms && (
-                                <p className="font-mono text-red-500 text-xs mt-1">{formErrors.acceptedTerms}</p>
+                            {!userEducation ? (
+                                // Display the information and terms section if userEducation does not exist
+                                <>
+                                    <div className="mb-3 text-base text-red-600 shadow-sm italic">
+                                        <p>Make sure all information you provide is true.</p>
+                                    </div>
+                                    <label className="text-sm">
+                                        <input
+                                            type="checkbox"
+                                            name="acceptedTerms"
+                                            required
+                                            checked={formData.acceptedTerms}
+                                            onChange={handleChange}
+                                        />
+                                        Accept our <Link to="/terms" target="_blank">terms and policies</Link>
+                                    </label>
+                                    {formErrors.acceptedTerms && (
+                                        <p className="font-mono text-red-500 text-xs mt-1">{formErrors.acceptedTerms}</p>
+                                    )}
+                                </>
+                            ) : (
+                                // Display the test message and degree image if userEducation and degreeURL exist
+                                userEducation.degreeURL && (
+                                    <>
+                                        <div className="mb-3 text-base text-green-400 italic">
+                                            <p>- You can test your skills or not.</p>
+                                            <p>- But, doing the test will help us approve your request faster...</p>
+                                        </div>
+                                        <div className="mt-3">
+                                            <img src={userEducation.degreeURL} alt="Degree Image" className="shadow-lg rounded-md" />
+                                        </div>
+                                    </>
+                                )
                             )}
                         </div>
                         <div className="flex-1 border-2 border-gray-500 rounded-lg p-6">
@@ -189,7 +230,7 @@ const EducationSection = () => {
                                                             className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-1 focus:ring-blue-500"
                                                             type="file"
                                                             name="degreeURL"
-                                                            onChange={handleFileChange} // Updated to handle file change separately
+                                                            onChange={(e) => handleFileChange(e)} // Updated to handle file change separately
                                                         />
                                                         {formErrors.degreeURL && <p className="font-mono text-red-500 text-xs mt-1">{formErrors.degreeURL}</p>}
                                                     </div>
@@ -248,15 +289,24 @@ const EducationSection = () => {
                                         </div>
 
                                         <div className="flex justify-end">
+                                            {getUserEducationStatus === "success" && (
+                                                <p className="font-mono px-4 py-2 text-xs text-green-500 text-center mt-2">User education and teacher request created successfully...</p>
+                                            )}
                                             {beTeacherStatus === "pending" && (
                                                 <p className="font-mono px-4 py-2 text-xs text-yellow-500 text-center mt-2">checking...</p>
                                             )}
                                             {beTeacherStatus === "failed" && (
                                                 <p className="font-mono px-4 py-2 text-xs text-red-500 text-center mt-2">{beTeacherError}</p>
                                             )}
-                                            <button type="submit" className="px-4 py-2 bg-green-500 text-white rounded hover:bg-blue-500">
-                                                Next
-                                            </button>
+                                            {getUserEducationStatus === "success" ? (
+                                                <Link to="/testDetail/1" className="px-4 py-2 bg-green-500 text-white rounded hover:bg-green-400">
+                                                    Test your skills
+                                                </Link>
+                                            ) : (
+                                                <button type="submit" className="px-4 py-2 bg-green-500 text-white rounded hover:bg-green-400">
+                                                    Next
+                                                </button>
+                                            )}
                                         </div>
                                     </div>
                                 </form>

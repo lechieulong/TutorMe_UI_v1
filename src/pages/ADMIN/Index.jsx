@@ -7,6 +7,8 @@ import Dashboard from './Dashboard';
 import Users from "./User";
 import Transaction from "./Transaction";
 import ImportUser from "./ImportUser";
+import TeacherRequest from "../../components/ADMIN/TeacherRequest";
+import TeacherRequestDetail from "./Request/TeacherRequestDetail";
 
 const AdminApp = () => {
     return (
@@ -22,6 +24,8 @@ const AdminApp = () => {
                             <Route path="/users" element={<Users />} />
                             <Route path="/transactions" element={<Transaction />} />
                             <Route path="/docs/importuser" element={<ImportUser />} />
+                            <Route path="/docs/teacherrequest" element={<TeacherRequest />} />
+                            <Route path="/docs/teacherrequest/:requestId" element={<TeacherRequestDetail />} />
                             {/* Add more routes as needed */}
                         </Routes>
                     </div>

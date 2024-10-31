@@ -29,24 +29,30 @@ const ButtonAddCourseTimeline = ({ courseId, onTimelineAdded }) => {
     }));
   };
 
-  // Hàm xử lý submit form
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      // Gọi API để thêm CourseTimeline mới
-      await axios.post("https://localhost:7030/api/CourseTimeline", {
-        courseId: courseId,
-        eventDate: formData.eventDate,
-        title: formData.title,
-        description: formData.description,
-        author: "YourAuthorName",
-      });
+      await axios.post("https://localhost:7030/api/CourseTimeline", [
+        {
+          courseId: courseId,
+          eventDate: formData.eventDate.toISOString(), // Đảm bảo định dạng ngày
+          title: formData.title,
+          description: formData.description,
+          author: "YourAuthorName",
+          isEnabled: true,
+        },
+      ]);
+      console.log(
+        courseId,
+        formData.eventDate,
+        formData.title,
+        formData.description
+      );
 
-      // Gọi lại hàm onTimelineAdded để cập nhật danh sách
       onTimelineAdded();
-      setShowForm(false); // Đóng form sau khi lưu thành công
+      setShowForm(false);
     } catch (error) {
-      console.error("Failed to create CourseTimeline", error);
+      console.error("Failed to create CourseTimeline", error.response.data);
     }
   };
 

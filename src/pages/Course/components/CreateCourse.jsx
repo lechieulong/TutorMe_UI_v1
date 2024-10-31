@@ -2,6 +2,13 @@ import { useState, useEffect } from "react";
 import axios from "axios";
 import { getUser } from "../../../service/GetUser"; // Hàm lấy thông tin người dùng
 
+const categoryMapping = {
+  Reading: 0,
+  Listening: 1,
+  Writing: 2,
+  Speaking: 3,
+};
+
 const CreateCourse = () => {
   const [course, setCourse] = useState({
     courseName: "",
@@ -29,10 +36,14 @@ const CreateCourse = () => {
 
   const handleCheckboxChange = (e) => {
     const { value, checked } = e.target;
+    const categoryValue = categoryMapping[value].toString(); // Giữ category dưới dạng chuỗi
+
     setCourse((prevCourse) => {
       const newCategories = checked
-        ? [...prevCourse.categories, value] // Thêm danh mục nếu được chọn
-        : prevCourse.categories.filter((category) => category !== value); // Loại bỏ nếu không được chọn
+        ? [...prevCourse.categories, categoryValue] // Thêm giá trị chuỗi của danh mục nếu được chọn
+        : prevCourse.categories.filter(
+            (category) => category !== categoryValue
+          ); // Loại bỏ nếu không được chọn
       return { ...prevCourse, categories: newCategories };
     });
   };

@@ -12,6 +12,7 @@ import Filter from "../Course/components/Filter";
 import CourseCard from "../Course/components/CourseCard";
 import { fetchCoursesByUserId } from "../../redux/courses/CourseSlice";
 import axios from "axios";
+import { STATUS } from "../../constant/SliceName";
 import { getUser } from "../../service/GetUser";
 
 const MentorCourseList = () => {
@@ -42,18 +43,23 @@ const MentorCourseList = () => {
   );
 
   const filteredCourses = useMemo(() => {
-    return courses
-      .filter(
-        (course) =>
-          selectedCategory === "All" ||
-          course.categories.includes(selectedCategory)
-      )
-      .filter((course) => {
-        const courseTitle = course.title || "";
-        const term = searchTerm || "";
-        return courseTitle.toLowerCase().includes(term.toLowerCase());
-      });
-  }, [courses, selectedCategory, searchTerm]);
+    if (status === STATUS.SUCCESS) {
+      return courses
+        .filter((course) => {
+          // Kiểm tra xem selectedCategory có phải là "All" không
+          if (selectedCategory === "All") return true;
+
+          // Kiểm tra xem category của khóa học có nằm trong danh sách categories không
+          return course.categories.includes(selectedCategory);
+        })
+        .filter((course) => {
+          const courseTitle = course.courseName || ""; // Sử dụng courseName thay vì title
+          const term = searchTerm || "";
+          return courseTitle.toLowerCase().includes(term.toLowerCase());
+        });
+    }
+    return [];
+  }, [courses, selectedCategory, searchTerm, status]);
 
   const indexOfLastCourse = currentPage * coursesPerPage;
   const indexOfFirstCourse = indexOfLastCourse - coursesPerPage;
@@ -101,7 +107,8 @@ const MentorCourseList = () => {
         return <FaBook className="text-blue-500 text-2xl" />;
     }
   };
-
+  if (status === STATUS.PENDING) return <p>Loading...</p>;
+  if (status === STATUS.FAILED) return <p>Error: {error}</p>;
   return (
     <MainLayout>
       <div className="px-4 py-6">
@@ -144,59 +151,49 @@ const MentorCourseList = () => {
           </div>
         )}
 
-        {currentCourses.length > 0 && (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mt-6">
-            {currentCourses.map((course) => (
-              <CourseCard
-                key={course.id}
-                courseName={course.courseName}
-                content={course.content}
-                title={course.title}
-                description={course.description}
-                category={course.categories
-                  .map((category) => {
-                    if (category === "Reading") return 0;
-                    if (category === "Listening") return 1;
-                    if (category === "Writing") return 2;
-                    if (category === "Speaking") return 3;
-                    return -1; // giá trị không hợp lệ
-                  })
-                  .join(", ")} // Hiển thị tất cả category dưới dạng số
-                icon={getIcon(course.categories[0])} // Lấy icon cho category đầu tiên
-                teacher={user?.name}
-                courseId={course.id}
-                onDelete={handleDelete}
-                isEnabled={course.isEnabled}
-              />
-            ))}
-          </div>
-        )}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mt-6">
+          {currentCourses.map((course) => (
+            <CourseCard
+              key={course.id}
+              courseName={course.courseName}
+              content={course.content}
+              title={course.title}
+              description={course.description}
+              category={course.category}
+              icon={getIcon(course.category)}
+              teacher={course.userId}
+              courseId={course.id}
+              onDelete={handleDelete}
+              isEnabled={course.isEnabled}
+            />
+          ))}
+        </div>
 
-        {currentCourses.length > 0 && (
-          <div className="flex justify-center items-center mt-4">
-            <button
-              onClick={handlePrevPage}
-              disabled={currentPage === 1}
-              className={`px-3 py-1.5 mx-1 text-sm font-medium ${
-                currentPage === 1 ? "bg-gray-300" : "bg-blue-600"
-              } text-white border border-blue-600 rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-400`}
-            >
-              Previous
-            </button>
-            <span className="text-sm mx-2">
-              Page {currentPage} of {totalPages}
-            </span>
-            <button
-              onClick={handleNextPage}
-              disabled={currentPage === totalPages}
-              className={`px-3 py-1.5 mx-1 text-sm font-medium ${
-                currentPage === totalPages ? "bg-gray-300" : "bg-blue-600"
-              } text-white border border-blue-600 rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-400`}
-            >
-              Next
-            </button>
-          </div>
-        )}
+        <div className="flex justify-center items-center mt-4">
+          <button
+            onClick={handlePrevPage}
+            disabled={currentPage === 1}
+            aria-label="Previous Page"
+            className={`px-3 py-1.5 mx-1 text-sm font-medium ${
+              currentPage === 1 ? "bg-gray-300" : "bg-blue-600"
+            } text-white border border-blue-600 rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-400`}
+          >
+            Previous
+          </button>
+          <span className="text-sm mx-2 text-black">
+            Page {currentPage} of {totalPages}
+          </span>
+          <button
+            onClick={handleNextPage}
+            disabled={currentPage === totalPages}
+            aria-label="Next Page"
+            className={`px-3 py-1.5 mx-1 text-sm font-medium ${
+              currentPage === totalPages ? "bg-gray-300" : "bg-blue-600"
+            } text-white border border-blue-600 rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-400`}
+          >
+            Next
+          </button>
+        </div>
       </div>
     </MainLayout>
   );

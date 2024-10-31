@@ -19,6 +19,7 @@ const MentorCourseDetail = () => {
   const [classes, setClasses] = useState([]);
   const [switchStates, setSwitchStates] = useState({});
   const [category, setCategory] = useState(location.state); // State để lưu danh mục
+  const [selectedTimelines, setSelectedTimelines] = useState([]); // State để lưu danh sách timeline được chọn
   const navigate = useNavigate();
 
   const fetchTimelines = async () => {
@@ -40,7 +41,6 @@ const MentorCourseDetail = () => {
       setUserId(userIdFromToken);
     }
   };
-
   useEffect(() => {
     const { category } = location.state || {}; // Lấy category từ location.state
     if (category) {
@@ -52,8 +52,12 @@ const MentorCourseDetail = () => {
     fetchClasses();
   }, [courseId, location.state]);
 
-  const handleTimelineAdded = () => {
+  const handleTimelineAdded = (timelineId, timelineName) => {
     fetchTimelines();
+    setSelectedTimelines((prev) => [
+      ...prev,
+      { id: timelineId, name: timelineName }, // Thêm tên timeline vào danh sách
+    ]);
   };
 
   const handleDetailAdded = () => {
@@ -149,12 +153,9 @@ const MentorCourseDetail = () => {
             <div className="w-2/5">
               <ButtonAddCourseTimeline
                 courseId={courseId}
-                onTimelineAdded={handleTimelineAdded}
+                onTimelineAdded={handleTimelineAdded} // Truyền hàm để lấy timelineId và tên
               />
-              <CourseTimeline
-                courseId={courseId}
-                categories={category} // Truyền category vào CourseTimeline
-              />
+              <CourseTimeline courseId={courseId} categories={category} />
               <div className="flex justify-center mt-4">
                 <button className="items-center p-2 bg-green-400">
                   Submit
@@ -167,7 +168,10 @@ const MentorCourseDetail = () => {
                 onDetailAdded={handleDetailAdded}
               />
               <div className="w-3/5">
-                <CourseTimelineDetail timelineIds={timelineIds} />
+                <CourseTimelineDetail
+                  timelineIds={timelineIds}
+                  selectedTimelines={selectedTimelines} // Truyền danh sách timeline vào CourseTimelineDetail
+                />
               </div>
             </div>
           </div>

@@ -1,9 +1,9 @@
-import React from 'react';
-import { Routes, Route } from 'react-router-dom';
+import React from "react";
+import { Routes, Route } from "react-router-dom";
 import AdminHeader from "../../components/ADMIN/Header";
 import Sidebar from "../../components/ADMIN/Sidebar";
-import MainContent from './MainContent';
-import Dashboard from './Dashboard';
+import MainContent from "./MainContent";
+import Dashboard from "./Dashboard";
 import Users from "./User";
 import Transaction from "./Transaction";
 import ImportUser from "./ImportUser";

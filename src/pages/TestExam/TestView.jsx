@@ -4,7 +4,7 @@ import Topic from "../../components/Test/Topic";
 import NavigationPart from "../../components/Test/NavigationPart";
 
 const TestView = React.memo(
-  ({ skillData, currentSkillKey, handleAnswerChange }) => {
+  ({ skillData, currentSkillKey, handleAnswerChange, userAnswers }) => {
     const questionRef = useRef({});
     const [isLoading, setIsLoading] = useState(true);
     const [isOpenSideView, setOpenSideView] = useState(false);
@@ -64,9 +64,9 @@ const TestView = React.memo(
 
     return (
       <div
-        className=" flex flex-col h-full "
+        className="h-full "
         style={{
-          height: "calc(100vh - 80px)",
+          height: "calc(100vh - 125px)",
         }}
       >
         <div className="flex h-full ">
@@ -76,7 +76,6 @@ const TestView = React.memo(
                 className="overflow-auto"
                 style={{
                   width: `${leftWidth}%`,
-                  height: "100%",
                 }}
               >
                 <Topic
@@ -105,6 +104,7 @@ const TestView = React.memo(
               refs={questionRef}
               currentSkillKey={currentSkillKey}
               handleAnswerChange={handleAnswerChange}
+              userAnswers={userAnswers}
             />
           </div>
         </div>
@@ -114,6 +114,8 @@ const TestView = React.memo(
             <NavigationPart
               partDatas={partDatas} // Pass all part data
               handlePartClick={handlePartClick} // Handle part click to update selected part
+              handleQuestionClick={handleQuestionClick}
+              userAnswers={userAnswers}
             />
           )}
         </div>

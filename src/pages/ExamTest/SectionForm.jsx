@@ -11,14 +11,17 @@ const sectionTypesBySkill = {
     { value: 1, label: "Multiple Choice Questions" },
     { value: 2, label: "True/False/Not Given Questions" },
     { value: 3, label: "Yes/No/Not Given Questions" },
+
     { value: 4, label: "Matching Headings" },
     { value: 5, label: "Matching Information " },
     { value: 6, label: "Matching Features" },
+
     { value: 7, label: "Matching Sentence Endings" },
     { value: 8, label: "Sentence Completion" },
-    { value: 9, label: "Short-answer Questions" },
-    { value: 10, label: "Diagram Completion" },
     { value: 11, label: "Summary Completion" },
+    { value: 9, label: "Short-answer Questions" },
+
+    { value: 10, label: "Diagram Completion" },
   ],
   Listening: [
     { value: 1, label: "Table/Note Completion" },
@@ -58,14 +61,19 @@ const SectionForm = ({ skill, partIndex, control }) => {
     const file = e.target.files[0];
     if (file) {
       try {
-        const uri = await dispatch(uploadFile(file));
-        field.onChange(uri);
+        const resultAction = await dispatch(uploadFile(file));
+        if (uploadFile.fulfilled.match(resultAction)) {
+          const fileUrl = resultAction.payload.fileUrl;
+
+          field.onChange(fileUrl);
+        } else {
+          console.error("Upload failed:", resultAction.error.message);
+        }
       } catch (error) {
         console.error("Error uploading image:", error);
       }
     }
   };
-
   return (
     <div>
       <h4 className="font-medium">Sections</h4>
@@ -85,10 +93,8 @@ const SectionForm = ({ skill, partIndex, control }) => {
               </button>
             </div>
 
-            {/* Conditional rendering based on skill type */}
             {(skill === "Reading" || skill === "Listening") && (
               <div>
-                {/* Section Type Dropdown */}
                 <Controller
                   name={`skills.${skill}.parts.${partIndex}.sections.${index}.sectionType`}
                   control={control}

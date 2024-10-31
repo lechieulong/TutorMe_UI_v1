@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { useFieldArray, Controller } from "react-hook-form";
 import AnswerForm from "./AnswerForm";
 import QuestionCard from "./QuestionCard";
+import TableInput from "./TableInput";
 import {
   faMultiply,
   faQuestionCircle,
@@ -55,6 +56,51 @@ const QuestionForm = ({
         </span>
         Questions
       </h5>
+
+      {skill === "Listening" && sectionType === 3 && (
+        <div className="mb-4 border p-4 rounded">
+          <label className="block mb-2 font-bold">Enter Summary content:</label>
+          <p className="mb-2 text-gray-600">
+            Please summarize the listening content in a few sentences. You can
+            include key points, important themes, or your personal insights.
+            Example:{" "}
+            <em>
+              <b>
+                "The listening segment discussed the [ ]. of effective
+                communication, highlighting the key strategies for [] improving
+                interpersonal skills."
+              </b>
+            </em>
+            each <b>[] </b> represent for each question , and <b> [skill]</b>{" "}
+            the text in bracket is answer
+          </p>
+          <Controller
+            name={`skills.${skill}.parts.${partIndex}.sections.${sectionIndex}.summary`}
+            control={control}
+            defaultValue=""
+            render={({ field }) => (
+              <textarea
+                {...field}
+                className="border p-2 w-full h-32 resize-none"
+                placeholder="Type your summary here..."
+              />
+            )}
+          />
+        </div>
+      )}
+
+      {skill === "Listening" && sectionType === 1 && (
+        <div className="mb-4 border p-4 rounded">
+          <label className="block mb-2 font-bold">Enter Table Content:</label>
+          <TableInput
+            control={control}
+            skill={skill}
+            partIndex={partIndex}
+            sectionIndex={sectionIndex}
+          />
+        </div>
+      )}
+
       {fields.map((question, index) => (
         <div key={question.id} className="mb-4 border p-4 rounded">
           <div className="flex p-2 justify-between gap-2 items-center">
@@ -90,7 +136,7 @@ const QuestionForm = ({
                           sectionType === 5 ||
                           sectionType === 6 ||
                           sectionType === 7
-                            ? "Heading "
+                            ? "Heading"
                             : "Question Name"
                         }
                       />
@@ -121,43 +167,49 @@ const QuestionForm = ({
           )}
         </div>
       ))}
-      <div className="flex gap-2">
-        <button
-          type="button"
-          onClick={() => setShowQuestionCard(true)}
-          className="bg-blue-500 text-white p-2 rounded"
-        >
-          Select Questions
-          <span className="ml-3">
-            <FontAwesomeIcon icon={faToggleOn} />
-          </span>
-        </button>
-        <button
-          type="button"
-          onClick={() =>
-            append({
-              questionName: "",
-              answers: [{ answerText: "", isCorrect: 0 }],
-              isFromQuestionBank: false,
-              questionType: sectionType,
-            })
-          }
-          className="bg-green-500 text-white p-2 rounded"
-        >
-          Add New Question
-          <span className="ml-3">
-            <FontAwesomeIcon icon={faSun} />
-          </span>
-        </button>
-      </div>
-      {showQuestionCard && (
-        <div className="fixed inset-0 z-50 bg-gray-900 bg-opacity-50 flex justify-center items-center">
-          <QuestionCard
-            selectedQuestions={fields}
-            onSelectQuestions={handleAddSelectedQuestions}
-            onClose={() => setShowQuestionCard(false)}
-            disabledQuestions={fields}
-          />
+
+      {skill === "Listening" && sectionType !== 3 && (
+        <div>
+          <div className="flex gap-2">
+            <button
+              type="button"
+              onClick={() => setShowQuestionCard(true)}
+              className="bg-blue-500 text-white p-2 rounded"
+            >
+              Select Questions
+              <span className="ml-3">
+                <FontAwesomeIcon icon={faToggleOn} />
+              </span>
+            </button>
+            <button
+              type="button"
+              onClick={() =>
+                append({
+                  questionName: "",
+                  answers: [{ answerText: "", isCorrect: 0 }],
+                  summary: "",
+                  isFromQuestionBank: false,
+                  questionType: sectionType,
+                })
+              }
+              className="bg-green-500 text-white p-2 rounded"
+            >
+              Add New Question
+              <span className="ml-3">
+                <FontAwesomeIcon icon={faSun} />
+              </span>
+            </button>
+          </div>
+          {showQuestionCard && (
+            <div className="fixed inset-0 z-50 bg-gray-900 bg-opacity-50 flex justify-center items-center">
+              <QuestionCard
+                selectedQuestions={fields}
+                onSelectQuestions={handleAddSelectedQuestions}
+                onClose={() => setShowQuestionCard(false)}
+                disabledQuestions={fields}
+              />
+            </div>
+          )}
         </div>
       )}
     </div>

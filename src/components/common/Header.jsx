@@ -144,10 +144,11 @@ const Header = () => {
               </a>
               <a
                 className="font-medium text-black focus:outline-none"
-                href={`/live-stream${user === null || user.role === "USER"
+                href={`/live-stream${
+                  user === null || user.role === "USER"
                     ? ""
                     : `?RoomId=${user.sub}`
-                  }`}
+                }`}
               >
                 <span className="mr-2">
                   <FontAwesomeIcon icon={faTv} />
@@ -166,7 +167,7 @@ const Header = () => {
 
               <Link
                 className="font-medium text-black focus:outline-none"
-                to="/testDetail/1"
+                to="/listTest"
               >
                 <span className="mr-2">
                   <FontAwesomeIcon icon={faPenNib} />
@@ -187,7 +188,8 @@ const Header = () => {
           </div>
         </nav>
       </header>
-      <LoginModal isOpen={isModalOpen} onClose={handleCloseModal} /> {/* Render the modal */}
+      <LoginModal isOpen={isModalOpen} onClose={handleCloseModal} />{" "}
+      {/* Render the modal */}
     </>
   );
 };

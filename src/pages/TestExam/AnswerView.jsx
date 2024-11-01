@@ -409,7 +409,7 @@ const AnswerView = ({
   };
 
   return (
-    <form className="p-4 bg-white rounded shadow-md">
+    <form className="p-4 bg-warmNeutral rounded shadow-md">
       {currentSkillKey === "listening" && (
         <div className="my-4">
           <AudioPlayer src={partData.audio} />

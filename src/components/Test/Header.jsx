@@ -5,8 +5,8 @@ import {
   faPaperPlane,
   faPen,
 } from "@fortawesome/free-solid-svg-icons";
-import { useState, useRef, useEffect } from "react";
-import Modal from "react-modal"; // Import react-modal
+import { useState, useEffect } from "react";
+import Modal from "react-modal";
 import NoteCard from "./NoteCard";
 
 const Header = ({
@@ -17,7 +17,7 @@ const Header = ({
 }) => {
   const [timeLeft, setTimeLeft] = useState(0);
   const [isNoteOpen, setIsNoteOpen] = useState(false);
-  const [isModalOpen, setIsModalOpen] = useState(false); // Modal visibility state
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
   const openNoteModal = () => setIsNoteOpen(true);
   const closeNoteModal = () => setIsNoteOpen(false);
@@ -26,8 +26,8 @@ const Header = ({
   const closeWarningModal = () => setIsModalOpen(false);
 
   const handleConfirmNextSkill = () => {
-    handleNextSkill(); // Call the next skill function
-    closeWarningModal(); // Close the modal
+    handleNextSkill();
+    closeWarningModal();
   };
 
   const formatTime = (seconds) => {
@@ -63,49 +63,40 @@ const Header = ({
   }, [currentSkillIndex, testData, handleNextSkill]);
 
   return (
-    <div className="flex-1 flex justify-between items-center p-4 bg-green-600 shadow-md">
-      <p className="text-lg font-semibold">
-        IELTS
-        <span className="ml-2 text-white">
-          <FontAwesomeIcon icon={faLanguage} />
-        </span>
+    <div className="flex justify-between items-center p-4 bg-green-600 shadow-lg rounded-lg">
+      <p className="text-lg font-semibold text-white flex items-center gap-2">
+        IELTS <FontAwesomeIcon icon={faLanguage} />
       </p>
-      <p className="text-lg font-semibold items-center">
-        <span className="mr-2 text-white">
-          <FontAwesomeIcon icon={faClock} />
-        </span>
-        <span className="text-sm mr-4">Time left</span>
-        <span className="text-xl text-white">{formatTime(timeLeft)}</span>
+      <div className="text-lg font-semibold text-white flex items-center gap-2">
+        <FontAwesomeIcon icon={faClock} className="mr-2" />
+        <span className="text-sm">Time left:</span>
+        <span className="text-xl font-bold">{formatTime(timeLeft)}</span>
         <span className="text-sm ml-2">minutes</span>
-      </p>
-      <div className="flex gap-8 justify-center items-center">
-        <span
+      </div>
+      <div className="flex gap-8 items-center">
+        <button
           onClick={openNoteModal}
-          className="text-md font-semibold text-white cursor-pointer"
+          type="button"
+          className="text-green-700 font-semibold bg-lightGreen hover:bg-accentGreen hover:text-white text-md px-3 py-2 rounded-lg flex items-center gap-2"
         >
-          <span className="mr-2 text-sm">
-            <FontAwesomeIcon icon={faPen} />
-          </span>
+          <FontAwesomeIcon icon={faPen} className="text-sm" />
           Take note
-        </span>
+        </button>
 
         {currentSkillIndex < Object.keys(testData).length - 1 ? (
           <button
             type="button"
-            onClick={openWarningModal} // Open warning modal instead of directly calling handleNextSkill
-            className="cursor-pointer inline-flex items-center gap-x-2 text-sm font-medium rounded-lg border border-transparent bg-blue-500 text-white px-4 py-2"
+            onClick={openWarningModal}
+            className="border border-white bg-black hover:bg-green-800 text-white font-medium rounded-lg px-4 py-2"
           >
             Next Skill
           </button>
         ) : (
           <button
-            type="button"
             onClick={handleSubmit}
-            className="cursor-pointer inline-flex items-center gap-x-2 text-sm font-medium rounded-lg border border-transparent bg-red-500 text-white px-4 py-2"
+            className="bg-red-600 hover:bg-red-700 text-white font-medium rounded-lg px-4 py-2 flex items-center gap-2"
           >
-            <span className="mr-2 text-sm">
-              <FontAwesomeIcon icon={faPaperPlane} />
-            </span>
+            <FontAwesomeIcon icon={faPaperPlane} className="text-sm" />
             Submit Test
           </button>
         )}
@@ -116,24 +107,28 @@ const Header = ({
         isOpen={isModalOpen}
         onRequestClose={closeWarningModal}
         contentLabel="Next Skill Confirmation"
-        className="bg-white rounded-lg shadow-lg p-6 max-w-md mx-auto"
+        className="bg-warmNeutral rounded-lg shadow-lg p-6 max-w-md mx-auto text-black"
         overlayClassName="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center"
       >
-        <h2 className="text-lg font-semibold mb-4">Confirm Next Skill</h2>
-        <p className="text-sm text-gray-700 mb-6">
+        <h2 className="text-lg font-semibold mb-4 text-houseGreen">
+          Confirm Next Skill
+        </h2>
+        <p className="text-sm mb-6">
           Do you want to move to the next skill? If you proceed, your result
           will be saved for this section.
         </p>
         <div className="flex justify-end gap-4">
           <button
+            type="button"
             onClick={closeWarningModal}
-            className="bg-gray-200 text-gray-700 rounded-md px-4 py-2"
+            className="bg-coolNeutral text-black rounded-md px-4 py-2"
           >
             Cancel
           </button>
           <button
+            type="button"
             onClick={handleConfirmNextSkill}
-            className="bg-blue-500 text-white rounded-md px-4 py-2"
+            className="bg-mainColor text-white rounded-md px-4 py-2"
           >
             Proceed
           </button>

@@ -117,6 +117,12 @@ const Topic = ({ partData, currentSkillKey }) => {
           </p>
         </>
       )}
+
+      {currentSkillKey.toLowerCase() === "writing" &&
+        partData.sections.length > 0 &&
+        partData.sections[0].questions.length > 0 && (
+          <p>{partData.sections[0].questions[0].questionName}</p>
+        )}
     </div>
   );
 };

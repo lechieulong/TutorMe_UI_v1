@@ -15,10 +15,13 @@ import { useEffect, useState } from "react";
 import { getTest, getSkills } from "../../redux/testExam/TestSlice";
 import { useDispatch } from "react-redux";
 import { useParams } from "react-router-dom";
+import CreateTest from "../ExamTest/CreateTest";
 
 const SkillPart = () => {
+  // setTestId day
   const [test, setTest] = useState(null);
-  const [skills, setSkills] = useState(null);
+  const [skills, setSkills] = useState([]);
+  const [createSkills, setCreateSkills] = useState(false);
 
   const navigate = useNavigate();
   const dispatch = useDispatch();
@@ -62,8 +65,9 @@ const SkillPart = () => {
   return (
     <MainLayout>
       {test ? (
-        <>
-          <div className="bg-white mt-10 border rounded-xl h-56 shadow-sm sm:flex dark:bg-neutral-900 dark:border-neutral-700 dark:shadow-neutral-700/70">
+        <div className="p-8">
+          <h3 className="text-2xl font-bold mb-2">Test Information</h3>
+          <div className="bg-white border rounded-xl h-56 shadow-sm sm:flex dark:bg-neutral-900 dark:border-neutral-700 dark:shadow-neutral-700/70">
             <div className="shrink-0 relative w-full rounded-t-xl overflow-hidden sm:rounded-s-xl sm:max-w-60 md:rounded-se-none md:max-w-xs">
               <img
                 className="absolute top-0 left-0 w-full h-full object-cover"
@@ -104,43 +108,59 @@ const SkillPart = () => {
           </div>
 
           {/* Skill Part */}
-          <div className="mt-2 border-gray-400 shadow-sm rounded-xl dark:bg-neutral-900 dark:border-neutral-700 dark:shadow-neutral-700/70">
-            <div className="flex gap-4 justify-center mt-6">
-              {skills &&
-                skills.map((skill) => (
-                  <div
-                    key={skill.id}
-                    className="p-4 h-[300px] md:p-5 flex flex-col gap-6 items-center justify-center border shadow-lg rounded-xl dark:bg-neutral-900 dark:border-neutral-700 dark:shadow-neutral-700/70"
-                    style={{ flex: "1 1 300px" }}
-                  >
-                    <p className="text-2xl text-green-800">
-                      <FontAwesomeIcon icon={skillTypeMap[skill.type]?.icon} />
-                    </p>
-                    <h3 className="text-lg font-bold text-gray-800 dark:text-white">
-                      {skillTypeMap[skill.type]?.name}
-                    </h3>
-                    <button
-                      onClick={() => handleTakeTest(skill.id)}
-                      className="mt-2 py-2 px-3 inline-flex justify-center items-center gap-x-2 text-sm font-medium rounded-lg border border-transparent bg-green-600 text-white hover:bg-green-700 focus:outline-none focus:bg-green-700 disabled:opacity-50 disabled:pointer-events-none"
+          {skills.length <= 0 ? (
+            <div>
+              {!createSkills ? (
+                <button type="button" onClick={() => setCreateSkills(true)}>
+                  Create Skill
+                </button>
+              ) : (
+                <CreateTest testId={testId} />
+              )}
+            </div>
+          ) : (
+            <div className="mt-2 border-gray-400 shadow-sm rounded-xl dark:bg-neutral-900 dark:border-neutral-700 dark:shadow-neutral-700/70">
+              <div className="flex gap-4 justify-center mt-6">
+                {skills &&
+                  skills.map((skill) => (
+                    <div
+                      key={skill.id}
+                      className="p-4 h-[300px] md:p-5 flex flex-col gap-6 items-center justify-center border shadow-lg rounded-xl dark:bg-neutral-900 dark:border-neutral-700 dark:shadow-neutral-700/70"
+                      style={{ flex: "1 1 300px" }}
                     >
-                      <FontAwesomeIcon icon={faPlay} className="mr-2" />
-                      Start
-                    </button>
-                  </div>
-                ))}
-            </div>
+                      <p className="text-2xl text-green-800">
+                        <FontAwesomeIcon
+                          icon={skillTypeMap[skill.type]?.icon}
+                        />
+                      </p>
+                      <h3 className="text-lg font-bold text-gray-800 dark:text-white">
+                        {skillTypeMap[skill.type]?.name}
+                      </h3>
+                      <button
+                        onClick={() => handleTakeTest(skill.id)}
+                        className="mt-2 py-2 px-3 inline-flex justify-center items-center gap-x-2 text-sm font-medium rounded-lg border border-transparent bg-green-600 text-white hover:bg-green-700 focus:outline-none focus:bg-green-700 disabled:opacity-50 disabled:pointer-events-none"
+                      >
+                        <FontAwesomeIcon icon={faPlay} className="mr-2" />
+                        Start
+                      </button>
+                    </div>
+                  ))}
+              </div>
 
-            <div className="border text-gray-700 shadow-md border-gray-300 p-6 flex justify-between mt-2 rounded-xl items-center">
-              <button
-                className="text-2xl p-4 font-semibold border-green-500"
-                onClick={handleTakeFullTest}
-              >
-                <FontAwesomeIcon icon={faThunderstorm} className="mr-2" />
-                Take Full Test
-              </button>
+              {!skills.length <= 0 && (
+                <div className="border text-gray-700 shadow-md border-gray-300 p-6 flex justify-between mt-2 rounded-xl items-center">
+                  <button
+                    className="text-2xl p-4 font-semibold border-green-500"
+                    onClick={handleTakeFullTest}
+                  >
+                    <FontAwesomeIcon icon={faThunderstorm} className="mr-2" />
+                    Take Full Test
+                  </button>
+                </div>
+              )}
             </div>
-          </div>
-        </>
+          )}
+        </div>
       ) : (
         <p>Loading...</p>
       )}

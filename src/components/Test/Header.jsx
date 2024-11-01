@@ -93,6 +93,7 @@ const Header = ({
           </button>
         ) : (
           <button
+            type="button"
             onClick={handleSubmit}
             className="bg-red-600 hover:bg-red-700 text-white font-medium rounded-lg px-4 py-2 flex items-center gap-2"
           >

@@ -5,7 +5,7 @@ import PreviewTest from "./PreviewTest";
 import { useDispatch } from "react-redux";
 import { addSkills } from "../../redux/testExam/TestSlice";
 
-const CreateTest = ({ skills }) => {
+const CreateTest = ({ skills, testId }) => {
   const { control, resetField, handleSubmit, setValue, getValues } = useForm();
   const [activeStep, setActiveStep] = useState(0);
   const [formData, setFormData] = useState(null);
@@ -32,10 +32,10 @@ const CreateTest = ({ skills }) => {
   ];
 
   const handleFinish = () => {
-    console.log("formData", formData);
-
     if (formData) {
-      dispatch(addSkills(formData));
+      console.log(formData, testId);
+
+      dispatch(addSkills({ skillsData: formData, testId }));
       alert("Test Created!");
     } else {
       alert("Please fill out the form before finishing.");

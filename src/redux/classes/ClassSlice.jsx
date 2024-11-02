@@ -3,16 +3,22 @@ import axios from "axios";
 import { SLICE_NAMES, ACTIONS, STATUS } from "../../constant/SliceName";
 import apiURLConfig from "../common/apiURLConfig";
 
-export const fetchClassesWithStudents = createAsyncThunk(
-  `${SLICE_NAMES.CLASSES}/${ACTIONS.GET_CLASS}`,
-  async () => {
-    const response = await axios.get(
-      "https://jsonplaceholder.typicode.com/users"
-    );
-    return response.data;
+export const fetchClasses = createAsyncThunk(
+  `${SLICE_NAMES.COURSES}/${ACTIONS.GET_CLASSESOFCOURSE}`,
+  async (courseId, { rejectWithValue }) => {
+    try {
+      const response = await axios.get(
+        `${apiURLConfig.baseURL}/Courses/${courseId}/classes`,
+        courseId
+      );
+      return response.data.result;
+    } catch (error) {
+      return rejectWithValue(
+        error.response?.data?.message || "Failed to get classes from course."
+      );
+    }
   }
 );
-
 // Action create class
 export const CreateClassAPI = createAsyncThunk(
   `${SLICE_NAMES.CLASSES}/${ACTIONS.CREATE_CLASS}`,
@@ -46,14 +52,14 @@ const classSlice = createSlice({
   reducers: {},
   extraReducers: (builder) => {
     builder
-      .addCase(fetchClassesWithStudents.pending, (state) => {
+      .addCase(fetchClasses.pending, (state) => {
         state.status = STATUS.PENDING;
       })
-      .addCase(fetchClassesWithStudents.fulfilled, (state, action) => {
+      .addCase(fetchClasses.fulfilled, (state, action) => {
         state.status = STATUS.SUCCESS;
         state.classes = action.payload;
       })
-      .addCase(fetchClassesWithStudents.rejected, (state, action) => {
+      .addCase(fetchClasses.rejected, (state, action) => {
         state.status = STATUS.FAILED;
         state.error = action.error.message;
       })

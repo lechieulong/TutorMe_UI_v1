@@ -102,14 +102,66 @@ export const BeTeacher = createAsyncThunk(
     }
 );
 
+// Action to get user education
+export const GetUserEducation = createAsyncThunk(
+    `${SLICE_NAMES.USER}/${ACTIONS.GET_USER_UDUCATION}`,
+    async (_, { rejectWithValue }) => {
+        try {
+            const token = Cookies.get("authToken");
+            const { data } = await axios.get(
+                `${apiURLConfig.baseURL}/usereducation/usereducation`,
+                {
+                    headers: {
+                        Authorization: `Bearer ${token}`, // Include the token in headers
+                    },
+                }
+            );
+            return data.result; // Return the result from the response
+        } catch (error) {
+            return rejectWithValue(
+                error.response?.data?.message || "Failed to get user education."
+            );
+        }
+    }
+);
+
+//Action to update profile
+export const UpdateProfile = createAsyncThunk(
+    `${SLICE_NAMES.USER}/${ACTIONS.UPDATE_PROFILE}`,
+    async (updateData, { rejectWithValue }) => {
+        try {
+            const token = Cookies.get("authToken");
+            const response = await axios.put(
+                `${apiURLConfig.baseURL}/user/update-profile`, updateData,
+                {
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                    },
+                }
+            );
+            return response.result;
+        } catch (error) {
+            return rejectWithValue(
+                error.response?.data?.message || "Failed to update user."
+            );
+        }
+    }
+);
+
 const initialState = {
     user: null,
+    userEducation: null,
     teachers: [],
     searchTeachers: [],
-    userInfor: null, // Thông tin người dùng
+    userInfor: null,
+    updateResponse: null,
     status: STATUS.IDLE, // Trạng thái mặc định
-    getuserstatus: STATUS.IDLE, // Trạng thái mặc định
+    getuserstatus: STATUS.IDLE,
+    getUserEducationStatus: STATUS.IDLE,
+    updateStatus: STATUS.IDLE,
     error: null, // Thông báo lỗi nếu có
+    updateError: null, // Thông báo lỗi nếu có
+    getUserEducationError: null, // Thông báo lỗi nếu có
     loadingTopTeachers: false,
     beTeacherResponse: null,
     beTeacherStatus: STATUS.IDLE,
@@ -189,6 +241,32 @@ const UserSlice = createSlice({
             .addCase(BeTeacher.rejected, (state, action) => {
                 state.beTeacherStatus = STATUS.FAILED;
                 state.beTeacherError = action.payload || action.error.message;
+            })
+
+            // Handle get user education
+            .addCase(GetUserEducation.pending, (state) => {
+                state.getUserEducationStatus = STATUS.PENDING;
+            })
+            .addCase(GetUserEducation.fulfilled, (state, action) => {
+                state.getUserEducationStatus = STATUS.SUCCESS;
+                state.userEducation = action.payload;
+            })
+            .addCase(GetUserEducation.rejected, (state, action) => {
+                state.getUserEducationStatus = STATUS.FAILED;
+                state.getUserEducationError = action.payload || action.error.message;
+            })
+
+            // Handle update profile
+            .addCase(UpdateProfile.pending, (state) => {
+                state.updateStatus = STATUS.PENDING;
+            })
+            .addCase(UpdateProfile.fulfilled, (state, action) => {
+                state.updateStatus = STATUS.SUCCESS;
+                state.updateResponse = action.payload;
+            })
+            .addCase(UpdateProfile.rejected, (state, action) => {
+                state.updateStatus = STATUS.FAILED;
+                state.updateError = action.payload || action.error.message;
             })
     },
 });

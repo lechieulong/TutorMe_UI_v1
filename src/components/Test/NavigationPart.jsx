@@ -29,7 +29,7 @@ const NavigationPart = ({
   };
 
   return (
-    <div className="bottom-0 left-0 right-0">
+    <div className="bottom-0 left-0 right-0 ">
       <div className="flex gap-3">
         {partDatas.map((part, index) => {
           const partName = `Part ${index + 1}`;

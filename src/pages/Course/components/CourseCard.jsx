@@ -103,7 +103,7 @@ const CourseCard = ({
         )}
       </div>
       <Link
-        to={destinationPath}
+        to={`/courseDetail/${courseId}`}
         state={{ category }} // Truyền category vào state
         className="flex-grow flex flex-col items-center"
       >

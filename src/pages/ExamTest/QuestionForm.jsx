@@ -48,6 +48,12 @@ const QuestionForm = ({
     setShowQuestionCard(false);
   };
 
+  const isReading = skill === "Reading" && ![7, 8, 9, 11].includes(sectionType);
+
+  const isListening = skill === "Listening" && [8, 4, 6].includes(sectionType);
+
+  const showAnswerForm = isReading || isListening;
+
   return (
     <div>
       <h5 className="font-extrabold">
@@ -117,41 +123,56 @@ const QuestionForm = ({
           </div>
           {!question.isFromQuestionBank ? (
             <>
-              {((skill === "Listening" && sectionType !== 5) ||
-                skill === "Reading" ||
+              {skill === "Listening" &&
+                sectionType !== 8 &&
+                sectionType !== 4 &&
+                sectionType !== 6 && (
+                  <p>
+                    This example for input field,{" "}
+                    <b>
+                      "How is go going on the{" "}
+                      <span className="text-red-300"> [answerNe] </span> kkkk "{" "}
+                    </b>{" "}
+                    answer is in "[]"
+                  </p>
+                )}
+              {((skill === "Listening" && sectionType !== 4) ||
+                (skill === "Reading" && sectionType !== 10) ||
                 skill === "Speaking" ||
                 skill === "Writing") && (
-                <Controller
-                  name={`skills.${skill}.parts.${partIndex}.sections.${sectionIndex}.questions.${index}.questionName`}
-                  control={control}
-                  defaultValue={question.questionName || ""}
-                  rules={{ required: "Question Name is required" }}
-                  render={({ field, fieldState }) => (
-                    <div className="mb-2">
-                      <input
-                        {...field}
-                        className="border p-1 w-full"
-                        placeholder={
-                          sectionType === 4 ||
-                          sectionType === 5 ||
-                          sectionType === 6 ||
-                          sectionType === 7
-                            ? "Heading"
-                            : "Question Name"
-                        }
-                      />
+                <>
+                  <Controller
+                    name={`skills.${skill}.parts.${partIndex}.sections.${sectionIndex}.questions.${index}.questionName`}
+                    control={control}
+                    defaultValue={question.questionName || ""}
+                    rules={{ required: "Question Name is required" }}
+                    render={({ field, fieldState }) => (
+                      <div className="mb-2">
+                        <input
+                          {...field}
+                          className="border p-1 w-full"
+                          placeholder={
+                            sectionType === 4 ||
+                            sectionType === 5 ||
+                            sectionType === 6 ||
+                            sectionType === 7
+                              ? "Heading"
+                              : "Question Name"
+                          }
+                        />
 
-                      {fieldState.error && (
-                        <p className="text-red-500">
-                          {fieldState.error.message}
-                        </p>
-                      )}
-                    </div>
-                  )}
-                />
+                        {fieldState.error && (
+                          <p className="text-red-500">
+                            {fieldState.error.message}
+                          </p>
+                        )}
+                      </div>
+                    )}
+                  />
+                </>
               )}
 
-              {(skill === "Reading" || skill === "Listening") && (
+              {showAnswerForm && (
                 <AnswerForm
                   skill={skill}
                   partIndex={partIndex}
@@ -168,7 +189,10 @@ const QuestionForm = ({
         </div>
       ))}
 
-      {skill === "Listening" && sectionType !== 3 && (
+      {(skill === "Listening" ||
+        skill === "Reading" ||
+        skill === "Writing" ||
+        skill === "Speaking") && (
         <div>
           <div className="flex gap-2">
             <button

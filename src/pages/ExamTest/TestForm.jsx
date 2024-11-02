@@ -20,7 +20,6 @@ const TestForm = ({ sectionCourseId, skills, classId }) => {
     watch,
   } = useForm();
   const dispatch = useDispatch();
-  skills = null;
 
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [testInfo, setTestInfo] = useState(null);

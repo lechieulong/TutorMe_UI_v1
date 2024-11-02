@@ -18,7 +18,7 @@ const MentorCourseDetail = () => {
   const [currentSlide, setCurrentSlide] = useState(0);
   const [classes, setClasses] = useState([]);
   const [switchStates, setSwitchStates] = useState({});
-  const [category, setCategory] = useState(location.state); // State để lưu danh mục
+  const [category, setCategory] = useState(""); // Khởi tạo category với giá trị mặc định là chuỗi rỗng
   const [selectedTimelines, setSelectedTimelines] = useState([]); // State để lưu danh sách timeline được chọn
   const navigate = useNavigate();
 
@@ -32,7 +32,6 @@ const MentorCourseDetail = () => {
       console.error("Failed to fetch timelines", error);
     }
   };
-  console.log("add");
 
   const initializeUser = () => {
     const userFromToken = getUser();
@@ -42,11 +41,14 @@ const MentorCourseDetail = () => {
       setUserId(userIdFromToken);
     }
   };
+
   useEffect(() => {
     const { category } = location.state || {}; // Lấy category từ location.state
     if (category) {
-      console.log("Category passed:", category); // Log category
+      console.log("Category passed from location.state:", category); // Log category
       setCategory(category); // Cập nhật state category
+    } else {
+      console.log("No category found in location.state"); // Log nếu không có category
     }
     initializeUser();
     fetchTimelines();
@@ -172,7 +174,8 @@ const MentorCourseDetail = () => {
               <div className="w-3/5">
                 <CourseTimelineDetail
                   timelineIds={timelineIds}
-                  selectedTimelines={selectedTimelines} // Truyền danh sách timeline vào CourseTimelineDetail
+                  selectedTimelines={selectedTimelines}
+                  categories={category} // Truyền danh sách timeline vào CourseTimelineDetail
                 />
               </div>
             </div>

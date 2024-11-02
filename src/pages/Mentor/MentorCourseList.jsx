@@ -46,14 +46,11 @@ const MentorCourseList = () => {
     if (status === STATUS.SUCCESS) {
       return courses
         .filter((course) => {
-          // Kiểm tra xem selectedCategory có phải là "All" không
           if (selectedCategory === "All") return true;
-
-          // Kiểm tra xem category của khóa học có nằm trong danh sách categories không
           return course.categories.includes(selectedCategory);
         })
         .filter((course) => {
-          const courseTitle = course.courseName || ""; // Sử dụng courseName thay vì title
+          const courseTitle = course.courseName || "";
           const term = searchTerm || "";
           return courseTitle.toLowerCase().includes(term.toLowerCase());
         });
@@ -107,8 +104,10 @@ const MentorCourseList = () => {
         return <FaBook className="text-blue-500 text-2xl" />;
     }
   };
+
   if (status === STATUS.PENDING) return <p>Loading...</p>;
   if (status === STATUS.FAILED) return <p>Error: {error}</p>;
+
   return (
     <MainLayout>
       <div className="px-4 py-6">
@@ -141,8 +140,6 @@ const MentorCourseList = () => {
           </button>
         </div>
 
-        {status === "pending" && <p>Loading courses...</p>}
-
         {currentCourses.length === 0 && status !== "pending" && (
           <div className="flex justify-center items-center h-32">
             <p className="text-red-500 text-lg font-semibold text-center">
@@ -152,21 +149,23 @@ const MentorCourseList = () => {
         )}
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mt-6">
-          {currentCourses.map((course) => (
-            <CourseCard
-              key={course.id}
-              courseName={course.courseName}
-              content={course.content}
-              title={course.title}
-              description={course.description}
-              category={course.category}
-              icon={getIcon(course.category)}
-              teacher={course.userId}
-              courseId={course.id}
-              onDelete={handleDelete}
-              isEnabled={course.isEnabled}
-            />
-          ))}
+          {currentCourses.map((course) => {
+            return (
+              <CourseCard
+                key={course.id}
+                courseName={course.courseName}
+                content={course.content}
+                title={course.title}
+                description={course.description}
+                category={course.categories}
+                icon={getIcon(course.categories)}
+                teacher={course.userId}
+                courseId={course.id}
+                onDelete={handleDelete}
+                isEnabled={course.isEnabled}
+              />
+            );
+          })}
         </div>
 
         <div className="flex justify-center items-center mt-4">

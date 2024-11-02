@@ -12,8 +12,8 @@ const LiveStream = () => {
         <div className="flex justify-center items-center">
           {/* Div chứa LiveStreamFrame chiếm 80% chiều rộng */}
           <div className=" p-2  w-8/12">
-          <CreateTicketButton/>
-            <LiveStreamFrame height="500px" width="1000px"/>
+            <CreateTicketButton />
+            <LiveStreamFrame height="500px" width="1000px" />
           </div>
         </div>
 

@@ -59,13 +59,13 @@ import Term from "./pages/Terms";
 import AdminApp from "./pages/ADMIN/Index";
 
 import CreateClass from "./pages/Class/CreateClass";
+import Course from "./pages/Course/CourseModified/Course";
 const App = () => {
   return (
     <div className=" min-h-screen ">
       <Router>
         <Routes>
           <Route path="/terms" element={<Term />} />
-
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
           <Route path="/forgotpass" element={<ForgotPassword />} />
@@ -108,11 +108,12 @@ const App = () => {
           {/* Mentor */}
           <Route path="/metorinfor" element={<MetorInfor />} />
           <Route path="/mentorCourseList" element={<MentorCourseList />} />
-          {/* Course */}
-          <Route path="/courseLayout" element={<CourseLayout />} />
+          {/* Course Modified */}
+          <Route path="/courseLayout/:courseId" element={<CourseLayout />} />
+          <Route path="/courseDetail/:courseId" element={<CourseLayout />} />
           <Route path="/courseList" element={<CourseList />} />
           <Route path="/createCourse" element={<CreateCourse />} />
-          <Route path="/courseDetail/:courseId" element={<CourseDetail />} />
+          {/* <Route path="/courseDetail/:courseId" element={<CourseDetail />} /> */}
           <Route
             path="/mentorCourseDetail/:courseId"
             element={<MentorCourseDetail />}

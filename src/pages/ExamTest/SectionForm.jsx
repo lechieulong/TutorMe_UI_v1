@@ -18,17 +18,15 @@ const sectionTypesBySkill = {
 
     { value: 7, label: "Matching Sentence Endings" },
     { value: 8, label: "Sentence Completion" },
-    { value: 11, label: "Summary Completion" },
     { value: 9, label: "Short-answer Questions" },
-
     { value: 10, label: "Diagram Completion" },
+    { value: 11, label: "Summary Completion" },
   ],
   Listening: [
     { value: 1, label: "Table/Note Completion" },
     { value: 2, label: "Sentence Completion" },
     { value: 3, label: "Summary Completion" },
     { value: 4, label: "Labeling a Diagram/Map/Plan with filling" },
-    { value: 5, label: "Labeling a Diagram/Map/Plan with options" },
     { value: 6, label: "Matching Questions" },
     { value: 7, label: "Short Answer Questions" },
     { value: 8, label: "Multiple Choice Questions" },
@@ -200,7 +198,7 @@ const SectionForm = ({ skill, partIndex, control }) => {
                 partIndex={partIndex}
                 sectionIndex={index}
                 control={control}
-                sectionType={0} // Assuming a default value for sectionType
+                sectionType={0}
               />
             )}
           </div>

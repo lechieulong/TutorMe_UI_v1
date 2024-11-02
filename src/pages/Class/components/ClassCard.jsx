@@ -32,13 +32,16 @@ const ClassCard = ({
 
     if (window.confirm(confirmationMessage)) {
       try {
-        await axios.put(
-          `https://localhost:7030/api/class/${classItem.id}/enabled`,
+        console.log("Class ID:", classItem.id); // Kiểm tra giá trị classId
+        const response = await axios.put(
+          `https://localhost:7030/api/class/${classItem.id}/enabled`, // Đảm bảo URL này chính xác
           newStatus,
           {
             headers: { "Content-Type": "application/json" },
           }
         );
+        console.log("API Response:", response.data); // In phản hồi từ API
+
         setIsSwitchOn(newStatus);
         alert(`Class đã được ${newStatus ? "hiển thị" : "ẩn"} thành công.`);
         onSwitchChange(classItem.id, newStatus);

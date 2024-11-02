@@ -85,21 +85,20 @@ const AnswerView = ({
     question,
     questionCounter
   ) => {
-    console.log("skill", skill);
-    console.log(sectionType);
-
     switch (skill) {
       case 0:
         if (sectionType === 1) {
           return (
-            <MultipleChoiceAnswers
-              question={question}
-              userAnswers={userAnswers}
-              renderLetter={renderLetter}
-              handleChangeWrap={handleChangeWrap}
-              skill={skill}
-              partData={partData}
-            />
+            <>
+              <MultipleChoiceAnswers
+                question={question}
+                userAnswers={userAnswers}
+                renderLetter={renderLetter}
+                handleChangeWrap={handleChangeWrap}
+                skill={skill}
+                partData={partData}
+              />
+            </>
           );
         }
         if (sectionType === 2 || sectionType === 3)
@@ -112,12 +111,7 @@ const AnswerView = ({
                   value={1}
                   className="h-4 w-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
                   onChange={(e) =>
-                    handleChangeWrap(
-                      e,
-                      currentSkillKey,
-                      partData.id,
-                      question.id
-                    )
+                    handleChangeWrap(e, skill, partData.id, question.id)
                   }
                 />
                 <span>True</span>
@@ -129,12 +123,7 @@ const AnswerView = ({
                   value={0}
                   className="h-4 w-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
                   onChange={(e) =>
-                    handleChangeWrap(
-                      e,
-                      currentSkillKey,
-                      partData.id,
-                      question.id
-                    )
+                    handleChangeWrap(e, skill, partData.id, question.id)
                   }
                 />
                 <span>False</span>
@@ -147,12 +136,7 @@ const AnswerView = ({
                     value={2}
                     className="h-4 w-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
                     onChange={(e) =>
-                      handleChangeWrap(
-                        e,
-                        currentSkillKey,
-                        partData.id,
-                        question.id
-                      )
+                      handleChangeWrap(e, skill, partData.id, question.id)
                     }
                   />
                   <span>Not Given</span>
@@ -181,7 +165,7 @@ const AnswerView = ({
                           skill,
                           partData.id,
                           question.id,
-                          answer.id // Pass the answer ID to update state
+                          answer.id
                         )
                       }
                       className="h-4 w-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
@@ -409,7 +393,7 @@ const AnswerView = ({
   };
 
   return (
-    <form className="p-4 bg-white rounded shadow-md">
+    <form className="p-4 bg-warmNeutral rounded shadow-md">
       {currentSkillKey === "listening" && (
         <div className="my-4">
           <AudioPlayer src={partData.audio} />

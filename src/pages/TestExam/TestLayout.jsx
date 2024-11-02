@@ -97,13 +97,11 @@ const TestLayout = ({ skillsData }) => {
     return <div>Loading test data...</div>;
   }
 
-  console.log(testData, "testData");
-
   const currentSkillKey = Object.keys(testData)[currentSkillIndex];
   const currentSkillData = testData[currentSkillKey];
 
   return (
-    <div className="w-screen">
+    <div className="">
       <form onSubmit={handleSubmit}>
         <div className="flex flex-col">
           <Header

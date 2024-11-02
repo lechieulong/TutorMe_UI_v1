@@ -32,6 +32,7 @@ const MentorCourseDetail = () => {
       console.error("Failed to fetch timelines", error);
     }
   };
+  console.log("add");
 
   const initializeUser = () => {
     const userFromToken = getUser();
@@ -164,6 +165,7 @@ const MentorCourseDetail = () => {
             </div>
             <div className="w-3/5">
               <ButtonAddCourseTimelineDetail
+                courseId={courseId}
                 timelineIds={timelineIds}
                 onDetailAdded={handleDetailAdded}
               />

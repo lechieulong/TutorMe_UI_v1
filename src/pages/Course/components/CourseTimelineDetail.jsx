@@ -18,7 +18,6 @@ const CourseTimelineDetail = ({ timelineIds, selectedTimelines }) => {
         const params = timelineIds
           .map((id) => `courseTimelineIds=${id}`)
           .join("&");
-        console.log("Timeline IDs:", timelineIds); // Ghi lại timelineIds
 
         const response = await axios.get(
           `https://localhost:7030/api/CourseTimelineDetail/CourseTimelines/Details?${params}`

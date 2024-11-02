@@ -148,6 +148,23 @@ export const createTest = createAsyncThunk(
   }
 );
 
+export const getTestBySectionCourseId = createAsyncThunk(
+  `${SLICE_NAMES.TEST}/${ACTIONS.GET_TEST_SECTION_COURSE}`,
+  async (sectionCourseId, { rejectWithValue }) => {
+    try {
+      const response = await axios.post(
+        `${API_BASE_URL}/${sectionCourseId}/sectionCourseId`
+      );
+      return response.data;
+    } catch (error) {
+      return rejectWithValue(
+        error.response?.data?.message ||
+          "Failed to get test by section course id "
+      );
+    }
+  }
+);
+
 // Action to update a test
 export const updateTest = createAsyncThunk(
   `${SLICE_NAMES.TEST}/${ACTIONS.UPDATE_TEST}`,

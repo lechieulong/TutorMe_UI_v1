@@ -24,7 +24,7 @@ import SkillPart from "./pages/TestExam/SkillPart";
 import LiveStream from "./pages/LiveStream";
 import MetorInfor from "./pages/Mentor/MentorInforTest";
 import CourseList from "./pages/Course/CourseList";
-import ClassOfCourse from "./pages/Course/ClassList";
+import ClassOfCourse from "./pages/Course/ClassOfCourseList";
 import TestList from "./pages/User/TestList";
 import MentorCourseDetail from "./pages/Mentor/MentorCourseDetail";
 // import MyLearning from "./pages/Class/MyLearning";
@@ -36,7 +36,7 @@ import CourseDetail from "./pages/Course/CourseDetail";
 import CourseTimeline from "./pages/Course/components/CourseTimeline";
 import CreateCourse from "./pages/Course/components/CreateCourse";
 import SpeakingGemini from "./service/SpeakingGemini";
-
+import ClassOfCourseList from "./pages/Course/ClassOfCourseList";
 import MyLearning from "./pages/Class/MyLearning";
 // import PayOS from "./pages/User/PayOS";
 import TestForm from "./pages/ExamTest/TestForm";
@@ -93,10 +93,10 @@ const App = () => {
           {/* LiveStream  exam*/}
           <Route path="/live-stream" element={<LiveStream />} />
           {/* Test  class*/}
-          {/* <Route
-            path="/courseDetail/:courseId/classList"
-            element={< />}
-          /> */}
+          <Route
+            path="/courseDetail/:courseId/classOfCourse"
+            element={<ClassOfCourse />}
+          />
           {/* Calender */}
           <Route path="/calendar" element={<Calendar />} />
           <Route path="/coachingschedule" element={<CoachingSchedule />} />

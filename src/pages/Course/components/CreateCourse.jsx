@@ -36,7 +36,7 @@ const CreateCourse = () => {
 
   const handleCheckboxChange = (e) => {
     const { value, checked } = e.target;
-    const categoryValue = categoryMapping[value].toString(); // Giữ category dưới dạng chuỗi
+    const categoryValue = value; // Giữ category dưới dạng chuỗi
 
     setCourse((prevCourse) => {
       const newCategories = checked
@@ -72,7 +72,9 @@ const CreateCourse = () => {
       alert("Tạo khoá học thành công!");
     } catch (error) {
       console.error("Lỗi khi tạo khoá học", error.response.data);
-      alert("Tạo khoá học thất bại: " + error.response.data.title);
+      alert(
+        "Tạo khoá học thất bại: " + error.response.data.message || error.message
+      );
     }
   };
 

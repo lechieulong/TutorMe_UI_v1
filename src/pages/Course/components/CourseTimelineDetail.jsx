@@ -63,7 +63,7 @@ const CourseTimelineDetail = ({
     );
   };
 
-  if (loading) return <div>Đang tải...</div>;
+  if (loading) return <div>Khoá học chưa có lộ trình nào</div>;
   if (error) return <div className="text-red-500">{error}</div>;
 
   return (

@@ -23,6 +23,7 @@ const ClassCard = ({
   const isMentorCourseDetail = location.pathname.startsWith(
     "/mentorCourseDetail/"
   );
+  const isClassOfCourse = location.pathname.startsWith("/classOfCourse");
 
   const handleSwitchChange = async () => {
     const newStatus = !isSwitchOn;
@@ -84,8 +85,8 @@ const ClassCard = ({
           </p>
         </div>
 
-        {/* Switch Button: Show only on mentorCourseDetail page */}
-        {isMentorCourseDetail && (
+        {/* Switch Button: Show only on mentorCourseDetail page, not on classOfCourse */}
+        {isMentorCourseDetail && !isClassOfCourse && (
           <div className="absolute bottom-4 right-4 flex items-center">
             <input
               type="checkbox"

@@ -12,8 +12,11 @@ import CourseCard from "./components/CourseCard";
 import { fetchCourses } from "../../redux/courses/CourseSlice";
 import { STATUS } from "../../constant/SliceName";
 import Calendar from "../../components/common/linkToCalendar";
+import { Link } from "react-router-dom";
+import { getUser } from "../../service/GetUser";
 
 const CourseList = () => {
+  const [user, setUser] = useState(null);
   const dispatch = useDispatch();
   const { courses = [], status, error } = useSelector((state) => state.courses);
 
@@ -26,10 +29,20 @@ const CourseList = () => {
     dispatch(fetchCourses());
   }, [dispatch]);
 
+  useEffect(() => {
+    const userFromToken = getUser();
+    setUser(userFromToken);
+  }, []);
   const categories = useMemo(
     () => ["All", "Listening", "Reading", "Writing", "Speaking"],
     []
   );
+
+  // useEffect(() => {
+  //   if (user?.sub) {
+  //     dispatch(fetchCoursesByUserId(user.sub));
+  //   }
+  // }, [dispatch, user]);
 
   const filteredCourses = useMemo(() => {
     if (status === STATUS.SUCCESS) {
@@ -115,6 +128,15 @@ const CourseList = () => {
             searchTerm={searchTerm}
             onSearchChange={(term) => setSearchTerm(term)}
           />
+          <Link
+            to="/mentorCourseList"
+            className={`py-2 px-3 inline-flex items-center gap-x-2 text-sm font-medium rounded-lg border border-gray-200 bg-white text-gray-800 shadow-sm hover:bg-gray-50 focus:outline-none focus:bg-gray-50 ${
+              user?.role === "USER" ? "hidden opacity-50" : ""
+            }`}
+            hidden={user?.role === "USER"} // Vô hiệu hóa nút nếu Role là "USER"
+          >
+            My Course
+          </Link>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mt-6">

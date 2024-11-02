@@ -2,56 +2,54 @@ import { useState, useEffect } from "react";
 import axios from "axios";
 import "tailwindcss/tailwind.css";
 
-const ButtonAddCourseTimelineDetail = ({
-  courseId,
-  timelineId,
-  onDetailAdded,
-}) => {
+const ButtonAddCourseTimelineDetail = ({ courseId, onDetailAdded }) => {
   const [showForm, setShowForm] = useState(false);
   const [formData, setFormData] = useState({
     title: "",
     videoUrl: "",
     topic: "",
-    selectedOption: "", // Trường cho giá trị select
+    selectedOption: "",
+    isEnabled: true,
   });
-  const [options, setOptions] = useState([]); // State để lưu trữ các tùy chọn
+  const [options, setOptions] = useState([]);
 
   useEffect(() => {
-    // Hàm để gọi API và lấy dữ liệu
     const fetchOptions = async () => {
       try {
         const response = await axios.get(
-          `https://localhost:7030/api/CourseTimeline/9c70094f-a3b8-4f3f-a870-025ee9083e1e/timelines`
+          `https://localhost:7030/api/CourseTimeline/Course/${courseId}`
         );
-        setOptions(response.data); // Lưu trữ dữ liệu vào state
+
+        if (response.data && response.data.length > 0) {
+          setOptions(response.data);
+          console.log(response.data);
+        } else {
+          console.log("No data found");
+        }
       } catch (error) {
         console.error("Failed to fetch options", error);
       }
     };
 
     fetchOptions();
-  }, []); // Chạy khi component được mount
+  }, [courseId]);
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setFormData({ ...formData, [name]: value });
-    console.log(`${name}: ${value}`); // Log giá trị mỗi khi input thay đổi
   };
 
   const handleAddDetail = async (e) => {
-    e.preventDefault(); // Ngăn chặn hành vi mặc định của form
+    e.preventDefault();
     try {
-      // Log giá trị formData để kiểm tra
       console.log("Submitting data:", {
-        courseTimelineId: timelineId,
+        courseTimelineId: formData.selectedOption,
         title: formData.title,
         videoUrl: formData.videoUrl,
         topic: formData.topic,
-        selectedOptionId: formData.selectedOption, // Thêm ID tùy chọn
         isEnabled: true,
       });
 
-      // Gửi dữ liệu theo định dạng mà API mong đợi
       await axios.post(`https://localhost:7030/api/CourseTimelineDetail`, [
         {
           courseTimelineId: formData.selectedOption,
@@ -62,15 +60,14 @@ const ButtonAddCourseTimelineDetail = ({
         },
       ]);
 
-      onDetailAdded(); // Gọi lại hàm để cập nhật danh sách
-      setShowForm(false); // Ẩn form sau khi thêm thành công
-      setFormData({ title: "", videoUrl: "", topic: "", selectedOption: "" }); // Đặt lại giá trị form
+      onDetailAdded();
+      setShowForm(false);
+      setFormData({ title: "", videoUrl: "", topic: "", selectedOption: "" });
     } catch (error) {
       console.error(
         "Failed to add course timeline detail",
         error.response?.data
-      ); // Log thông tin lỗi chi tiết
-      console.error("Validation errors:", error.response?.data?.errors); // Log thông tin lỗi xác thực
+      );
     }
   };
 
@@ -107,7 +104,7 @@ const ButtonAddCourseTimelineDetail = ({
             <input
               type="text"
               name="title"
-              placeholder="Tiêu đề"
+              placeholder="Nhập tiêu đề"
               value={formData.title}
               onChange={handleInputChange}
               className="mt-1 block w-full border border-gray-300 rounded-md p-2"
@@ -116,11 +113,11 @@ const ButtonAddCourseTimelineDetail = ({
           </label>
 
           <label className="block mb-2">
-            URL video
+            URL Video
             <input
-              type="text"
+              type="url"
               name="videoUrl"
-              placeholder="URL video"
+              placeholder="Nhập URL video"
               value={formData.videoUrl}
               onChange={handleInputChange}
               className="mt-1 block w-full border border-gray-300 rounded-md p-2"
@@ -133,7 +130,7 @@ const ButtonAddCourseTimelineDetail = ({
             <input
               type="text"
               name="topic"
-              placeholder="Chủ đề"
+              placeholder="Nhập chủ đề"
               value={formData.topic}
               onChange={handleInputChange}
               className="mt-1 block w-full border border-gray-300 rounded-md p-2"
@@ -164,14 +161,14 @@ const ButtonAddCourseTimelineDetail = ({
           <div className="flex justify-between mt-4">
             <button
               type="button"
-              className="bg-gray-300 text-white py-1 px-3 rounded" // Giảm padding
-              onClick={() => setShowForm(false)} // Đóng form nếu muốn hủy
+              className="bg-gray-300 text-white py-1 px-3 rounded"
+              onClick={() => setShowForm(false)}
             >
               Hủy
             </button>
             <button
               type="submit"
-              className="bg-green-500 text-white py-1 px-3 rounded" // Giảm padding
+              className="bg-green-500 text-white py-1 px-3 rounded"
             >
               Lưu chi tiết
             </button>

@@ -165,6 +165,7 @@ const MentorCourseDetail = () => {
             </div>
             <div className="w-3/5">
               <ButtonAddCourseTimelineDetail
+                courseId={courseId}
                 timelineIds={timelineIds}
                 onDetailAdded={handleDetailAdded}
               />

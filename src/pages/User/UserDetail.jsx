@@ -1,7 +1,13 @@
 import React from "react";
 import Sidebar from "./components/Sidebar";
 import MainLayout from "../../layout/MainLayout";
-import { FaLocationArrow, FaEnvelope, FaPhone, FaRegUser, FaCalendarDay } from "react-icons/fa";
+import {
+  FaLocationArrow,
+  FaEnvelope,
+  FaPhone,
+  FaRegUser,
+  FaCalendarDay,
+} from "react-icons/fa";
 import defaulAvatar from "../../assets/images/default-avatar.jpg";
 import Cookies from "js-cookie";
 import { Link, useNavigate } from "react-router-dom";
@@ -96,14 +102,16 @@ const UserDetail = () => {
                     <p className="text-lg font-semibold">About</p>
                     <div className="p-4 bg-gray-200 rounded-lg">
                       <p className="italic mb-2 flex items-center">
-                        <FaEnvelope className="mr-2 text-gray-400" /> {userInfor?.email}
+                        <FaEnvelope className="mr-2 text-gray-400" />{" "}
+                        {userInfor?.email}
                       </p>
                       <p className="italic mb-2 flex items-center">
                         <FaLocationArrow className="mr-2 text-gray-400" /> Lives
                         in Quang Binh
                       </p>
                       <p className="italic mb-2 flex items-center">
-                        <FaCalendarDay  className="mr-2 text-gray-400" /> {formatDOB(userInfor?.dob)}
+                        <FaCalendarDay className="mr-2 text-gray-400" />{" "}
+                        {formatDOB(userInfor?.dob)}
                       </p>
                     </div>
                   </div>

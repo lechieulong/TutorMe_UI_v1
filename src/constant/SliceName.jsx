@@ -31,6 +31,7 @@ export const ACTIONS = {
 
   FETCH_TESTS: "getTests",
   GET_TEST: "getTest",
+  GET_TEST_SECTION_COURSE: "getTestBySectionCourseId",
   GET_SKILLS: "getSkills",
   GET_SKILL: "getSkill",
   GET_TESTING: "getTesting",
@@ -57,7 +58,7 @@ export const ACTIONS = {
   BE_TEACHER: "beteacher",
   UPDATE_TEACHER_REQUEST: "updateTeacherRequest",
   UPDATE_PROFILE: "updateprofile",
-  
+
   //Event
   GET_EVENT_BY_USERID: "geteventbyuserid",
 

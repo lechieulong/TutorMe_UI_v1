@@ -5,7 +5,6 @@ import { AdminRoute } from "./service/checkAuth";
 
 import Home from "./pages/Home";
 import NotFound from "./components/common/NotFound";
-import ClassesList from "./pages/Class/ClassList";
 import TestSetting from "./pages/TestExam/TestSetting";
 import Login from "./pages/Authentication/Login";
 import Register from "./pages/Authentication/Register";
@@ -66,7 +65,6 @@ const App = () => {
       <Router>
         <Routes>
           <Route path="/terms" element={<Term />} />
-
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
           <Route path="/forgotpass" element={<ForgotPassword />} />
@@ -97,7 +95,10 @@ const App = () => {
           {/* LiveStream  exam*/}
           <Route path="/live-stream" element={<LiveStream />} />
           {/* Test  class*/}
-          <Route path="/classes" element={<ClassesList />} />
+          {/* <Route
+            path="/courseDetail/:courseId/classList"
+            element={< />}
+          /> */}
           {/* Calender */}
           <Route path="/calendar" element={<Calendar />} />
           <Route path="/coachingschedule" element={<CoachingSchedule />} />

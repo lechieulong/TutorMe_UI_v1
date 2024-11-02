@@ -5,7 +5,6 @@ import Header from "../../components/common/Header";
 import PreviewTest from "./PreviewTest";
 import { useDispatch } from "react-redux";
 import { addSkills } from "../../redux/testExam/TestSlice";
-import MainLayout from "../../layout/MainLayout";
 
 const CreateTest = ({ testId, skills }) => {
   const { control, resetField, handleSubmit, setValue, getValues } = useForm();

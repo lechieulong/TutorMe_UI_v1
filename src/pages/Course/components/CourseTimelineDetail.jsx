@@ -48,10 +48,18 @@ const CourseTimelineDetail = ({
     setActiveIndex(activeIndex === index ? null : index);
   };
 
-  const handleCreateTest = (courseTimelineDetailId) => {
-    const categories = ["Listening"];
-    navigate(`/create-test/${courseTimelineDetailId}`, {
-      state: { courseTimelineDetailId, categories },
+  const handleCreateTest = (timelineId) => {
+    const categoryMap = ["Reading", "Listening", "Writing", "Speaking"];
+
+    const categoryIndices =
+      typeof categories === "object" && categories !== null
+        ? categories
+        : JSON.parse(categoryString);
+
+    const mappedCategories = categoryIndices.map((index) => categoryMap[index]);
+
+    navigate(`/create-test/${timelineId}`, {
+      state: { timelineId, categories: mappedCategories },
     });
   };
 
@@ -108,7 +116,6 @@ const CourseTimelineDetail = ({
               <p className="text-gray-700 mt-2">{detail.title}</p>
               <button
                 type="button"
-                onClick={() => handleCreateTest(detail.id)} // Chỉ truyền timeline.id
                 className="py-2 px-3 inline-flex items-center gap-x-2 text-sm font-medium rounded-lg border border-gray-200 bg-white text-gray-800 shadow-sm hover:bg-gray-50 focus:outline-none focus:bg-gray-50"
                 onClick={() => handleCreateTest(detail.courseTimelineId)} // Gọi hàm và truyền ID chi tiết
               >

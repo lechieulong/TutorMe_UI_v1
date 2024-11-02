@@ -38,6 +38,23 @@ export const Profile = createAsyncThunk(
     }
 );
 
+// Action get user va usereducation
+export const GetUserEducationByUsername = createAsyncThunk(
+    `${SLICE_NAMES.USER}/${ACTIONS.GET_USEREDUCATION_BY_USERNAME}`,
+    async (username, { rejectWithValue }) => {
+        try {
+            const response = await axios.get(
+                `${apiURLConfig.baseURL}/user/usereducation/${username}`
+            );
+            return response.data.result;
+        } catch (error) {
+            return rejectWithValue(
+                error.response?.data?.message || "Failed to load user education!"
+            );
+        }
+    }
+);
+
 // Action to get top 10 teachers
 export const GetTopTeachers = createAsyncThunk(
     `${SLICE_NAMES.USER}/${ACTIONS.GET_TOP10_TEACHERS}`,
@@ -251,6 +268,20 @@ const UserSlice = createSlice({
             .addCase(Profile.rejected, (state, action) => {
                 state.status = STATUS.FAILED;
                 state.error = action.payload || action.error.message;
+            })
+
+            //Hanlde get User Information & user education
+            .addCase(GetUserEducationByUsername.pending, (state) => {
+                state.getUserEducationStatus = STATUS.PENDING;
+                state.getUserEducationError = null;
+            })
+            .addCase(GetUserEducationByUsername.fulfilled, (state, action) => {
+                state.getUserEducationStatus = STATUS.SUCCESS;
+                state.userEducation = action.payload;
+            })
+            .addCase(GetUserEducationByUsername.rejected, (state, action) => {
+                state.getUserEducationStatus = STATUS.FAILED;
+                state.getUserEducationError = action.payload || action.error.message;
             })
 
             // Handle get top teachers

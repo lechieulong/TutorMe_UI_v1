@@ -49,6 +49,7 @@ export const ACTIONS = {
 
   GET_USER_BY_ID: "getuserbyid",
   GET_USER_INFORMATION: "getProfile",
+  GET_USEREDUCATION_BY_USERNAME: "getUsereducationByUsername",
   GET_TEACHER_REQUEST_BY_USERID: "getTeacherRequestByUserId",
   GET_USER_UDUCATION: "getUserEducation",
   GET_TOP10_TEACHERS: "getTop10Teachers",

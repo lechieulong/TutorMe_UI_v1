@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { NavLink } from 'react-router-dom';
 import {
     FaAngleDown, FaThLarge, FaUserFriends, FaDollarSign, FaChartLine, FaCalendarAlt,
-    FaFileAlt, FaCog, FaBook, FaSignInAlt, FaUserPlus, FaUnlockAlt, FaExclamationTriangle, FaExchangeAlt, FaPenNib 
+    FaFileAlt, FaCog, FaBook, FaSignInAlt, FaUserPlus, FaUnlockAlt, FaExclamationTriangle, FaExchangeAlt, FaPenNib, FaHeadset, FaBookOpen 
 } from 'react-icons/fa';
 import { BackgroundColor } from 'devextreme-react/cjs/chart';
 
@@ -235,7 +235,7 @@ const Sidebar = () => {
                                         `flex items-center p-3 text-gray-700 hover:bg-gray-200 transition duration-200 ease-in-out ${isActive ? 'bg-gray-200' : ''}`
                                     }
                                 >
-                                    <FaSignInAlt />
+                                    <FaBookOpen />
                                     <span className="ml-3">Course report</span>
                                 </NavLink>
                             </li>
@@ -246,7 +246,7 @@ const Sidebar = () => {
                                         `flex items-center p-3 text-gray-700 hover:bg-gray-200 transition duration-200 ease-in-out ${isActive ? 'bg-gray-200' : ''}`
                                     }
                                 >
-                                    <FaUserPlus />
+                                    <FaHeadset />
                                     <span className="ml-3">Livestream report</span>
                                 </NavLink>
                             </li>

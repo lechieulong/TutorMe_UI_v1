@@ -22,7 +22,7 @@ const LinkTo = () => {
             {/* Coaching Schedule Button */}
             <Link to="/coachingschedule">
                 <button
-                    className={`fixed ${userFromToken?.role?.length > 0 ? 'bottom-20' : 'bottom-5'} right-5 bg-blue-500 text-white rounded-full p-3 shadow-2xl hover:bg-blue-700 transition-all duration-300 transform hover:scale-110`}
+                    className={`fixed ${userFromToken?.role?.length > 0 ? 'bottom-20' : 'bottom-5'} right-5 bg-mainColor text-white rounded-full p-3 shadow-2xl hover:bg-accentGreen transition-all duration-300 transform hover:scale-110`}
                     onMouseEnter={() => setShowTextPeople(true)}
                     onMouseLeave={() => setShowTextPeople(false)}
                 >
@@ -39,7 +39,7 @@ const LinkTo = () => {
             {userFromToken?.role?.length > 0 && (
                 <Link to="/calendar">
                     <button
-                        className="fixed bottom-5 right-5 bg-blue-500 text-white rounded-full p-3 shadow-2xl hover:bg-blue-700 transition-all duration-300 transform hover:scale-110"
+                        className="fixed bottom-5 right-5 bg-mainColor text-white rounded-full p-3 shadow-2xl hover:bg-accentGreen transition-all duration-300 transform hover:scale-110"
                         onMouseEnter={() => setShowTextCalendar(true)}
                         onMouseLeave={() => setShowTextCalendar(false)}
                     >

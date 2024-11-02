@@ -39,7 +39,7 @@ const Sidebar = () => {
                         <NavLink
                             to="dashboard"
                             className={({ isActive }) =>
-                                `flex items-center p-3 text-gray-700 hover:bg-gray-200 transition duration-200 ease-in-out ${isActive ? 'bg-blue-200' : ''}`
+                                `flex items-center p-3 text-gray-700 hover:bg-gray-200 transition duration-200 ease-in-out ${isActive ? 'bg-lightGreen' : ''}`
                             }
                         >
                             <FaThLarge />
@@ -50,7 +50,7 @@ const Sidebar = () => {
                         <NavLink
                             to="users"
                             className={({ isActive }) =>
-                                `flex items-center p-3 text-gray-700 hover:bg-gray-200 transition duration-200 ease-in-out ${isActive ? 'bg-blue-200' : ''}`
+                                `flex items-center p-3 text-gray-700 hover:bg-gray-200 transition duration-200 ease-in-out ${isActive ? 'bg-lightGreen' : ''}`
                             }
                         >
                             <FaUserFriends />
@@ -61,7 +61,7 @@ const Sidebar = () => {
                         <NavLink
                             to="transactions"
                             className={({ isActive }) =>
-                                `flex items-center p-3 text-gray-700 hover:bg-gray-200 transition duration-200 ease-in-out ${isActive ? 'bg-blue-200' : ''}`
+                                `flex items-center p-3 text-gray-700 hover:bg-gray-200 transition duration-200 ease-in-out ${isActive ? 'bg-lightGreen' : ''}`
                             }
                         >
                             <FaDollarSign />
@@ -72,7 +72,7 @@ const Sidebar = () => {
                         <NavLink
                             to="analytics"
                             className={({ isActive }) =>
-                                `flex items-center p-3 text-gray-700 hover:bg-gray-200 transition duration-200 ease-in-out ${isActive ? 'bg-blue-200' : ''}`
+                                `flex items-center p-3 text-gray-700 hover:bg-gray-200 transition duration-200 ease-in-out ${isActive ? 'bg-lightGreen' : ''}`
                             }
                         >
                             <FaChartLine />
@@ -83,7 +83,7 @@ const Sidebar = () => {
                         <NavLink
                             to="calendar"
                             className={({ isActive }) =>
-                                `flex items-center p-3 text-gray-700 hover:bg-gray-200 transition duration-200 ease-in-out ${isActive ? 'bg-blue-200' : ''}`
+                                `flex items-center p-3 text-gray-700 hover:bg-gray-200 transition duration-200 ease-in-out ${isActive ? 'bg-lightGreen' : ''}`
                             }
                         >
                             <FaCalendarAlt />
@@ -94,7 +94,7 @@ const Sidebar = () => {
                         <NavLink
                             to="test"
                             className={({ isActive }) =>
-                                `flex items-center p-3 text-gray-700 hover:bg-gray-200 transition duration-200 ease-in-out ${isActive ? 'bg-blue-200' : ''}`
+                                `flex items-center p-3 text-gray-700 hover:bg-gray-200 transition duration-200 ease-in-out ${isActive ? 'bg-lightGreen' : ''}`
                             }
                         >
                             <FaPenNib />
@@ -232,7 +232,7 @@ const Sidebar = () => {
                                 <NavLink
                                     to="login"
                                     className={({ isActive }) =>
-                                        `flex items-center p-3 text-gray-700 hover:bg-gray-200 transition duration-200 ease-in-out ${isActive ? 'bg-gray-200' : ''}`
+                                        `flex items-center p-3 text-gray-700 hover:bg-gray-200 transition duration-200 ease-in-out ${isActive ? 'bg-lightGreen' : ''}`
                                     }
                                 >
                                     <FaBookOpen />
@@ -243,7 +243,7 @@ const Sidebar = () => {
                                 <NavLink
                                     to="register"
                                     className={({ isActive }) =>
-                                        `flex items-center p-3 text-gray-700 hover:bg-gray-200 transition duration-200 ease-in-out ${isActive ? 'bg-gray-200' : ''}`
+                                        `flex items-center p-3 text-gray-700 hover:bg-gray-200 transition duration-200 ease-in-out ${isActive ? 'bg-lightGreen' : ''}`
                                     }
                                 >
                                     <FaHeadset />
@@ -254,7 +254,7 @@ const Sidebar = () => {
                                 <NavLink
                                     to="forgot-password"
                                     className={({ isActive }) =>
-                                        `flex items-center p-3 text-gray-700 hover:bg-gray-200 transition duration-200 ease-in-out ${isActive ? 'bg-gray-200' : ''}`
+                                        `flex items-center p-3 text-gray-700 hover:bg-gray-200 transition duration-200 ease-in-out ${isActive ? 'bg-lightGreen' : ''}`
                                     }
                                 >
                                     <FaUnlockAlt />
@@ -265,7 +265,7 @@ const Sidebar = () => {
                                 <NavLink
                                     to="blank-page"
                                     className={({ isActive }) =>
-                                        `flex items-center p-3 text-gray-700 hover:bg-gray-200 transition duration-200 ease-in-out ${isActive ? 'bg-gray-200' : ''}`
+                                        `flex items-center p-3 text-gray-700 hover:bg-gray-200 transition duration-200 ease-in-out ${isActive ? 'bg-lightGreen' : ''}`
                                     }
                                 >
                                     <FaFileAlt />
@@ -276,7 +276,7 @@ const Sidebar = () => {
                                 <NavLink
                                     to="404"
                                     className={({ isActive }) =>
-                                        `flex items-center p-3 text-gray-700 hover:bg-gray-200 transition duration-200 ease-in-out ${isActive ? 'bg-gray-200' : ''}`
+                                        `flex items-center p-3 text-gray-700 hover:bg-gray-200 transition duration-200 ease-in-out ${isActive ? 'bg-lightGreen' : ''}`
                                     }
                                 >
                                     <FaExclamationTriangle />
@@ -289,7 +289,7 @@ const Sidebar = () => {
                         <NavLink
                             to="settings"
                             className={({ isActive }) =>
-                                `flex items-center p-3 text-gray-700 hover:bg-gray-200 transition duration-200 ease-in-out ${isActive ? 'bg-gray-200' : ''}`
+                                `flex items-center p-3 text-gray-700 hover:bg-gray-200 transition duration-200 ease-in-out ${isActive ? 'bg-lightGreen' : ''}`
                             }
                         >
                             <FaCog />
@@ -300,7 +300,7 @@ const Sidebar = () => {
                         <NavLink
                             to="/"
                             className={({ isActive }) =>
-                                `flex items-center p-3 text-gray-700 hover:bg-gray-200 transition duration-200 ease-in-out ${isActive ? 'bg-gray-200' : ''}`
+                                `flex items-center p-3 text-gray-700 hover:bg-gray-200 transition duration-200 ease-in-out ${isActive ? 'bg-lightGreen' : ''}`
                             }
                         >
                             <FaExchangeAlt  />

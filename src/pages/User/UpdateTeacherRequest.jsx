@@ -148,7 +148,7 @@ const EducationSection = () => {
 
     return (
         <MainLayout>
-            <div className="flex h-screen w-full">
+            <div className="flex w-full">
                 <Sidebar />
                 <div className="flex-1 p-6">
                     <div className="flex gap-8 bg-gray-100 p-6 px-12">

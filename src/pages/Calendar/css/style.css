@@ -12,14 +12,14 @@
 }
 
 .rbc-toolbar {
-    background-color: #85aef2;
+    background-color: #006241;
     color: white;
     border-radius: 8px 8px 0 0;
     padding: 10px;
 }
 
 .rbc-toolbar button {
-    background-color: #60a5fa;
+    background-color: #1E3932;
     border: none;
     border-radius: 4px;
     color: white;
@@ -29,7 +29,7 @@
 }
 
 .rbc-toolbar button:hover {
-    background-color: #3b82f6;
+    background-color: #D4E9E2;
 }
 
 .rbc-event {

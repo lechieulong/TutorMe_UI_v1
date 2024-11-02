@@ -110,10 +110,9 @@ export async function getOrder_Backend(orderId){
       return error.response.data;
     }
 }
-export async function GiveMeMyMoney(money,Message){
-  const user=getUser();
+export async function GiveMeMyMoney(UserId,money,Message){
   const model={
-    UserId:user.sub,
+    UserId:UserId,
     Balance:money,
     Message:Message,
     signature:"signature"

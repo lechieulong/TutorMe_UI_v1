@@ -28,7 +28,6 @@ const sectionTypesBySkill = {
     { value: 2, label: "Sentence Completion" },
     { value: 3, label: "Summary Completion" },
     { value: 4, label: "Labeling a Diagram/Map/Plan with filling" },
-    { value: 5, label: "Labeling a Diagram/Map/Plan with options" },
     { value: 6, label: "Matching Questions" },
     { value: 7, label: "Short Answer Questions" },
     { value: 8, label: "Multiple Choice Questions" },

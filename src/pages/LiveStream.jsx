@@ -2,8 +2,6 @@ import LiveStreamFrame from "../components/common/LiveStreamFrame";
 import IdolListCard from "../components/common/IdolListCard";
 import idols from "../data/idols";
 import MainLayout from "../layout/MainLayout";
-import CreateTicketButton from "../components/common/Ticket";
-
 const LiveStream = () => {
   return (
     <MainLayout>

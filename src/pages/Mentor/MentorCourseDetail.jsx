@@ -32,6 +32,7 @@ const MentorCourseDetail = () => {
       console.error("Failed to fetch timelines", error);
     }
   };
+  console.log("add");
 
   const initializeUser = () => {
     const userFromToken = getUser();

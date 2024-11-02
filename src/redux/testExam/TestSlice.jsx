@@ -271,11 +271,11 @@ export const updateQuestion = createAsyncThunk(
 
 export const addSkills = createAsyncThunk(
   `${SLICE_NAMES.TEST}/${ACTIONS.ADD_SKILLS}`,
-  async (skillsData, { rejectWithValue }) => {
+  async ({ skillsData, testId }, { rejectWithValue }) => {
     try {
       const token = Cookies.get("authToken");
       const response = await axios.post(
-        `${API_BASE_URL}/test/skills/${"3a8b39e8-d254-4630-b2d9-ecaf1943d11d"}`,
+        `${API_BASE_URL}/test/skills/${testId}`,
         skillsData,
         {
           headers: {

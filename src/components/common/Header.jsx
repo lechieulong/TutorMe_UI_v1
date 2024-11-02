@@ -1,6 +1,6 @@
 // src/components/Header.js
 import { Link } from "react-router-dom";
-import { useDispatch, useSelector } from 'react-redux';
+import { useDispatch, useSelector } from "react-redux";
 import useAuthToken from "../../hooks/useAuthToken"; // Import useAuthToken
 import Cookies from "js-cookie"; // Import js-cookie
 import { getUser } from "../../service/GetUser";
@@ -22,6 +22,7 @@ import {
 import { useEffect, useState } from "react";
 import LoginModal from "./LoginModal";
 import { CheckAuthUser } from "../../service/checkAuth";
+import { ConsoleLevel } from "@zegocloud/zego-uikit-prebuilt";
 
 const Header = () => {
   const dispatch = useDispatch();
@@ -50,7 +51,9 @@ const Header = () => {
           if (userFromToken) {
             setUserFromToke(userFromToken);
             //get user from DB by ID get from token
-            const fetchedUser = await dispatch(GetUserByID(userFromToken.sub)).unwrap();
+            const fetchedUser = await dispatch(
+              GetUserByID(userFromToken.sub)
+            ).unwrap();
             setUser(fetchedUser);
           } else {
             setUser(null);

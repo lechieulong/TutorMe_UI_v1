@@ -16,6 +16,22 @@ const AnswerForm = ({
     control,
   });
 
+  const isListening =
+    skill === "Listening" && (sectionType === 6 || sectionType === 8);
+  const isReading =
+    skill === "Reading" &&
+    (sectionType === 1 || sectionType === 2 || sectionType === 3);
+
+  const showButtonAnswerTest = isListening || isReading;
+
+  const isCorrectListening = skill === "Listening" && sectionType === 8;
+  const isCorrectReading =
+    (skill === "Reading" && sectionType === 1) ||
+    sectionType === 2 ||
+    sectionType === 3;
+
+  const showIsCorrectAnswer = isCorrectListening || isCorrectReading;
+
   return (
     <div>
       <h6 className="font-medium">
@@ -63,98 +79,88 @@ const AnswerForm = ({
             )}
           />
 
-          {sectionType !== 6 &&
-            sectionType !== 4 &&
-            sectionType !== 5 &&
-            sectionType !== 7 &&
-            skill === "Listening" &&
-            sectionType !== 2 && (
-              <>
-                {skill === "Reading" &&
-                (sectionType === 2 || sectionType === 3) ? (
-                  <Controller
-                    name={`skills.${skill}.parts.${partIndex}.sections.${sectionIndex}.questions.${questionIndex}.answers.${index}.isCorrect`}
-                    control={control}
-                    render={({ field }) => (
-                      <div className="flex items-center w-3/12">
+          {showIsCorrectAnswer && (
+            <>
+              {skill === "Reading" &&
+              (sectionType === 2 || sectionType === 3) ? (
+                <Controller
+                  name={`skills.${skill}.parts.${partIndex}.sections.${sectionIndex}.questions.${questionIndex}.answers.${index}.isCorrect`}
+                  control={control}
+                  render={({ field }) => (
+                    <div className="flex items-center w-3/12">
+                      <button
+                        type="button"
+                        onClick={() => field.onChange(1)} // Set to 1 (True)
+                        className={`mr-2 p-1 rounded ${
+                          field.value === 1 ? "bg-green-500" : "bg-gray-300"
+                        }`}
+                      >
+                        True
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => field.onChange(0)} // Set to 0 (False)
+                        className={`p-1 rounded ${
+                          field.value === 0 ? "bg-green-500" : "bg-gray-300"
+                        }`}
+                      >
+                        False
+                      </button>
+                      {sectionType === 3 && (
                         <button
                           type="button"
-                          onClick={() => field.onChange(1)} // Set to 1 (True)
-                          className={`mr-2 p-1 rounded ${
-                            field.value === 1 ? "bg-green-500" : "bg-gray-300"
-                          }`}
-                        >
-                          True
-                        </button>
-                        <button
-                          type="button"
-                          onClick={() => field.onChange(0)} // Set to 0 (False)
+                          onClick={() => field.onChange(2)} // Set to 0 (False)
                           className={`p-1 rounded ${
-                            field.value === 0 ? "bg-green-500" : "bg-gray-300"
+                            field.value === 2 ? "bg-green-500" : "bg-gray-300"
                           }`}
                         >
-                          False
+                          Not Given
                         </button>
-                        {sectionType === 3 && (
-                          <button
-                            type="button"
-                            onClick={() => field.onChange(2)} // Set to 0 (False)
-                            className={`p-1 rounded ${
-                              field.value === 2 ? "bg-green-500" : "bg-gray-300"
-                            }`}
-                          >
-                            Not Given
-                          </button>
-                        )}
-                      </div>
-                    )}
-                  />
-                ) : (
-                  // Regular Correct Answer Checkbox
-                  <Controller
-                    name={`skills.${skill}.parts.${partIndex}.sections.${sectionIndex}.questions.${questionIndex}.answers.${index}.isCorrect`}
-                    control={control}
-                    render={({ field }) => (
-                      <div className="flex items-center w-3/12">
-                        <input
-                          type="checkbox"
-                          checked={field.value === 1} // checked if value is 1 (true)
-                          onChange={(e) =>
-                            field.onChange(e.target.checked ? 1 : 0)
-                          } // 1 if checked, 0 if not
-                          className="mr-2"
-                        />
-                        <label>Correct Answer</label>
-                      </div>
-                    )}
-                  />
-                )}
-                <button
-                  type="button"
-                  onClick={() => remove(index)}
-                  className="bg-red-500 text-white p-1 rounded w-8 h-8 flex items-center justify-center"
-                >
-                  <FontAwesomeIcon icon={faTrash} className="text-xs" />
-                </button>
-              </>
-            )}
+                      )}
+                    </div>
+                  )}
+                />
+              ) : (
+                // Regular Correct Answer Checkbox
+                <Controller
+                  name={`skills.${skill}.parts.${partIndex}.sections.${sectionIndex}.questions.${questionIndex}.answers.${index}.isCorrect`}
+                  control={control}
+                  render={({ field }) => (
+                    <div className="flex items-center w-3/12">
+                      <input
+                        type="checkbox"
+                        checked={field.value === 1} // checked if value is 1 (true)
+                        onChange={(e) =>
+                          field.onChange(e.target.checked ? 1 : 0)
+                        } // 1 if checked, 0 if not
+                        className="mr-2"
+                      />
+                      <label>Correct Answer</label>
+                    </div>
+                  )}
+                />
+              )}
+              <button
+                type="button"
+                onClick={() => remove(index)}
+                className="bg-red-500 text-white p-1 rounded w-8 h-8 flex items-center justify-center"
+              >
+                <FontAwesomeIcon icon={faTrash} className="text-xs" />
+              </button>
+            </>
+          )}
         </div>
       ))}
 
-      {(skill === "Listening" && (sectionType === 7 || sectionType === 8)) ||
-        (skill === "Reading" &&
-          (sectionType === 1 ||
-            sectionType === 2 ||
-            sectionType === 3 ||
-            sectionType === 9) && (
-            <button
-              type="button"
-              onClick={() => append({ answerText: "", isCorrect: 0 })} // Default value is 0 (false)
-              className="bg-green-500 text-white p-2 rounded"
-            >
-              Add Answer
-            </button>
-          ))}
+      {showButtonAnswerTest && (
+        <button
+          type="button"
+          onClick={() => append({ answerText: "", isCorrect: 0 })} // Default value is 0 (false)
+          className="bg-green-500 text-white p-2 rounded"
+        >
+          Add Answer
+        </button>
+      )}
     </div>
   );
 };

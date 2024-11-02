@@ -48,6 +48,39 @@ const QuestionForm = ({
     setShowQuestionCard(false);
   };
 
+  const isListening = skill === "Listening" && sectionType !== 3;
+  const isReading = skill === "Reading" && sectionType !== 11;
+
+  const showAddQuestion = isListening || isReading;
+
+  const listeningAnswerForm =
+    skill === "Listening" &&
+    (sectionType === 4 || sectionType === 6 || sectionType === 8);
+
+  const readingAnswerForm =
+    skill === "Reading" &&
+    sectionType !== 11 &&
+    sectionType !== 7 &&
+    sectionType !== 8 &&
+    sectionType !== 9;
+  const showAnswerForm = listeningAnswerForm || readingAnswerForm;
+
+  const readingQuestionForm = skill === "Reading";
+  const listeningListeningForm = skill === "Listening" && sectionType != 4;
+
+  const showQuestionForm =
+    listeningListeningForm ||
+    readingQuestionForm ||
+    skill === "Speaking" ||
+    skill === "Writing";
+
+  const readingMessage =
+    skill === "Reading" &&
+    (sectionType === 7 || sectionType === 8 || sectionType === 9);
+  const listeningMessage =
+    skill === "Listening" && (sectionType === 2 || sectionType === 7);
+  const showMessageExample = readingMessage || listeningMessage;
+
   return (
     <div>
       <h5 className="font-extrabold">
@@ -57,7 +90,8 @@ const QuestionForm = ({
         Questions
       </h5>
 
-      {skill === "Listening" && sectionType === 3 && (
+      {((skill === "Listening" && sectionType === 3) ||
+        (skill === "Reading" && sectionType === 11)) && (
         <div className="mb-4 border p-4 rounded">
           <label className="block mb-2 font-bold">Enter Summary content:</label>
           <p className="mb-2 text-gray-600">
@@ -117,10 +151,13 @@ const QuestionForm = ({
           </div>
           {!question.isFromQuestionBank ? (
             <>
-              {((skill === "Listening" && sectionType !== 5) ||
-                skill === "Reading" ||
-                skill === "Speaking" ||
-                skill === "Writing") && (
+              {showMessageExample && (
+                <p>
+                  this is example about message input field "hahah is not
+                  perform [] are ok " "[]" is present for answer
+                </p>
+              )}
+              {showQuestionForm && (
                 <Controller
                   name={`skills.${skill}.parts.${partIndex}.sections.${sectionIndex}.questions.${index}.questionName`}
                   control={control}
@@ -151,7 +188,7 @@ const QuestionForm = ({
                 />
               )}
 
-              {(skill === "Reading" || skill === "Listening") && (
+              {showAnswerForm && (
                 <AnswerForm
                   skill={skill}
                   partIndex={partIndex}
@@ -168,7 +205,7 @@ const QuestionForm = ({
         </div>
       ))}
 
-      {skill === "Listening" && sectionType !== 3 && (
+      {showAddQuestion && (
         <div>
           <div className="flex gap-2">
             <button

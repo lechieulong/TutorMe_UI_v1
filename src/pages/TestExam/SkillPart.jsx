@@ -108,7 +108,7 @@ const SkillPart = () => {
           {skills.length === 0 ? (
             <>
               {createSkill ? (
-                <CreateTest />
+                <CreateTest testId={testId} />
               ) : (
                 <button
                   className="p-2 bg-red-100"

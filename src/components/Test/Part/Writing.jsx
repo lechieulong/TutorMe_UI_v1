@@ -28,7 +28,7 @@ const Writing = ({ partData, currentSkillKey, handleAnswerChange }) => {
   return (
     <div
       style={{
-        height: "calc(100vh - 100px)",
+        height: "calc(100vh - 180px)",
       }}
       className="flex flex-col"
     >

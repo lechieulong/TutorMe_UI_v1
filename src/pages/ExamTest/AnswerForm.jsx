@@ -16,8 +16,7 @@ const AnswerForm = ({
     control,
   });
 
-  const isListening =
-    skill === "Listening" && (sectionType === 6 || sectionType === 8);
+  const isListening = skill === "Listening" && sectionType === 8;
   const isReading =
     skill === "Reading" &&
     (sectionType === 1 || sectionType === 2 || sectionType === 3);

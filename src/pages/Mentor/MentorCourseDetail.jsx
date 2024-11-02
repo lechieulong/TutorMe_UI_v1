@@ -108,28 +108,28 @@ const MentorCourseDetail = () => {
   }, [hasError]); // Chạy effect khi hasError thay đổi
 
   return (
-    <MainLayout>
-      <div className="flex flex-col min-h-screen w-full">
-        <div className="flex flex-1 mt-16 w-full">
-          <MentorSidebar />
-          <div className="flex-1 p-4">
-            <div className="flex justify-start items-center mb-4">
-              <p className="text-black font-bold text-4xl">{className}</p>
-            </div>
-            <div className="flex flex-col bg-white border w-full shadow-sm rounded-xl p-4 md:p-5 relative group mb-4">
-              <div className="mt-4 relative">
-                <div className="flex justify-between items-center">
-                  <h4 className="text-md font-bold text-gray-800">Classes</h4>
-                  <button
-                    type="button"
-                    className="py-2 px-3 inline-flex items-center gap-x-2 text-sm font-medium rounded-lg border border-gray-200 bg-white text-gray-800 shadow-sm hover:bg-gray-50 focus:outline-none focus:bg-gray-50"
-                    onClick={() =>
-                      navigate("/createClass", { state: { courseId } })
-                    }
-                  >
-                    Create Class
-                  </button>
-                </div>
+    <div className="flex flex-col w-screen">
+      <MentorHeader />
+      <div className="flex flex-1 mt-16 w-full">
+        <MentorSidebar />
+        <div className="flex-1 p-4">
+          <div className="flex justify-start items-center mb-4">
+            <p className="text-black font-bold text-4xl">{className}</p>
+          </div>
+          <div className="flex flex-col bg-white border w-full shadow-sm rounded-xl p-4 md:p-5 relative group mb-4">
+            <div className="mt-4 relative">
+              <div className="flex justify-between items-center">
+                <h4 className="text-md font-bold text-gray-800">Classes</h4>
+                <button
+                  type="button"
+                  className="py-2 px-3 inline-flex items-center gap-x-2 text-sm font-medium rounded-lg border border-gray-200 bg-white text-gray-800 shadow-sm hover:bg-gray-50 focus:outline-none focus:bg-gray-50"
+                  onClick={() =>
+                    navigate("/createClass", { state: { courseId } })
+                  }
+                >
+                  Create Class
+                </button>
+              </div>
 
                 <div className="overflow-hidden">
                   <div

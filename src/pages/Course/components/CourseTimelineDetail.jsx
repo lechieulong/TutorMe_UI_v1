@@ -49,18 +49,18 @@ const CourseTimelineDetail = ({
   };
 
   const handleCreateTest = (timelineId) => {
-    // Log categories và timelineId khi nhấn nút "Create Test"
-    const categoryString =
+    const categoryMap = ["Reading", "Listening", "Writing", "Speaking"];
+
+    const categoryIndices =
       typeof categories === "object" && categories !== null
-        ? JSON.stringify(categories)
-        : String(categories);
+        ? categories
+        : JSON.parse(categoryString);
 
-    console.log("Category for test:", categoryString);
-    console.log("CourseTimeline ID:", details.id);
+    const mappedCategories = categoryIndices.map((index) => categoryMap[index]);
 
-    alert(
-      `Category for test: ${categoryString}\nCourseTimeline ID: ${timelineId}`
-    );
+    navigate(`/create-test/${timelineId}`, {
+      state: { timelineId, categories: mappedCategories },
+    });
   };
 
   if (loading) return <div>Khoá học chưa có lộ trình nào</div>;
@@ -116,8 +116,8 @@ const CourseTimelineDetail = ({
               <p className="text-gray-700 mt-2">{detail.title}</p>
               <button
                 type="button"
-                onClick={() => handleCreateTest(detail.id)} // Chỉ truyền timeline.id
                 className="py-2 px-3 inline-flex items-center gap-x-2 text-sm font-medium rounded-lg border border-gray-200 bg-white text-gray-800 shadow-sm hover:bg-gray-50 focus:outline-none focus:bg-gray-50"
+                onClick={() => handleCreateTest(detail.courseTimelineId)} // Gọi hàm và truyền ID chi tiết
               >
                 Create Test
               </button>

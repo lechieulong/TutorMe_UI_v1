@@ -78,7 +78,7 @@ const Header = () => {
 
   return (
     <>
-      <header className="top-0 left-0 right-0 w-full bg-white text-sm pt-3 z-50 border border-gray-300">
+      <header className="top-0 left-0 right-0 bg-accentGreen text-white w-full bg text-sm pt-3 z-50 border border-gray-300">
         <nav className="mx-auto pb-2 px-4 flex flex-wrap basis-full items-center justify-between">
           <a
             className="sm:order-1 flex-none text-xl font-semibold focus:outline-none focus:opacity-80"
@@ -136,7 +136,7 @@ const Header = () => {
           >
             <div className="flex flex-col gap-5 mt-5 sm:flex-row sm:items-center sm:mt-0 sm:ps-5">
               <a
-                className="font-medium text-black focus:outline-none"
+                className="font-medium text-whitefocus:outline-none"
                 href="/"
                 aria-current="page"
               >
@@ -146,7 +146,7 @@ const Header = () => {
                 Home
               </a>
               <a
-                className="font-medium text-black focus:outline-none"
+                className="font-medium text-whitefocus:outline-none"
                 href={`/live-stream${
                   user === null || user.role === "USER"
                     ? ""
@@ -159,7 +159,7 @@ const Header = () => {
                 Livestreams
               </a>
               <Link
-                className="font-medium text-black focus:outline-none"
+                className="font-medium text-whitefocus:outline-none"
                 to="/courseList"
               >
                 <span className="mr-2">
@@ -169,7 +169,7 @@ const Header = () => {
               </Link>
 
               <Link
-                className="font-medium text-black focus:outline-none"
+                className="font-medium text-whitefocus:outline-none"
                 to="/listTest"
               >
                 <span className="mr-2">
@@ -179,7 +179,7 @@ const Header = () => {
               </Link>
 
               <Link
-                className="font-medium text-black focus:outline-none"
+                className="font-medium text-whitefocus:outline-none"
                 to="/mylearning"
               >
                 <span className="mr-2">

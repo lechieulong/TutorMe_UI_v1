@@ -85,7 +85,7 @@ const AvailableTime = () => {
                                                                 <p className="text-xs text-green-500">{item.price} ₫</p>
                                                                 <p className="text-xs text-red-500">Pending</p>
                                                             </div>
-                                                        ) : (
+                                                        ) : item.status === 0 &&(
                                                             // Nếu không phải Pending, cho phép bấm vào Link
                                                             <Link to="/schedulepaymentmethod"
                                                                 state={{

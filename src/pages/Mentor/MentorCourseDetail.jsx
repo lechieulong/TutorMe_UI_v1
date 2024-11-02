@@ -97,7 +97,7 @@ const MentorCourseDetail = () => {
   };
 
   return (
-    <div className="flex flex-col min-h-screen w-full">
+    <div className="flex flex-col w-screen">
       <MentorHeader />
       <div className="flex flex-1 mt-16 w-full">
         <MentorSidebar />

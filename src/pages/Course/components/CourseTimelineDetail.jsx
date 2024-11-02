@@ -48,19 +48,11 @@ const CourseTimelineDetail = ({
     setActiveIndex(activeIndex === index ? null : index);
   };
 
-  const handleCreateTest = (timelineId) => {
-    // Log categories và timelineId khi nhấn nút "Create Test"
-    const categoryString =
-      typeof categories === "object" && categories !== null
-        ? JSON.stringify(categories)
-        : String(categories);
-
-    console.log("Category for test:", categoryString);
-    console.log("CourseTimeline ID:", details.id);
-
-    alert(
-      `Category for test: ${categoryString}\nCourseTimeline ID: ${timelineId}`
-    );
+  const handleCreateTest = (courseTimelineDetailId) => {
+    const categories = ["Listening"];
+    navigate(`/create-test/${courseTimelineDetailId}`, {
+      state: { courseTimelineDetailId, categories },
+    });
   };
 
   if (loading) return <div>Đang tải...</div>;
@@ -118,6 +110,7 @@ const CourseTimelineDetail = ({
                 type="button"
                 onClick={() => handleCreateTest(detail.id)} // Chỉ truyền timeline.id
                 className="py-2 px-3 inline-flex items-center gap-x-2 text-sm font-medium rounded-lg border border-gray-200 bg-white text-gray-800 shadow-sm hover:bg-gray-50 focus:outline-none focus:bg-gray-50"
+                onClick={() => handleCreateTest(detail.courseTimelineId)} // Gọi hàm và truyền ID chi tiết
               >
                 Create Test
               </button>

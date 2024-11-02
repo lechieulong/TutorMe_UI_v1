@@ -113,7 +113,7 @@ const Users = () => {
                         placeholder="Search by email"
                         value={searchTerm}
                         onChange={(e) => setSearchTerm(e.target.value)}
-                        className="border border-gray-300 rounded-lg p-2 text-sm focus:outline-none focus:ring focus:ring-purple-300"
+                        className="border border-gray-300 rounded-lg p-2 text-sm focus:outline-none focus:ring focus:ring-opacity-50 focus:ring-[#d4e9e2]"
                     />
                     {/* <button className="bg-purple-700 text-white px-4 py-2 rounded-lg shadow hover:bg-purple-600 transition">
                         Add New

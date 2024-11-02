@@ -2,15 +2,21 @@ import React, { useState } from 'react';
 import { NavLink } from 'react-router-dom';
 import {
     FaAngleDown, FaThLarge, FaUserFriends, FaDollarSign, FaChartLine, FaCalendarAlt,
-    FaFileAlt, FaCog, FaBook, FaSignInAlt, FaUserPlus, FaUnlockAlt, FaExclamationTriangle, FaExchangeAlt 
+    FaFileAlt, FaCog, FaBook, FaSignInAlt, FaUserPlus, FaUnlockAlt, FaExclamationTriangle, FaExchangeAlt, FaPenNib 
 } from 'react-icons/fa';
+import { BackgroundColor } from 'devextreme-react/cjs/chart';
 
 const Sidebar = () => {
     const [isPagesOpen, setIsPagesOpen] = useState(false);
+    const [isReportsOpen, setIsReportsOpen] = useState(false);
     const [isDocsOpen, setIsDocsOpen] = useState(false); // State for Documentation dropdown
 
     const togglePagesDropdown = () => {
         setIsPagesOpen(prevState => !prevState);
+    };
+
+    const toggleReportsDropdown = () => {
+        setIsReportsOpen(prevState => !prevState);
     };
 
     const toggleDocsDropdown = () => {
@@ -18,8 +24,8 @@ const Sidebar = () => {
     };
 
     return (
-        <aside className="w-64 bg-fuchsia-400 shadow-lg h-screen">
-            <div className="flex items-center p-4 border-b border-gray-300">
+        <aside className="w-64 bg-white shadow-lg h-screen">
+            <div className="flex items-center p-4">
                 <img
                     src="/src/assets/images/aiillogo.ico"
                     alt="Logo"
@@ -84,7 +90,18 @@ const Sidebar = () => {
                             <span className="ml-3">Calendar</span>
                         </NavLink>
                     </li>
-                    <li className="flex items-center justify-between p-3 text-gray-700 hover:bg-gray-200 cursor-pointer transition duration-200 ease-in-out" onClick={togglePagesDropdown}>
+                    <li>
+                        <NavLink
+                            to="test"
+                            className={({ isActive }) =>
+                                `flex items-center p-3 text-gray-700 hover:bg-gray-200 transition duration-200 ease-in-out ${isActive ? 'bg-blue-200' : ''}`
+                            }
+                        >
+                            <FaPenNib />
+                            <span className="ml-3">Test</span>
+                        </NavLink>
+                    </li>
+                    {/* <li className="flex items-center justify-between p-3 text-gray-700 hover:bg-gray-200 cursor-pointer transition duration-200 ease-in-out" onClick={togglePagesDropdown}>
                         <div className="flex items-center">
                             <FaFileAlt />
                             <span className="ml-3">Pages</span>
@@ -149,7 +166,7 @@ const Sidebar = () => {
                                 </NavLink>
                             </li>
                         </ul>
-                    )}
+                    )} */}
                     <li className="flex items-center justify-between p-3 text-gray-700 hover:bg-gray-200 cursor-pointer transition duration-200 ease-in-out" onClick={toggleDocsDropdown}>
                         <div className="flex items-center">
                             <FaBook />
@@ -200,6 +217,72 @@ const Sidebar = () => {
                                 </NavLink>
                             </li>
                             {/* Add more documentation links as needed */}
+                        </ul>
+                    )}
+                    <li className="flex items-center justify-between p-3 text-gray-700 hover:bg-gray-200 cursor-pointer transition duration-200 ease-in-out" onClick={toggleReportsDropdown}>
+                        <div className="flex items-center">
+                            <FaFileAlt />
+                            <span className="ml-3">Report & Complaint</span>
+                        </div>
+                        <FaAngleDown className={`transform transition-transform ${isReportsOpen ? 'rotate-180' : ''}`} />
+                    </li>
+                    {isReportsOpen && (
+                        <ul className="ml-6">
+                            <li>
+                                <NavLink
+                                    to="login"
+                                    className={({ isActive }) =>
+                                        `flex items-center p-3 text-gray-700 hover:bg-gray-200 transition duration-200 ease-in-out ${isActive ? 'bg-gray-200' : ''}`
+                                    }
+                                >
+                                    <FaSignInAlt />
+                                    <span className="ml-3">Course report</span>
+                                </NavLink>
+                            </li>
+                            <li>
+                                <NavLink
+                                    to="register"
+                                    className={({ isActive }) =>
+                                        `flex items-center p-3 text-gray-700 hover:bg-gray-200 transition duration-200 ease-in-out ${isActive ? 'bg-gray-200' : ''}`
+                                    }
+                                >
+                                    <FaUserPlus />
+                                    <span className="ml-3">Livestream report</span>
+                                </NavLink>
+                            </li>
+                            <li>
+                                <NavLink
+                                    to="forgot-password"
+                                    className={({ isActive }) =>
+                                        `flex items-center p-3 text-gray-700 hover:bg-gray-200 transition duration-200 ease-in-out ${isActive ? 'bg-gray-200' : ''}`
+                                    }
+                                >
+                                    <FaUnlockAlt />
+                                    <span className="ml-3">User Complaint</span>
+                                </NavLink>
+                            </li>
+                            <li>
+                                <NavLink
+                                    to="blank-page"
+                                    className={({ isActive }) =>
+                                        `flex items-center p-3 text-gray-700 hover:bg-gray-200 transition duration-200 ease-in-out ${isActive ? 'bg-gray-200' : ''}`
+                                    }
+                                >
+                                    <FaFileAlt />
+                                    <span className="ml-3">Blank Page</span>
+                                </NavLink>
+                            </li>
+                            <li>
+                                <NavLink
+                                    to="404"
+                                    className={({ isActive }) =>
+                                        `flex items-center p-3 text-gray-700 hover:bg-gray-200 transition duration-200 ease-in-out ${isActive ? 'bg-gray-200' : ''}`
+                                    }
+                                >
+                                    <FaExclamationTriangle />
+                                    <span className="ml-3">404</span>
+                                </NavLink>
+                            </li>
                         </ul>
                     )}
                     <li>

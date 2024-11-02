@@ -102,6 +102,29 @@ export const BeTeacher = createAsyncThunk(
     }
 );
 
+//Action to reagister teacher
+export const UpdaterTeacherRequest = createAsyncThunk(
+    `${SLICE_NAMES.USER}/${ACTIONS.UPDATE_TEACHER_REQUEST}`,
+    async (userData, { rejectWithValue }) => {
+        try {
+            const token = Cookies.get("authToken");
+            const response = await axios.post(
+                `${apiURLConfig.baseURL}/teacherrequest/update-request`, userData,
+                {
+                    headers: {
+                        'Authorization': `Bearer ${token}`, // Include token in the request headers
+                    },
+                }
+            );
+            return response.result;
+        } catch (error) {
+            return rejectWithValue(
+                error.response?.data?.message || "Failed to be teacher."
+            );
+        }
+    }
+);
+
 // Action to get user education
 export const GetUserEducation = createAsyncThunk(
     `${SLICE_NAMES.USER}/${ACTIONS.GET_USER_UDUCATION}`,
@@ -148,9 +171,34 @@ export const UpdateProfile = createAsyncThunk(
     }
 );
 
+//Action to get teacher request by userId
+export const GetTeacherRequestByUserId = createAsyncThunk(
+    `${SLICE_NAMES.USER}/${ACTIONS.GET_TEACHER_REQUEST_BY_USERID}`,
+    async (_, { rejectWithValue }) => {
+        try {
+            const token = Cookies.get("authToken");
+            const response = await axios.get(
+                `${apiURLConfig.baseURL}/teacherrequest/teacher-request`,
+                {
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                    },
+                }
+            );
+            return response.data.result;
+        } catch (error) {
+            return rejectWithValue(
+                error.response?.data?.message || "Failed to update user."
+            );
+        }
+    }
+);
+
 const initialState = {
     user: null,
     userEducation: null,
+    teacherRequest: null,
+    updateTeacherResponse: null,
     teachers: [],
     searchTeachers: [],
     userInfor: null,
@@ -158,10 +206,14 @@ const initialState = {
     status: STATUS.IDLE, // Trạng thái mặc định
     getuserstatus: STATUS.IDLE,
     getUserEducationStatus: STATUS.IDLE,
+    getTeacherRequestStatus: STATUS.IDLE,
+    updateTeacherRequestStatus: STATUS.IDLE,
     updateStatus: STATUS.IDLE,
     error: null, // Thông báo lỗi nếu có
     updateError: null, // Thông báo lỗi nếu có
     getUserEducationError: null, // Thông báo lỗi nếu có
+    getTeacherRequestError: null, // Thông báo lỗi nếu có
+    updateTeacherRequestError: null, // Thông báo lỗi nếu có
     loadingTopTeachers: false,
     beTeacherResponse: null,
     beTeacherStatus: STATUS.IDLE,
@@ -243,6 +295,20 @@ const UserSlice = createSlice({
                 state.beTeacherError = action.payload || action.error.message;
             })
 
+            // Handle update teacher request
+            .addCase(UpdaterTeacherRequest.pending, (state) => {
+                state.updateTeacherRequestStatus = STATUS.PENDING;
+                state.updateTeacherRequestError = null;
+            })
+            .addCase(UpdaterTeacherRequest.fulfilled, (state, action) => {
+                state.updateTeacherRequestStatus = STATUS.SUCCESS;
+                state.updateTeacherResponse = action.payload;
+            })
+            .addCase(UpdaterTeacherRequest.rejected, (state, action) => {
+                state.updateTeacherRequestStatus = STATUS.FAILED;
+                state.updateTeacherRequestError = action.payload || action.error.message;
+            })
+
             // Handle get user education
             .addCase(GetUserEducation.pending, (state) => {
                 state.getUserEducationStatus = STATUS.PENDING;
@@ -267,6 +333,20 @@ const UserSlice = createSlice({
             .addCase(UpdateProfile.rejected, (state, action) => {
                 state.updateStatus = STATUS.FAILED;
                 state.updateError = action.payload || action.error.message;
+            })
+
+            // Handle get Teacher request
+            .addCase(GetTeacherRequestByUserId.pending, (state) => {
+                state.getTeacherRequestStatus = STATUS.PENDING;
+                state.getTeacherRequestError = null;
+            })
+            .addCase(GetTeacherRequestByUserId.fulfilled, (state, action) => {
+                state.getTeacherRequestStatus = STATUS.SUCCESS;
+                state.teacherRequest = action.payload;
+            })
+            .addCase(GetTeacherRequestByUserId.rejected, (state, action) => {
+                state.getTeacherRequestStatus = STATUS.FAILED;
+                state.getTeacherRequestError = action.payload || action.error.message;
             })
     },
 });

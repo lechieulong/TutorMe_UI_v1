@@ -17,7 +17,7 @@ const AdminApp = () => {
             <div className="flex-1 flex flex-col">
                 <AdminHeader className="bg-white shadow"/>
                 <div className="flex-1 overflow-y-auto bg-gray-100">
-                    <div className="p-6 bg-purple-600 min-h-full">
+                    <div className="p-6 min-h-full" style={{backgroundColor: "#d4e9e2"}}>
                         <Routes>
                             <Route path="/" element={<MainContent />} />
                             <Route path="/dashboard" element={<Dashboard />} />

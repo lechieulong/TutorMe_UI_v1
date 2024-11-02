@@ -16,6 +16,7 @@ import UserDetail from "./pages/User/UserDetail";
 import ProfileEdit from "./pages/User/ProfileEdit";
 import ChangePassword from "./pages/User/ChangePassword";
 import BeTeacher from "./pages/User/Beteacher";
+import UpdateTeacherRequest from "./pages/User/UpdateTeacherRequest";
 
 import Calendar from "./pages/Calendar/Calendar";
 import CoachingSchedule from "./pages/Teacher/CoachingSchedule";
@@ -74,6 +75,7 @@ const App = () => {
           <Route path="/changepassword" element={<ChangePassword />} />
           <Route path="/reset-password" element={<ResetPassword />} />
           <Route path="/beteacher" element={<BeTeacher />} />
+          <Route path="/updateteacherrequest" element={<UpdateTeacherRequest />} />
           {/* <Route path="/Payment" element={<PayOS />} /> */}
           {/* Test  common*/}
           <Route path="/" element={<Home />} />

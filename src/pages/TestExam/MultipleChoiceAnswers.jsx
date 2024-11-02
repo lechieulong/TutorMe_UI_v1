@@ -10,7 +10,7 @@ const MultipleChoiceAnswers = ({
 }) => (
   <div className="flex flex-col gap-2">
     {question.answers.map((answer, index) => (
-      <div className="flex gap-2 justify-start items-center" key={answer.id}>
+      <div className="flex gap-2 justify-start " key={answer.id}>
         <p className="font-semibold">{renderLetter(index + 1)}</p>
         <label className="flex items-center space-x-2">
           <input

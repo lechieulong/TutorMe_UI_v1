@@ -81,7 +81,7 @@ const Header = ({
         <button
           onClick={openNoteModal}
           type="button"
-          className="text-green-700 font-semibold bg-lightGreen hover:bg-accentGreen hover:text-white text-md px-3 py-2 rounded-lg flex items-center gap-2"
+          className="text-black font-semibold bg-white hover:bg-gray-200 hover:text-black text-md px-3 py-2 rounded-lg flex items-center gap-2"
         >
           <FontAwesomeIcon icon={faPen} className="text-sm" />
           Take note

@@ -66,20 +66,6 @@ const CourseTimeline = ({ courseId, onUpdateStatus, categories }) => {
     }
   };
 
-  const handleCreateTest = (timelineId) => {
-    // Log categories và courseTimelineId khi nhấn nút "Create Test"
-    const categoryString =
-      typeof categories === "object" && categories !== null
-        ? JSON.stringify(categories)
-        : String(categories);
-
-    console.log("Category for test:", categoryString);
-    console.log("CourseTimeline ID:", timelineId);
-    alert(
-      `Category for test: ${categoryString}\nCourseTimeline ID: ${timelineId}`
-    );
-  };
-
   if (loading) return <div>Đang tải...</div>;
   if (error) return <div className="text-red-500">{error}</div>;
 
@@ -110,13 +96,6 @@ const CourseTimeline = ({ courseId, onUpdateStatus, categories }) => {
                 <p className="mt-1 text-sm text-gray-600">
                   {timeline.description}
                 </p>
-                <button
-                  type="button"
-                  onClick={() => handleCreateTest(timeline.id)} // Thêm timeline.id
-                  className="py-2 px-3 inline-flex items-center gap-x-2 text-sm font-medium rounded-lg border border-gray-200 bg-white text-gray-800 shadow-sm hover:bg-gray-50 focus:outline-none focus:bg-gray-50"
-                >
-                  Create Test
-                </button>
               </div>
               <div className="flex items-center">
                 <input

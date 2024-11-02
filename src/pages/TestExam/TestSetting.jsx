@@ -84,8 +84,8 @@ const TestSetting = () => {
       {isTestStarted ? (
         <TestLayout />
       ) : (
-        <div className="flex mt-5 justify-center items-center ">
-          <div className="bg-white border shadow-lg rounded-lg p-6 w-full max-w-4xl">
+        <div className="flex mt-20 justify-center items-center  ">
+          <div className="bg-white border shadow-2xl  rounded-lg p-6 w-full max-w-4xl">
             <h2 className="text-2xl font-semibold text-center text-green-700 mb-4">
               Choose a mode
             </h2>

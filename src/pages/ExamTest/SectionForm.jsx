@@ -128,7 +128,8 @@ const SectionForm = ({ skill, partIndex, control }) => {
 
                 {((skill === "Listening" &&
                   (sectionType === 4 || sectionType === 5)) ||
-                  (skill === "Writing" && sectionType === 1)) && (
+                  (skill === "Reading" && sectionType === 6) ||
+                  sectionType === 10) && (
                   <Controller
                     name={`skills.${skill}.parts.${partIndex}.sections.${index}.image`}
                     control={control}

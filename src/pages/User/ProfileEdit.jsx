@@ -87,7 +87,7 @@ const ProfileEditSection = () => {
 
     return (
         <MainLayout>
-            <div className="flex h-screen w-full">
+            <div className="flex w-full">
                 <Sidebar />
                 <div className="flex-1 p-8">
                     <div className="bg-gray-100 p-6 border-2 border-gray-500 rounded-lg">

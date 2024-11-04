@@ -55,6 +55,29 @@ export const Admin_GetTeacherRequestDetail = createAsyncThunk(
     }
 );
 
+// Action to process teacher request
+export const Admin_ProcessTeacherRequest = createAsyncThunk(
+    `${SLICE_NAMES.TEACHER}/${ACTIONS.PROCESS_TEACHER_REQUEST}`,
+    async ({ requestId, processTeacherRequestData }, { rejectWithValue }) => {
+        try {
+            const token = Cookies.get("authToken");
+            const { data } = await axios.post(
+                `${apiURLConfig.baseURL}/teacherrequest/process-request/${requestId}`, processTeacherRequestData,
+                {
+                    headers: {
+                        Authorization: `Bearer ${token}`, // Include the token in headers
+                    },
+                }
+            );
+            return data.result; // Return the result from the response
+        } catch (error) {
+            return rejectWithValue(
+                error.response?.data?.message || "Failed to get user education."
+            );
+        }
+    }
+);
+
 const initialState = {
     request: null,
     requests: [],
@@ -62,8 +85,10 @@ const initialState = {
     totalPages: null,
     getRequestsStatus: STATUS.IDLE,
     getRequestDetailStatus: STATUS.IDLE,
+    processStatus: STATUS.IDLE,
     getRequestsError: null, // Thông báo lỗi nếu có
     getRequestDetailError: null, // Thông báo lỗi nếu có
+    processError: null, // Thông báo lỗi nếu có
 };
 
 const TeacherSlice = createSlice({
@@ -101,6 +126,20 @@ const TeacherSlice = createSlice({
             .addCase(Admin_GetTeacherRequestDetail.rejected, (state, action) => {
                 state.getRequestDetailStatus = STATUS.FAILED;
                 state.getRequestDetailError = action.payload || action.error.message;
+            })
+
+            // Handle process teacher request
+            .addCase(Admin_ProcessTeacherRequest.pending, (state) => {
+                state.processStatus = STATUS.PENDING;
+                state.processError = null;
+            })
+            .addCase(Admin_ProcessTeacherRequest.fulfilled, (state, action) => {
+                state.processStatus = STATUS.SUCCESS;
+                state.request = action.payload;
+            })
+            .addCase(Admin_ProcessTeacherRequest.rejected, (state, action) => {
+                state.processStatus = STATUS.FAILED;
+                state.processError = action.payload || action.error.message;
             })
     },
 });

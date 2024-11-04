@@ -13,7 +13,7 @@ const About = () => {
         }
     }, [dispatch, teachername]);
 
-    const { userInfor } = useSelector((state) => state.user);
+    const { userInfor, userEducation } = useSelector((state) => state.user);
 
     return (
         <div className="flex space-x-4 mb-4">
@@ -72,7 +72,7 @@ const About = () => {
                 <div className="bg-white p-4 rounded shadow mb-4">
                     <h2 className="font-semibold mb-2">About</h2>
                     <p className="flex items-center text-gray-600 mb-2">
-                        <span className="text-sm">Tao là giáo viên tiếng Anh với chứng chỉ Ielst 9.0</span>
+                        <span className="text-sm">{userEducation?.userEducationDto?.aboutMe}</span>
                     </p>
                 </div>
 

@@ -78,7 +78,7 @@ const Header = () => {
 
   return (
     <>
-      <header className="top-0 left-0 right-0 bg-accentGreen text-white w-full bg text-sm pt-3 z-50 border border-gray-300">
+      <header className="top-0 left-0 right-0 bg-accentGreen text-white w-full bg text-sm pt-3 z-50 border-b border-gray-300">
         <nav className="mx-auto pb-2 px-4 flex flex-wrap basis-full items-center justify-between">
           <a
             className="sm:order-1 flex-none text-xl font-semibold focus:outline-none focus:opacity-80"
@@ -93,21 +93,21 @@ const Header = () => {
                   <Link
                     to="/admin/app"
                     type="button"
-                    className="py-2 px-3 inline-flex items-center gap-x-2 text-sm font-medium rounded-lg border border-gray-200 bg-white text-gray-800 shadow-sm hover:bg-gray-50 focus:outline-none focus:bg-gray-50 disabled:opacity-50 disabled:pointer-events-none dark:border-neutral-700 transition-hover transition-transform duration-500 dark:hover:scale-110"
+                    className="py-2 px-3 inline-flex items-center gap-x-2 text-sm font-medium rounded-lg border border-gray-200 bg-lightGreen text-gray-800 shadow-sm hover:bg-gray-50 focus:outline-none focus:bg-gray-50 disabled:opacity-50 disabled:pointer-events-none dark:border-neutral-700 transition-hover transition-transform duration-500 dark:hover:scale-110"
                   >
                     <FaInfinity className="text-xl" />
                   </Link>
                 )}
                 <button
                   type="button"
-                  className="py-2 px-3 inline-flex items-center gap-x-2 text-sm font-medium rounded-lg border border-gray-200 bg-white text-gray-800 shadow-sm hover:bg-gray-50 focus:outline-none focus:bg-gray-50 disabled:opacity-50 disabled:pointer-events-none   dark:border-neutral-700 transition-hover transition-transform duration-500 dark:hover:scale-110"
+                  className="py-2 px-3 inline-flex items-center gap-x-2 text-sm font-medium rounded-lg border border-gray-200 bg-lightGreen text-gray-800 shadow-sm hover:bg-gray-50 focus:outline-none focus:bg-gray-50 disabled:opacity-50 disabled:pointer-events-none   dark:border-neutral-700 transition-hover transition-transform duration-500 dark:hover:scale-110"
                 >
                   Stream now
                   <FontAwesomeIcon icon={faHeadset} />
                 </button>
                 <button
                   onClick={handleLogout}
-                  className="py-2 px-3 inline-flex items-center gap-x-2 text-sm font-medium rounded-lg border border-gray-200 bg-white text-gray-800 shadow-sm hover:bg-gray-50 focus:outline-none focus:bg-gray-50"
+                  className="py-2 px-3 inline-flex items-center gap-x-2 text-sm font-medium rounded-lg border border-gray-200 bg-lightGreen text-gray-800 shadow-sm hover:bg-gray-50 focus:outline-none focus:bg-gray-50"
                 >
                   Logout
                 </button>

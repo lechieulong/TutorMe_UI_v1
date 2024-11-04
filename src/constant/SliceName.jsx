@@ -50,10 +50,13 @@ export const ACTIONS = {
 
   GET_USER_BY_ID: "getuserbyid",
   GET_USER_INFORMATION: "getProfile",
+  GET_USEREDUCATION_BY_USERNAME: "getUsereducationByUsername",
+  GET_TEACHER_REQUEST_BY_USERID: "getTeacherRequestByUserId",
   GET_USER_UDUCATION: "getUserEducation",
   GET_TOP10_TEACHERS: "getTop10Teachers",
   SEARCH_TEACHER: "searchteacher",
   BE_TEACHER: "beteacher",
+  UPDATE_TEACHER_REQUEST: "updateTeacherRequest",
   UPDATE_PROFILE: "updateprofile",
 
   //Event
@@ -69,6 +72,7 @@ export const ACTIONS = {
   //ADMIN
   GET_ALL_USERS: "getallusers",
   GET_ALL_REQUESTS: "getallrequests",
+  PROCESS_TEACHER_REQUEST: "processteacherrequest",
   GET_REQUEST_DETAILS: "getrequestdetails",
   LOCK_USER: "lockuser",
   UNLOCK_USER: "unlockuser",

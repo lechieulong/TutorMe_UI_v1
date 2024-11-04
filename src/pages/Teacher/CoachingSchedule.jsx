@@ -13,12 +13,14 @@ import { SetSchedule } from '../../redux/Schedule/ScheduleSlice';
 import Search from './components/Search';
 import { ToastContainer, toast } from "react-toastify";
 import { Link, useNavigate } from "react-router-dom";
+import { GetUserEducationByUsername } from '../../redux/users/UserSlice';
 
 import "react-toastify/dist/ReactToastify.css";
 
 const CoachingSchedule = () => {
     const dispatch = useDispatch();
     const [activeTab, setActiveTab] = useState(() => localStorage.getItem('activeTab') || 'about');
+    const { user } = useSelector((state) => state.user);
     const { teachername } = useParams();
 
     const [userFromToken, setUser] = useState(null);
@@ -36,6 +38,7 @@ const CoachingSchedule = () => {
 
     useEffect(() => {
         dispatch(GetTopTeachers());
+        dispatch(GetUserEducationByUsername(teachername));
     }, [dispatch]);
 
     const { teachers } = useSelector((state) => state.user);
@@ -118,7 +121,9 @@ const CoachingSchedule = () => {
                 });
 
                 toast.success("Set schedule successful");
-                navigate("/coachingschedule"/{teachername});
+                setActiveTab('availableTime');
+                localStorage.setItem('activeTab', 'availableTime');
+                navigate(`/coachingschedule/${user.userName}`);
 
                 toggleModal();
             } catch (error) {
@@ -138,15 +143,21 @@ const CoachingSchedule = () => {
                     <header className="flex items-center justify-between mb-4">
                         <div>
                             <h1 className="text-2xl font-bold">CONNECTION BETWEEN TEACHERS AND STUDENTS</h1>
-                            <p className="text-gray-600">Coaching 1:1 · 145.2K members</p>
+                            <p className="text-gray-600">Coaching 1:1
+                                {userFromToken?.role?.includes(Roles.TEACHER) && (
+                                    <Link to={`/coachingschedule/${user?.userName}`} className="text-blue-500"> - Your schedule</Link>
+                                )}
+                            </p>
                         </div>
                         <div className="flex items-center space-x-2">
                             {userFromToken?.role?.includes(Roles.TEACHER) && (
-                                <button
-                                    onClick={toggleModal}
-                                    className="bg-green-400 text-white px-4 py-2 rounded">
-                                    Set Schedule
-                                </button>
+                                <>
+                                    <button
+                                        onClick={toggleModal}
+                                        className="bg-green-400 text-white px-4 py-2 rounded">
+                                        Set Schedule
+                                    </button>
+                                </>
                             )}
                             <button className="bg-red-500 text-white px-4 py-2 rounded">Teacher</button>
                             <button className="bg-yellow-300 text-white px-4 py-2 rounded">Scheduled</button>
@@ -156,15 +167,22 @@ const CoachingSchedule = () => {
                     {/* Teacher Profile and Search Section */}
                     <div className="flex items-center space-x-2 mb-4">
                         {teachers.length > 0 ? (
-                            teachers.map((teacher) => (
-                                <a href={`/coachingschedule/${teacher.userName}`} className="inline-block" key={teacher.userName}>
-                                    <img
-                                        src={teacher.imageURL || `https://placehold.co/40x40`}
-                                        alt={`Profile of ${teacher.name}`}
-                                        className="rounded-full w-10 h-10"
-                                    />
+                            <>
+                                {teachers.map((teacher) => (
+                                    <a href={`/coachingschedule/${teacher.userName}`} className="inline-block" key={teacher.userName}>
+                                        <img
+                                            src={teacher.imageURL || `https://placehold.co/40x40`}
+                                            alt={`Profile of ${teacher.name}`}
+                                            className="rounded-full w-10 h-10"
+                                        />
+                                    </a>
+                                ))}
+                                <a href={`/teachers`} className="inline-block">
+                                    <p className="border bg-blue-400 rounded-full w-10 h-10 flex items-center justify-center">
+                                        All
+                                    </p>
                                 </a>
-                            ))
+                            </>
                         ) : (
                             <p className="text-gray-600">No teachers available.</p>
                         )}

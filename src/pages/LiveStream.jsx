@@ -2,8 +2,6 @@ import LiveStreamFrame from "../components/common/LiveStreamFrame";
 import IdolListCard from "../components/common/IdolListCard";
 import idols from "../data/idols";
 import MainLayout from "../layout/MainLayout";
-import CreateTicketButton from "../components/common/Ticket";
-
 const LiveStream = () => {
   return (
     <MainLayout>
@@ -12,8 +10,8 @@ const LiveStream = () => {
         <div className="flex justify-center items-center">
           {/* Div chứa LiveStreamFrame chiếm 80% chiều rộng */}
           <div className=" p-2  w-8/12">
-          <CreateTicketButton/>
-            <LiveStreamFrame height="500px" width="1000px"/>
+            <CreateTicketButton />
+            <LiveStreamFrame height="500px" width="1000px" />
           </div>
         </div>
 

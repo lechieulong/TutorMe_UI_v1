@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react';
 import { useDispatch, useSelector } from "react-redux";
 import { Profile } from '../../../redux/users/UserSlice';
-import defaulAvatar from "../../../assets/images/defaul-avatar.jpg";
+import defaulAvatar from "../../../assets/images/default-avatar.jpg";
 import { useParams } from "react-router-dom";
 import { GetSchedule7Days } from '../../../redux/Schedule/ScheduleSlice';
 import { Link, useNavigate } from "react-router-dom";
@@ -85,7 +85,7 @@ const AvailableTime = () => {
                                                                 <p className="text-xs text-green-500">{item.price} ₫</p>
                                                                 <p className="text-xs text-red-500">Pending</p>
                                                             </div>
-                                                        ) : (
+                                                        ) : item.status === 0 &&(
                                                             // Nếu không phải Pending, cho phép bấm vào Link
                                                             <Link to="/schedulepaymentmethod"
                                                                 state={{

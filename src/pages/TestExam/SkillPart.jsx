@@ -15,10 +15,12 @@ import { useEffect, useState } from "react";
 import { getTest, getSkills } from "../../redux/testExam/TestSlice";
 import { useDispatch } from "react-redux";
 import { useParams } from "react-router-dom";
+import CreateTest from "../ExamTest/CreateTest";
 
 const SkillPart = () => {
   const [test, setTest] = useState(null);
-  const [skills, setSkills] = useState(null);
+  const [skills, setSkills] = useState([]);
+  const [createSkill, setCreateSkill] = useState(false);
 
   const navigate = useNavigate();
   const dispatch = useDispatch();
@@ -62,8 +64,8 @@ const SkillPart = () => {
   return (
     <MainLayout>
       {test ? (
-        <>
-          <div className="bg-white mt-10 border rounded-xl h-56 shadow-sm sm:flex dark:bg-neutral-900 dark:border-neutral-700 dark:shadow-neutral-700/70">
+        <div className="py-10 px-20">
+          <div className="bg-white  border rounded-xl h-56 shadow-sm sm:flex dark:bg-neutral-900 dark:border-neutral-700 dark:shadow-neutral-700/70">
             <div className="shrink-0 relative w-full rounded-t-xl overflow-hidden sm:rounded-s-xl sm:max-w-60 md:rounded-se-none md:max-w-xs">
               <img
                 className="absolute top-0 left-0 w-full h-full object-cover"
@@ -103,11 +105,23 @@ const SkillPart = () => {
             </div>
           </div>
 
-          {/* Skill Part */}
-          <div className="mt-2 border-gray-400 shadow-sm rounded-xl dark:bg-neutral-900 dark:border-neutral-700 dark:shadow-neutral-700/70">
-            <div className="flex gap-4 justify-center mt-6">
-              {skills &&
-                skills.map((skill) => (
+          {skills.length === 0 ? (
+            <>
+              {createSkill ? (
+                <CreateTest testId={testId} />
+              ) : (
+                <button
+                  className="p-2 bg-red-100"
+                  onClick={() => setCreateSkill(true)}
+                >
+                  Create Skill
+                </button>
+              )}
+            </>
+          ) : (
+            <div className="mt-2 border-gray-400 shadow-sm rounded-xl dark:bg-neutral-900 dark:border-neutral-700 dark:shadow-neutral-700/70">
+              <div className="flex gap-4 justify-center mt-6">
+                {skills.map((skill) => (
                   <div
                     key={skill.id}
                     className="p-4 h-[300px] md:p-5 flex flex-col gap-6 items-center justify-center border shadow-lg rounded-xl dark:bg-neutral-900 dark:border-neutral-700 dark:shadow-neutral-700/70"
@@ -128,19 +142,20 @@ const SkillPart = () => {
                     </button>
                   </div>
                 ))}
-            </div>
+              </div>
 
-            <div className="border text-gray-700 shadow-md border-gray-300 p-6 flex justify-between mt-2 rounded-xl items-center">
-              <button
-                className="text-2xl p-4 font-semibold border-green-500"
-                onClick={handleTakeFullTest}
-              >
-                <FontAwesomeIcon icon={faThunderstorm} className="mr-2" />
-                Take Full Test
-              </button>
+              <div className="border text-gray-700 shadow-md border-gray-300 p-6 flex justify-between mt-2 rounded-xl items-center">
+                <button
+                  className="text-2xl p-4 font-semibold border-green-500"
+                  onClick={handleTakeFullTest}
+                >
+                  <FontAwesomeIcon icon={faThunderstorm} className="mr-2" />
+                  Take Full Test
+                </button>
+              </div>
             </div>
-          </div>
-        </>
+          )}
+        </div>
       ) : (
         <p>Loading...</p>
       )}

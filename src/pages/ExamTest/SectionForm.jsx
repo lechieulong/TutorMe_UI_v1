@@ -11,21 +11,23 @@ const sectionTypesBySkill = {
     { value: 1, label: "Multiple Choice Questions" },
     { value: 2, label: "True/False/Not Given Questions" },
     { value: 3, label: "Yes/No/Not Given Questions" },
+
     { value: 4, label: "Matching Headings" },
     { value: 5, label: "Matching Information " },
     { value: 6, label: "Matching Features" },
+
     { value: 7, label: "Matching Sentence Endings" },
     { value: 8, label: "Sentence Completion" },
-    { value: 9, label: "Short-answer Questions" },
-    { value: 10, label: "Diagram Completion" },
     { value: 11, label: "Summary Completion" },
+    { value: 9, label: "Short-answer Questions" },
+
+    { value: 10, label: "Diagram Completion" },
   ],
   Listening: [
     { value: 1, label: "Table/Note Completion" },
     { value: 2, label: "Sentence Completion" },
     { value: 3, label: "Summary Completion" },
     { value: 4, label: "Labeling a Diagram/Map/Plan with filling" },
-    { value: 5, label: "Labeling a Diagram/Map/Plan with options" },
     { value: 6, label: "Matching Questions" },
     { value: 7, label: "Short Answer Questions" },
     { value: 8, label: "Multiple Choice Questions" },
@@ -90,10 +92,8 @@ const SectionForm = ({ skill, partIndex, control }) => {
               </button>
             </div>
 
-            {/* Conditional rendering based on skill type */}
             {(skill === "Reading" || skill === "Listening") && (
               <div>
-                {/* Section Type Dropdown */}
                 <Controller
                   name={`skills.${skill}.parts.${partIndex}.sections.${index}.sectionType`}
                   control={control}

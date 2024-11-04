@@ -7,6 +7,7 @@ import CourseTimelineDetail from "./components/CourseTimelineDetail";
 import axios from "axios";
 import { getUser } from "../../service/GetUser";
 import ClassCard from "../Class/components/ClassCard";
+import MainLayout from "../../layout/MainLayout";
 
 const CourseDetail = () => {
   const { className, courseId } = useParams();
@@ -122,81 +123,83 @@ const CourseDetail = () => {
   };
 
   return (
-    <div className="  w-full">
-      <div className="flex flex-1  w-full">
-        <div className="flex-1 p-4">
-          <ol className="flex items-center whitespace-nowrap">
-            <li className="inline-flex items-center">
-              <button
-                type="button"
-                onClick={handleEnroll}
-                className="py-2 px-3 inline-flex items-center gap-x-2 text-sm font-medium rounded-lg border border-gray-200 bg-green-400 text-gray-800 shadow-sm hover:bg-gray-50 focus:outline-none focus:bg-gray-50 disabled:opacity-50 disabled:pointer-events-none dark:border-neutral-700 transition-hover transition-transform duration-500 dark:hover:scale-110"
-                disabled={isEnrolled}
-              >
-                {isEnrolled ? "Enrolled" : "Enroll"}
-              </button>
-              {className}
-            </li>
-          </ol>
-          {errorMessage && (
-            <p className="text-red-500">
-              {errorMessage}{" "}
-              <a
-                href={`http://localhost:5173/courseDetail/${courseId}/classes`}
-                className="text-blue-500 underline"
-              >
-                đây
-              </a>
-            </p>
-          )}
-          <div className="flex flex-col bg-white border w-full shadow-sm rounded-xl p-4 md:p-5 relative group">
-            <h4 className="text-md font-bold text-gray-800">Classes</h4>
-            <div className="overflow-hidden">
-              <div
-                className="flex transition-transform duration-500"
-                style={{ transform: `translateX(-${currentSlide * 100}%)` }}
-              >
-                {classes.map((classItem) => (
-                  <ClassCard
-                    key={classItem.id}
-                    classItem={classItem}
-                    isActive={selectedClassId === classItem.id}
-                    onSelect={handleSelectClass}
-                  />
-                ))}
+    <MainLayout>
+      <div className="  w-full">
+        <div className="flex flex-1  w-full">
+          <div className="flex-1 p-4">
+            <ol className="flex items-center whitespace-nowrap">
+              <li className="inline-flex items-center">
+                <button
+                  type="button"
+                  onClick={handleEnroll}
+                  className="py-2 px-3 inline-flex items-center gap-x-2 text-sm font-medium rounded-lg border border-gray-200 bg-green-400 text-gray-800 shadow-sm hover:bg-gray-50 focus:outline-none focus:bg-gray-50 disabled:opacity-50 disabled:pointer-events-none dark:border-neutral-700 transition-hover transition-transform duration-500 dark:hover:scale-110"
+                  disabled={isEnrolled}
+                >
+                  {isEnrolled ? "Enrolled" : "Enroll"}
+                </button>
+                {className}
+              </li>
+            </ol>
+            {errorMessage && (
+              <p className="text-red-500">
+                {errorMessage}{" "}
+                <a
+                  href={`http://localhost:5173/courseDetail/${courseId}/classes`}
+                  className="text-blue-500 underline"
+                >
+                  đây
+                </a>
+              </p>
+            )}
+            <div className="flex flex-col bg-white border w-full shadow-sm rounded-xl p-4 md:p-5 relative group">
+              <h4 className="text-md font-bold text-gray-800">Classes</h4>
+              <div className="overflow-hidden">
+                <div
+                  className="flex transition-transform duration-500"
+                  style={{ transform: `translateX(-${currentSlide * 100}%)` }}
+                >
+                  {classes.map((classItem) => (
+                    <ClassCard
+                      key={classItem.id}
+                      classItem={classItem}
+                      isActive={selectedClassId === classItem.id}
+                      onSelect={handleSelectClass}
+                    />
+                  ))}
+                </div>
+              </div>
+              <div className="flex justify-between mt-2">
+                <button
+                  onClick={handlePrev}
+                  className="py-2 px-3 inline-flex items-center gap-x-2 text-sm font-medium rounded-lg border border-gray-200 bg-white text-gray-800 shadow-sm hover:bg-gray-50 focus:outline-none focus:bg-gray-50"
+                  disabled={currentSlide === 0}
+                >
+                  Prev
+                </button>
+                <button
+                  onClick={handleNext}
+                  className="py-2 px-3 inline-flex items-center gap-x-2 text-sm font-medium rounded-lg border border-gray-200 bg-white text-gray-800 shadow-sm hover:bg-gray-50 focus:outline-none focus:bg-gray-50"
+                  disabled={currentSlide >= Math.ceil(classes.length / 3) - 1}
+                >
+                  Next
+                </button>
               </div>
             </div>
-            <div className="flex justify-between mt-2">
-              <button
-                onClick={handlePrev}
-                className="py-2 px-3 inline-flex items-center gap-x-2 text-sm font-medium rounded-lg border border-gray-200 bg-white text-gray-800 shadow-sm hover:bg-gray-50 focus:outline-none focus:bg-gray-50"
-                disabled={currentSlide === 0}
-              >
-                Prev
-              </button>
-              <button
-                onClick={handleNext}
-                className="py-2 px-3 inline-flex items-center gap-x-2 text-sm font-medium rounded-lg border border-gray-200 bg-white text-gray-800 shadow-sm hover:bg-gray-50 focus:outline-none focus:bg-gray-50"
-                disabled={currentSlide >= Math.ceil(classes.length / 3) - 1}
-              >
-                Next
-              </button>
+            <div className="flex justify-start items-center mb-4">
+              <p className="text-black font-bold text-4xl">{className}</p>
             </div>
-          </div>
-          <div className="flex justify-start items-center mb-4">
-            <p className="text-black font-bold text-4xl">{className}</p>
-          </div>
-          <div className="flex gap-4">
-            <div className="w-2/5">
-              <CourseTimeline timelineIds={timelineIds} courseId={courseId} />
-            </div>
-            <div className="w-3/5">
-              <CourseTimelineDetail timelineIds={timelineIds} />
+            <div className="flex gap-4">
+              <div className="w-5/12">
+                <CourseTimeline timelineIds={timelineIds} courseId={courseId} />
+              </div>
+              <div className="w-7/12">
+                <CourseTimelineDetail timelineIds={timelineIds} />
+              </div>
             </div>
           </div>
         </div>
       </div>
-    </div>
+    </MainLayout>
   );
 };
 

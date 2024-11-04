@@ -5,7 +5,6 @@ import { AdminRoute } from "./service/checkAuth";
 
 import Home from "./pages/Home";
 import NotFound from "./components/common/NotFound";
-import ClassesList from "./pages/Class/ClassList";
 import TestSetting from "./pages/TestExam/TestSetting";
 import Login from "./pages/Authentication/Login";
 import Register from "./pages/Authentication/Register";
@@ -16,6 +15,7 @@ import UserDetail from "./pages/User/UserDetail";
 import ProfileEdit from "./pages/User/ProfileEdit";
 import ChangePassword from "./pages/User/ChangePassword";
 import BeTeacher from "./pages/User/Beteacher";
+import UpdateTeacherRequest from "./pages/User/UpdateTeacherRequest";
 
 import Calendar from "./pages/Calendar/Calendar";
 import CoachingSchedule from "./pages/Teacher/CoachingSchedule";
@@ -53,6 +53,8 @@ import CreateTestLayout from "./pages/course/CreateTestLayout";
 import CourseLayout from "./pages/course/CourseLayout";
 import ListTest from "./pages/ExamTest/ListTest";
 
+import Term from "./pages/Terms";
+
 //ADMIN
 import AdminApp from "./pages/ADMIN/Index";
 
@@ -62,6 +64,7 @@ const App = () => {
     <div className=" min-h-screen ">
       <Router>
         <Routes>
+          <Route path="/terms" element={<Term />} />
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
           <Route path="/forgotpass" element={<ForgotPassword />} />
@@ -70,17 +73,15 @@ const App = () => {
           <Route path="/changepassword" element={<ChangePassword />} />
           <Route path="/reset-password" element={<ResetPassword />} />
           <Route path="/beteacher" element={<BeTeacher />} />
+          <Route path="/updateteacherrequest" element={<UpdateTeacherRequest />} />
           {/* <Route path="/Payment" element={<PayOS />} /> */}
-
           {/* Test  common*/}
           <Route path="/" element={<Home />} />
           <Route path="*" element={<NotFound />} />
           <Route path="/gemini" element={<SpeakingGemini />} />
-
           {/* Test  exam*/}
           <Route path="/testing/:testId" element={<TestLayout />} />
           <Route path="/testing/:skillId/skill" element={<TestLayout />} />
-
           <Route
             path="/test/:testId/settings/:skillId"
             element={<TestSetting />}
@@ -89,15 +90,15 @@ const App = () => {
           <Route path="/listTest" element={<ListTest />} />
           <Route path="/create-skill" element={<CreateTest />} />
           <Route path="/create-test/:sectionCourseId" element={<TestForm />} />
-          <Route path="/create-test" element={<CreateTestLayout />} />
+          <Route path="/create-test" element={<TestForm />} />
           <Route path="/questionbank" element={<QuestionBank />} />
-
           {/* LiveStream  exam*/}
           <Route path="/live-stream" element={<LiveStream />} />
-
           {/* Test  class*/}
-          <Route path="/classes" element={<ClassesList />} />
-
+          {/* <Route
+            path="/courseDetail/:courseId/classList"
+            element={< />}
+          /> */}
           {/* Calender */}
           <Route path="/calendar" element={<Calendar />} />
           <Route path="/coachingschedule" element={<CoachingSchedule />} />
@@ -106,16 +107,12 @@ const App = () => {
             element={<CoachingSchedule />}
           />
           <Route path="/schedulepaymentmethod" element={<ConfirmBook />} />
-
           {/* Test Mentor */}
-
           {/* Mentor */}
           <Route path="/metorinfor" element={<MetorInfor />} />
           <Route path="/mentorCourseList" element={<MentorCourseList />} />
-
           {/* Course */}
           <Route path="/courseLayout" element={<CourseLayout />} />
-
           <Route path="/courseList" element={<CourseList />} />
           <Route path="/createCourse" element={<CreateCourse />} />
           <Route path="/courseDetail/:courseId" element={<CourseDetail />} />
@@ -129,22 +126,17 @@ const App = () => {
           />
           <Route path="/course-timeline" element={<CourseTimeline />} />
           {/* <Route path="/courses/:courseId" element={<CourseDetail />} /> */}
-
           {/* Class */}
           <Route path="/mylearning" element={<MyLearning />} />
           <Route path="/createClass" element={<CreateClass />} />
-
           {/* List test that User did */}
           <Route path="/testlist" element={<TestList />} />
-
           {/* Error page */}
           <Route path="/404" element={<Error404 />} />
           <Route path="/not-authorized" element={<NotAuthorizedPage />} />
-
           <Route path="/Payment" element={<PayOS />} />
           <Route path="/Paymentresult" element={<PaymentResult />} />
-
-          {/* ADMIN */}
+          ADMIN
           <Route
             path="/admin/app/*"
             element={

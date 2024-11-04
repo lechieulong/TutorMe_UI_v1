@@ -30,6 +30,8 @@ const CourseCard = ({
     return null;
   }
 
+  // Log giá trị của category
+
   const handleDelete = async () => {
     if (onDelete) {
       try {
@@ -104,6 +106,7 @@ const CourseCard = ({
       </div>
       <Link
         to={destinationPath}
+        state={{ category }} // Truyền categories vào state
         className="flex-grow flex flex-col items-center"
       >
         <div className="text-2xl mb-1">{icon}</div>

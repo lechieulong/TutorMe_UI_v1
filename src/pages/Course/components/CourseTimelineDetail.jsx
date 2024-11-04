@@ -1,13 +1,17 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
-import { useNavigate } from "react-router-dom"; // Nhập useNavigate từ react-router-dom
+import { useNavigate } from "react-router-dom";
 
-const CourseTimelineDetail = ({ timelineIds }) => {
-  const [details, setDetails] = useState([]); // State để lưu thông tin chi tiết
-  const [loading, setLoading] = useState(true); // State để kiểm tra trạng thái tải
-  const [error, setError] = useState(null); // State để lưu thông báo lỗi
-  const [activeIndex, setActiveIndex] = useState(null); // State để theo dõi mục đang mở
-  const navigate = useNavigate(); // Khởi tạo useNavigate để điều hướng
+const CourseTimelineDetail = ({
+  timelineIds,
+  selectedTimelines,
+  categories,
+}) => {
+  const [details, setDetails] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const [activeIndex, setActiveIndex] = useState(null);
+  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchTimelineDetails = async () => {
@@ -26,12 +30,12 @@ const CourseTimelineDetail = ({ timelineIds }) => {
         if (Array.isArray(response.data) && response.data.length > 0) {
           setDetails(response.data);
         } else {
-          setError("Không có phần học nào cho lộ trình này."); // Thông báo khi không có dữ liệu
+          setError("Không có phần học nào cho lộ trình này.");
         }
       } catch (error) {
-        setError("Không thể lấy thông tin chi tiết của lộ trình."); // Thiết lập thông báo lỗi
+        setError("Không thể lấy thông tin chi tiết của lộ trình.");
       } finally {
-        setLoading(false); // Kết thúc trạng thái tải
+        setLoading(false);
       }
     };
 
@@ -44,8 +48,19 @@ const CourseTimelineDetail = ({ timelineIds }) => {
     setActiveIndex(activeIndex === index ? null : index);
   };
 
-  const handleCreateTest = (courseTimelineDetailId) => {
-    navigate(`/create-test/${courseTimelineDetailId}`);
+  const handleCreateTest = (timelineId) => {
+    const categoryMap = ["Reading", "Listening", "Writing", "Speaking"];
+
+    const categoryIndices =
+      typeof categories === "object" && categories !== null
+        ? categories
+        : JSON.parse(categoryString);
+
+    const mappedCategories = categoryIndices.map((index) => categoryMap[index]);
+
+    navigate(`/create-test/${timelineId}`, {
+      state: { timelineId, categories: mappedCategories },
+    });
   };
 
   if (loading) return <div>Đang tải...</div>;
@@ -102,7 +117,7 @@ const CourseTimelineDetail = ({ timelineIds }) => {
               <button
                 type="button"
                 className="py-2 px-3 inline-flex items-center gap-x-2 text-sm font-medium rounded-lg border border-gray-200 bg-white text-gray-800 shadow-sm hover:bg-gray-50 focus:outline-none focus:bg-gray-50"
-                onClick={() => handleCreateTest(detail.id, courseSPea)} // Gọi hàm và truyền ID chi tiết
+                onClick={() => handleCreateTest(detail.courseTimelineId)} // Gọi hàm và truyền ID chi tiết
               >
                 Create Test
               </button>

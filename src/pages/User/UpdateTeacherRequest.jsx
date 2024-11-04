@@ -9,6 +9,7 @@ import { GetSpecialization } from '../../redux/specialization/SpecializationSlic
 import { uploadFile } from '../../redux/testExam/TestSlice';
 import { GetUserEducation } from '../../redux/users/UserSlice';;
 import { GetTeacherRequestByUserId } from '../../redux/users/UserSlice';
+import { UpdaterTeacherRequest } from '../../redux/users/UserSlice';
 
 const EducationSection = () => {
     const navigate = useNavigate();
@@ -16,7 +17,7 @@ const EducationSection = () => {
 
     // Extracting specializations and user data from Redux state
     const { specializations, getspecializationstatus } = useSelector((state) => state.specialization);
-    const { beTeacherStatus, beTeacherError, userEducation, getUserEducationStatus, teacherRequest } = useSelector((state) => state.user);
+    const { updateTeacherResponse, updateTeacherRequestStatus, userEducation, updateTeacherRequestError } = useSelector((state) => state.user);
 
     useEffect(() => {
         dispatch(GetSpecialization());
@@ -130,9 +131,9 @@ const EducationSection = () => {
                     .filter(key => formData.specialization[key]),
             };
             try {
-                const resultAction = await dispatch(BeTeacher(userData));
-                if (BeTeacher.fulfilled.match(resultAction)) {
-                    window.location.reload();
+                const resultAction = await dispatch(UpdaterTeacherRequest(userData));
+                if (UpdaterTeacherRequest.fulfilled.match(resultAction)) {
+                    navigate("/beteacher");
                 } else {
                     setFormErrors({ server: 'Failed to submit. Please try again.' });
                 }
@@ -149,42 +150,24 @@ const EducationSection = () => {
         <MainLayout>
             <div className="flex w-full">
                 <Sidebar />
-                <div className="flex-1">
-                    <div className="flex gap-8 bg-gray-100 py-10 px-12">
+                <div className="flex-1 p-6">
+                    <div className="flex gap-8 bg-gray-100 p-6 px-12">
                         <div className="hidden md:flex md:w-1/3 flex-col items-start">
-                            {!userEducation ? (
-                                // Display the information and terms section if userEducation does not exist
-                                <>
-                                    <div className="mb-3 text-base text-red-600 shadow-sm italic">
-                                        <p>Make sure all information you provide is true.</p>
-                                    </div>
-                                    <label className="text-sm">
-                                        <input
-                                            type="checkbox"
-                                            name="acceptedTerms"
-                                            required
-                                            checked={formData.acceptedTerms}
-                                            onChange={handleChange}
-                                        />
-                                        Accept our <Link to="/terms" target="_blank">terms and policies</Link>
-                                    </label>
-                                    {formErrors.acceptedTerms && (
-                                        <p className="font-mono text-red-500 text-xs mt-1">{formErrors.acceptedTerms}</p>
-                                    )}
-                                </>
-                            ) : (
-                                // Display the test message and degree image if userEducation and degreeURL exist
-                                userEducation.degreeURL && (
-                                    <>
-                                        <div className="mb-3 text-base text-green-400 italic">
-                                            <p>- You can test your skills or not.</p>
-                                            <p>- But, doing the test will help us approve your request faster...</p>
-                                        </div>
-                                        <div className="mt-3">
-                                            <img src={userEducation.degreeURL} alt="Degree Image" className="shadow-lg rounded-md" />
-                                        </div>
-                                    </>
-                                )
+                            <div className="mb-3 text-base text-red-600 shadow-sm italic">
+                                <p>Make sure all information you provide is true.</p>
+                            </div>
+                            <label className="text-sm">
+                                <input
+                                    type="checkbox"
+                                    name="acceptedTerms"
+                                    required
+                                    checked={formData.acceptedTerms}
+                                    onChange={handleChange}
+                                />
+                                Accept our <Link to="/terms" target="_blank">terms and policies</Link>
+                            </label>
+                            {formErrors.acceptedTerms && (
+                                <p className="font-mono text-red-500 text-xs mt-1">{formErrors.acceptedTerms}</p>
                             )}
                         </div>
                         <div className="flex-1 border-2 border-gray-500 rounded-lg p-6">
@@ -289,61 +272,19 @@ const EducationSection = () => {
                                                 </div>
                                             </div>
                                         </div>
-
                                         <div className="flex justify-end">
-                                            {!teacherRequest && (
-                                                <button type="submit" className="px-4 py-2 bg-green-500 text-white rounded hover:bg-green-400">
-                                                Next
-                                            </button>
-                                            )}
-                                            {teacherRequest?.status === 0 && (
-                                                <>
-                                                    <p className="font-mono px-4 py-2 text-xs text-green-500 text-center mt-2">
-                                                        User education and teacher request created successfully...
-                                                    </p>
-                                                    {getUserEducationStatus === "success" ? (
-                                                        <Link to="/testDetail/1" className="px-4 py-2 bg-green-500 text-white rounded hover:bg-green-400">
-                                                            Test your skills
-                                                        </Link>
-                                                    ) : (
-                                                        <button type="submit" className="px-4 py-2 bg-green-500 text-white rounded hover:bg-green-400">
-                                                            Next
-                                                        </button>
-                                                    )}
-                                                </>
-                                            )}
-
-                                            {teacherRequest?.status === 1 && (
-                                                <>
-                                                    <p className="font-mono px-4 py-2 text-xs text-red-500 text-center mt-2">
-                                                        Your request has been approved...
-                                                    </p>
-                                                    <Link to="/update" className="px-4 py-2 bg-red-500 text-white rounded hover:bg-red-400">
-                                                        Update role
-                                                    </Link>
-                                                </>
-                                            )}
-
-                                            {teacherRequest?.status === 2 && (
-                                                <>
-                                                    <p className="font-mono px-4 py-2 text-xs text-red-500 text-center mt-2">
-                                                        Your request has been rejected...
-                                                    </p>
-                                                    <Link to="/updateteacherrequest" className="px-4 py-2 bg-red-500 text-white rounded hover:bg-red-400">
-                                                        Update request
-                                                    </Link>
-                                                </>
-                                            )}
-
                                             {/* Handling pending status */}
-                                            {beTeacherStatus === "pending" && (
-                                                <p className="font-mono px-4 py-2 text-xs text-yellow-500 text-center mt-2">Checking...</p>
+                                            {updateTeacherRequestStatus === "pending" && (
+                                                <p className="font-mono px-4 py-2 text-xs text-yellow-500 text-center mt-2">Resubminting...</p>
                                             )}
 
                                             {/* Handling failed status */}
-                                            {beTeacherStatus === "failed" && (
-                                                <p className="font-mono px-4 py-2 text-xs text-red-500 text-center mt-2">{beTeacherError}</p>
+                                            {updateTeacherRequestStatus === "failed" && (
+                                                <p className="font-mono px-4 py-2 text-xs text-red-500 text-center mt-2">{updateTeacherRequestError}</p>
                                             )}
+                                            <button type="submit" className="px-4 py-2 bg-green-500 text-white rounded hover:bg-green-400">
+                                                Resubmit
+                                            </button>
                                         </div>
                                     </div>
                                 </form>

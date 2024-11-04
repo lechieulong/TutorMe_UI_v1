@@ -1,18 +1,24 @@
 import React from 'react';
+import { useSelector } from "react-redux";
+import defaulAvatar from "../../../assets/images/default-avatar.jpg";
 
 const Certification = () => {
+    const { userEducation } = useSelector((state) => state.user);
+
+    console.log("User education: ", userEducation);
+
     return (
         <div className="flex space-x-4 mb-4">
             <div className="flex-1">
                 <div className="bg-white p-4 rounded shadow mb-4">
                     <div className="flex items-center space-x-2 mb-2">
                         <img
-                            src="https://placehold.co/40x40"
-                            alt="Anne Tran profile"
-                            className="rounded-full"
+                            src={userEducation?.imageURL || defaulAvatar}
+                            alt={`${userEducation?.name} profile`}
+                            className="rounded-full w-10 h-10"
                         />
                         <div>
-                            <p className="font-semibold">Nguyen Van Sy</p>
+                            <p className="font-semibold">{userEducation?.name}</p>
                             <p className="text-gray-500 text-xs">
                                 Be teacher · Aug 10, 2024<i className="fas fa-globe"></i>
                             </p>
@@ -20,16 +26,20 @@ const Certification = () => {
                     </div>
                     <div className="flex justify-center">
                         <img
-                            src="https://placehold.co/300x300"
+                            src={userEducation?.imageURL || "https://placehold.co/300x300"}
                             alt="Teacher avatar"
                             className="rounded"
+                            style={{ maxWidth: "100%", height: "auto" }}
                         />
                     </div>
                 </div>
 
                 <div className="bg-white p-4 rounded shadow">
                     <div className="flex items-center space-x-2 mb-2">
-                        <img src="https://placehold.co/40x40" alt="User profile" className="rounded-full" />
+                        <img 
+                            src={userEducation?.imageURL || "https://placehold.co/40x40" }
+                            alt="User profile" 
+                            className="rounded-full w-10 h-10" />
                         <input
                             type="text"
                             placeholder="Sent message to teacher..."
@@ -57,7 +67,7 @@ const Certification = () => {
                 <div className="bg-yellow-100 p-4 rounded shadow">
                     <div className="">
                         <img
-                            src="https://placehold.co/300x300"
+                            src={userEducation?.userEducationDto?.degreeURL || "https://placehold.co/300x300" }
                             alt="Certification"
                             className="rounded"
                         />

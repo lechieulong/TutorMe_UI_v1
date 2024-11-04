@@ -5,8 +5,10 @@ import {
   faPaperPlane,
   faPen,
 } from "@fortawesome/free-solid-svg-icons";
-import { useState, useRef, useEffect } from "react";
+import { useState, useEffect } from "react";
+import Modal from "react-modal";
 import NoteCard from "./NoteCard";
+import { Link } from "react-router-dom";
 
 const Header = ({
   testData,
@@ -16,9 +18,18 @@ const Header = ({
 }) => {
   const [timeLeft, setTimeLeft] = useState(0);
   const [isNoteOpen, setIsNoteOpen] = useState(false);
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
   const openNoteModal = () => setIsNoteOpen(true);
   const closeNoteModal = () => setIsNoteOpen(false);
+
+  const openWarningModal = () => setIsModalOpen(true);
+  const closeWarningModal = () => setIsModalOpen(false);
+
+  const handleConfirmNextSkill = () => {
+    handleNextSkill();
+    closeWarningModal();
+  };
 
   const formatTime = (seconds) => {
     const minutes = Math.floor(seconds / 60);
@@ -31,76 +42,102 @@ const Header = ({
   useEffect(() => {
     if (Object.keys(testData).length > 0) {
       const currentSkillData = Object.values(testData)[currentSkillIndex];
-      setTimeLeft(currentSkillData.duration * 60); // Set time in seconds for the current skill
+      setTimeLeft(currentSkillData.duration * 60);
 
       const id = setInterval(() => {
         setTimeLeft((prevTimeLeft) => {
           if (prevTimeLeft <= 0) {
-            clearInterval(id); // Clear the interval when time runs out
+            clearInterval(id);
             if (currentSkillIndex === Object.keys(testData).length - 1) {
-              handleSubmit(); // Auto-submit only when time reaches zero on the last skill
+              handleSubmit();
             } else {
-              handleNextSkill(); // Move to the next skill if there is one
+              handleNextSkill();
             }
-            return 0; // Ensure timeLeft doesn't go below zero
+            return 0;
           }
           return prevTimeLeft - 1;
         });
       }, 1000);
 
-      return () => clearInterval(id); // Cleanup interval when component unmounts or currentSkillIndex changes
+      return () => clearInterval(id);
     }
   }, [currentSkillIndex, testData, handleNextSkill]);
 
   return (
-    <div className="flex-1 flex justify-between items-center p-4 bg-green-400 shadow-md">
-      <p className="text-lg font-semibold">
-        IELTS
-        <span className="ml-2 text-white">
-          <FontAwesomeIcon icon={faLanguage} />
-        </span>
-      </p>
-      <p className="text-lg font-semibold items-center">
-        <span className="mr-2 text-white">
-          <FontAwesomeIcon icon={faClock} />
-        </span>
-        <span className="text-sm mr-4">Time left</span>
-        <span className="text-xl text-white">{formatTime(timeLeft)}</span>
-        <span className="text-sm ml-2">minutes</span>
-      </p>
-      <div className="flex gap-8 justify-center items-center">
-        <span
-          onClick={openNoteModal}
-          className="text-md font-semibold text-white cursor-pointer"
-        >
-          <span className="mr-2 text-sm">
-            <FontAwesomeIcon icon={faPen} />
-          </span>
-          Take note
-        </span>
+    <div className="flex justify-between items-center p-4 bg-green-600 shadow-lg rounded-lg">
+      <Link to={"/"}>
+        <p className="text-lg font-semibold text-white flex items-center gap-2">
+          IELTS <FontAwesomeIcon icon={faLanguage} />
+        </p>
+      </Link>
 
-        {/* Render "Next Skill" or "Submit Test" buttons */}
+      <div className="text-lg font-semibold text-white flex items-center gap-2">
+        <FontAwesomeIcon icon={faClock} className="mr-2" />
+        <span className="text-sm">Time left:</span>
+        <span className="text-xl font-bold">{formatTime(timeLeft)}</span>
+        <span className="text-sm ml-2">minutes</span>
+      </div>
+      <div className="flex gap-8 items-center">
+        <button
+          onClick={openNoteModal}
+          type="button"
+          className="text-black font-semibold bg-white hover:bg-gray-200 hover:text-black text-md px-3 py-2 rounded-lg flex items-center gap-2"
+        >
+          <FontAwesomeIcon icon={faPen} className="text-sm" />
+          Take note
+        </button>
+
         {currentSkillIndex < Object.keys(testData).length - 1 ? (
           <button
             type="button"
-            onClick={handleNextSkill}
-            className="cursor-pointer inline-flex items-center gap-x-2 text-sm font-medium rounded-lg border border-transparent bg-blue-500 text-white px-4 py-2"
+            onClick={openWarningModal}
+            className="border border-white bg-black hover:bg-green-800 text-white font-medium rounded-lg px-4 py-2"
           >
             Next Skill
           </button>
         ) : (
           <button
-            type="button"
             onClick={handleSubmit}
-            className="cursor-pointer inline-flex items-center gap-x-2 text-sm font-medium rounded-lg border border-transparent bg-red-500 text-white px-4 py-2"
+            className="bg-red-600 hover:bg-red-700 text-white font-medium rounded-lg px-4 py-2 flex items-center gap-2"
           >
-            <span className="mr-2 text-sm">
-              <FontAwesomeIcon icon={faPaperPlane} />
-            </span>
+            <FontAwesomeIcon icon={faPaperPlane} className="text-sm" />
             Submit Test
           </button>
         )}
       </div>
+
+      {/* Warning Modal for Next Skill */}
+      <Modal
+        isOpen={isModalOpen}
+        onRequestClose={closeWarningModal}
+        contentLabel="Next Skill Confirmation"
+        className="bg-warmNeutral rounded-lg shadow-lg p-6 max-w-md mx-auto text-black"
+        overlayClassName="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center"
+      >
+        <h2 className="text-lg font-semibold mb-4 text-houseGreen">
+          Confirm Next Skill
+        </h2>
+        <p className="text-sm mb-6">
+          Do you want to move to the next skill? If you proceed, your result
+          will be saved for this section.
+        </p>
+        <div className="flex justify-end gap-4">
+          <button
+            type="button"
+            onClick={closeWarningModal}
+            className="bg-coolNeutral text-black rounded-md px-4 py-2"
+          >
+            Cancel
+          </button>
+          <button
+            type="button"
+            onClick={handleConfirmNextSkill}
+            className="bg-mainColor text-white rounded-md px-4 py-2"
+          >
+            Proceed
+          </button>
+        </div>
+      </Modal>
 
       {isNoteOpen && <NoteCard onClose={closeNoteModal} />}
     </div>

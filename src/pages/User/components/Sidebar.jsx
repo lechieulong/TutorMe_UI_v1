@@ -35,7 +35,7 @@ const Sidebar = () => {
                     <NavLink
                         to={`/user/${userInfor?.userName}`}
                         className={({ isActive }) =>
-                            `flex items-center p-3 ${isActive ? 'bg-gray-100 text-gray-700 hover:bg-gray-200' : 'text-gray-700 hover:bg-gray-200'} rounded-lg transition-colors duration-300 text-sm`
+                            `flex items-center p-3 ${isActive ? 'bg-lightGreen text-gray-700 hover:bg-gray-200' : 'text-gray-700 hover:bg-gray-200'} rounded-lg transition-colors duration-300 text-sm`
                         }>
                         <FaRegUser className="mr-3 text-lg text-gray-500" />
                         <span className="hidden sm:inline">Your Profile</span>
@@ -45,7 +45,7 @@ const Sidebar = () => {
                         <NavLink
                             to="/beteacher"
                             className={({ isActive }) =>
-                                `flex items-center p-3 ${isActive ? 'bg-gray-100 text-gray-700 hover:bg-gray-200' : 'text-gray-700 hover:bg-gray-200'} rounded-lg transition-colors duration-300 text-sm`
+                                `flex items-center p-3 ${isActive ? 'bg-lightGreen text-gray-700 hover:bg-gray-200' : 'text-gray-700 hover:bg-gray-200'} rounded-lg transition-colors duration-300 text-sm`
                             }>
                             <FaUserGraduate className="mr-3 text-lg text-gray-500" />
                             <span className="hidden sm:inline">Be Teacher</span>
@@ -54,7 +54,7 @@ const Sidebar = () => {
                         <NavLink
                             to="/teacherprofile"
                             className={({ isActive }) =>
-                                `flex items-center p-3 ${isActive ? 'bg-gray-100 text-gray-700 hover:bg-gray-200' : 'text-gray-700 hover:bg-gray-200'} rounded-lg transition-colors duration-300 text-sm`
+                                `flex items-center p-3 ${isActive ? 'bg-lightGreen text-gray-700 hover:bg-gray-200' : 'text-gray-700 hover:bg-gray-200'} rounded-lg transition-colors duration-300 text-sm`
                             }>
                             <FaUserGraduate className="mr-3 text-lg text-gray-500" />
                             <span className="hidden sm:inline">Teacher Profile</span>
@@ -64,7 +64,7 @@ const Sidebar = () => {
                     <NavLink
                         to="/changepassword"
                         className={({ isActive }) =>
-                            `flex items-center p-3 ${isActive ? 'bg-gray-100 text-gray-700 hover:bg-gray-200' : 'text-gray-700 hover:bg-gray-200'} rounded-lg transition-colors duration-300 text-sm`
+                            `flex items-center p-3 ${isActive ? 'bg-lightGreen text-gray-700 hover:bg-gray-200' : 'text-gray-700 hover:bg-gray-200'} rounded-lg transition-colors duration-300 text-sm`
                         }>
                         <FaEye className="mr-3 text-lg text-gray-500" />
                         <span className="hidden sm:inline">Change Password</span>

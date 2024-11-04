@@ -148,6 +148,23 @@ export const createTest = createAsyncThunk(
   }
 );
 
+export const getTestBySectionCourseId = createAsyncThunk(
+  `${SLICE_NAMES.TEST}/${ACTIONS.GET_TEST_SECTION_COURSE}`,
+  async (sectionCourseId, { rejectWithValue }) => {
+    try {
+      const response = await axios.post(
+        `${API_BASE_URL}/${sectionCourseId}/sectionCourseId`
+      );
+      return response.data;
+    } catch (error) {
+      return rejectWithValue(
+        error.response?.data?.message ||
+          "Failed to get test by section course id "
+      );
+    }
+  }
+);
+
 // Action to update a test
 export const updateTest = createAsyncThunk(
   `${SLICE_NAMES.TEST}/${ACTIONS.UPDATE_TEST}`,
@@ -271,11 +288,11 @@ export const updateQuestion = createAsyncThunk(
 
 export const addSkills = createAsyncThunk(
   `${SLICE_NAMES.TEST}/${ACTIONS.ADD_SKILLS}`,
-  async (skillsData, { rejectWithValue }) => {
+  async ({ skillsData, testId }, { rejectWithValue }) => {
     try {
       const token = Cookies.get("authToken");
       const response = await axios.post(
-        `${API_BASE_URL}/test/skills/${"3a8b39e8-d254-4630-b2d9-ecaf1943d11d"}`,
+        `${API_BASE_URL}/test/skills/${testId}`,
         skillsData,
         {
           headers: {

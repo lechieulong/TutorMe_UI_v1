@@ -1,15 +1,15 @@
 import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { fetchClassesWithStudents } from "../../redux/classes/ClassSlice";
+import { fetchClassesWithCourseId } from "../../redux/classes/ClassSlice";
 import { STATUS } from "../../constant/SliceName";
 
-const ClassesList = () => {
+const ClassesList = (courseId) => {
   const dispatch = useDispatch();
   const { classes, status, error } = useSelector((state) => state.classes);
 
   useEffect(() => {
     if (status === STATUS.SUCCESS) {
-      dispatch(fetchClassesWithStudents());
+      dispatch(fetchClassesWithCourseId(courseId));
     }
   }, []);
 

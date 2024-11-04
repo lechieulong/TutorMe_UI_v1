@@ -12,6 +12,7 @@ import Filter from "../Course/components/Filter";
 import CourseCard from "../Course/components/CourseCard";
 import { fetchCoursesByUserId } from "../../redux/courses/CourseSlice";
 import axios from "axios";
+import { STATUS } from "../../constant/SliceName";
 import { getUser } from "../../service/GetUser";
 
 const MentorCourseList = () => {
@@ -42,17 +43,20 @@ const MentorCourseList = () => {
   );
 
   const filteredCourses = useMemo(() => {
-    return courses
-      .filter(
-        (course) =>
-          selectedCategory === "All" || course.category === selectedCategory
-      )
-      .filter((course) => {
-        const courseTitle = course.title || "";
-        const term = searchTerm || "";
-        return courseTitle.toLowerCase().includes(term.toLowerCase());
-      });
-  }, [courses, selectedCategory, searchTerm]);
+    if (status === STATUS.SUCCESS) {
+      return courses
+        .filter((course) => {
+          if (selectedCategory === "All") return true;
+          return course.categories.includes(selectedCategory);
+        })
+        .filter((course) => {
+          const courseTitle = course.courseName || "";
+          const term = searchTerm || "";
+          return courseTitle.toLowerCase().includes(term.toLowerCase());
+        });
+    }
+    return [];
+  }, [courses, selectedCategory, searchTerm, status]);
 
   const indexOfLastCourse = currentPage * coursesPerPage;
   const indexOfFirstCourse = indexOfLastCourse - coursesPerPage;
@@ -101,6 +105,9 @@ const MentorCourseList = () => {
     }
   };
 
+  if (status === STATUS.PENDING) return <p>Loading...</p>;
+  if (status === STATUS.FAILED) return <p>Error: {error}</p>;
+
   return (
     <MainLayout>
       <div className="px-4 py-6">
@@ -133,8 +140,6 @@ const MentorCourseList = () => {
           </button>
         </div>
 
-        {status === "pending" && <p>Loading courses...</p>}
-
         {currentCourses.length === 0 && status !== "pending" && (
           <div className="flex justify-center items-center h-32">
             <p className="text-red-500 text-lg font-semibold text-center">
@@ -143,51 +148,51 @@ const MentorCourseList = () => {
           </div>
         )}
 
-        {currentCourses.length > 0 && (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mt-6">
-            {currentCourses.map((course) => (
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mt-6">
+          {currentCourses.map((course) => {
+            return (
               <CourseCard
                 key={course.id}
                 courseName={course.courseName}
                 content={course.content}
                 title={course.title}
                 description={course.description}
-                category={course.category}
-                icon={getIcon(course.category)}
-                teacher={user?.name}
+                category={course.categories}
+                icon={getIcon(course.categories)}
+                teacher={course.userId}
                 courseId={course.id}
                 onDelete={handleDelete}
                 isEnabled={course.isEnabled}
               />
-            ))}
-          </div>
-        )}
+            );
+          })}
+        </div>
 
-        {currentCourses.length > 0 && (
-          <div className="flex justify-center items-center mt-4">
-            <button
-              onClick={handlePrevPage}
-              disabled={currentPage === 1}
-              className={`px-3 py-1.5 mx-1 text-sm font-medium ${
-                currentPage === 1 ? "bg-gray-300" : "bg-blue-600"
-              } text-white border border-blue-600 rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-400`}
-            >
-              Previous
-            </button>
-            <span className="text-sm mx-2">
-              Page {currentPage} of {totalPages}
-            </span>
-            <button
-              onClick={handleNextPage}
-              disabled={currentPage === totalPages}
-              className={`px-3 py-1.5 mx-1 text-sm font-medium ${
-                currentPage === totalPages ? "bg-gray-300" : "bg-blue-600"
-              } text-white border border-blue-600 rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-400`}
-            >
-              Next
-            </button>
-          </div>
-        )}
+        <div className="flex justify-center items-center mt-4">
+          <button
+            onClick={handlePrevPage}
+            disabled={currentPage === 1}
+            aria-label="Previous Page"
+            className={`px-3 py-1.5 mx-1 text-sm font-medium ${
+              currentPage === 1 ? "bg-gray-300" : "bg-blue-600"
+            } text-white border border-blue-600 rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-400`}
+          >
+            Previous
+          </button>
+          <span className="text-sm mx-2 text-black">
+            Page {currentPage} of {totalPages}
+          </span>
+          <button
+            onClick={handleNextPage}
+            disabled={currentPage === totalPages}
+            aria-label="Next Page"
+            className={`px-3 py-1.5 mx-1 text-sm font-medium ${
+              currentPage === totalPages ? "bg-gray-300" : "bg-blue-600"
+            } text-white border border-blue-600 rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-400`}
+          >
+            Next
+          </button>
+        </div>
       </div>
     </MainLayout>
   );

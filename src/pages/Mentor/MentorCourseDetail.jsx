@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { useParams, useNavigate } from "react-router-dom";
+import { useParams, useNavigate, useLocation } from "react-router-dom";
 import MentorHeader from "../../components/Mentor/MentorHeader";
 import MentorSidebar from "../../components/Mentor/MentorSideBar";
 import CourseTimeline from "../Course/components/CourseTimeline";
@@ -12,17 +12,20 @@ import ClassCard from "../Class/components/ClassCard";
 
 const MentorCourseDetail = () => {
   const { className, courseId } = useParams();
+  const location = useLocation();
   const [timelineIds, setTimelineIds] = useState([]);
   const [userId, setUserId] = useState(null);
   const [currentSlide, setCurrentSlide] = useState(0);
   const [classes, setClasses] = useState([]);
   const [switchStates, setSwitchStates] = useState({});
+  const [category, setCategory] = useState(""); // Khởi tạo category với giá trị mặc định là chuỗi rỗng
+  const [selectedTimelines, setSelectedTimelines] = useState([]); // State để lưu danh sách timeline được chọn
   const navigate = useNavigate();
 
   const fetchTimelines = async () => {
     try {
       const response = await axios.get(
-        `https://localhost:7030/api/CourseTimeline/Course?courseId=${courseId}`
+        `https://localhost:7030/api/CourseTimeline/Course/${courseId}`
       );
       setTimelineIds(response.data.map((timeline) => timeline.id));
     } catch (error) {
@@ -40,13 +43,24 @@ const MentorCourseDetail = () => {
   };
 
   useEffect(() => {
+    const { category } = location.state || {}; // Lấy category từ location.state
+    if (category) {
+      console.log("Category passed from location.state:", category); // Log category
+      setCategory(category); // Cập nhật state category
+    } else {
+      console.log("No category found in location.state"); // Log nếu không có category
+    }
     initializeUser();
     fetchTimelines();
     fetchClasses();
-  }, [courseId]);
+  }, [courseId, location.state]);
 
-  const handleTimelineAdded = () => {
+  const handleTimelineAdded = (timelineId, timelineName) => {
     fetchTimelines();
+    setSelectedTimelines((prev) => [
+      ...prev,
+      { id: timelineId, name: timelineName }, // Thêm tên timeline vào danh sách
+    ]);
   };
 
   const handleDetailAdded = () => {
@@ -59,15 +73,12 @@ const MentorCourseDetail = () => {
         `https://localhost:7030/api/class/course/${courseId}/classes`
       );
 
-      // Log dữ liệu nhận được từ API
       console.log("Classes fetched:", response.data.result);
-
       setClasses(response.data.result);
 
-      // Khởi tạo trạng thái switch dựa vào giá trị Enabled
       const initialSwitchStates = {};
       response.data.result.forEach((classItem) => {
-        initialSwitchStates[classItem.id] = classItem.isEnabled; // Sử dụng isEnabled từ response
+        initialSwitchStates[classItem.id] = classItem.isEnabled;
       });
       setSwitchStates(initialSwitchStates);
     } catch (error) {
@@ -86,7 +97,7 @@ const MentorCourseDetail = () => {
   };
 
   return (
-    <div className="flex flex-col min-h-screen w-full">
+    <div className="flex flex-col w-screen">
       <MentorHeader />
       <div className="flex flex-1 mt-16 w-full">
         <MentorSidebar />
@@ -119,8 +130,6 @@ const MentorCourseDetail = () => {
                       key={classItem.id}
                       classItem={classItem}
                       switchState={switchStates[classItem.id] || false}
-
-                      // onSwitchChange={handleSwitchChange}
                     />
                   ))}
                 </div>
@@ -147,12 +156,9 @@ const MentorCourseDetail = () => {
             <div className="w-2/5">
               <ButtonAddCourseTimeline
                 courseId={courseId}
-                onTimelineAdded={handleTimelineAdded}
+                onTimelineAdded={handleTimelineAdded} // Truyền hàm để lấy timelineId và tên
               />
-              <CourseTimeline
-                courseId={courseId}
-                onSelectTimeline={setTimelineIds}
-              />
+              <CourseTimeline courseId={courseId} categories={category} />
               <div className="flex justify-center mt-4">
                 <button className="items-center p-2 bg-green-400">
                   Submit
@@ -161,11 +167,16 @@ const MentorCourseDetail = () => {
             </div>
             <div className="w-3/5">
               <ButtonAddCourseTimelineDetail
+                courseId={courseId}
                 timelineIds={timelineIds}
                 onDetailAdded={handleDetailAdded}
               />
               <div className="w-3/5">
-                <CourseTimelineDetail timelineIds={timelineIds} />
+                <CourseTimelineDetail
+                  timelineIds={timelineIds}
+                  selectedTimelines={selectedTimelines}
+                  categories={category} // Truyền danh sách timeline vào CourseTimelineDetail
+                />
               </div>
             </div>
           </div>

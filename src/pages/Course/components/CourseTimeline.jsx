@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 
-const CourseTimeline = ({ courseId, onUpdateStatus }) => {
+const CourseTimeline = ({ courseId, onUpdateStatus, categories }) => {
   const [timelines, setTimelines] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -12,15 +12,10 @@ const CourseTimeline = ({ courseId, onUpdateStatus }) => {
         const response = await axios.get(
           `https://localhost:7030/api/CourseTimeline/Course/${courseId}`
         );
-
-        // Log dữ liệu nhận được từ API
-        console.log("Dữ liệu timeline nhận được:", response.data);
-
-        // Đảm bảo dữ liệu được lưu vào state
         setTimelines(response.data);
       } catch (error) {
         setError("Hiện chưa có lịch học nào");
-        console.error("Error fetching timelines:", error); // Log lỗi để kiểm tra
+        console.error("Error fetching timelines:", error);
       } finally {
         setLoading(false);
       }
@@ -28,6 +23,15 @@ const CourseTimeline = ({ courseId, onUpdateStatus }) => {
 
     fetchTimelines();
   }, [courseId]);
+
+  useEffect(() => {
+    const categoryString =
+      typeof categories === "object" && categories !== null
+        ? JSON.stringify(categories)
+        : String(categories);
+
+    console.log("Received categories:", categoryString);
+  }, [categories]);
 
   const handleSwitchChange = async (timelineId, currentState) => {
     const newStatus = !currentState;
@@ -80,13 +84,11 @@ const CourseTimeline = ({ courseId, onUpdateStatus }) => {
                   {timeline.eventDateFormatted}
                 </span>
               </div>
-
               <div className="relative last:after:hidden after:absolute after:top-7 after:bottom-0 after:start-3.5 after:w-px after:-translate-x-[0.5px] after:bg-gray-200">
                 <div className="relative z-10 size-7 flex justify-center items-center">
                   <div className="size-2 rounded-full bg-gray-400"></div>
                 </div>
               </div>
-
               <div className="grow pt-0.5 pb-8">
                 <h3 className="flex gap-x-1.5 font-semibold text-gray-800">
                   {timeline.title}
@@ -95,8 +97,6 @@ const CourseTimeline = ({ courseId, onUpdateStatus }) => {
                   {timeline.description}
                 </p>
               </div>
-
-              {/* Switch Button */}
               <div className="flex items-center">
                 <input
                   type="checkbox"

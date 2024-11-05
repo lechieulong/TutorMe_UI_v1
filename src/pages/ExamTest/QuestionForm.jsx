@@ -51,7 +51,8 @@ const QuestionForm = ({
   const isListening = skill === "Listening" && sectionType !== 3;
   const isReading = skill === "Reading" && sectionType !== 11;
 
-  const showAddQuestion = isListening || isReading;
+  const showAddQuestion =
+    isListening || isReading || skill === "Writing" || skill === "Speaking";
 
   const listeningAnswerForm =
     skill === "Listening" &&
@@ -65,7 +66,11 @@ const QuestionForm = ({
     sectionType !== 9;
   const showAnswerForm = listeningAnswerForm || readingAnswerForm;
 
-  const readingQuestionForm = skill === "Reading";
+  const readingQuestionForm =
+    skill === "Reading" &&
+    sectionType !== 2 &&
+    sectionType !== 3 &&
+    sectionType !== 10;
   const listeningListeningForm = skill === "Listening" && sectionType != 4;
 
   const showQuestionForm =

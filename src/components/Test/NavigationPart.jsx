@@ -75,8 +75,6 @@ const NavigationPart = ({
                       }
                     >
                       <span>{questionIndex + 1}</span>
-                      {isAnswered && <span>✔️</span>}
-                      {/* Optional: Add a checkmark */}
                     </li>
                   );
                 })}

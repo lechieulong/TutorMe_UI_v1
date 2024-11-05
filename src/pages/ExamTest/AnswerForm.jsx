@@ -17,9 +17,7 @@ const AnswerForm = ({
   });
 
   const isListening = skill === "Listening" && sectionType === 8;
-  const isReading =
-    skill === "Reading" &&
-    (sectionType === 1 || sectionType === 2 || sectionType === 3);
+  const isReading = skill === "Reading" && sectionType === 1;
 
   const showButtonAnswerTest = isListening || isReading;
 
@@ -54,7 +52,7 @@ const AnswerForm = ({
             control={control}
             rules={{ required: "Answer Text is required" }}
             render={({ field, fieldState }) => (
-              <div className="w-8/12">
+              <div className="w-7/12">
                 <input
                   {...field}
                   className="border p-1 w-full"
@@ -86,11 +84,11 @@ const AnswerForm = ({
                   name={`skills.${skill}.parts.${partIndex}.sections.${sectionIndex}.questions.${questionIndex}.answers.${index}.isCorrect`}
                   control={control}
                   render={({ field }) => (
-                    <div className="flex items-center w-3/12">
+                    <div className="flex items-center gap-2 w-4/12">
                       <button
                         type="button"
                         onClick={() => field.onChange(1)} // Set to 1 (True)
-                        className={`mr-2 p-1 rounded ${
+                        className={`p-1 rounded ${
                           field.value === 1 ? "bg-green-500" : "bg-gray-300"
                         }`}
                       >
@@ -139,13 +137,16 @@ const AnswerForm = ({
                   )}
                 />
               )}
-              <button
-                type="button"
-                onClick={() => remove(index)}
-                className="bg-red-500 text-white p-1 rounded w-8 h-8 flex items-center justify-center"
-              >
-                <FontAwesomeIcon icon={faTrash} className="text-xs" />
-              </button>
+              {((skill === "Reading" && sectionType != 2 && sectionType != 3) ||
+                (skill === "Listening" && sectionType === 8)) && (
+                <button
+                  type="button"
+                  onClick={() => remove(index)}
+                  className="bg-red-500 text-white p-1 rounded w-8 h-8 flex items-center justify-center"
+                >
+                  <FontAwesomeIcon icon={faTrash} className="text-xs" />
+                </button>
+              )}
             </>
           )}
         </div>

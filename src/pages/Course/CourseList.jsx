@@ -20,7 +20,7 @@ const CourseList = () => {
   const dispatch = useDispatch();
   const { courses = [], status, error } = useSelector((state) => state.courses);
 
-  const [selectedCategory, setSelectedCategory] = useState("All");
+  const [selectedSkill, setSelectedSkill] = useState("All");
   const [currentPage, setCurrentPage] = useState(1);
   const [searchTerm, setSearchTerm] = useState("");
   const coursesPerPage = 8;
@@ -48,11 +48,11 @@ const CourseList = () => {
     if (status === STATUS.SUCCESS) {
       return courses
         .filter((course) => {
-          // Kiểm tra xem selectedCategory có phải là "All" không
-          if (selectedCategory === "All") return true;
+          // Kiểm tra xem selectedSkill có phải là "All" không
+          if (selectedSkill === "All") return true;
 
-          // Kiểm tra xem category của khóa học có nằm trong danh sách categories không
-          return course.categories.includes(selectedCategory);
+          // Kiểm tra xem Skill của khóa học có nằm trong danh sách categories không
+          return course.categories.includes(selectedSkill);
         })
         .filter((course) => {
           const courseTitle = course.courseName || ""; // Sử dụng courseName thay vì title
@@ -61,7 +61,7 @@ const CourseList = () => {
         });
     }
     return [];
-  }, [courses, selectedCategory, searchTerm, status]);
+  }, [courses, selectedSkill, searchTerm, status]);
 
   const indexOfLastCourse = currentPage * coursesPerPage;
   const indexOfFirstCourse = indexOfLastCourse - coursesPerPage;
@@ -83,8 +83,8 @@ const CourseList = () => {
     }
   };
 
-  const getIcon = (category) => {
-    switch (category) {
+  const getIcon = (Skill) => {
+    switch (Skill) {
       case "Reading":
         return <FaBook className="text-blue-500 text-2xl" />;
       case "Listening":
@@ -120,9 +120,9 @@ const CourseList = () => {
         <div className="flex items-center justify-between mb-4">
           <Filter
             categories={categories}
-            selectedCategory={selectedCategory}
-            onCategorySelect={(category) => {
-              setSelectedCategory(category);
+            selectedSkill={selectedSkill}
+            onSkillSelect={(Skill) => {
+              setSelectedSkill(Skill);
               setCurrentPage(1);
             }}
             searchTerm={searchTerm}
@@ -147,8 +147,8 @@ const CourseList = () => {
               content={course.content}
               title={course.title}
               description={course.description}
-              category={course.category}
-              icon={getIcon(course.category)}
+              Skill={course.Skill}
+              icon={getIcon(course.Skill)}
               teacher={course.userId}
               courseId={course.id}
               isEnabled={course.isEnabled}

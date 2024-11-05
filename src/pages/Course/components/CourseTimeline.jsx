@@ -60,16 +60,14 @@ const CourseTimeline = ({ courseId, onUpdateStatus, categories, onError }) => {
   };
 
   const handleCreateTest = (timelineId) => {
-    const categoryString =
+    const SkillString =
       typeof categories === "object" && categories !== null
         ? JSON.stringify(categories)
         : String(categories);
 
-    console.log("Category for test:", categoryString);
+    console.log("Skill for test:", SkillString);
     console.log("CourseTimeline ID:", timelineId);
-    alert(
-      `Category for test: ${categoryString}\nCourseTimeline ID: ${timelineId}`
-    );
+    alert(`Skill for test: ${SkillString}\nCourseTimeline ID: ${timelineId}`);
   };
 
   if (loading) return <div>Đang tải...</div>;

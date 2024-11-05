@@ -49,14 +49,16 @@ const CourseTimelineDetail = ({
   };
 
   const handleCreateTest = (timelineId) => {
-    const categoryMap = ["Reading", "Listening", "Writing", "Speaking"];
+    console.log("Categories prop:", categories); // Log giá trị của categories
 
-    const categoryIndices =
-      typeof categories === "object" && categories !== null
-        ? categories
-        : JSON.parse(categoryString);
+    // const SkillMap = ["Reading", "Listening", "Writing", "Speaking"];
 
-    const mappedCategories = categoryIndices.map((index) => categoryMap[index]);
+    // const SkillIndices =
+    //   Array.isArray(categories) && categories.length > 0 ? categories : [];
+
+    // const mappedCategories = SkillIndices.map((index) => SkillMap[index]);
+    const mappedCategories = ["Listening"];
+    console.log("Mapped Categories:", mappedCategories);
 
     navigate(`/create-test/${timelineId}`, {
       state: { timelineId, categories: mappedCategories },
@@ -85,7 +87,7 @@ const CourseTimelineDetail = ({
 
             <div
               style={{
-                maxHeight: activeIndex === index ? "400px" : "0",
+                maxHeight: activeIndex === index ? "600px" : "0",
                 opacity: activeIndex === index ? 1 : 0,
                 transition: "opacity 0.5s ease, max-height 0.5s ease",
                 overflow: "hidden",
@@ -94,10 +96,11 @@ const CourseTimelineDetail = ({
               <div
                 style={{
                   position: "relative",
-                  paddingBottom: "56.25%",
+                  paddingBottom: "50%",
                   height: 0,
                   overflow: "hidden",
                   width: "100%",
+                  marginBottom: "1rem", // Thêm khoảng cách dưới iframe
                 }}
               >
                 <iframe
@@ -109,18 +112,27 @@ const CourseTimelineDetail = ({
                     left: 0,
                     width: "100%",
                     height: "100%",
+                    zIndex: 1,
                   }}
                   allowFullScreen
                 ></iframe>
               </div>
               <p className="text-gray-700 mt-2">{detail.title}</p>
-              <button
-                type="button"
-                className="py-2 px-3 inline-flex items-center gap-x-2 text-sm font-medium rounded-lg border border-gray-200 bg-white text-gray-800 shadow-sm hover:bg-gray-50 focus:outline-none focus:bg-gray-50"
-                onClick={() => handleCreateTest(detail.courseTimelineId)} // Gọi hàm và truyền ID chi tiết
-              >
-                Create Test
-              </button>
+
+              {/* Chỉ hiển thị nút Create Test khi courseTimelineId tồn tại */}
+              {detail.courseTimelineId && (
+                <button
+                  type="button"
+                  className="py-2 px-3 inline-flex items-center gap-x-2 text-sm font-medium rounded-lg border border-gray-200 bg-white text-gray-800 shadow-sm hover:bg-gray-50 focus:outline-none focus:bg-gray-50"
+                  onClick={() => handleCreateTest(detail.courseTimelineId)}
+                  style={{
+                    position: "relative",
+                    zIndex: 2, // Đảm bảo nút hiển thị trên iframe
+                  }}
+                >
+                  Create Test
+                </button>
+              )}
             </div>
           </div>
         ))

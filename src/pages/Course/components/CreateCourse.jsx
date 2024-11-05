@@ -1,12 +1,12 @@
 import { useState, useEffect } from "react";
 import axios from "axios";
-import { getUser } from "../../../service/GetUser"; // Hàm lấy thông tin người dùng
+import { getUser } from "../../../service/GetUser";
 
-const categoryMapping = {
-  Reading: 0,
-  Listening: 1,
-  Writing: 2,
-  Speaking: 3,
+const SkillMapping = {
+  Reading: "0",
+  Listening: "1",
+  Writing: "2",
+  Speaking: "3",
 };
 
 const CreateCourse = () => {
@@ -15,9 +15,10 @@ const CreateCourse = () => {
     content: "",
     hours: 0,
     days: 0,
-    categories: [], // Danh sách danh mục
+    categories: [],
     price: 0,
-    userId: "", // Chỉ cần userId
+    userId: "",
+    imageUrl: "default_image_url.jpg", // Đặt giá trị mặc định cho ImageUrl
   });
 
   useEffect(() => {
@@ -36,14 +37,12 @@ const CreateCourse = () => {
 
   const handleCheckboxChange = (e) => {
     const { value, checked } = e.target;
-    const categoryValue = value; // Giữ category dưới dạng chuỗi
+    const SkillValue = SkillMapping[value];
 
     setCourse((prevCourse) => {
       const newCategories = checked
-        ? [...prevCourse.categories, categoryValue] // Thêm giá trị chuỗi của danh mục nếu được chọn
-        : prevCourse.categories.filter(
-            (category) => category !== categoryValue
-          ); // Loại bỏ nếu không được chọn
+        ? [...prevCourse.categories, SkillValue]
+        : prevCourse.categories.filter((Skill) => Skill !== SkillValue);
       return { ...prevCourse, categories: newCategories };
     });
   };
@@ -51,7 +50,6 @@ const CreateCourse = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    // Kiểm tra các giá trị nhập vào không được âm
     if (course.hours < 0 || course.days < 0 || course.price < 0) {
       alert("Số giờ, số ngày và giá không được phép âm.");
       return;
@@ -59,15 +57,15 @@ const CreateCourse = () => {
 
     try {
       await axios.post("https://localhost:7030/api/Courses", course);
-      // Reset form
       setCourse({
         courseName: "",
         content: "",
         hours: 0,
         days: 0,
-        categories: [], // Đặt lại danh mục về mảng rỗng
+        categories: [],
         price: 0,
         userId: course.userId,
+        imageUrl: "default_image_url.jpg",
       });
       alert("Tạo khoá học thành công!");
     } catch (error) {

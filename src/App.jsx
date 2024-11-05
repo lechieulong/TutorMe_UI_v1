@@ -2,7 +2,7 @@ import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import "regenerator-runtime/runtime";
 import { GoogleOAuthProvider } from "@react-oauth/google";
 import { AdminRoute } from "./service/checkAuth";
-
+import CreateCourseLessonContent from "./pages/Mentor/component/CreateCourseLessonContent";
 import Home from "./pages/Home";
 import NotFound from "./components/common/NotFound";
 import TestSetting from "./pages/TestExam/TestSetting";
@@ -29,7 +29,7 @@ import TestList from "./pages/User/TestList";
 import MentorCourseDetail from "./pages/Mentor/MentorCourseDetail";
 // import MyLearning from "./pages/Class/MyLearning";
 // import CourseDetail from './CourseDetail';
-
+import SkillCard from "./pages/Mentor/component/SkillCard";
 import "preline";
 import TestLayout from "./pages/TestExam/TestLayout";
 import CourseDetail from "./pages/Course/CourseDetail";
@@ -51,7 +51,7 @@ import PaymentResult from "./pages/User/PayOSResult ";
 import CreateTestLayout from "./pages/course/CreateTestLayout";
 import CourseLayout from "./pages/course/CourseLayout";
 import ListTest from "./pages/ExamTest/ListTest";
-
+import CreateCourseLesson from "./pages/Mentor/component/CreateCourseLesson";
 import Term from "./pages/Terms";
 
 //ADMIN
@@ -97,6 +97,7 @@ const App = () => {
             path="/courseDetail/:courseId/classOfCourse"
             element={<ClassOfCourse />}
           />
+          <Route path="/skillCard" element={<SkillCard />} />
           {/* Calender */}
           <Route path="/calendar" element={<Calendar />} />
           <Route path="/coachingschedule" element={<CoachingSchedule />} />
@@ -117,6 +118,11 @@ const App = () => {
           <Route
             path="/mentorCourseDetail/:courseId"
             element={<MentorCourseDetail />}
+          />
+          <Route path="createCourseLesson" element={<CreateCourseLesson />} />
+          <Route
+            path="createCourseLessonContent"
+            element={<CreateCourseLessonContent />}
           />
           <Route
             path="/courseDetail/:courseId/classes"

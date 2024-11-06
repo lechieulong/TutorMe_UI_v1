@@ -42,14 +42,12 @@ const sectionTypesBySkill = {
     { value: 3, label: "Part 3" },
   ],
 };
-
 const SectionForm = ({ skill, partIndex, control }) => {
   const { fields, append, remove } = useFieldArray({
     name: `skills.${skill}.parts.${partIndex}.sections`,
     control,
   });
   const sectionTypes = sectionTypesBySkill[skill] || [];
-
   const sectionTypeValues = useWatch({
     name: `skills.${skill}.parts.${partIndex}.sections`,
     control,
@@ -63,7 +61,6 @@ const SectionForm = ({ skill, partIndex, control }) => {
         const resultAction = await dispatch(uploadFile(file));
         if (uploadFile.fulfilled.match(resultAction)) {
           const fileUrl = resultAction.payload.fileUrl;
-
           field.onChange(fileUrl);
         } else {
           console.error("Upload failed:", resultAction.error.message);
@@ -108,7 +105,7 @@ const SectionForm = ({ skill, partIndex, control }) => {
                         className="border p-1 w-full"
                         onChange={(e) => field.onChange(Number(e.target.value))}
                         value={sectionType || ""}
-                        disabled={!!sectionType} // Disable the dropdown if sectionType is already selected
+                        disabled={!!sectionType}
                       >
                         <option value="">Select Section Type</option>
                         {sectionTypes.map((type) => (
@@ -126,9 +123,9 @@ const SectionForm = ({ skill, partIndex, control }) => {
                   )}
                 />
 
-                {((skill === "Listening" &&
-                  (sectionType === 4 || sectionType === 5)) ||
-                  (skill === "Writing" && sectionType === 1)) && (
+                {((skill === "Listening" && sectionType === 4) ||
+                  (skill === "Reading" && sectionType === 6) ||
+                  sectionType === 10) && (
                   <Controller
                     name={`skills.${skill}.parts.${partIndex}.sections.${index}.image`}
                     control={control}
@@ -143,11 +140,6 @@ const SectionForm = ({ skill, partIndex, control }) => {
                           onChange={(e) => handleFileChange(e, field)}
                           className="border p-1 w-full"
                         />
-                        {field.value && (
-                          <p className="text-gray-700">
-                            Image file: {field.value.name}
-                          </p>
-                        )}
                       </div>
                     )}
                   />
@@ -155,7 +147,6 @@ const SectionForm = ({ skill, partIndex, control }) => {
               </div>
             )}
 
-            {/* Section Guide Input for all skills */}
             <Controller
               name={`skills.${skill}.parts.${partIndex}.sections.${index}.sectionGuide`}
               control={control}
@@ -177,7 +168,6 @@ const SectionForm = ({ skill, partIndex, control }) => {
               )}
             />
 
-            {/* Render QuestionForm only for Reading and Listening */}
             {skill === "Reading" || skill === "Listening" ? (
               sectionType ? (
                 <QuestionForm
@@ -193,13 +183,12 @@ const SectionForm = ({ skill, partIndex, control }) => {
                 </p>
               )
             ) : (
-              // Always render QuestionForm for Writing and Speaking
               <QuestionForm
                 skill={skill}
                 partIndex={partIndex}
                 sectionIndex={index}
                 control={control}
-                sectionType={0} // Assuming a default value for sectionType
+                sectionType={0}
               />
             )}
           </div>
@@ -211,7 +200,7 @@ const SectionForm = ({ skill, partIndex, control }) => {
           append({
             sectionGuide: "",
             sectionType: 0,
-            image: null,
+            image: "",
             questions: [],
           })
         }

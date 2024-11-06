@@ -32,9 +32,7 @@ const CourseDetail = () => {
     const userRoleFromToken = userFromToken?.role;
 
     if (userIdFromToken) setUserId(userIdFromToken);
-    if (Array.isArray(userRoleFromToken)) {
-      setUserRole(userRoleFromToken);
-    }
+    if (userIdFromToken) setUserRole(userRoleFromToken);
   }, []);
 
   const fetchClasses = useCallback(async () => {
@@ -66,13 +64,9 @@ const CourseDetail = () => {
     }
   }, [userId, dispatch]);
 
-  useEffect(() => {
-    if (getEnrollmentsStatus === "succeeded") {
-      const isEnrolled = enrollments.some(
-        (enrollment) => enrollment.courseId === courseId
-      );
-    }
-  }, [getEnrollmentsStatus, enrollments, courseId]);
+  const isEnrolled = enrollments.some(
+    (enrollment) => enrollment.courseId === courseId
+  );
 
   const handlePrev = () => {
     setCurrentSlide((prevSlide) => Math.max(prevSlide - 1, 0));
@@ -94,8 +88,8 @@ const CourseDetail = () => {
               <p className="text-black font-bold text-4xl">{className}</p>
             </div>
 
-            {/* Hiển thị nút Enroll nếu người dùng không có vai trò "TEACHER" */}
-            {userRole && !userRole.includes("TEACHER") && (
+            {/* Hiển thị nút "Enroll" nếu chưa enroll */}
+            {userRole === "USER" && !isEnrolled && (
               <button
                 type="button"
                 className="py-2 px-3 inline-flex items-center gap-x-2 text-sm font-medium rounded-lg border border-gray-200 bg-white text-gray-800 shadow-sm hover:bg-gray-50 focus:outline-none focus:bg-gray-50"
@@ -111,18 +105,17 @@ const CourseDetail = () => {
               <div className="mt-4 relative">
                 <div className="flex justify-between items-center">
                   <h4 className="text-md font-bold text-gray-800">Classes</h4>
-                  {userRole &&
-                    !(userRole.length === 1 && userRole[0] === "USER") && (
-                      <button
-                        type="button"
-                        className="py-2 px-3 inline-flex items-center gap-x-2 text-sm font-medium rounded-lg border border-gray-200 bg-white text-gray-800 shadow-sm hover:bg-gray-50 focus:outline-none focus:bg-gray-50"
-                        onClick={() =>
-                          navigate("/createClass", { state: { courseId } })
-                        }
-                      >
-                        Create Class
-                      </button>
-                    )}
+                  {userRole !== "USER" && (
+                    <button
+                      type="button"
+                      className="py-2 px-3 inline-flex items-center gap-x-2 text-sm font-medium rounded-lg border border-gray-200 bg-white text-gray-800 shadow-sm hover:bg-gray-50 focus:outline-none focus:bg-gray-50"
+                      onClick={() =>
+                        navigate("/createClass", { state: { courseId } })
+                      }
+                    >
+                      Create Class
+                    </button>
+                  )}
                 </div>
 
                 <div className="overflow-hidden">

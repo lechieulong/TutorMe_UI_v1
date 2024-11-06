@@ -1,6 +1,9 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
 import { useParams } from "react-router-dom";
+import MainLayout from "../../layout/MainLayout";
+import MentorSidebar from "../../components/Mentor/MentorSideBar";
+import ClassCard from "../Class/components/ClassCard";
 
 const ClassOfCourseList = () => {
   const { courseId } = useParams(); // Lấy courseId từ URL
@@ -26,38 +29,64 @@ const ClassOfCourseList = () => {
     }
   };
 
+  const handleSwitchChange = (classId, newStatus) => {
+    setClasses((prevClasses) =>
+      prevClasses.map((classItem) =>
+        classItem.id === classId
+          ? { ...classItem, isEnabled: newStatus }
+          : classItem
+      )
+    );
+  };
+
+  const handleSelectClass = (classId) => {
+    console.log(`Class selected: ${classId}`);
+  };
+
   useEffect(() => {
     fetchClasses();
   }, [courseId]);
 
+  if (loading) {
+    return (
+      <div className="flex justify-center items-center h-full">
+        <p className="text-lg font-semibold">Loading...</p>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="flex justify-center items-center h-full">
+        <p className="text-red-500 text-lg">{error}</p>
+      </div>
+    );
+  }
+
   return (
-    <div className="flex flex-col min-h-screen w-full">
-      <h2 className="text-lg font-semibold mb-4">Danh Sách Lớp Học</h2>
-      {loading ? (
-        <p>Đang tải...</p>
-      ) : error ? (
-        <p>{error}</p>
-      ) : Array.isArray(classes) && classes.length === 0 ? (
-        <p>Không có lớp học nào.</p>
-      ) : (
-        <ul>
-          {classes.map((classItem) => (
-            <li key={classItem.id}>
-              <h3 className="font-semibold">{classItem.className}</h3>
-              <p>{classItem.classDescription}</p>
-              <p>
-                Thời gian: {new Date(classItem.startDate).toLocaleDateString()}{" "}
-                - {new Date(classItem.endDate).toLocaleDateString()}
-              </p>
-              <p>
-                Trạng thái:{" "}
-                {classItem.isEnabled ? "Kích hoạt" : "Không kích hoạt"}
-              </p>
-            </li>
-          ))}
-        </ul>
-      )}
-    </div>
+    <MainLayout>
+      <div className="flex flex-col w-screen min-h-screen bg-gray-50">
+        <div className="flex flex-1 mt-16 w-full">
+          <MentorSidebar />
+          <div className="flex-1 p-6 bg-white rounded-lg shadow-md mx-4">
+            <h2 className="text-2xl font-bold text-gray-700 mb-6">
+              Danh sách các lớp học
+            </h2>
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+              {classes.map((classItem) => (
+                <ClassCard
+                  key={classItem.id}
+                  classItem={classItem}
+                  switchState={classItem.isEnabled}
+                  onSwitchChange={handleSwitchChange}
+                  onSelect={handleSelectClass}
+                />
+              ))}
+            </div>
+          </div>
+        </div>
+      </div>
+    </MainLayout>
   );
 };
 

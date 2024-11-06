@@ -56,7 +56,7 @@ import Term from "./pages/Terms";
 import DynamicForm from "./pages/Course/components/DynamicForm";
 //ADMIN
 import AdminApp from "./pages/ADMIN/Index";
-
+import ClassDetail from "./pages/Class/ClassDetail";
 import CreateClass from "./pages/Class/CreateClass";
 const App = () => {
   return (
@@ -105,6 +105,10 @@ const App = () => {
           <Route
             path="/coachingschedule/:teachername"
             element={<CoachingSchedule />}
+          />
+          <Route
+            path="/courseDetail/:courseId/classOfCourse/classDetail/:classId"
+            element={<ClassDetail />}
           />
           <Route path="/schedulepaymentmethod" element={<ConfirmBook />} />
           {/* Test Mentor */}

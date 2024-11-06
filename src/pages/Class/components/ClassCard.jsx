@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { useLocation } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import axios from "axios";
 
 const ClassCard = ({
@@ -10,20 +10,19 @@ const ClassCard = ({
   isActive,
 }) => {
   const location = useLocation();
+  const navigate = useNavigate();
   const [isSwitchOn, setIsSwitchOn] = useState(
     switchState || classItem.isEnabled
-  ); // Sử dụng isEnabled từ classItem
+  );
 
   useEffect(() => {
     setIsSwitchOn(switchState);
   }, [switchState]);
 
-  const isCourseDetailWithClassId =
-    location.pathname.startsWith("/courseDetail/");
-  const isMentorCourseDetail = location.pathname.startsWith(
-    "/mentorCourseDetail/"
-  );
-  const isClassOfCourse = location.pathname.startsWith("/classOfCourse");
+  // Kiểm tra nếu đang ở đường dẫn courseDetail với classOfCourse
+  const isInCourseDetailWithClassOfCourse =
+    location.pathname.includes("/courseDetail") &&
+    location.pathname.includes("/classOfCourse");
 
   const handleSwitchChange = async () => {
     const newStatus = !isSwitchOn;
@@ -50,21 +49,23 @@ const ClassCard = ({
   };
 
   const handleCardClick = () => {
-    // Kiểm tra nếu classItem không được kích hoạt
     if (!classItem.isEnabled) {
-      onSelect(false); // Gọi hàm onSelect với false
-      alert("Lớp học này không khả dụng."); // Thông báo cho người dùng
-    } else if (isCourseDetailWithClassId && onSelect) {
-      onSelect(classItem.id); // Gọi hàm onSelect với classId
+      onSelect(false);
+      alert("Lớp học này không khả dụng.");
+    } else if (isInCourseDetailWithClassOfCourse) {
+      // Điều hướng đến đường dẫn classDetail nếu đang ở courseDetail với classOfCourse
+      navigate(`${location.pathname}/classDetail/${classItem.id}`);
+    } else if (onSelect) {
+      onSelect(classItem.id);
     }
   };
 
-  if (!classItem) return null; // Kiểm tra xem classItem có tồn tại không
+  if (!classItem) return null;
 
   return (
     <div
       className={`flex-shrink-0 w-1/4 p-1 cursor-pointer transition-transform duration-300 ${
-        isCourseDetailWithClassId && isActive
+        isInCourseDetailWithClassOfCourse && isActive
           ? "border-2 border-green-300 rounded-lg"
           : "border border-transparent"
       }`}
@@ -85,8 +86,7 @@ const ClassCard = ({
           </p>
         </div>
 
-        {/* Switch Button: Show only on mentorCourseDetail page, not on classOfCourse */}
-        {isMentorCourseDetail && !isClassOfCourse && (
+        {location.pathname.startsWith("/mentorCourseDetail") && (
           <div className="absolute bottom-4 right-4 flex items-center">
             <input
               type="checkbox"

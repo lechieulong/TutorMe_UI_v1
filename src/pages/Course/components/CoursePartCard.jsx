@@ -80,8 +80,7 @@ const CoursePartCard = ({ skillId, userRole }) => {
       {courseParts.map((coursePart) => (
         <div key={coursePart.id} className="mb-4">
           <div className="flex gap-2 absolute top-4 right-4">
-            {/* Render buttons only if userRole is not just "USER" */}
-            {userRole && !(userRole.length === 1 && userRole[0] === "USER") && (
+            {userRole !== "USER" && (
               <>
                 <button
                   type="button"
@@ -123,7 +122,7 @@ const CoursePartCard = ({ skillId, userRole }) => {
             <CourseLessonCard
               coursePartId={coursePart.id}
               onLessonCreated={handleLessonCreated}
-              userRole={userRole} // Pass the userRole to CourseLessonCard
+              userRole={userRole}
             />
 
             {showLessonForm[coursePart.id] && (

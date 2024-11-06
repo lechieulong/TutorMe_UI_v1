@@ -10,7 +10,6 @@ const CourseLessonCard = ({ coursePartId, userRole }) => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [dynamicForms, setDynamicForms] = useState([]);
-  const [formData, setFormData] = useState({}); // Lưu trữ dữ liệu từ các form động
   const token = Cookies.get("authToken");
 
   const toggleCollapse = () => {
@@ -48,39 +47,6 @@ const CourseLessonCard = ({ coursePartId, userRole }) => {
     setDynamicForms((prevForms) =>
       prevForms.filter((form) => form.id !== formId)
     );
-    setFormData((prevData) => {
-      const newData = { ...prevData };
-      delete newData[formId];
-      return newData;
-    });
-  };
-
-  // Xử lý cập nhật dữ liệu từ các form động
-  const handleFormChange = (formId, data) => {
-    setFormData((prevData) => ({
-      ...prevData,
-      [formId]: data,
-    }));
-  };
-
-  // Xử lý submit tất cả form
-  const handleSubmitAll = async () => {
-    try {
-      const requests = Object.values(formData).map((data) =>
-        axios.post("https://localhost:7030/api/CourseLessonContent", data, {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        })
-      );
-      await Promise.all(requests);
-      alert("All contents submitted successfully!");
-      setFormData({});
-      setDynamicForms([]);
-    } catch (error) {
-      console.error("Failed to submit contents:", error);
-      alert("Failed to submit all contents.");
-    }
   };
 
   if (loading) {
@@ -92,7 +58,7 @@ const CourseLessonCard = ({ coursePartId, userRole }) => {
   }
 
   return (
-    <div className="h-vh100 border rounded-md p-4 mb-4 shadow-md relative">
+    <div className="h-vh100 p-4 mb-4 shadow-md relative">
       <div onClick={toggleCollapse} className="cursor-pointer">
         <h3 className="text-lg font-semibold">Course Lessons</h3>
       </div>
@@ -114,16 +80,15 @@ const CourseLessonCard = ({ coursePartId, userRole }) => {
               >
                 <h4 className="text-md font-semibold">{courseLesson.title}</h4>
                 <div className="flex gap-2 mt-2">
-                  {userRole &&
-                    !(userRole.length === 1 && userRole[0] === "USER") && (
-                      <button
-                        type="button"
-                        className="py-2 px-3 text-sm font-medium rounded-lg border border-gray-200 bg-white text-gray-800 shadow-sm hover:bg-gray-50 focus:outline-none focus:bg-gray-50"
-                        onClick={() => addDynamicForm(courseLesson.id)}
-                      >
-                        Thêm nội dung mới
-                      </button>
-                    )}
+                  {userRole !== "USER" && (
+                    <button
+                      type="button"
+                      className="py-2 px-3 text-sm font-medium bg-white text-gray-800 shadow-sm hover:bg-gray-50 focus:outline-none focus:bg-gray-50"
+                      onClick={() => addDynamicForm(courseLesson.id)}
+                    >
+                      Thêm nội dung mới
+                    </button>
+                  )}
                 </div>
 
                 <CourseLessonContent
@@ -138,24 +103,12 @@ const CourseLessonCard = ({ coursePartId, userRole }) => {
                       <CreateCourseLessonContent
                         courseLessonId={courseLesson.id}
                         onClose={() => removeDynamicForm(form.id)}
-                        onFormChange={(data) => handleFormChange(form.id, data)}
                       />
                     </div>
                   ))}
               </div>
             ))
           )}
-        </div>
-
-        {/* Nút submit tất cả */}
-        <div className="mt-4">
-          <button
-            type="button"
-            onClick={handleSubmitAll}
-            className="bg-blue-600 text-white font-semibold py-2 px-4 rounded-md hover:bg-blue-700"
-          >
-            Submit All
-          </button>
         </div>
       </div>
     </div>

@@ -85,13 +85,13 @@ const CourseSkillCard = ({ courseId, userRole }) => {
 
       <div className="mt-3">
         <div className="flex gap-2">
-          {userRole && !(userRole.length === 1 && userRole[0] === "USER") && (
+          {userRole !== "USER" && (
             <>
               <button
                 type="button"
                 onClick={handleCreatePartClick}
                 disabled={loading}
-                className="py-2 px-3 inline-flex items-center gap-x-2 text-sm font-medium rounded-lg border border-gray-200 bg-white text-gray-800 shadow-sm hover:bg-gray-50 focus:outline-none focus:bg-gray-50"
+                className="py-2 mb-2 px-3 inline-flex items-center gap-x-2 text-sm font-medium rounded-lg border border-gray-200 bg-white text-gray-800 shadow-sm hover:bg-gray-50 focus:outline-none focus:bg-gray-50"
               >
                 {loading
                   ? "Loading..."
@@ -102,7 +102,7 @@ const CourseSkillCard = ({ courseId, userRole }) => {
               <button
                 type="button"
                 onClick={() => handleCreateTestClick(activeTab)}
-                className="py-2 px-3 inline-flex items-center gap-x-2 text-sm font-medium rounded-lg border border-gray-200 bg-white text-gray-800 shadow-sm hover:bg-gray-50 focus:outline-none focus:bg-gray-50"
+                className="py-2 mb-2 px-3 inline-flex items-center gap-x-2 text-sm font-medium rounded-lg border border-gray-200 bg-white text-gray-800 shadow-sm hover:bg-gray-50 focus:outline-none focus:bg-gray-50"
               >
                 Create Test
               </button>

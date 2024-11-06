@@ -68,7 +68,7 @@ const CourseCard = ({
 
   let destinationPath;
   if (location.pathname === "/mentorCourseList") {
-    destinationPath = `/mentorCourseDetail/${courseId}`;
+    destinationPath = `/courseDetail/${courseId}`;
   } else if (location.pathname === "/courseList") {
     destinationPath = `/courseDetail/${courseId}`;
   }

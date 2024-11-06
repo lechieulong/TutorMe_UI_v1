@@ -1,43 +1,87 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
+import Cookies from "js-cookie";
 import CreateCourseLessonContent from "./CreateCourseLessonContent";
 import CourseLessonContent from "./CourseLessonContent";
 
-const CourseLessonCard = ({ coursePartId }) => {
+const CourseLessonCard = ({ coursePartId, userRole }) => {
   const [isCollapsed, setIsCollapsed] = useState(true);
   const [courseLessons, setCourseLessons] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [selectedLessonId, setSelectedLessonId] = useState(null);
+  const [dynamicForms, setDynamicForms] = useState([]);
+  const [formData, setFormData] = useState({}); // Lưu trữ dữ liệu từ các form động
+  const token = Cookies.get("authToken");
 
   const toggleCollapse = () => {
-    if (!selectedLessonId) {
-      setIsCollapsed(!isCollapsed);
+    setIsCollapsed(!isCollapsed);
+  };
+
+  const fetchCourseLessons = async () => {
+    try {
+      const response = await axios.get(
+        `https://localhost:7030/api/CourseLessons/CoursePart/${coursePartId}`,
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+      setCourseLessons(response.data);
+      setLoading(false);
+    } catch (err) {
+      setError("Failed to fetch course lessons");
+      setLoading(false);
     }
   };
 
-  const handleFormClose = () => {
-    setSelectedLessonId(null);
-  };
-
   useEffect(() => {
-    const fetchCourseLessons = async () => {
-      try {
-        const response = await axios.get(
-          `https://localhost:7030/api/CourseLessons/CoursePart/${coursePartId}`
-        );
-        setCourseLessons(response.data);
-        setLoading(false);
-      } catch (err) {
-        setError("Failed to fetch course lessons");
-        setLoading(false);
-      }
-    };
-
     if (coursePartId) {
       fetchCourseLessons();
     }
   }, [coursePartId]);
+
+  const addDynamicForm = (lessonId) => {
+    setDynamicForms((prevForms) => [
+      ...prevForms,
+      { id: Date.now(), lessonId: lessonId },
+    ]);
+  };
+
+  const removeDynamicForm = (formId) => {
+    setDynamicForms((prevForms) =>
+      prevForms.filter((form) => form.id !== formId)
+    );
+    setFormData((prevData) => {
+      const newData = { ...prevData };
+      delete newData[formId];
+      return newData;
+    });
+  };
+
+  // Xử lý cập nhật dữ liệu từ các form động
+  const handleFormChange = (formId, data) => {
+    setFormData((prevData) => ({
+      ...prevData,
+      [formId]: data,
+    }));
+  };
+
+  // Xử lý submit tất cả form
+  const handleSubmitAll = async () => {
+    try {
+      const requests = Object.values(formData).map((data) =>
+        axios.post("https://localhost:7030/api/CourseLessonContent", data, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        })
+      );
+      await Promise.all(requests);
+      alert("All contents submitted successfully!");
+      setFormData({});
+      setDynamicForms([]);
+    } catch (error) {
+      console.error("Failed to submit contents:", error);
+      alert("Failed to submit all contents.");
+    }
+  };
 
   if (loading) {
     return <p>Loading lessons...</p>;
@@ -69,28 +113,49 @@ const CourseLessonCard = ({ coursePartId }) => {
                 className="border rounded-md p-2 mb-2 shadow-sm flex flex-col items-start"
               >
                 <h4 className="text-md font-semibold">{courseLesson.title}</h4>
-                <button
-                  type="button"
-                  className="py-2 px-3 text-sm font-medium rounded-lg border border-gray-200 bg-white text-gray-800 shadow-sm hover:bg-gray-50 focus:outline-none focus:bg-gray-50 mt-2"
-                  onClick={() => {
-                    setSelectedLessonId(courseLesson.id);
-                  }}
-                >
-                  Create Lesson Content
-                </button>
+                <div className="flex gap-2 mt-2">
+                  {userRole &&
+                    !(userRole.length === 1 && userRole[0] === "USER") && (
+                      <button
+                        type="button"
+                        className="py-2 px-3 text-sm font-medium rounded-lg border border-gray-200 bg-white text-gray-800 shadow-sm hover:bg-gray-50 focus:outline-none focus:bg-gray-50"
+                        onClick={() => addDynamicForm(courseLesson.id)}
+                      >
+                        Thêm nội dung mới
+                      </button>
+                    )}
+                </div>
 
-                {selectedLessonId === courseLesson.id && (
-                  <div className="mt-2 w-full">
-                    <CreateCourseLessonContent
-                      courseLessonId={courseLesson.id}
-                      onClose={handleFormClose}
-                    />
-                  </div>
-                )}
-                <CourseLessonContent courseLessonContenttId={courseLesson.id} />
+                <CourseLessonContent
+                  courseLessontId={courseLesson.id}
+                  key={`${courseLesson.id}-${Date.now()}`}
+                />
+
+                {dynamicForms
+                  .filter((form) => form.lessonId === courseLesson.id)
+                  .map((form) => (
+                    <div key={form.id} className="mt-2 w-full">
+                      <CreateCourseLessonContent
+                        courseLessonId={courseLesson.id}
+                        onClose={() => removeDynamicForm(form.id)}
+                        onFormChange={(data) => handleFormChange(form.id, data)}
+                      />
+                    </div>
+                  ))}
               </div>
             ))
           )}
+        </div>
+
+        {/* Nút submit tất cả */}
+        <div className="mt-4">
+          <button
+            type="button"
+            onClick={handleSubmitAll}
+            className="bg-blue-600 text-white font-semibold py-2 px-4 rounded-md hover:bg-blue-700"
+          >
+            Submit All
+          </button>
         </div>
       </div>
     </div>

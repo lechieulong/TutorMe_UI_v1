@@ -1,16 +1,18 @@
 import { useState, useEffect } from "react";
 import axios from "axios";
-
-const CourseLessonContent = ({ courseLessonContenttId }) => {
+import AudioPlayer from "../../TestExam/AudioPlayer";
+const CourseLessonContent = ({ courseLessontId, userRole }) => {
   const [courseLessonContents, setCourseLessonContents] = useState([]);
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    console.log(courseLessontId);
+
     const fetchCourseLessonContents = async () => {
       try {
         const response = await axios.get(
-          `https://localhost:7030/api/CourseLessonContent/lesson/${courseLessonContenttId}`
+          `https://localhost:7030/api/CourseLessonContent/lesson/${courseLessontId}`
         );
         setCourseLessonContents(response.data);
         setLoading(false);
@@ -20,10 +22,10 @@ const CourseLessonContent = ({ courseLessonContenttId }) => {
       }
     };
 
-    if (courseLessonContenttId) {
+    if (courseLessontId) {
       fetchCourseLessonContents();
     }
-  }, [courseLessonContenttId]);
+  }, [courseLessontId]);
 
   if (loading) {
     return <p>Loading contents...</p>;
@@ -52,30 +54,23 @@ const CourseLessonContent = ({ courseLessonContenttId }) => {
                     />
                   );
                 case "audio":
-                  return (
-                    <audio controls className="w-full mb-4" key={content.id}>
-                      <source src={content.contentUrl} type="audio/mpeg" />
-                      Your browser does not support the audio element.
-                    </audio>
-                  );
+                  return <AudioPlayer src={content.contentUrl} />;
                 case "video":
                   return (
                     <iframe
-                      className="w-full h-60 mb-4"
-                      src={content.contentUrl}
-                      title="Video Content"
-                      frameBorder="0"
-                      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                      className="w-[560px] h-[315px]"
+                      src={`https://www.youtube.com/embed/${content.contentUrl}`}
+                      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                      referrerPolicy="strict-origin-when-cross-origin"
                       allowFullScreen
-                      key={content.id}
                     />
                   );
                 case "text":
                 default:
                   return (
-                    <p className="mb-4" key={content.id}>
-                      {content.contentUrl}
-                    </p>
+                    <div
+                      dangerouslySetInnerHTML={{ __html: content.contentText }}
+                    />
                   );
               }
             })

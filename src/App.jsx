@@ -26,13 +26,13 @@ import MetorInfor from "./pages/Mentor/MentorInforTest";
 import CourseList from "./pages/Course/CourseList";
 import ClassOfCourse from "./pages/Course/ClassOfCourseList";
 import TestList from "./pages/User/TestList";
-import MentorCourseDetail from "./pages/Mentor/MentorCourseDetail";
+import CourseDetail from "./pages/Mentor/CourseDetail";
 // import MyLearning from "./pages/Class/MyLearning";
 // import CourseDetail from './CourseDetail';
-import SkillCard from "./pages/Mentor/component/SkillCard";
+import CourseSkillCard from "./pages/Mentor/component/CourseSkillCard";
 import "preline";
 import TestLayout from "./pages/TestExam/TestLayout";
-import CourseDetail from "./pages/Course/CourseDetail";
+import CourseDetail1 from "./pages/Course/CourseDetail1";
 import CourseTimeline from "./pages/Course/components/CourseTimeline";
 import CreateCourse from "./pages/Course/components/CreateCourse";
 import SpeakingGemini from "./service/SpeakingGemini";
@@ -53,7 +53,7 @@ import CourseLayout from "./pages/course/CourseLayout";
 import ListTest from "./pages/ExamTest/ListTest";
 import CreateCourseLesson from "./pages/Mentor/component/CreateCourseLesson";
 import Term from "./pages/Terms";
-
+import DynamicForm from "./pages/Course/components/DynamicForm";
 //ADMIN
 import AdminApp from "./pages/ADMIN/Index";
 
@@ -97,7 +97,8 @@ const App = () => {
             path="/courseDetail/:courseId/classOfCourse"
             element={<ClassOfCourse />}
           />
-          <Route path="/skillCard" element={<SkillCard />} />
+          <Route path="/dynamicForm" element={<DynamicForm />} />
+          <Route path="/skillCard" element={<CourseSkillCard />} />
           {/* Calender */}
           <Route path="/calendar" element={<Calendar />} />
           <Route path="/coachingschedule" element={<CoachingSchedule />} />
@@ -115,10 +116,7 @@ const App = () => {
           <Route path="/courseList" element={<CourseList />} />
           <Route path="/createCourse" element={<CreateCourse />} />
           <Route path="/courseDetail/:courseId" element={<CourseDetail />} />
-          <Route
-            path="/mentorCourseDetail/:courseId"
-            element={<MentorCourseDetail />}
-          />
+          <Route path="/courseDetail/:courseId" element={<CourseDetail />} />
           <Route path="createCourseLesson" element={<CreateCourseLesson />} />
           <Route
             path="createCourseLessonContent"

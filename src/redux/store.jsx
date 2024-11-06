@@ -12,9 +12,11 @@ import scheduleReducer from "./Schedule/ScheduleSlice";
 import specializationReducer from "./specialization/SpecializationSlice";
 import ADMIN_usersReducer from "./ADMIN/UserSlice";
 import ADMIN_teachersReducer from "./ADMIN/TeacherSlice";
+import enrollmentReducer from "./Enrollment/EnrollmentSlice";
 
 export const store = configureStore({
   reducer: {
+    enrollment: enrollmentReducer,
     courseTimelineDetail: courseTimelineDetailReducer,
     courseTimeline: courseTimelineReducer,
     courses: courseReducer,
@@ -27,7 +29,7 @@ export const store = configureStore({
     schedule: scheduleReducer,
     specialization: specializationReducer,
     ADMIN_userslice: ADMIN_usersReducer,
-    ADMIN_teachersReducer: ADMIN_teachersReducer,
+    ADMIN_teachers: ADMIN_teachersReducer,
   },
 });
 

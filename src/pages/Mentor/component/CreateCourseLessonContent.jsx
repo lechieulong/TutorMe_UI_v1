@@ -6,7 +6,11 @@ import { getUser } from "../../../service/GetUser";
 import useAuthToken from "../../../hooks/useAuthToken";
 import Cookies from "js-cookie";
 
-const CreateCourseLessonContent = ({ courseLessonId, onClose }) => {
+const CreateCourseLessonContent = ({
+  courseLessonId,
+  onClose,
+  onContentCreated,
+}) => {
   const authToken = useAuthToken();
   const [user, setUser] = useState(null);
   const [contentData, setContentData] = useState({
@@ -40,7 +44,31 @@ const CreateCourseLessonContent = ({ courseLessonId, onClose }) => {
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setContentData((prev) => ({ ...prev, [name]: value }));
+
+    // Khi chọn video, đặt lại contentUrl
+    if (name === "contentType" && value === "video") {
+      setContentData((prev) => ({ ...prev, contentUrl: "" }));
+    }
+
+    setContentData((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
+  };
+
+  const handleContentUrlChange = (e) => {
+    const value = e.target.value;
+    let videoId = value;
+
+    // Kiểm tra nếu là URL của YouTube và lấy ID từ sau dấu '='
+    if (contentData.contentType === "video") {
+      const match = value.match(/[?&]v=([^&]+)/);
+      if (match) {
+        videoId = match[1];
+      }
+    }
+
+    setContentData((prev) => ({ ...prev, contentUrl: videoId }));
   };
 
   const handleQuillChange = (value) => {
@@ -92,8 +120,11 @@ const CreateCourseLessonContent = ({ courseLessonId, onClose }) => {
         lessonContentData
       );
       setSuccess(true);
+
+      // Gọi hàm onContentCreated để cập nhật danh sách bài học
+      if (onContentCreated) onContentCreated();
+      onClose(); // Đóng form sau khi tạo thành công
     } catch (err) {
-      console.error("Detailed error:", err.response.data.errors);
       console.error("Error response:", err.response);
       setError("Failed to create course lesson content.");
     } finally {
@@ -173,7 +204,7 @@ const CreateCourseLessonContent = ({ courseLessonId, onClose }) => {
               type="file"
               name="contentUrl"
               onChange={handleFileChange}
-              accept="audio/mp3"
+              accept="audio/mpeg"
               className="w-full border border-gray-300 rounded-md p-2 mt-1"
               required
             />
@@ -185,7 +216,7 @@ const CreateCourseLessonContent = ({ courseLessonId, onClose }) => {
               type="text"
               name="contentUrl"
               value={contentData.contentUrl}
-              onChange={handleChange}
+              onChange={handleContentUrlChange}
               className="w-full border border-gray-300 rounded-md p-2 mt-1"
               placeholder="Enter video URL"
               required

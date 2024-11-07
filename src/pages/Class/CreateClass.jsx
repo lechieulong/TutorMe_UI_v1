@@ -1,20 +1,30 @@
 import React, { useState, useEffect } from "react";
-import { useLocation } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom"; // Thêm useNavigate
 import axios from "axios";
 
 const CreateClass = () => {
   const location = useLocation();
+  const navigate = useNavigate(); // Khai báo biến navigate
   const [className, setClassName] = useState("");
   const [classDescription, setClassDescription] = useState("");
   const [count, setCount] = useState(0);
   const [courseId, setCourseId] = useState("");
   const [startDate, setStartDate] = useState("");
   const [endDate, setEndDate] = useState("");
-  const [startTime, setStartTime] = useState(""); // Đổi thành định dạng chuỗi
-  const [endTime, setEndTime] = useState(""); // Đổi thành định dạng chuỗi
+  const [startTime, setStartTime] = useState("");
+  const [endTime, setEndTime] = useState("");
   const [isEnabled, setIsEnabled] = useState(true);
   const [imageUrl, setImageUrl] = useState("");
-  const [errorMessage, setErrorMessage] = useState(""); // Thêm thông báo lỗi
+  const [inputErrors, setInputErrors] = useState({
+    className: false,
+    classDescription: false,
+    count: false,
+    startDate: false,
+    endDate: false,
+    startTime: false,
+    endTime: false,
+    imageUrl: false,
+  });
 
   useEffect(() => {
     if (location.state?.courseId) {
@@ -22,14 +32,55 @@ const CreateClass = () => {
     }
   }, [location.state?.courseId]);
 
+  const validateStartDate = () => {
+    const today = new Date().toISOString().split("T")[0];
+    if (startDate < today) {
+      setInputErrors((prev) => ({ ...prev, startDate: true }));
+    } else {
+      setInputErrors((prev) => ({ ...prev, startDate: false }));
+    }
+  };
+
+  const validateEndDate = () => {
+    if (endDate < startDate) {
+      setInputErrors((prev) => ({ ...prev, endDate: true }));
+    } else {
+      setInputErrors((prev) => ({ ...prev, endDate: false }));
+    }
+  };
+
+  const validateStartTime = () => {
+    const [hours] = startTime.split(":").map(Number);
+    if (hours < 6 || hours >= 22) {
+      setInputErrors((prev) => ({ ...prev, startTime: true }));
+    } else {
+      setInputErrors((prev) => ({ ...prev, startTime: false }));
+    }
+  };
+
+  const validateEndTime = () => {
+    const [startHours] = startTime.split(":").map(Number);
+    const [endHours] = endTime.split(":").map(Number);
+    if (endHours < startHours || endHours >= 22) {
+      setInputErrors((prev) => ({ ...prev, endTime: true }));
+    } else {
+      setInputErrors((prev) => ({ ...prev, endTime: false }));
+    }
+  };
+
+  const validateFields = () => {
+    validateStartDate();
+    validateEndDate();
+    validateStartTime();
+    validateEndTime();
+    return !Object.values(inputErrors).some((error) => error);
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    // Kiểm tra định dạng thời gian
-    if (!startTime || !endTime) {
-      setErrorMessage("Thời gian bắt đầu và kết thúc không được để trống.");
-      return;
-    }
+    // Kiểm tra trường trước khi gửi
+    if (!validateFields()) return;
 
     const newClass = {
       className,
@@ -38,8 +89,8 @@ const CreateClass = () => {
       courseId,
       startDate,
       endDate,
-      startTime: { ticks: new Date(startTime).getTime() * 10000 }, // Chuyển đổi thời gian sang ticks
-      endTime: { ticks: new Date(endTime).getTime() * 10000 }, // Chuyển đổi thời gian sang ticks
+      startTime: { ticks: new Date(startTime).getTime() * 10000 },
+      endTime: { ticks: new Date(endTime).getTime() * 10000 },
       isEnabled,
       imageUrl,
     };
@@ -61,18 +112,26 @@ const CreateClass = () => {
       setEndTime("");
       setIsEnabled(true);
       setImageUrl("");
-      setErrorMessage(""); // Reset thông báo lỗi
+      setInputErrors({
+        className: false,
+        classDescription: false,
+        count: false,
+        startDate: false,
+        endDate: false,
+        startTime: false,
+        endTime: false,
+        imageUrl: false,
+      }); // Reset lỗi input
+
+      navigate(-1); // Trở về trang trước đó
     } catch (error) {
       console.error("Failed to create class:", error);
-      setErrorMessage("Không thể tạo lớp học. Vui lòng thử lại."); // Cập nhật thông báo lỗi
     }
   };
 
   return (
     <div className="max-w-lg mx-auto bg-white p-6 rounded-lg shadow-lg">
       <h2 className="text-2xl font-bold mb-4">Thêm Lớp Học Mới</h2>
-      {errorMessage && <p className="text-red-500">{errorMessage}</p>}{" "}
-      {/* Hiển thị thông báo lỗi */}
       <form onSubmit={handleSubmit}>
         <div className="mb-4">
           <label className="block text-sm font-semibold mb-2">
@@ -81,9 +140,14 @@ const CreateClass = () => {
           <input
             type="text"
             value={className}
-            onChange={(e) => setClassName(e.target.value)}
+            onChange={(e) => {
+              setClassName(e.target.value);
+              setInputErrors((prev) => ({ ...prev, className: false })); // Reset lỗi khi người dùng nhập
+            }}
             required
-            className="w-full border border-gray-300 p-2 rounded focus:outline-none focus:border-blue-500"
+            className={`w-full border p-2 rounded focus:outline-none focus:border-blue-500 ${
+              inputErrors.className ? "border-red-500" : "border-gray-300"
+            }`}
           />
         </div>
 
@@ -91,9 +155,16 @@ const CreateClass = () => {
           <label className="block text-sm font-semibold mb-2">Mô Tả</label>
           <textarea
             value={classDescription}
-            onChange={(e) => setClassDescription(e.target.value)}
+            onChange={(e) => {
+              setClassDescription(e.target.value);
+              setInputErrors((prev) => ({ ...prev, classDescription: false })); // Reset lỗi khi người dùng nhập
+            }}
             required
-            className="w-full border border-gray-300 p-2 rounded focus:outline-none focus:border-blue-500"
+            className={`w-full border p-2 rounded focus:outline-none focus:border-blue-500 ${
+              inputErrors.classDescription
+                ? "border-red-500"
+                : "border-gray-300"
+            }`}
             rows="3"
           ></textarea>
         </div>
@@ -105,9 +176,14 @@ const CreateClass = () => {
           <input
             type="number"
             value={count}
-            onChange={(e) => setCount(e.target.value)}
+            onChange={(e) => {
+              setCount(e.target.value);
+              setInputErrors((prev) => ({ ...prev, count: false })); // Reset lỗi khi người dùng nhập
+            }}
             required
-            className="w-full border border-gray-300 p-2 rounded focus:outline-none focus:border-blue-500"
+            className={`w-full border p-2 rounded focus:outline-none focus:border-blue-500 ${
+              inputErrors.count ? "border-red-500" : "border-gray-300"
+            }`}
           />
         </div>
 
@@ -121,9 +197,14 @@ const CreateClass = () => {
             <input
               type="date"
               value={startDate}
-              onChange={(e) => setStartDate(e.target.value)}
+              onChange={(e) => {
+                setStartDate(e.target.value);
+                validateStartDate(); // Kiểm tra khi thay đổi
+              }}
               required
-              className="w-full border border-gray-300 p-2 rounded focus:outline-none focus:border-blue-500"
+              className={`w-full border p-2 rounded focus:outline-none focus:border-blue-500 ${
+                inputErrors.startDate ? "border-red-500" : "border-gray-300"
+              }`}
             />
           </div>
           <div>
@@ -133,9 +214,14 @@ const CreateClass = () => {
             <input
               type="date"
               value={endDate}
-              onChange={(e) => setEndDate(e.target.value)}
+              onChange={(e) => {
+                setEndDate(e.target.value);
+                validateEndDate(); // Kiểm tra khi thay đổi
+              }}
               required
-              className="w-full border border-gray-300 p-2 rounded focus:outline-none focus:border-blue-500"
+              className={`w-full border p-2 rounded focus:outline-none focus:border-blue-500 ${
+                inputErrors.endDate ? "border-red-500" : "border-gray-300"
+              }`}
             />
           </div>
         </div>
@@ -148,9 +234,14 @@ const CreateClass = () => {
             <input
               type="time"
               value={startTime}
-              onChange={(e) => setStartTime(e.target.value)}
+              onChange={(e) => {
+                setStartTime(e.target.value);
+                validateStartTime(); // Kiểm tra khi thay đổi
+              }}
               required
-              className="w-full border border-gray-300 p-2 rounded focus:outline-none focus:border-blue-500"
+              className={`w-full border p-2 rounded focus:outline-none focus:border-blue-500 ${
+                inputErrors.startTime ? "border-red-500" : "border-gray-300"
+              }`}
             />
           </div>
           <div>
@@ -160,9 +251,14 @@ const CreateClass = () => {
             <input
               type="time"
               value={endTime}
-              onChange={(e) => setEndTime(e.target.value)}
+              onChange={(e) => {
+                setEndTime(e.target.value);
+                validateEndTime(); // Kiểm tra khi thay đổi
+              }}
               required
-              className="w-full border border-gray-300 p-2 rounded focus:outline-none focus:border-blue-500"
+              className={`w-full border p-2 rounded focus:outline-none focus:border-blue-500 ${
+                inputErrors.endTime ? "border-red-500" : "border-gray-300"
+              }`}
             />
           </div>
         </div>
@@ -172,31 +268,36 @@ const CreateClass = () => {
             URL Hình Ảnh
           </label>
           <input
-            type="url"
+            type="text"
             value={imageUrl}
-            onChange={(e) => setImageUrl(e.target.value)}
+            onChange={(e) => {
+              setImageUrl(e.target.value);
+              setInputErrors((prev) => ({ ...prev, imageUrl: false })); // Reset lỗi khi người dùng nhập
+            }}
             required
-            className="w-full border border-gray-300 p-2 rounded focus:outline-none focus:border-blue-500"
+            className={`w-full border p-2 rounded focus:outline-none focus:border-blue-500 ${
+              inputErrors.imageUrl ? "border-red-500" : "border-gray-300"
+            }`}
           />
         </div>
 
         <div className="mb-4">
-          <label className="block text-sm font-semibold mb-2">
-            Kích Hoạt Lớp Học
+          <label className="inline-flex items-center">
+            <input
+              type="checkbox"
+              checked={isEnabled}
+              onChange={(e) => setIsEnabled(e.target.checked)}
+              className="mr-2"
+            />
+            <span className="text-sm font-semibold">Kích Hoạt</span>
           </label>
-          <input
-            type="checkbox"
-            checked={isEnabled}
-            onChange={(e) => setIsEnabled(e.target.checked)}
-            className="focus:outline-none focus:border-blue-500"
-          />
         </div>
 
         <button
           type="submit"
-          className="w-full bg-blue-500 text-white font-semibold py-2 rounded hover:bg-blue-600 transition duration-300"
+          className="bg-blue-500 text-white p-2 rounded hover:bg-blue-600"
         >
-          Thêm Lớp Học
+          Tạo Lớp Học
         </button>
       </form>
     </div>

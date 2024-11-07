@@ -21,7 +21,7 @@ const MentorCourseList = () => {
   const [user, setUser] = useState(null);
   const { courses = [], status, error } = useSelector((state) => state.courses);
 
-  const [selectedCategory, setSelectedCategory] = useState("All");
+  const [selectedSkill, setSelectedSkill] = useState("All");
   const [currentPage, setCurrentPage] = useState(1);
   const [searchTerm, setSearchTerm] = useState("");
   const coursesPerPage = 8;
@@ -46,8 +46,8 @@ const MentorCourseList = () => {
     if (status === STATUS.SUCCESS) {
       return courses
         .filter((course) => {
-          if (selectedCategory === "All") return true;
-          return course.categories.includes(selectedCategory);
+          if (selectedSkill === "All") return true;
+          return course.categories.includes(selectedSkill);
         })
         .filter((course) => {
           const courseTitle = course.courseName || "";
@@ -56,7 +56,7 @@ const MentorCourseList = () => {
         });
     }
     return [];
-  }, [courses, selectedCategory, searchTerm, status]);
+  }, [courses, selectedSkill, searchTerm, status]);
 
   const indexOfLastCourse = currentPage * coursesPerPage;
   const indexOfFirstCourse = indexOfLastCourse - coursesPerPage;
@@ -88,8 +88,8 @@ const MentorCourseList = () => {
     }
   };
 
-  const getIcon = (category) => {
-    switch (category) {
+  const getIcon = (Skill) => {
+    switch (Skill) {
       case "Reading":
         return <FaBook className="text-blue-500 text-2xl" />;
       case "Listening":
@@ -106,7 +106,6 @@ const MentorCourseList = () => {
   };
 
   if (status === STATUS.PENDING) return <p>Loading...</p>;
-  if (status === STATUS.FAILED) return <p>Error: {error}</p>;
 
   return (
     <MainLayout>
@@ -123,9 +122,9 @@ const MentorCourseList = () => {
         <div className="flex items-center justify-between mb-4">
           <Filter
             categories={categories}
-            selectedCategory={selectedCategory}
-            onCategorySelect={(category) => {
-              setSelectedCategory(category);
+            selectedSkill={selectedSkill}
+            onSkillSelect={(Skill) => {
+              setSelectedSkill(Skill);
               setCurrentPage(1);
             }}
             searchTerm={searchTerm}
@@ -140,7 +139,12 @@ const MentorCourseList = () => {
           </button>
         </div>
 
-        {currentCourses.length === 0 && status !== "pending" && (
+        {/* Hiển thị lỗi nếu có */}
+        {error && (
+          <div className="text-red-500 text-center mb-4">Error: {error}</div>
+        )}
+
+        {currentCourses.length === 0 && !error && (
           <div className="flex justify-center items-center h-32">
             <p className="text-red-500 text-lg font-semibold text-center">
               Bạn chưa có khoá học nào
@@ -150,6 +154,7 @@ const MentorCourseList = () => {
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mt-6">
           {currentCourses.map((course) => {
+            console.log("Categories:", course.categories); // Log categories của từng course
             return (
               <CourseCard
                 key={course.id}
@@ -157,7 +162,7 @@ const MentorCourseList = () => {
                 content={course.content}
                 title={course.title}
                 description={course.description}
-                category={course.categories}
+                Skill={course.categories}
                 icon={getIcon(course.categories)}
                 teacher={course.userId}
                 courseId={course.id}

@@ -1,20 +1,21 @@
 import { useState, useEffect } from "react";
 import axios from "axios";
 import AudioPlayer from "../../TestExam/AudioPlayer";
+
 const CourseLessonContent = ({ courseLessontId, userRole }) => {
   const [courseLessonContents, setCourseLessonContents] = useState([]);
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    console.log(courseLessontId);
-
     const fetchCourseLessonContents = async () => {
       try {
         const response = await axios.get(
           `https://localhost:7030/api/CourseLessonContent/lesson/${courseLessontId}`
         );
-        setCourseLessonContents(response.data);
+        // Sắp xếp nội dung theo `order` trước khi lưu vào state
+        const sortedContents = response.data.sort((a, b) => a.order - b.order);
+        setCourseLessonContents(sortedContents);
         setLoading(false);
       } catch (err) {
         setError("Failed to fetch course lesson contents");
@@ -54,10 +55,13 @@ const CourseLessonContent = ({ courseLessontId, userRole }) => {
                     />
                   );
                 case "audio":
-                  return <AudioPlayer src={content.contentUrl} />;
+                  return (
+                    <AudioPlayer src={content.contentUrl} key={content.id} />
+                  );
                 case "video":
                   return (
                     <iframe
+                      key={content.id}
                       className="w-[560px] h-[315px]"
                       src={`https://www.youtube.com/embed/${content.contentUrl}`}
                       allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
@@ -65,10 +69,22 @@ const CourseLessonContent = ({ courseLessontId, userRole }) => {
                       allowFullScreen
                     />
                   );
+                case "file":
+                  return (
+                    <a
+                      key={content.id}
+                      href={content.contentUrl}
+                      download
+                      className="text-blue-500 underline"
+                    >
+                      Download File
+                    </a>
+                  );
                 case "text":
                 default:
                   return (
                     <div
+                      key={content.id}
                       dangerouslySetInnerHTML={{ __html: content.contentText }}
                     />
                   );

@@ -45,9 +45,8 @@ const CreateCourseLessonContent = ({
   const handleChange = (e) => {
     const { name, value } = e.target;
 
-    // Khi chọn video, đặt lại contentUrl
-    if (name === "contentType" && value === "video") {
-      setContentData((prev) => ({ ...prev, contentUrl: "" }));
+    if (name === "contentType" && value !== "video") {
+      setContentData((prev) => ({ ...prev, contentUrl: "", file: null }));
     }
 
     setContentData((prev) => ({
@@ -60,7 +59,6 @@ const CreateCourseLessonContent = ({
     const value = e.target.value;
     let videoId = value;
 
-    // Kiểm tra nếu là URL của YouTube và lấy ID từ sau dấu '='
     if (contentData.contentType === "video") {
       const match = value.match(/[?&]v=([^&]+)/);
       if (match) {
@@ -121,9 +119,8 @@ const CreateCourseLessonContent = ({
       );
       setSuccess(true);
 
-      // Gọi hàm onContentCreated để cập nhật danh sách bài học
       if (onContentCreated) onContentCreated();
-      onClose(); // Đóng form sau khi tạo thành công
+      onClose();
     } catch (err) {
       console.error("Error response:", err.response);
       setError("Failed to create course lesson content.");
@@ -135,22 +132,6 @@ const CreateCourseLessonContent = ({
   return (
     <div className="p-6 bg-white rounded-lg shadow-lg max-w-md mx-auto">
       <form onSubmit={handleSubmit}>
-        <input
-          type="hidden"
-          className="w-full border border-gray-300 rounded-md p-2 mt-1"
-          name="courseLessonId"
-          value={contentData.courseLessonId}
-          onChange={handleChange}
-        />
-        <input
-          type="hidden"
-          className="w-full border border-gray-300 rounded-md p-2 mt-1"
-          name="contentUrl"
-          value={contentData.contentUrl}
-          onChange={handleChange}
-          placeholder="Content URL"
-        />
-
         <div className="mb-4">
           <label className="block text-gray-700 font-medium">
             Content Type
@@ -167,6 +148,7 @@ const CreateCourseLessonContent = ({
             <option value="image">Image</option>
             <option value="audio">Audio</option>
             <option value="video">Video</option>
+            <option value="file">File</option>
           </select>
         </div>
 
@@ -179,6 +161,19 @@ const CreateCourseLessonContent = ({
               value={contentData.contentText}
               onChange={handleQuillChange}
               placeholder="Enter content text"
+            />
+          </div>
+        ) : contentData.contentType === "file" ? (
+          <div className="mb-4">
+            <label className="block text-gray-700 font-medium">
+              Upload File
+            </label>
+            <input
+              type="file"
+              name="contentUrl"
+              onChange={handleFileChange}
+              className="w-full border border-gray-300 rounded-md p-2 mt-1"
+              required
             />
           </div>
         ) : contentData.contentType === "image" ? (

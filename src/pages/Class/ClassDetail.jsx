@@ -66,7 +66,7 @@ const ClassDetail = () => {
   return (
     <MainLayout>
       <div className="flex flex-col w-screen">
-        <div className="flex flex-1 mt-16 w-full">
+        <div className="flex flex-1 w-full">
           <MentorSidebar />
           <div className="flex-1 p-4">
             <div className="bg-white p-6 rounded-lg shadow-lg">

@@ -78,8 +78,8 @@ const CoursePartCard = ({ skillId, userRole }) => {
   return (
     <div className="border rounded-md p-4 mb-4 shadow-md relative">
       {courseParts.map((coursePart) => (
-        <div key={coursePart.id} className="mb-4">
-          <div className="flex gap-2 absolute top-4 right-4">
+        <div key={coursePart.id} className="mb-6 border-b pb-4">
+          <div className="flex gap-2 justify-end mb-2">
             {userRole !== "USER" && (
               <>
                 <button

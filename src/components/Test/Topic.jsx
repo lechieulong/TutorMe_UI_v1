@@ -68,15 +68,18 @@ const Topic = ({ partData, currentSkillKey }) => {
     <div className="p-5" onMouseUp={handleMouseUp}>
       {currentSkillKey === "writing" && (
         <>
-          {partData.image}
-          <img
-            src={partData.image}
-            alt=" image"
-            style={{ width: "100%", height: "auto" }}
-          />
+          {partData.partNumber === 1 && (
+            <img
+              src={partData.image}
+              alt=" image"
+              style={{ width: "50%", height: "50%" }}
+            />
+          )}
+
           {partData.sections.map((section, index) => (
             <div key={index}>
               <p>{section.sectionGuide}</p>
+              <p>{section.questions && section.questions[0]?.questionName}</p>
             </div>
           ))}
         </>

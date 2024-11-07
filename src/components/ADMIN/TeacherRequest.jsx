@@ -47,14 +47,14 @@ const TeacherRequests = () => {
                         placeholder="Search by description"
                         value={searchTerm}
                         onChange={(e) => setSearchTerm(e.target.value)}
-                        className="border border-gray-300 rounded-lg p-2 text-sm focus:outline-none focus:ring focus:ring-purple-300"
+                        className="border border-gray-300 rounded-lg p-2 text-sm focus:outline-none focus:ring focus:ring-lightGreen"
                     />
                     {["Pending", "Accepted", "Rejected"].map((status, index) => (
                         <button
                             key={status}
                             onClick={() => handleStatusChange(index)}
-                            className={`${statusFilter === index ? "bg-purple-700" : "bg-gray-400"
-                                } text-white px-4 py-2 rounded-lg shadow hover:bg-purple-600 transition`}
+                            className={`${statusFilter === index ? "bg-mainColor" : "bg-gray-400"
+                                } text-white px-4 py-2 rounded-lg shadow hover:bg-accentGreen transition`}
                         >
                             {status}
                         </button>

@@ -3,9 +3,9 @@ import { FaBell } from "react-icons/fa";
 
 const AdminHeader = () => {
     return (
-        <header className="flex justify-between items-center p-5 bg-purple-300 shadow-md"> {/* Increased padding */}
+        <header className="flex justify-between items-center p-5 bg-white text-7xl font-mono" style={{backgroundColor: "#d4e9e2"}}>
             <div className="flex items-center">
-                <span className="ml-3 text-xl font-semibold"></span>
+                <span className="ml-3 text-xl font-semibold">AI-Enhanced IELTS Prep</span>
             </div>
             <div className="flex items-center">
                 <i className="fas fa-sun text-xl mr-4"></i>

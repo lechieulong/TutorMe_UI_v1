@@ -52,10 +52,10 @@ const UserDetail = () => {
 
   return (
     <MainLayout>
-      <div className="flex h-screen w-full bg-gray-100">
+      <div className="flex w-full bg-gray-100">
         <Sidebar userInfor={userInfor} />
-        <main className="flex-1">
-          <div className="w-full max-w-full mx-auto bg-gray-100 pt-10 flex flex-col">
+        <main className="flex-1 p-5">
+          <div className="w-full max-w-full mx-auto bg-gray-100 py-10 flex flex-col">
             <div className="flex flex-col lg:flex-row items-start">
               <div className="lg:w-1/4 flex flex-col items-center mb-6 lg:mb-0 lg:mr-6">
                 <img

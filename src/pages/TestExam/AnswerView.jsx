@@ -85,9 +85,6 @@ const AnswerView = ({
     question,
     questionCounter
   ) => {
-    console.log("skill", skill);
-    console.log(sectionType);
-
     switch (skill) {
       case 0:
         if (sectionType === 1) {
@@ -104,47 +101,14 @@ const AnswerView = ({
         }
         if (sectionType === 2 || sectionType === 3)
           return (
-            <div className="flex flex-col space-y-2">
-              <label className="flex items-center space-x-2">
-                <input
-                  type="radio"
-                  name={`question_${question.id}`}
-                  value={1}
-                  className="h-4 w-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
-                  onChange={(e) =>
-                    handleChangeWrap(
-                      e,
-                      currentSkillKey,
-                      partData.id,
-                      question.id
-                    )
-                  }
-                />
-                <span>True</span>
-              </label>
-              <label className="flex items-center space-x-2">
-                <input
-                  type="radio"
-                  name={`question_${question.id}`}
-                  value={0}
-                  className="h-4 w-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
-                  onChange={(e) =>
-                    handleChangeWrap(
-                      e,
-                      currentSkillKey,
-                      partData.id,
-                      question.id
-                    )
-                  }
-                />
-                <span>False</span>
-              </label>
-              {sectionType === 3 && (
+            <>
+              <p>{question.answers[0].answerText}</p>
+              <div className="flex flex-col space-y-2">
                 <label className="flex items-center space-x-2">
                   <input
                     type="radio"
                     name={`question_${question.id}`}
-                    value={2}
+                    value={1}
                     className="h-4 w-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
                     onChange={(e) =>
                       handleChangeWrap(
@@ -155,11 +119,93 @@ const AnswerView = ({
                       )
                     }
                   />
-                  <span>Not Given</span>
+                  <span>True</span>
                 </label>
-              )}
+                <label className="flex items-center space-x-2">
+                  <input
+                    type="radio"
+                    name={`question_${question.id}`}
+                    value={0}
+                    className="h-4 w-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
+                    onChange={(e) =>
+                      handleChangeWrap(
+                        e,
+                        currentSkillKey,
+                        partData.id,
+                        question.id
+                      )
+                    }
+                  />
+                  <span>False</span>
+                </label>
+                {sectionType === 3 && (
+                  <label className="flex items-center space-x-2">
+                    <input
+                      type="radio"
+                      name={`question_${question.id}`}
+                      value={2}
+                      className="h-4 w-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
+                      onChange={(e) =>
+                        handleChangeWrap(
+                          e,
+                          currentSkillKey,
+                          partData.id,
+                          question.id
+                        )
+                      }
+                    />
+                    <span>Not Given</span>
+                  </label>
+                )}
+              </div>
+            </>
+          );
+        if (
+          sectionType === 7 ||
+          sectionType === 8 ||
+          sectionType === 9 ||
+          sectionType === 11
+        ) {
+          const questionParts = question.questionName.split("[]");
+          return (
+            <div className="font-medium  ">
+              {questionParts[0]}
+              <input
+                type="text"
+                placeholder={`enter text here `}
+                className="border border-gray-300 rounded px-2 py-1 focus:outline-none focus:ring-2 focus:ring-blue-500 inline-block align-middle"
+                style={{ display: "inline-block", width: "auto" }}
+                onChange={(e) =>
+                  handleChangeWrap(
+                    e,
+                    skill,
+                    partData.id,
+                    question.id,
+                    null,
+                    sectionType
+                  )
+                }
+              />
+              <span className="font-bold"> {questionCounter}</span>
+              {questionParts[1]} {/* Part after [] */}
             </div>
           );
+        }
+        if (sectionType === 10) {
+          return (
+            <>
+              <span className="font-bold mr-2"> {questionCounter}</span>
+              <input
+                type="text"
+                placeholder="Your answer"
+                className="border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                onChange={(e) =>
+                  handleChangeWrap(e, skill, partData.id, question.id)
+                }
+              />
+            </>
+          );
+        }
       case 1:
         if (sectionType === 6)
           return (
@@ -203,7 +249,7 @@ const AnswerView = ({
               partData={partData}
             />
           );
-        if (sectionType === 2 || sectionType === 3 || sectionType === 4) {
+        if (sectionType === 2 || sectionType === 3 || sectionType === 7) {
           const questionParts = question.questionName.split("[]");
           return (
             <div className="font-medium  ">
@@ -229,17 +275,19 @@ const AnswerView = ({
             </div>
           );
         }
-
-        if (sectionType === 7 || sectionType === 4) {
+        if (sectionType === 4) {
           return (
-            <input
-              type="text"
-              placeholder="Your answer"
-              className="border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
-              onChange={(e) =>
-                handleChangeWrap(e, skill, partData.id, question.id)
-              }
-            />
+            <div>
+              <span className="font-bold"> {questionCounter}</span>
+              <input
+                type="text"
+                placeholder="Your answer"
+                className="border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                onChange={(e) =>
+                  handleChangeWrap(e, skill, partData.id, question.id)
+                }
+              />
+            </div>
           );
         }
       case 2:
@@ -387,6 +435,9 @@ const AnswerView = ({
             </p>
           );
         }
+        if (sectionType === 8) {
+          return <p></p>;
+        }
       case 1:
         if (sectionType === 2 || sectionType === 4 || sectionType === 5)
           return <p></p>;
@@ -423,16 +474,15 @@ const AnswerView = ({
             return partData.sections.map((section, sectionIndex) => (
               <div key={sectionIndex} className="mb-6">
                 <p className="font-bold text-lg mb-2">{section.sectionGuide}</p>
-                {skill === 1 &&
-                  (section.sectionType === 4 ||
-                    section.sectionType === 5 ||
-                    section.sectionType === 1) && (
-                    <img
-                      src={section.image}
-                      alt=" image"
-                      style={{ width: "50%", height: "auto" }}
-                    />
-                  )}
+                {((skill === 0 &&
+                  (section.sectionType === 10 || section.sectionType === 6)) ||
+                  (skill === 1 && section.sectionType === 4)) && (
+                  <img
+                    src={section.image}
+                    alt=" image"
+                    style={{ width: "50%", height: "auto" }}
+                  />
+                )}
 
                 <div className="bg-gray-50 p-4 rounded-md shadow-sm">
                   {(skill === 0 && section.sectionType === 4) ||

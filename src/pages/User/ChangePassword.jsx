@@ -88,10 +88,10 @@ const ProfileSection = () => {
 
   return (
     <MainLayout>
-      <div className="flex h-screen w-full">
+      <div className="flex w-full">
         <Sidebar />
-        <div className="flex-1 p-12">
-          <div className="flex gap-8 bg-gray-100 p-6 px-12">
+        <div className="flex-1">
+          <div className="flex gap-8 bg-gray-100 py-10 px-12">
             <div className="flex-1 border-2 border-gray-500 rounded-lg p-6">
               <ul className="mt-2 flex space-x-4 border-b border-gray-300">
                 <li>

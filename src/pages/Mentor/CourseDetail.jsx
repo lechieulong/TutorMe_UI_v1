@@ -1,11 +1,14 @@
-import { useState, useEffect, useCallback } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { useParams, useNavigate, useLocation } from "react-router-dom";
-import axios from "axios";
+import { useDispatch, useSelector } from "react-redux";
 import MentorSidebar from "../../components/Mentor/MentorSideBar";
 import MainLayout from "../../layout/MainLayout";
 import { getUser } from "../../service/GetUser";
 import ClassCard from "../Class/components/ClassCard";
 import CourseSkillCard from "./component/CourseSkillCard";
+import Rating from "../../components/common/Rating";
+import { CheckUserEnrollment } from "../../redux/Enrollment/EnrollmentSlice";
+import { fetchClasses } from "../../redux/classes/ClassSlice";
 
 const CourseDetail = () => {
   const { className, courseId } = useParams();
@@ -14,31 +17,18 @@ const CourseDetail = () => {
   const [userId, setUserId] = useState(null);
   const [userRole, setUserRole] = useState(null);
   const [currentSlide, setCurrentSlide] = useState(0);
-  const [classes, setClasses] = useState([]);
   const [selectedClassId, setSelectedClassId] = useState(null);
-  const [switchStates, setSwitchStates] = useState({});
-  const [hasError, setHasError] = useState(false);
-  const [isEnrolled, setIsEnrolled] = useState(false); // Trạng thái đã đăng ký
   const navigate = useNavigate();
 
-  const fetchEnrollments = useCallback(async () => {
-    if (userId) {
-      try {
-        const response = await axios.get(
-          `https://localhost:7030/api/Enrollment/User/${userId}`
-        );
-        const userEnrollments = response.data;
-        // Kiểm tra nếu bất kỳ enrollment nào có courseId trùng với khóa học hiện tại
-        const enrolled = userEnrollments.some(
-          (enrollment) => enrollment.courseId === courseId
-        );
-        setIsEnrolled(enrolled); // Cập nhật isEnrolled dựa trên kết quả
-      } catch (error) {
-        console.error("Failed to fetch enrollments", error);
-      }
-    }
-  }, [userId, courseId]);
+  const dispatch = useDispatch();
 
+  // Lấy dữ liệu classes và trạng thái switch từ Redux
+  const classes = useSelector((state) => state.classes.classes);
+  const switchStates = useSelector((state) => state.classes.switchStates);
+  const classesStatus = useSelector((state) => state.classes.status);
+  const isEnrolled = useSelector((state) => state.enrollment.isEnrolled);
+
+  // Lấy userId và role từ token
   const initializeUser = useCallback(() => {
     const userFromToken = getUser();
     const userIdFromToken = userFromToken?.sub;
@@ -48,32 +38,16 @@ const CourseDetail = () => {
     if (userRoleFromToken) setUserRole(userRoleFromToken);
   }, []);
 
-  const fetchClasses = useCallback(async () => {
-    try {
-      const response = await axios.get(
-        `https://localhost:7030/api/class/course/${courseId}/classes`
-      );
-      setClasses(response.data.result);
-      const initialSwitchStates = {};
-      response.data.result.forEach((classItem) => {
-        initialSwitchStates[classItem.id] = classItem.isEnabled;
-      });
-      setSwitchStates(initialSwitchStates);
-      setHasError(false);
-    } catch (error) {
-      console.error("Failed to fetch classes", error);
-      setHasError(true);
-    }
-  }, [courseId]);
-
   useEffect(() => {
     initializeUser();
-    fetchClasses();
-  }, [initializeUser, fetchClasses, courseId]);
+    dispatch(fetchClasses(courseId)); // Gọi fetchClasses từ Redux
+  }, [initializeUser, dispatch, courseId]);
 
   useEffect(() => {
-    fetchEnrollments(); // Kiểm tra trạng thái đăng ký khi trang tải
-  }, [fetchEnrollments]);
+    if (userId) {
+      dispatch(CheckUserEnrollment({ userId, courseId }));
+    }
+  }, [dispatch, userId, courseId]);
 
   const handleEnroll = async () => {
     if (!selectedClassId || !userId || !courseId) {
@@ -88,7 +62,7 @@ const CourseDetail = () => {
       };
       await axios.post("https://localhost:7030/api/enrollment", enrollmentData);
       alert("Enrollment successful!");
-      fetchEnrollments(); // Cập nhật trạng thái sau khi đăng ký thành công
+      dispatch(CheckUserEnrollment({ userId, courseId })); // Cập nhật trạng thái sau khi đăng ký thành công
     } catch (error) {
       console.error("Enrollment failed", error);
       alert("Enrollment failed.");
@@ -194,6 +168,11 @@ const CourseDetail = () => {
 
             <div className="mt-8">
               <CourseSkillCard courseId={courseId} userRole={userRole} />
+            </div>
+            <div className="mt-8">
+              {/* {userRole === "USER" && isEnrolled && (
+                <Rating userId={userId} courseId={courseId} />
+              )} */}
             </div>
           </div>
         </div>

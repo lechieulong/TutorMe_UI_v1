@@ -128,7 +128,7 @@ const CourseSkillCard = ({ courseId, userRole }) => {
 
         {skills.map((skill) => (
           <div
-            key={skill.id}
+            key={skill.id} // Đảm bảo mỗi div có key duy nhất
             className={`${activeTab === skill.id ? "" : "hidden"}`}
             role="tabpanel"
             aria-labelledby={skill.id}

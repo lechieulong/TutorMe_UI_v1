@@ -3,35 +3,10 @@ import axios from "axios";
 import apiURLConfig from "../common/apiURLConfig";
 import Cookies from "js-cookie";
 
-// Action Enroll User
-export const EnrollUser = createAsyncThunk(
-  "enrollment/EnrollUser",
-  async (enrollmentData, { rejectWithValue }) => {
-    try {
-      const token = Cookies.get("authToken");
-      const response = await axios.post(
-        `${apiURLConfig.baseURL}/enrollment`,
-        enrollmentData,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
-      return response.data;
-    } catch (error) {
-      console.error("API Error: ", error);
-      return rejectWithValue(
-        error.response?.data?.message || "Failed to enroll user"
-      );
-    }
-  }
-);
-
-// Action to get user enrollments
-export const GetUserEnrollments = createAsyncThunk(
-  "enrollment/GetUserEnrollments",
-  async (userId, { rejectWithValue }) => {
+// Action để kiểm tra người dùng có đăng ký khóa học
+export const CheckUserEnrollment = createAsyncThunk(
+  "enrollment/CheckUserEnrollment",
+  async ({ userId, courseId }, { rejectWithValue }) => {
     try {
       const token = Cookies.get("authToken");
       const response = await axios.get(
@@ -42,11 +17,15 @@ export const GetUserEnrollments = createAsyncThunk(
           },
         }
       );
-      return response.data;
+      const userEnrollments = response.data;
+      const isEnrolled = userEnrollments.some(
+        (enrollment) => enrollment.courseId === courseId
+      );
+      return { isEnrolled };
     } catch (error) {
       console.error("API Error: ", error);
       return rejectWithValue(
-        error.response?.data?.message || "Failed to get user enrollments"
+        error.response?.data?.message || "Failed to check enrollment"
       );
     }
   }
@@ -55,9 +34,10 @@ export const GetUserEnrollments = createAsyncThunk(
 const initialState = {
   enrollment: null,
   enrollments: [],
-  enrollmentStatus: "idle", // Default status for checking enrollment
+  enrollmentStatus: "idle",
   enrollStatus: "idle",
   getEnrollmentsStatus: "idle",
+  isEnrolled: false,
   error: null,
   enrollmentsError: null,
 };
@@ -68,30 +48,17 @@ const EnrollmentSlice = createSlice({
   reducers: {},
   extraReducers: (builder) => {
     builder
-      // Handle user enrollment
-      .addCase(EnrollUser.pending, (state) => {
-        state.enrollStatus = "pending";
+      // Handle CheckUserEnrollment
+      .addCase(CheckUserEnrollment.pending, (state) => {
+        state.enrollmentStatus = "pending";
       })
-      .addCase(EnrollUser.fulfilled, (state, action) => {
-        state.enrollStatus = "succeeded";
-        state.enrollment = action.payload;
+      .addCase(CheckUserEnrollment.fulfilled, (state, action) => {
+        state.enrollmentStatus = "succeeded";
+        state.isEnrolled = action.payload.isEnrolled;
       })
-      .addCase(EnrollUser.rejected, (state, action) => {
-        state.enrollStatus = "failed";
-        state.error = action.payload || action.error.message; // Set error message
-      })
-
-      // Handle get user enrollments
-      .addCase(GetUserEnrollments.pending, (state) => {
-        state.getEnrollmentsStatus = "pending";
-      })
-      .addCase(GetUserEnrollments.fulfilled, (state, action) => {
-        state.getEnrollmentsStatus = "succeeded";
-        state.enrollments = action.payload; // Assuming the API returns an array of enrollments
-      })
-      .addCase(GetUserEnrollments.rejected, (state, action) => {
-        state.getEnrollmentsStatus = "failed";
-        state.enrollmentsError = action.payload || action.error.message; // Set error message
+      .addCase(CheckUserEnrollment.rejected, (state, action) => {
+        state.enrollmentStatus = "failed";
+        state.error = action.payload || action.error.message;
       });
   },
 });

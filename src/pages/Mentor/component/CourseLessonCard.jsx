@@ -49,6 +49,19 @@ const CourseLessonCard = ({ coursePartId, userRole }) => {
     );
   };
 
+  const handleCreateTest = async (lessonId) => {
+    try {
+      console.log("Lesson ID:", lessonId);
+      const response = await axios.get(
+        `https://localhost:7030/api/CourseSkills/DescriptionByCourseLesson/${lessonId}`,
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+      console.log("API Response Data:", response.data);
+    } catch (error) {
+      console.error("Failed to fetch data from API", error);
+    }
+  };
+
   if (loading) {
     return <p>Loading lessons...</p>;
   }
@@ -81,13 +94,22 @@ const CourseLessonCard = ({ coursePartId, userRole }) => {
                 <h4 className="text-md font-semibold">{courseLesson.title}</h4>
                 <div className="flex gap-2 mt-2">
                   {userRole !== "USER" && (
-                    <button
-                      type="button"
-                      className="py-2 px-3 text-sm font-medium bg-white text-gray-800 shadow-sm hover:bg-gray-50 focus:outline-none focus:bg-gray-50"
-                      onClick={() => addDynamicForm(courseLesson.id)}
-                    >
-                      Thêm nội dung mới
-                    </button>
+                    <>
+                      <button
+                        type="button"
+                        className="py-2 px-3 text-sm font-medium bg-white text-gray-800 shadow-sm hover:bg-gray-50 focus:outline-none focus:bg-gray-50"
+                        onClick={() => addDynamicForm(courseLesson.id)}
+                      >
+                        Thêm nội dung mới
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => handleCreateTest(courseLesson.id)}
+                        className="py-2 px-3 inline-flex items-center gap-x-2 text-sm font-medium rounded-lg border border-gray-200 bg-white text-gray-800 shadow-sm hover:bg-gray-50 focus:outline-none focus:bg-gray-50"
+                      >
+                        Create Test
+                      </button>
+                    </>
                   )}
                 </div>
 

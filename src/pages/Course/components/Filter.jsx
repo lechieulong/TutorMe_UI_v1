@@ -3,27 +3,27 @@ import { FaSearch } from "react-icons/fa";
 
 const Filter = ({
   categories,
-  selectedCategory,
-  onCategorySelect,
+  selectedSkill,
+  onSkillSelect,
   searchTerm,
   onSearchChange,
 }) => {
   return (
     <div className="mb-6 flex flex-col items-center md:flex-row md:justify-between">
       <div className="flex flex-wrap justify-center md:ml-4 mb-4 md:mb-0">
-        {categories.map((category) => (
+        {categories.map((Skill) => (
           <button
-            key={category}
-            onClick={() => onCategorySelect(category)}
+            key={Skill}
+            onClick={() => onSkillSelect(Skill)}
             className={`px-3 py-1.5 mx-1 text-sm font-medium rounded-lg 
                             ${
-                              selectedCategory === category
+                              selectedSkill === Skill
                                 ? "bg-blue-600 text-white"
                                 : "bg-gray-300 text-gray-800"
                             } 
                             hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500`}
           >
-            {category}
+            {Skill}
           </button>
         ))}
       </div>

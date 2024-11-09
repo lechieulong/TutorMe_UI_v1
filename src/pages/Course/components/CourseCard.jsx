@@ -8,7 +8,7 @@ const CourseCard = ({
   courseName,
   title,
   description,
-  category,
+  Skill,
   icon,
   teacher,
   courseId,
@@ -17,20 +17,14 @@ const CourseCard = ({
 }) => {
   const location = useLocation();
 
-  // Kiểm tra xem có phải trang mentorCourseList không
   const isMentorCourseList = location.pathname === "/mentorCourseList";
-
-  // Nếu là mentorCourseList thì switch sẽ lấy trạng thái từ isEnabled, ngược lại mặc định là true
   const [isSwitchOn, setIsSwitchOn] = useState(
     isMentorCourseList ? isEnabled : true
   );
 
-  // Nếu không phải mentorCourseList và isEnabled là false, không hiển thị CourseCard
   if (!isMentorCourseList && !isEnabled) {
     return null;
   }
-
-  // Log giá trị của category
 
   const handleDelete = async () => {
     if (onDelete) {
@@ -68,9 +62,13 @@ const CourseCard = ({
     }
   };
 
+  const handleClick = () => {
+    console.log("Skill:", Skill); // Log Skill khi nhấn vào card
+  };
+
   let destinationPath;
   if (location.pathname === "/mentorCourseList") {
-    destinationPath = `/mentorCourseDetail/${courseId}`;
+    destinationPath = `/courseDetail/${courseId}`;
   } else if (location.pathname === "/courseList") {
     destinationPath = `/courseDetail/${courseId}`;
   }
@@ -78,7 +76,6 @@ const CourseCard = ({
   return (
     <div className="relative bg-white h-52 shadow-md rounded-lg p-4 flex flex-col items-center hover:bg-gray-100 transition-all">
       <div className="absolute top-1 right-1 flex items-center space-x-2">
-        {/* Chỉ hiển thị nút delete và switch nếu đang ở trang mentorCourseList */}
         {isMentorCourseList && (
           <>
             <button
@@ -106,8 +103,9 @@ const CourseCard = ({
       </div>
       <Link
         to={destinationPath}
-        state={{ category }} // Truyền categories vào state
+        state={{ Skill }}
         className="flex-grow flex flex-col items-center"
+        onClick={handleClick} // Gọi handleClick khi nhấn vào card
       >
         <div className="text-2xl mb-1">{icon}</div>
         <h3 className="text-lg font-bold">{courseName}</h3>
@@ -132,9 +130,7 @@ const CourseCard = ({
         >
           {content}
         </p>
-        <span className="text-sm font-medium text-blue-600 mb-2">
-          {category}
-        </span>
+        <span className="text-sm font-medium text-blue-600 mb-2">{Skill}</span>
         <div className="text-sm text-gray-600">
           <span className="font-semibold">Teacher: </span>
           {teacher}

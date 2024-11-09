@@ -3,7 +3,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { fetchClassesWithCourseId } from "../../redux/classes/ClassSlice";
 import { STATUS } from "../../constant/SliceName";
 
-const ClassesList = (courseId) => {
+const ClassListOfCourse = (courseId) => {
   const dispatch = useDispatch();
   const { classes, status, error } = useSelector((state) => state.classes);
 
@@ -31,4 +31,4 @@ const ClassesList = (courseId) => {
   );
 };
 
-export default ClassesList;
+export default ClassListOfCourse;

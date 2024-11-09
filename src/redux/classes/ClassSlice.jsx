@@ -8,7 +8,7 @@ export const fetchClasses = createAsyncThunk(
   async (courseId, { rejectWithValue }) => {
     try {
       const response = await axios.get(
-        `${apiURLConfig.baseURL}/Courses/${courseId}/classes`,
+        `${apiURLConfig.baseURL}/courses/${courseId}/classes`,
         courseId
       );
       return response.data.result;

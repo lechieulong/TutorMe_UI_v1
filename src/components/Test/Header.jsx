@@ -27,8 +27,9 @@ const Header = ({
   const closeWarningModal = () => setIsModalOpen(false);
 
   const handleConfirmNextSkill = () => {
-    handleNextSkill();
-    closeWarningModal();
+    handleSubmit(); // Wait for submission to complete
+    handleNextSkill(); // Move to the next skill
+    closeWarningModal(); // Close the modal after handling next skill
   };
 
   const formatTime = (seconds) => {
@@ -97,6 +98,7 @@ const Header = ({
           </button>
         ) : (
           <button
+            type="button"
             onClick={handleSubmit}
             className="bg-red-600 hover:bg-red-700 text-white font-medium rounded-lg px-4 py-2 flex items-center gap-2"
           >

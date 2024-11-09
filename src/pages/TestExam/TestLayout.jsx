@@ -79,6 +79,32 @@ const TestLayout = ({ skillsData }) => {
   }, []);
 
   const handleSubmit = () => {
+    if (!userAnswers || Object.keys(userAnswers).length === 0) {
+      console.log("No answers to submit");
+      return;
+    }
+    const firstAnswer = Object.values(userAnswers)[0];
+    const { skill } = firstAnswer;
+
+    console.log("Skill type for submission:", skill);
+
+    switch (skill) {
+      case 0:
+        console.log("Calling Reading API");
+        break;
+      case 1: // Listening skill
+        console.log("Calling Listening API");
+        break;
+      case 2: // Writing skill
+        console.log("Calling Writing API");
+        break;
+      case 3: // Speaking skill
+        console.log("Calling Speaking API");
+        break;
+      default:
+        console.log("Unknown skill type");
+    }
+
     console.log("userAnswers", userAnswers);
   };
 
@@ -96,8 +122,6 @@ const TestLayout = ({ skillsData }) => {
   if (loading) {
     return <div>Loading test data...</div>;
   }
-
-  console.log(testData, "testData");
 
   const currentSkillKey = Object.keys(testData)[currentSkillIndex];
   const currentSkillData = testData[currentSkillKey];

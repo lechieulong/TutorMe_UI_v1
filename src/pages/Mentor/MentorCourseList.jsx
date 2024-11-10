@@ -1,6 +1,5 @@
 import { useEffect, useState, useMemo } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { useNavigate } from "react-router-dom";
 import {
   FaBook,
   FaSurprise,
@@ -14,16 +13,18 @@ import { fetchCoursesByUserId } from "../../redux/courses/CourseSlice";
 import axios from "axios";
 import { STATUS } from "../../constant/SliceName";
 import { getUser } from "../../service/GetUser";
+import CreateCourse from "../Course/components/CreateCourse";
 
 const MentorCourseList = () => {
   const dispatch = useDispatch();
-  const navigate = useNavigate();
   const [user, setUser] = useState(null);
   const { courses = [], status, error } = useSelector((state) => state.courses);
 
   const [selectedSkill, setSelectedSkill] = useState("All");
   const [currentPage, setCurrentPage] = useState(1);
   const [searchTerm, setSearchTerm] = useState("");
+  const [isCreateCourseOpen, setIsCreateCourseOpen] = useState(false);
+  const [isCourseCreated, setIsCourseCreated] = useState(false);
   const coursesPerPage = 8;
 
   useEffect(() => {
@@ -32,10 +33,11 @@ const MentorCourseList = () => {
   }, []);
 
   useEffect(() => {
-    if (user?.sub) {
+    if (isCourseCreated && user?.sub) {
       dispatch(fetchCoursesByUserId(user.sub));
+      setIsCourseCreated(false);
     }
-  }, [dispatch, user]);
+  }, [isCourseCreated, dispatch, user]);
 
   const categories = useMemo(
     () => ["All", "Listening", "Reading", "Writing", "Speaking"],
@@ -106,7 +108,12 @@ const MentorCourseList = () => {
   };
 
   if (status === STATUS.PENDING) return <p>Loading...</p>;
-
+  const handleOpenCreateCourse = () => setIsCreateCourseOpen(true);
+  const handleCloseCreateCourse = () => setIsCreateCourseOpen(false);
+  const handleCreateSuccess = () => {
+    setIsCourseCreated(true);
+    handleCloseCreateCourse();
+  };
   return (
     <MainLayout>
       <div className="px-4 py-6">
@@ -130,13 +137,16 @@ const MentorCourseList = () => {
             searchTerm={searchTerm}
             onSearchChange={(term) => setSearchTerm(term)}
           />
-          <button
-            type="button"
-            className="py-2 px-3 inline-flex items-center gap-x-2 text-sm font-medium rounded-lg border border-gray-200 bg-white text-gray-800 shadow-sm hover:bg-gray-50 focus:outline-none focus:bg-gray-50"
-            onClick={() => navigate("/createCourse")}
-          >
+          <button onClick={handleOpenCreateCourse} className="btn">
             Create Course
           </button>
+
+          {isCreateCourseOpen && (
+            <CreateCourse
+              onClose={handleOpenCreateCourse}
+              onCreateSuccess={handleCreateSuccess}
+            />
+          )}
         </div>
 
         {/* Hiển thị lỗi nếu có */}

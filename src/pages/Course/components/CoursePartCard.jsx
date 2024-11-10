@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useCallback, useState } from "react";
 import axios from "axios";
 import CourseLessonCard from "../../Mentor/component/CourseLessonCard";
 import CreateCourseLesson from "../../Mentor/component/CreateCourseLesson";
@@ -8,30 +8,29 @@ const CoursePartCard = ({ skillId, userRole }) => {
   const [collapsedParts, setCollapsedParts] = useState({});
   const [showLessonForm, setShowLessonForm] = useState({});
   const [error, setError] = useState(null);
+  const [lessonCreatedTrigger, setLessonCreatedTrigger] = useState(0);
 
-  useEffect(() => {
+  const fetchCourseParts = useCallback(async () => {
     if (!skillId) return;
-
-    const fetchCourseParts = async () => {
-      try {
-        const response = await axios.get(
-          `https://localhost:7030/api/CourseParts/ByCourseSkill/${skillId}`
-        );
-        setCourseParts(response.data);
-        const initialCollapsedState = response.data.reduce((acc, part) => {
-          acc[part.id] = true;
-          return acc;
-        }, {});
-        setCollapsedParts(initialCollapsedState);
-        setError(null);
-      } catch (err) {
-        setError("Failed to fetch course parts.");
-      }
-    };
-
-    fetchCourseParts();
+    try {
+      const response = await axios.get(
+        `https://localhost:7030/api/CourseParts/ByCourseSkill/${skillId}`
+      );
+      setCourseParts(response.data);
+      const initialCollapsedState = response.data.reduce((acc, part) => {
+        acc[part.id] = true;
+        return acc;
+      }, {});
+      setCollapsedParts(initialCollapsedState);
+      setError(null);
+    } catch (err) {
+      setError("Failed to fetch course parts.");
+    }
   }, [skillId]);
 
+  useEffect(() => {
+    fetchCourseParts();
+  }, [skillId, fetchCourseParts, lessonCreatedTrigger]);
   const toggleCollapse = (partId) => {
     setCollapsedParts((prev) => ({
       ...prev,
@@ -51,7 +50,6 @@ const CoursePartCard = ({ skillId, userRole }) => {
   };
 
   const handleCreateTestClick = async (partId) => {
-    console.log("Create Test clicked for Part ID:", partId);
     try {
       const response = await axios.get(
         `https://localhost:7030/api/CourseSkills/DescriptionByCoursePart/${partId}`
@@ -70,6 +68,8 @@ const CoursePartCard = ({ skillId, userRole }) => {
   };
 
   const handleLessonCreated = () => {
+    console.log("Lesson created. Reloading Course Parts...");
+    setLessonCreatedTrigger((prev) => prev + 1);
     setShowLessonForm({});
   };
 

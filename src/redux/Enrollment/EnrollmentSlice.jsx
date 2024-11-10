@@ -30,7 +30,30 @@ export const CheckUserEnrollment = createAsyncThunk(
     }
   }
 );
-
+export const enrollUser = createAsyncThunk(
+  "enrollment/enrollUser",
+  async ({ courseId, userId, classId }, { rejectWithValue }) => {
+    try {
+      const token = Cookies.get("authToken");
+      const enrollmentData = {
+        courseId,
+        userId,
+        classId,
+      };
+      await axios.post(`${apiURLConfig.baseURL}/enrollment`, enrollmentData, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      return { success: true };
+    } catch (error) {
+      console.error("Enrollment failed", error);
+      return rejectWithValue(
+        error.response?.data?.message || "Failed to enroll"
+      );
+    }
+  }
+);
 const initialState = {
   enrollment: null,
   enrollments: [],
@@ -48,7 +71,9 @@ const EnrollmentSlice = createSlice({
   reducers: {},
   extraReducers: (builder) => {
     builder
-      // Handle CheckUserEnrollment
+      .addCase(enrollUser.pending, (state) => {
+        state.enrollStatus = "pending";
+      })
       .addCase(CheckUserEnrollment.pending, (state) => {
         state.enrollmentStatus = "pending";
       })

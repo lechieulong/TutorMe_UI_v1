@@ -15,7 +15,7 @@ const questionTypes = [
   { value: 10, label: "Diagram Completion" },
 ];
 
-const CreateCourseLesson = ({ coursePartId, onClose }) => {
+const CreateCourseLesson = ({ coursePartId, onClose, onCreated }) => {
   const [lesson, setLesson] = useState({
     coursePartId: coursePartId || "",
     title: "",
@@ -31,7 +31,6 @@ const CreateCourseLesson = ({ coursePartId, onClose }) => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
     if (loading) return;
 
     setLoading(true);
@@ -40,6 +39,7 @@ const CreateCourseLesson = ({ coursePartId, onClose }) => {
     try {
       await axios.post("https://localhost:7030/api/CourseLessons", lesson);
       alert("Course Lesson created successfully!");
+      onCreated();
       onClose();
     } catch (err) {
       setError(err.response?.data?.message || "Failed to create course lesson");

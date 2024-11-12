@@ -3,25 +3,21 @@ import axios from "axios";
 import apiURLConfig from "../common/apiURLConfig";
 import Cookies from "js-cookie";
 
-// Action để kiểm tra người dùng có đăng ký khóa học
 export const CheckUserEnrollment = createAsyncThunk(
   "enrollment/CheckUserEnrollment",
   async ({ userId, courseId }, { rejectWithValue }) => {
     try {
       const token = Cookies.get("authToken");
       const response = await axios.get(
-        `${apiURLConfig.baseURL}/enrollment/user/${userId}`,
+        `${apiURLConfig.baseURL}/enrollment/check`,
         {
+          params: { userId, courseId },
           headers: {
             Authorization: `Bearer ${token}`,
           },
         }
       );
-      const userEnrollments = response.data;
-      const isEnrolled = userEnrollments.some(
-        (enrollment) => enrollment.courseId === courseId
-      );
-      return { isEnrolled };
+      return response.data; // Trả về boolean trực tiếp từ API
     } catch (error) {
       console.error("API Error: ", error);
       return rejectWithValue(
@@ -30,6 +26,7 @@ export const CheckUserEnrollment = createAsyncThunk(
     }
   }
 );
+
 export const enrollUser = createAsyncThunk(
   "enrollment/enrollUser",
   async ({ courseId, userId, classId }, { rejectWithValue }) => {
@@ -54,6 +51,7 @@ export const enrollUser = createAsyncThunk(
     }
   }
 );
+
 const initialState = {
   enrollment: null,
   enrollments: [],
@@ -79,7 +77,7 @@ const EnrollmentSlice = createSlice({
       })
       .addCase(CheckUserEnrollment.fulfilled, (state, action) => {
         state.enrollmentStatus = "succeeded";
-        state.isEnrolled = action.payload.isEnrolled;
+        state.isEnrolled = action.payload;
       })
       .addCase(CheckUserEnrollment.rejected, (state, action) => {
         state.enrollmentStatus = "failed";

@@ -66,11 +66,12 @@ const CourseCard = ({
     console.log("Skill:", Skill); // Log Skill khi nhấn vào card
   };
 
+  // Đặt đường dẫn điều hướng với điều kiện nếu là courseList
   let destinationPath;
   if (location.pathname === "/mentorCourseList") {
     destinationPath = `/courseDetail/${courseId}`;
   } else if (location.pathname === "/courseList") {
-    destinationPath = `/courseDetail/${courseId}`;
+    destinationPath = `/courseDetail/${courseId}/review`;
   }
 
   return (

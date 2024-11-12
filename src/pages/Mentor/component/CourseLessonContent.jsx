@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import axios from "axios";
 import AudioPlayer from "../../TestExam/AudioPlayer";
 
-const CourseLessonContent = ({ courseLessontId, userRole }) => {
+const CourseLessonContent = ({ courseLessontId }) => {
   const [courseLessonContents, setCourseLessonContents] = useState([]);
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -13,7 +13,8 @@ const CourseLessonContent = ({ courseLessontId, userRole }) => {
         const response = await axios.get(
           `https://localhost:7030/api/CourseLessonContent/lesson/${courseLessontId}`
         );
-        // Sắp xếp nội dung theo `order` trước khi lưu vào state
+        console.log("HI");
+
         const sortedContents = response.data.sort((a, b) => a.order - b.order);
         setCourseLessonContents(sortedContents);
         setLoading(false);
@@ -38,7 +39,7 @@ const CourseLessonContent = ({ courseLessontId, userRole }) => {
 
   return (
     <div>
-      <div className="p-4 mb-4 relative">
+      <div className="p-4 ml-4 mb-4 relative">
         <div>
           {courseLessonContents.length === 0 ? (
             <p>No content found for this lesson.</p>

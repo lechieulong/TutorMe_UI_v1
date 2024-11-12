@@ -4,16 +4,27 @@ import Cookies from "js-cookie";
 import CreateCourseLessonContent from "./CreateCourseLessonContent";
 import CourseLessonContent from "./CourseLessonContent";
 
-const CourseLessonCard = ({ coursePartId, userRole }) => {
-  const [isCollapsed, setIsCollapsed] = useState(true);
+const CourseLessonCard = ({
+  isReviewPath,
+  coursePartId,
+  userRole,
+  isEnrolled,
+}) => {
+  const [collapsedLessons, setCollapsedLessons] = useState({});
   const [courseLessons, setCourseLessons] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [dynamicForms, setDynamicForms] = useState([]);
   const token = Cookies.get("authToken");
 
-  const toggleCollapse = () => {
-    setIsCollapsed(!isCollapsed);
+  const toggleCollapse = (lessonId) => {
+    // Chỉ cho phép toggle collapse khi cả isReviewPath và isEnrolled đều là true
+    if (isReviewPath && isEnrolled) {
+      setCollapsedLessons((prev) => ({
+        ...prev,
+        [lessonId]: !prev[lessonId],
+      }));
+    }
   };
 
   const fetchCourseLessons = async () => {
@@ -70,18 +81,15 @@ const CourseLessonCard = ({ coursePartId, userRole }) => {
     return <p>{error}</p>;
   }
 
+  console.log(isReviewPath + " " + isEnrolled); // Giữ nguyên dòng này
+
   return (
     <div className="h-vh100 p-4 mb-4 shadow-md relative">
-      <div onClick={toggleCollapse} className="cursor-pointer">
-        <h3 className="text-lg font-semibold">Course Lessons</h3>
+      <div className="cursor-pointer">
+        <h3 className="text-lg font-semibold text-red-600">Lessons</h3>
       </div>
 
-      <div
-        className={`mt-4 overflow-hidden transition-all duration-1000 ease-in-out ${
-          isCollapsed ? "max-h-0 opacity-0" : "opacity-100"
-        }`}
-        style={{ maxHeight: isCollapsed ? 0 : "100vh", overflowY: "auto" }}
-      >
+      <div className="mt-4 overflow-hidden transition-all duration-1000 ease-in-out">
         <div>
           {courseLessons.length === 0 ? (
             <p>No lessons found for this course part.</p>
@@ -91,9 +99,15 @@ const CourseLessonCard = ({ coursePartId, userRole }) => {
                 key={courseLesson.id}
                 className="border rounded-md p-2 mb-2 shadow-sm flex flex-col items-start"
               >
-                <h4 className="text-md font-semibold">{courseLesson.title}</h4>
+                <h4
+                  className="text-md font-semibold cursor-pointer"
+                  onClick={() => toggleCollapse(courseLesson.id)}
+                >
+                  {courseLesson.title}
+                </h4>
+
                 <div className="flex gap-2 mt-2">
-                  {userRole !== "USER" && (
+                  {userRole !== "USER" && !isReviewPath && (
                     <>
                       <button
                         type="button"
@@ -113,21 +127,26 @@ const CourseLessonCard = ({ coursePartId, userRole }) => {
                   )}
                 </div>
 
-                <CourseLessonContent
-                  courseLessontId={courseLesson.id}
-                  key={`${courseLesson.id}-${Date.now()}`}
-                />
+                {/* Hiển thị CourseLessonContent khi lesson không bị collapsed */}
+                {!collapsedLessons[courseLesson.id] && (
+                  <CourseLessonContent
+                    courseLessontId={courseLesson.id}
+                    key={courseLesson.id}
+                  />
+                )}
 
-                {dynamicForms
-                  .filter((form) => form.lessonId === courseLesson.id)
-                  .map((form) => (
-                    <div key={form.id} className="mt-2 w-full">
-                      <CreateCourseLessonContent
-                        courseLessonId={courseLesson.id}
-                        onClose={() => removeDynamicForm(form.id)}
-                      />
-                    </div>
-                  ))}
+                {/* Hiển thị dynamicForms nếu có */}
+                {!collapsedLessons[courseLesson.id] &&
+                  dynamicForms
+                    .filter((form) => form.lessonId === courseLesson.id)
+                    .map((form) => (
+                      <div key={form.id} className="mt-2 w-full">
+                        <CreateCourseLessonContent
+                          courseLessonId={courseLesson.id}
+                          onClose={() => removeDynamicForm(form.id)}
+                        />
+                      </div>
+                    ))}
               </div>
             ))
           )}

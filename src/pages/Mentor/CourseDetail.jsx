@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback } from "react";
-import { useParams, useNavigate, useLocation } from "react-router-dom";
+import { useParams, useLocation } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import MentorSidebar from "../../components/Mentor/MentorSideBar";
 import MainLayout from "../../layout/MainLayout";
@@ -15,19 +15,20 @@ import CreateClass from "../Class/CreateClass";
 const CourseDetail = () => {
   const { className, courseId } = useParams();
   const location = useLocation();
-  const Skill = location.state?.Skill;
   const [userId, setUserId] = useState(null);
   const [userRole, setUserRole] = useState(null);
   const [currentSlide, setCurrentSlide] = useState(0);
   const [selectedClassId, setSelectedClassId] = useState(null);
   const [isCreateClassOpen, setIsCreateClassOpen] = useState(false);
-  const navigate = useNavigate();
 
   const dispatch = useDispatch();
   const classes = useSelector((state) => state.classes.classes);
   const switchStates = useSelector((state) => state.classes.switchStates);
-  const classesStatus = useSelector((state) => state.classes.status);
+
   const isEnrolled = useSelector((state) => state.enrollment.isEnrolled);
+
+  const isReviewPath = location.pathname.includes("/review");
+  console.log("URL contains /review:", isReviewPath);
 
   const initializeUser = useCallback(() => {
     const userFromToken = getUser();
@@ -45,7 +46,9 @@ const CourseDetail = () => {
 
   useEffect(() => {
     if (userId) {
-      dispatch(CheckUserEnrollment({ userId, courseId }));
+      dispatch(CheckUserEnrollment({ userId, courseId })).then((result) => {
+        console.log("Enrollment check completed:", result);
+      });
     }
   }, [dispatch, userId, courseId]);
 
@@ -109,7 +112,7 @@ const CourseDetail = () => {
               </button>
             )}
 
-            {!isEnrolled && (
+            {userRole === "USER" && !isEnrolled && (
               <div className="flex flex-col bg-white border w-full shadow-sm rounded-xl p-4 md:p-5 relative group mb-4">
                 <div className="mt-4 relative">
                   <div className="flex justify-between items-center">
@@ -124,7 +127,6 @@ const CourseDetail = () => {
                       </button>
                     )}
                   </div>
-
                   <div className="overflow-hidden">
                     <div
                       className="flex transition-transform duration-500"
@@ -144,7 +146,6 @@ const CourseDetail = () => {
                       ))}
                     </div>
                   </div>
-
                   <div className="flex justify-between mt-2">
                     <button
                       onClick={handlePrev}
@@ -168,7 +169,12 @@ const CourseDetail = () => {
             )}
 
             <div className="mt-8">
-              <CourseSkillCard courseId={courseId} userRole={userRole} />
+              <CourseSkillCard
+                isReviewPath={isReviewPath}
+                courseId={courseId}
+                userRole={userRole}
+                isEnrolled={isEnrolled}
+              />
             </div>
             <div className="mt-8">
               {/* {userRole === "USER" && isEnrolled && (

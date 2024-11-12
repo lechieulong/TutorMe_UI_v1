@@ -3,7 +3,7 @@ import axios from "axios";
 import CourseLessonCard from "../../Mentor/component/CourseLessonCard";
 import CreateCourseLesson from "../../Mentor/component/CreateCourseLesson";
 
-const CoursePartCard = ({ skillId, userRole }) => {
+const CoursePartCard = ({ isReviewPath, skillId, userRole, isEnrolled }) => {
   const [courseParts, setCourseParts] = useState([]);
   const [collapsedParts, setCollapsedParts] = useState({});
   const [showLessonForm, setShowLessonForm] = useState({});
@@ -16,8 +16,11 @@ const CoursePartCard = ({ skillId, userRole }) => {
       const response = await axios.get(
         `https://localhost:7030/api/CourseParts/ByCourseSkill/${skillId}`
       );
-      setCourseParts(response.data);
-      const initialCollapsedState = response.data.reduce((acc, part) => {
+      // Sắp xếp courseParts theo trường order trước khi set vào state
+      const sortedCourseParts = response.data.sort((a, b) => a.order - b.order);
+      setCourseParts(sortedCourseParts);
+
+      const initialCollapsedState = sortedCourseParts.reduce((acc, part) => {
         acc[part.id] = true;
         return acc;
       }, {});
@@ -31,6 +34,7 @@ const CoursePartCard = ({ skillId, userRole }) => {
   useEffect(() => {
     fetchCourseParts();
   }, [skillId, fetchCourseParts, lessonCreatedTrigger]);
+
   const toggleCollapse = (partId) => {
     setCollapsedParts((prev) => ({
       ...prev,
@@ -76,11 +80,14 @@ const CoursePartCard = ({ skillId, userRole }) => {
   if (error) return <p>{error}</p>;
 
   return (
-    <div className="border rounded-md p-4 mb-4 shadow-md relative">
+    <div className="p-4 mb-4">
       {courseParts.map((coursePart) => (
-        <div key={coursePart.id} className="mb-6 border-b pb-4">
+        <div
+          key={coursePart.id}
+          className="border rounded-md p-4 mb-4 shadow-md bg-[#EEEDEB]"
+        >
           <div className="flex gap-2 justify-end mb-2">
-            {userRole !== "USER" && (
+            {userRole !== "USER" && !isReviewPath && (
               <>
                 <button
                   type="button"
@@ -120,9 +127,11 @@ const CoursePartCard = ({ skillId, userRole }) => {
             }}
           >
             <CourseLessonCard
+              isReviewPath={isReviewPath}
               coursePartId={coursePart.id}
               onLessonCreated={handleLessonCreated}
               userRole={userRole}
+              isEnrolled={isEnrolled}
             />
 
             {showLessonForm[coursePart.id] && (

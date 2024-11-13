@@ -521,6 +521,92 @@ const mockTestData = {
       },
     ],
   },
+  speaking: {
+    id: '7f0ec5a8-8017-47b1-b848-53a7bc6de993', // GUID for writing
+    duration: 60,
+    type: 3,
+    parts: [
+      {
+        id: 'b65b2391-5dbf-4673-81c1-5271d055482b', // GUID for part 5
+        partNumber: 1,
+        contentText: "",
+        audio: null,
+        image:
+          "https://www.pexels.com/photo/document-on-top-of-stationery-669619.jpeg",
+        questionName: "Writing Section 1",
+        sections: [
+          {
+            id: '3a537a52-1c94-4973-9f4e-d1bd953d8ef8', // GUID for section 7
+            sectionGuide: "Write at least 250 words on the following topic:",
+            sectionType: 1,
+            image: "",
+            questions: [
+              {
+                id: '74e032d5-e672-4e53-b2d1-c4dbf8ee2b1e', // GUID for question 14
+                questionName:
+                  "Discuss the impact of technology on communication.",
+                answers: [], // No answers for writing questions
+              },
+            ],
+          },
+        ],
+      },
+      {
+        id: 'd7400c7a-c66e-4010-b5ba-3b5e1c74afc8', // GUID for part 6
+        partNumber: 2,
+        contentText: "<p>Writing Task 2 prompt.</p>",
+        audio: null,
+        image:
+          "https://www.pexels.com/photo/close-up-photo-of-ballpoint-pen-on-paper-590582.jpeg",
+        questionName: "Writing Section 2",
+        sections: [
+          {
+            id: 'd3d41483-82eb-4d88-b87a-95f86eebc5f7', // GUID for section 8
+            sectionGuide:
+              "Write a letter to your friend inviting them to your birthday party:",
+            sectionType: 1,
+            image: "",
+            questions: [
+              {
+                id: 'd8d2c7ee-f76e-4f00-b058-70893bc21d43', // GUID for question 15
+                questionName:
+                  "What details should you include in the invitation?",
+                answers: [], // No answers for writing questions
+              },
+            ],
+          },
+        ],
+      },
+      {
+        id: 2,
+        partNumber: 2,
+        contentText: "<p>Learn additional vocabulary words.</p>",
+        audio: null,
+        image: "https://unsplash.com/photos/jGm1kjkVp8I",
+        questionName: "Vocabulary Section 2",
+        sections: [
+          {
+            id: 2,
+            sectionGuide: "Use the following words in a sentence:",
+            sectionType: 5,
+            image: "",
+            questions: [
+              {
+                id: 3,
+                questionName: "Use 'ambiguous' in a sentence.",
+                answers: [],
+              },
+              {
+                id: 4,
+                questionName: "Use 'cognizant' in a sentence.",
+                answers: [],
+              },
+            ],
+          },
+        ],
+      },
+    ],
+  },
 };
 
 export default mockTestData;

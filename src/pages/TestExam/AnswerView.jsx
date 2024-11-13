@@ -588,6 +588,8 @@ const AnswerView = ({
           handleAnswerChange={handleAnswerChange}
         />
       )}
+
+      {currentSkillKey === "speaking" && <Speaking />}
     </form>
   );
 };

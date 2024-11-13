@@ -3,50 +3,50 @@ import axios from "axios";
 import apiURLConfig from "../common/apiURLConfig";
 import Cookies from "js-cookie";
 
-// Action Enroll User
-export const EnrollUser = createAsyncThunk(
-  "enrollment/EnrollUser",
-  async (enrollmentData, { rejectWithValue }) => {
+export const CheckUserEnrollment = createAsyncThunk(
+  "enrollment/CheckUserEnrollment",
+  async ({ userId, courseId }, { rejectWithValue }) => {
     try {
       const token = Cookies.get("authToken");
-      const response = await axios.post(
-        `${apiURLConfig.baseURL}/enrollment`,
-        enrollmentData,
+      const response = await axios.get(
+        `${apiURLConfig.baseURL}/enrollment/check`,
         {
+          params: { userId, courseId },
           headers: {
             Authorization: `Bearer ${token}`,
           },
         }
       );
-      return response.data;
+      return response.data; // Trả về boolean trực tiếp từ API
     } catch (error) {
       console.error("API Error: ", error);
       return rejectWithValue(
-        error.response?.data?.message || "Failed to enroll user"
+        error.response?.data?.message || "Failed to check enrollment"
       );
     }
   }
 );
 
-// Action to get user enrollments
-export const GetUserEnrollments = createAsyncThunk(
-  "enrollment/GetUserEnrollments",
-  async (userId, { rejectWithValue }) => {
+export const enrollUser = createAsyncThunk(
+  "enrollment/enrollUser",
+  async ({ courseId, userId, classId }, { rejectWithValue }) => {
     try {
       const token = Cookies.get("authToken");
-      const response = await axios.get(
-        `${apiURLConfig.baseURL}/enrollment/user/${userId}`,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
-      return response.data;
+      const enrollmentData = {
+        courseId,
+        userId,
+        classId,
+      };
+      await axios.post(`${apiURLConfig.baseURL}/enrollment`, enrollmentData, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      return { success: true };
     } catch (error) {
-      console.error("API Error: ", error);
+      console.error("Enrollment failed", error);
       return rejectWithValue(
-        error.response?.data?.message || "Failed to get user enrollments"
+        error.response?.data?.message || "Failed to enroll"
       );
     }
   }
@@ -55,9 +55,10 @@ export const GetUserEnrollments = createAsyncThunk(
 const initialState = {
   enrollment: null,
   enrollments: [],
-  enrollmentStatus: "idle", // Default status for checking enrollment
+  enrollmentStatus: "idle",
   enrollStatus: "idle",
   getEnrollmentsStatus: "idle",
+  isEnrolled: false,
   error: null,
   enrollmentsError: null,
 };
@@ -68,30 +69,19 @@ const EnrollmentSlice = createSlice({
   reducers: {},
   extraReducers: (builder) => {
     builder
-      // Handle user enrollment
-      .addCase(EnrollUser.pending, (state) => {
+      .addCase(enrollUser.pending, (state) => {
         state.enrollStatus = "pending";
       })
-      .addCase(EnrollUser.fulfilled, (state, action) => {
-        state.enrollStatus = "succeeded";
-        state.enrollment = action.payload;
+      .addCase(CheckUserEnrollment.pending, (state) => {
+        state.enrollmentStatus = "pending";
       })
-      .addCase(EnrollUser.rejected, (state, action) => {
-        state.enrollStatus = "failed";
-        state.error = action.payload || action.error.message; // Set error message
+      .addCase(CheckUserEnrollment.fulfilled, (state, action) => {
+        state.enrollmentStatus = "succeeded";
+        state.isEnrolled = action.payload;
       })
-
-      // Handle get user enrollments
-      .addCase(GetUserEnrollments.pending, (state) => {
-        state.getEnrollmentsStatus = "pending";
-      })
-      .addCase(GetUserEnrollments.fulfilled, (state, action) => {
-        state.getEnrollmentsStatus = "succeeded";
-        state.enrollments = action.payload; // Assuming the API returns an array of enrollments
-      })
-      .addCase(GetUserEnrollments.rejected, (state, action) => {
-        state.getEnrollmentsStatus = "failed";
-        state.enrollmentsError = action.payload || action.error.message; // Set error message
+      .addCase(CheckUserEnrollment.rejected, (state, action) => {
+        state.enrollmentStatus = "failed";
+        state.error = action.payload || action.error.message;
       });
   },
 });

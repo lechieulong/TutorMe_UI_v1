@@ -136,7 +136,7 @@ const Header = () => {
           >
             <div className="flex flex-col gap-5 mt-5 sm:flex-row sm:items-center sm:mt-0 sm:ps-5">
               <a
-                className="font-medium text-whitefocus:outline-none"
+                className="font-medium text-white focus:outline-none"
                 href="/"
                 aria-current="page"
               >
@@ -146,7 +146,7 @@ const Header = () => {
                 Home
               </a>
               <a
-                className="font-medium text-whitefocus:outline-none"
+                className="font-medium text-white focus:outline-none"
                 href={`/live-stream${
                   user === null || user.role === "USER"
                     ? ""
@@ -159,7 +159,7 @@ const Header = () => {
                 Livestreams
               </a>
               <Link
-                className="font-medium text-whitefocus:outline-none"
+                className="font-medium text-white focus:outline-none"
                 to="/courseList"
               >
                 <span className="mr-2">
@@ -169,7 +169,7 @@ const Header = () => {
               </Link>
 
               <Link
-                className="font-medium text-whitefocus:outline-none"
+                className="font-medium text-white focus:outline-none"
                 to="/listTest"
               >
                 <span className="mr-2">
@@ -179,7 +179,7 @@ const Header = () => {
               </Link>
 
               <Link
-                className="font-medium text-whitefocus:outline-none"
+                className="font-medium text-white focus:outline-none"
                 to="/mylearning"
               >
                 <span className="mr-2">

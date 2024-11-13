@@ -1,10 +1,9 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
-import ReactQuill from "react-quill";
-import "react-quill/dist/quill.snow.css";
+import Cookies from "js-cookie";
+import JoditEditor from "jodit-react";
 import { getUser } from "../../../service/GetUser";
 import useAuthToken from "../../../hooks/useAuthToken";
-import Cookies from "js-cookie";
 
 const CreateCourseLessonContent = ({
   courseLessonId,
@@ -69,7 +68,7 @@ const CreateCourseLessonContent = ({
     setContentData((prev) => ({ ...prev, contentUrl: videoId }));
   };
 
-  const handleQuillChange = (value) => {
+  const handleJoditChange = (value) => {
     setContentData((prev) => ({ ...prev, contentText: value }));
   };
 
@@ -130,7 +129,11 @@ const CreateCourseLessonContent = ({
   };
 
   return (
-    <div className="p-6 bg-white rounded-lg shadow-lg max-w-md mx-auto">
+    <div
+      className={`p-6 bg-white rounded-lg shadow-lg mx-auto ${
+        contentData.contentType === "text" ? "max-w-2xl" : "max-w-md"
+      }`}
+    >
       <form onSubmit={handleSubmit}>
         <div className="mb-4">
           <label className="block text-gray-700 font-medium">
@@ -157,10 +160,13 @@ const CreateCourseLessonContent = ({
             <label className="block text-gray-700 font-medium">
               Content Text
             </label>
-            <ReactQuill
+            <JoditEditor
               value={contentData.contentText}
-              onChange={handleQuillChange}
-              placeholder="Enter content text"
+              onBlur={handleJoditChange}
+              // onChange={handleJoditChange}
+              config={{
+                placeholder: "Enter content text",
+              }}
             />
           </div>
         ) : contentData.contentType === "file" ? (

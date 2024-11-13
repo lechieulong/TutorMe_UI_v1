@@ -19,6 +19,8 @@ const CreateCoursePart = ({ courseSkillId, onClose, onCreated }) => {
   };
 
   const handleSubmit = async (e) => {
+    console.log(courseSkillId);
+
     e.preventDefault();
     setLoading(true);
     setError(null);

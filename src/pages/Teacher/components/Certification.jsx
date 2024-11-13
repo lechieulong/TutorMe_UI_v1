@@ -1,8 +1,12 @@
-import React from 'react';
-import { useSelector } from "react-redux";
+import React, { useEffect } from 'react';
+import { useSelector, useDispatch } from "react-redux";
 import defaulAvatar from "../../../assets/images/default-avatar.jpg";
+import { useParams } from "react-router-dom";
+import { Profile } from '../../../redux/users/UserSlice';
 
 const Certification = () => {
+    const { teachername } = useParams();
+    const dispatch = useDispatch();
     const { userEducation } = useSelector((state) => state.user);
 
     console.log("User education: ", userEducation);

@@ -10,8 +10,10 @@ import Login from "./pages/Authentication/Login";
 import Register from "./pages/Authentication/Register";
 import ForgotPassword from "./pages/Authentication/ForgotPassword";
 import ResetPassword from "./pages/Authentication/ResetPassword";
+import UpMoney from "./pages/User/UpMoney";
 
 import UserDetail from "./pages/User/UserDetail";
+import TeacherProfile from "./pages/Teacher/TeacherProfile";
 import ProfileEdit from "./pages/User/ProfileEdit";
 import ChangePassword from "./pages/User/ChangePassword";
 import BeTeacher from "./pages/User/Beteacher";
@@ -20,6 +22,7 @@ import UpdateTeacherRequest from "./pages/User/UpdateTeacherRequest";
 import Calendar from "./pages/Calendar/Calendar";
 import CoachingSchedule from "./pages/Teacher/CoachingSchedule";
 import ConfirmBook from "./pages/Schedule/ConfirmBook";
+import BookedSchedule from "./pages/Schedule/Scheduled";
 
 import SkillPart from "./pages/TestExam/SkillPart";
 import LiveStream from "./pages/LiveStream";
@@ -69,11 +72,13 @@ const App = () => {
           <Route path="/register" element={<Register />} />
           <Route path="/forgotpass" element={<ForgotPassword />} />
           <Route path="/user/:username" element={<UserDetail />} />
+          <Route path="/teacherprofile" element={<TeacherProfile />} />
           <Route path="/user/edit/:username" element={<ProfileEdit />} />
           <Route path="/changepassword" element={<ChangePassword />} />
           <Route path="/reset-password" element={<ResetPassword />} />
           <Route path="/beteacher" element={<BeTeacher />} />
           <Route path="/updateteacherrequest" element={<UpdateTeacherRequest />} />
+          <Route path="/upmoney" element={<UpMoney />} />
           {/* <Route path="/Payment" element={<PayOS />} /> */}
           {/* Test  common*/}
           <Route path="/" element={<Home />} />
@@ -107,6 +112,8 @@ const App = () => {
             element={<CoachingSchedule />}
           />
           <Route path="/schedulepaymentmethod" element={<ConfirmBook />} />
+          <Route path="/coachingschedule/bookedschedule" element={<BookedSchedule />} />
+
           {/* Test Mentor */}
           {/* Mentor */}
           <Route path="/metorinfor" element={<MetorInfor />} />
@@ -135,8 +142,10 @@ const App = () => {
           <Route path="/404" element={<Error404 />} />
           <Route path="/not-authorized" element={<NotAuthorizedPage />} />
           <Route path="/Payment" element={<PayOS />} />
+          <Route path="/Payment" element={<PayOS />} />
           <Route path="/Paymentresult" element={<PaymentResult />} />
-          ADMIN
+          
+          {/* ADMIN */}
           <Route
             path="/admin/app/*"
             element={

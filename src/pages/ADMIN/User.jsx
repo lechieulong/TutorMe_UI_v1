@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Admin_GetUsers, Admin_LockUser, Admin_UnlockUser } from '../../redux/ADMIN/UserSlice';
-import { FaLock, FaLockOpen } from 'react-icons/fa';
+import { FaLock, FaLockOpen, FaFilter } from 'react-icons/fa';
 import LockoutModal from '../../components/ADMIN/LockoutModal';
 import UnlockModal from '../../components/ADMIN/UnlockModal';
 import ImportedNotify from '../../components/ADMIN/ImportedNotify';
@@ -118,6 +118,9 @@ const Users = () => {
                     {/* <button className="bg-purple-700 text-white px-4 py-2 rounded-lg shadow hover:bg-purple-600 transition">
                         Add New
                     </button> */}
+                    <button className="border border-gray-300 rounded-lg p-2 flex items-center mr-2">
+                        <FaFilter className="mr-2" /> Filter
+                    </button>
                     <button
                         className={`bg-red-500 text-white px-4 py-2 rounded-lg shadow transition ${importUserStatus === "pending" ? "hover:bg-red-500" : "hover:bg-red-400"
                             }`}

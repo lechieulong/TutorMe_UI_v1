@@ -12,6 +12,7 @@ import scheduleReducer from "./Schedule/ScheduleSlice";
 import specializationReducer from "./specialization/SpecializationSlice";
 import ADMIN_usersReducer from "./ADMIN/UserSlice";
 import ADMIN_teachersReducer from "./ADMIN/TeacherSlice";
+import User_BalanceReducer from "./users/BalanceSlice";
 
 export const store = configureStore({
   reducer: {
@@ -22,6 +23,7 @@ export const store = configureStore({
     auth: authReducer,
     test: testReducer,
     user: userReducer,
+    user_balance: User_BalanceReducer,
     event: eventReducer,
     answer: answerReducer,
     schedule: scheduleReducer,

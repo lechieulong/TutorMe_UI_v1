@@ -6,6 +6,7 @@ import { useParams } from "react-router-dom";
 import { GetSchedule7Days } from '../../../redux/Schedule/ScheduleSlice';
 import { Link, useNavigate } from "react-router-dom";
 import { CheckAuthUser } from '../../../service/checkAuth';
+import { formatCurrency } from '../../../utils/Validator';
 
 // Utility function to get the day names
 const getNext7Days = () => {
@@ -29,7 +30,7 @@ const AvailableTime = () => {
 
     // Get schedule and user information from Redux store
     const { schedules, scheduleStatus, scheduleError } = useSelector((state) => state.schedule);
-    const { userInfor } = useSelector((state) => state.user);
+    const { userInfor, user } = useSelector((state) => state.user);
 
     // Dispatch to fetch teacher profile and schedule
     useEffect(() => {
@@ -82,24 +83,45 @@ const AvailableTime = () => {
                                                                 <p className="text-sm font-bold text-gray-700">
                                                                     {new Date(item.startTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: false })} - {new Date(item.endTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: false })}
                                                                 </p>
-                                                                <p className="text-xs text-green-500">{item.price} ₫</p>
+                                                                <p className="text-xs text-green-500">{formatCurrency(item.price)}</p>
                                                                 <p className="text-xs text-red-500">Pending</p>
                                                             </div>
-                                                        ) : item.status === 0 &&(
+                                                        ) : item.status === 0 && user?.userName === userInfor?.userName ? (
                                                             // Nếu không phải Pending, cho phép bấm vào Link
                                                             <Link to="/schedulepaymentmethod"
                                                                 state={{
                                                                     scheduleId: item.id,
                                                                     teacherName: userInfor?.name,
+                                                                    teacherId: userInfor?.id,
+                                                                    date: new Date(item.startTime).toLocaleDateString(),
                                                                     startTime: new Date(item.startTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: false }),
                                                                     endTime: new Date(item.endTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: false }),
-                                                                    price: item.price
+                                                                    price: item.price,
+                                                                    status: item.status
                                                                 }}
                                                                 className="w-full text-left focus:outline-none p-2">
                                                                 <p className="text-sm font-bold text-gray-700">
                                                                     {new Date(item.startTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: false })} - {new Date(item.endTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: false })}
                                                                 </p>
-                                                                <p className="text-xs text-green-500">{item.price} ₫</p>
+                                                                <p className="text-xs text-green-500">{formatCurrency(item.price)}</p>
+                                                            </Link>
+                                                        ) : item.status === 0 && user?.userName !== userInfor?.userName && (
+                                                            <Link to="/schedulepaymentmethod"
+                                                                state={{
+                                                                    scheduleId: item.id,
+                                                                    teacherName: userInfor?.name,
+                                                                    teacherId: userInfor?.id,
+                                                                    date: new Date(item.startTime).toLocaleDateString(),
+                                                                    startTime: new Date(item.startTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: false }),
+                                                                    endTime: new Date(item.endTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: false }),
+                                                                    price: item.price,
+                                                                    status: item.status
+                                                                }}
+                                                                className="w-full text-left focus:outline-none p-2">
+                                                                <p className="text-sm font-bold text-gray-700">
+                                                                    {new Date(item.startTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: false })} - {new Date(item.endTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: false })}
+                                                                </p>
+                                                                <p className="text-xs text-green-500">{formatCurrency(item.price)}</p>
                                                             </Link>
                                                         )}
                                                     </div>
@@ -130,23 +152,50 @@ const AvailableTime = () => {
                                                                     <p className="text-sm font-bold text-gray-700">
                                                                         {new Date(item.startTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: false })} - {new Date(item.endTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: false })}
                                                                     </p>
-                                                                    <p className="text-xs text-green-500">{item.price} ₫</p>
+                                                                    <p className="text-xs text-green-500">{formatCurrency(item.price)}</p>
                                                                     <p className="text-xs text-red-500">Pending</p>
                                                                 </div>
-                                                            ) : (
-                                                                // Nếu không phải Pending, cho phép bấm vào Link
+                                                            ) : item.status === 0 && user?.userName === userInfor?.userName ? (
+                                                                <>
+                                                                {/* // Nếu không phải Pending, cho phép bấm vào Link */}
+                                                                    <Link to="/schedulepaymentmethod"
+                                                                        state={{
+                                                                            scheduleId: item.id,
+                                                                            teacherName: userInfor?.name,
+                                                                            teacherId: userInfor?.id,
+                                                                            date: new Date(item.startTime).toLocaleDateString(),
+                                                                            startTime: new Date(item.startTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: false }),
+                                                                            endTime: new Date(item.endTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: false }),
+                                                                            price: item.price,
+                                                                            status: item.status
+                                                                        }}
+                                                                        className="w-full text-left focus:outline-none p-2">
+                                                                        <p className="text-sm font-bold text-gray-700">
+                                                                            {new Date(item.startTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: false })} - {new Date(item.endTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: false })}
+                                                                        </p>
+                                                                        <p className="text-xs text-green-500">{formatCurrency(item.price)}</p>
+
+                                                                    </Link>
+                                                                    <button>Edit</button>
+                                                                    <button>Delete</button>
+                                                                </>
+                                                            ) : item.status === 0 && user?.userName !== userInfor?.userName && (
                                                                 <Link to="/schedulepaymentmethod"
                                                                     state={{
+                                                                        scheduleId: item.id,
                                                                         teacherName: userInfor?.name,
+                                                                        teacherId: userInfor?.id,
+                                                                        date: new Date(item.startTime).toLocaleDateString(),
                                                                         startTime: new Date(item.startTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: false }),
                                                                         endTime: new Date(item.endTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: false }),
-                                                                        price: item.price
+                                                                        price: item.price,
+                                                                        status: item.status
                                                                     }}
                                                                     className="w-full text-left focus:outline-none p-2">
                                                                     <p className="text-sm font-bold text-gray-700">
                                                                         {new Date(item.startTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: false })} - {new Date(item.endTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: false })}
                                                                     </p>
-                                                                    <p className="text-xs text-green-500">{item.price} ₫</p>
+                                                                    <p className="text-xs text-green-500">{formatCurrency(item.price)}</p>
                                                                 </Link>
                                                             )}
                                                         </div>

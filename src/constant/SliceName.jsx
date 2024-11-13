@@ -7,9 +7,11 @@ export const SLICE_NAMES = {
   AUTH: "auth",
   TEST: "test",
   USER: "user",
+  USERBALANCE: "userBalance",
   TEACHER: "teacher",
   EVENT: "event",
   SCHEDULE: "schedule",
+  SCHEDULESESSION: "scheduleSession",
   COMMON: "common",
   SPECIALIZATION: "specialization",
 };
@@ -28,6 +30,7 @@ export const ACTIONS = {
   CHANGE_PASSWORD: "change-password",
   REQUEST_FORGOT: "forgot-password",
   RESET_PASSWORD: "reset-password",
+  UPDATE_ROLE: "update-role",
 
   FETCH_TESTS: "getTests",
   GET_TEST: "getTest",
@@ -59,11 +62,13 @@ export const ACTIONS = {
   UPDATE_TEACHER_REQUEST: "updateTeacherRequest",
   UPDATE_PROFILE: "updateprofile",
 
+  GET_USER_BALANCE: "getuserbalance",
   //Event
   GET_EVENT_BY_USERID: "geteventbyuserid",
 
   //Schedule
   SET_SCHEDULE: "setschedule",
+  SET_SCHEDULE_SESSION: "setscheduleSession",
   GET_SCHEDULE_7DAYS: "getschedule7days",
 
   //Specialization

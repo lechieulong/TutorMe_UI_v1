@@ -44,7 +44,7 @@ const MentorSidebar = ({ setSelectedComponent }) => {
             <li>
               <Link
                 className="flex items-center gap-x-3.5 py-2 px-2.5 text-sm text-gray-700 rounded-lg hover:bg-gray-100"
-                to={`/courseDetail/${courseId}/classList`} // Use courseId variable dynamically
+                to={`/courseDetail/${courseId}/classOfCourse`}
               >
                 <svg
                   className="size-4"

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { useLocation } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import axios from "axios";
 
 const ClassCard = ({
@@ -8,21 +8,30 @@ const ClassCard = ({
   onSwitchChange,
   onSelect,
   isActive,
+  userRole,
 }) => {
   const location = useLocation();
-  const [isSwitchOn, setIsSwitchOn] = useState(
-    switchState || classItem.isEnabled
-  ); // Sử dụng isEnabled từ classItem
+  const navigate = useNavigate();
+  const [isSwitchOn, setIsSwitchOn] = useState(false);
 
   useEffect(() => {
-    setIsSwitchOn(switchState);
-  }, [switchState]);
+    const fetchEnabledStatus = async () => {
+      try {
+        const response = await axios.get(
+          `https://localhost:7030/api/class/${classItem.id}/enabled`
+        );
+        if (typeof response.data.isEnabled === "boolean") {
+          setIsSwitchOn(response.data.isEnabled);
+        } else {
+          console.error("Phản hồi từ API không hợp lệ");
+        }
+      } catch (error) {
+        console.error("Không thể tải trạng thái enabled của lớp học", error);
+      }
+    };
 
-  const isCourseDetailWithClassId =
-    location.pathname.startsWith("/courseDetail/");
-  const isMentorCourseDetail = location.pathname.startsWith(
-    "/mentorCourseDetail/"
-  );
+    fetchEnabledStatus();
+  }, [classItem.id]);
 
   const handleSwitchChange = async () => {
     const newStatus = !isSwitchOn;
@@ -32,16 +41,24 @@ const ClassCard = ({
 
     if (window.confirm(confirmationMessage)) {
       try {
-        await axios.put(
+        const response = await axios.put(
           `https://localhost:7030/api/class/${classItem.id}/enabled`,
           newStatus,
           {
             headers: { "Content-Type": "application/json" },
           }
         );
-        setIsSwitchOn(newStatus);
-        alert(`Class đã được ${newStatus ? "hiển thị" : "ẩn"} thành công.`);
-        onSwitchChange(classItem.id, newStatus);
+        if (typeof response.data.isEnabled === "boolean") {
+          setIsSwitchOn(response.data.isEnabled);
+          alert(
+            `Class đã được ${
+              response.data.isEnabled ? "hiển thị" : "ẩn"
+            } thành công.`
+          );
+          onSwitchChange(classItem.id, response.data.isEnabled);
+        } else {
+          throw new Error("Phản hồi từ API không hợp lệ");
+        }
       } catch (error) {
         console.error("Cập nhật trạng thái class thất bại", error);
       }
@@ -49,21 +66,22 @@ const ClassCard = ({
   };
 
   const handleCardClick = () => {
-    // Kiểm tra nếu classItem không được kích hoạt
-    if (!classItem.isEnabled) {
-      onSelect(false); // Gọi hàm onSelect với false
-      alert("Lớp học này không khả dụng."); // Thông báo cho người dùng
-    } else if (isCourseDetailWithClassId && onSelect) {
-      onSelect(classItem.id); // Gọi hàm onSelect với classId
+    if (!isSwitchOn) {
+      alert("Lớp học này không khả dụng.");
+      onSelect(false);
+    } else {
+      onSelect && onSelect(classItem.id);
+
+      if (location.pathname.includes("/classOfCourse")) {
+        navigate(`/classDetail/${classItem.courseId}/${classItem.id}`);
+      }
     }
   };
-
-  if (!classItem) return null; // Kiểm tra xem classItem có tồn tại không
 
   return (
     <div
       className={`flex-shrink-0 w-1/4 p-1 cursor-pointer transition-transform duration-300 ${
-        isCourseDetailWithClassId && isActive
+        isActive
           ? "border-2 border-green-300 rounded-lg"
           : "border border-transparent"
       }`}
@@ -84,8 +102,7 @@ const ClassCard = ({
           </p>
         </div>
 
-        {/* Switch Button: Show only on mentorCourseDetail page */}
-        {isMentorCourseDetail && (
+        {userRole !== "USER" && (
           <div className="absolute bottom-4 right-4 flex items-center">
             <input
               type="checkbox"

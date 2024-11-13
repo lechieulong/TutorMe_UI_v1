@@ -49,7 +49,7 @@ import QuestionBank from "./pages/ExamTest/questionBank/QuestionBank";
 import PayOS from "./pages/User/PayOS";
 import PaymentResult from "./pages/User/PayOSResult ";
 // import CreateTestLayout from "./pages/course/CreateTestLayout";
-import CourseLayout from "./pages/course/CourseLayout";
+// import CourseLayout from "./pages/course/CourseLayout";
 import ListTest from "./pages/ExamTest/ListTest";
 import CreateCourseLesson from "./pages/Mentor/component/CreateCourseLesson";
 import Term from "./pages/Terms";
@@ -120,7 +120,7 @@ const App = () => {
           <Route path="/metorinfor" element={<MetorInfor />} />
           <Route path="/mentorCourseList" element={<MentorCourseList />} />
           {/* Course */}
-          <Route path="/courseLayout" element={<CourseLayout />} />
+          {/* <Route path="/courseLayout" element={<CourseLayout />} /> */}
           <Route path="/courseList" element={<CourseList />} />
           <Route path="/createCourse" element={<CreateCourse />} />
           <Route

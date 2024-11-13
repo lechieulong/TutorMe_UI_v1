@@ -13,7 +13,7 @@ const Speaking = ({ partData, currentSkillKey, handleAnswerChange }) => {
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(-1); // Start with welcome message
   const [thinking, setThinking] = useState(false);
   const [aiText, setAiText] = useState("");
-  const [timeLeft, setTimeLeft] = useState(45); // Default time for Part 1 (45 seconds)
+  const [timeLeft, setTimeLeft] = useState(5); // Default time for Part 1 (45 seconds)
 
   const [showWelcome, setShowWelcome] = useState(true);
   const [guidelineMessage, setGuidelineMessage] = useState("");
@@ -38,7 +38,7 @@ const Speaking = ({ partData, currentSkillKey, handleAnswerChange }) => {
       const utterance = new SpeechSynthesisUtterance(text);
       utterance.lang = "en-US";
       utterance.voice = examinerVoice();
-      utterance.rate = 1;
+      utterance.rate = 3;
       utterance.onend = callback;
       window.speechSynthesis.speak(utterance);
     } else {
@@ -48,7 +48,6 @@ const Speaking = ({ partData, currentSkillKey, handleAnswerChange }) => {
 
   const evaluateAnswer = async (userAnswer) => {
     try {
-      console.log(userAnswer);
       setThinking(true);
       const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
       const prompt = `Give an overall score and scores for grammar, vocabulary, fluency, coherence on the IELTS score scale, and provide feedback based on this corrected answer: "${userAnswer}"`;
@@ -56,7 +55,6 @@ const Speaking = ({ partData, currentSkillKey, handleAnswerChange }) => {
       const aiResponse =
         result.response.candidates[0].content.parts[0].text.trim();
       setAiText(aiResponse);
-
       setThinking(false);
       speakText(`Your feedback is as follows: ${aiResponse}`);
     } catch (error) {
@@ -66,20 +64,23 @@ const Speaking = ({ partData, currentSkillKey, handleAnswerChange }) => {
   };
 
   const handleTimer = () => {
-    SpeechRecognition.stopListening();
-    evaluateAnswer(transcript);
-    resetTranscript();
-    goToNextQuestion();
-    setAiText("");
-    window.speechSynthesis.cancel();
+    if (timeLeft > 0) {
+      setTimeLeft((prevTime) => prevTime - 1);
+    } else {
+      SpeechRecognition.stopListening();
+      evaluateAnswer(transcript);
+      resetTranscript();
+      setTimeout(() => {
+        setAiText(""); // Clear feedback
+        goToNextQuestion(); // Move to next question
+      }, 10000); // 10 seconds for feedback display
+    }
   };
 
   const goToNextQuestion = () => {
     setCurrentQuestionIndex((prevIndex) => prevIndex + 1);
     setQuestionRead(false); // Reset question read state
-    setTimeLeft(
-      partData.partNumber === 1 || partData.partNumber === 3 ? 45 : 180
-    ); // Reset timer based on partNumber
+    setTimeLeft(partData.partNumber === 1 ? 5 : 180); // Reset timer based on partNumber
     resetTranscript(); // Clear the transcript for the next question
     setAiText(""); // Clear feedback
   };
@@ -91,17 +92,12 @@ const Speaking = ({ partData, currentSkillKey, handleAnswerChange }) => {
           setQuestionRead(true);
         });
       }
+      console.log(questionRead);
       if (questionRead) {
         const timer = setInterval(() => {
-          setTimeLeft((prevTime) => {
-            if (prevTime > 0) {
-              return prevTime - 1;
-            } else {
-              clearInterval(timer);
-              handleTimer();
-              return 0;
-            }
-          });
+          if (timeLeft > 0) {
+            setTimeLeft((prevTime) => prevTime - 1);
+          }
         }, 1000);
         return () => clearInterval(timer);
       }
@@ -118,10 +114,10 @@ const Speaking = ({ partData, currentSkillKey, handleAnswerChange }) => {
     let welcomeMessage = "";
 
     if (partData?.partNumber === 1) {
-      // welcomeMessage = "a";
-      welcomeMessage = `Hello, and welcome to the IELTS Speaking test. My name is Hydra, and I will be your examiner today. This test is recorded for assessment purposes.
-        The Speaking test is divided into three parts. I will explain each part as we go along, and I will ask you to speak on a variety of topics. You are encouraged to speak as much as possible and give full answers. There are no right or wrong answers, so feel free to share your thoughts and opinions.
-        In Part 1, I will ask you some general questions about yourself, your life, and familiar topics. This is just to help you feel comfortable.`;
+      welcomeMessage = "a";
+      // welcomeMessage = `Hello, and welcome to the IELTS Speaking test. My name is Hydra, and I will be your examiner today. This test is recorded for assessment purposes.
+      //   The Speaking test is divided into three parts. I will explain each part as we go along, and I will ask you to speak on a variety of topics. You are encouraged to speak as much as possible and give full answers. There are no right or wrong answers, so feel free to share your thoughts and opinions.
+      //   In Part 1, I will ask you some general questions about yourself, your life, and familiar topics. This is just to help you feel comfortable.`;
     } else if (partData?.partNumber === 2) {
       welcomeMessage = `In Part 2, I will give you a task card with a topic and prompts. You will have 1 minute to prepare, and then I would like you to speak for 1-2 minutes on the topic.`;
     } else if (partData?.partNumber === 3) {
@@ -136,6 +132,7 @@ const Speaking = ({ partData, currentSkillKey, handleAnswerChange }) => {
     });
 
     return () => {
+      console.log(" vi ga");
       window.speechSynthesis.cancel();
       setCurrentQuestionIndex(-1);
     };
@@ -175,14 +172,11 @@ const Speaking = ({ partData, currentSkillKey, handleAnswerChange }) => {
             <div className="flex">
               <button
                 type="button"
-                onClick={() =>
-                  SpeechRecognition.startListening({ continuous: true })
-                }
+                onClick={SpeechRecognition.startListening}
                 className="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600"
               >
                 Start Speaking
               </button>
-
               <button
                 type="button"
                 onClick={SpeechRecognition.stopListening}
@@ -199,7 +193,7 @@ const Speaking = ({ partData, currentSkillKey, handleAnswerChange }) => {
             )}
             {!thinking && aiText && (
               <div>
-                <p>Feedback:</p>
+                <p>Your feedback:</p>
                 <div className="bg-gray-100 p-2 rounded">{aiText}</div>
               </div>
             )}

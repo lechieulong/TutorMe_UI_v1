@@ -115,7 +115,7 @@ const ButtonAddCourseTimelineDetail = ({ courseId, onDetailAdded }) => {
           <label className="block mb-2">
             URL Video
             <input
-              type="url"
+              type="text"
               name="videoUrl"
               placeholder="Nhập URL video"
               value={formData.videoUrl}

@@ -596,6 +596,14 @@ const AnswerView = ({
           handleAnswerChange={handleAnswerChange}
         />
       )}
+
+      {currentSkillKey === "speaking" && (
+        <Speaking
+          partData={partData}
+          currentSkillKey={currentSkillKey}
+          handleAnswerChange={handleAnswerChange}
+        />
+      )}
     </form>
   );
 };

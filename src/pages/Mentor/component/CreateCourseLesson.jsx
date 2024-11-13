@@ -1,21 +1,7 @@
 import React, { useState } from "react";
 import axios from "axios";
 
-const questionTypes = [
-  { value: 1, label: "Multiple Choice Questions" },
-  { value: 2, label: "True/False/Not Given Questions" },
-  { value: 3, label: "Yes/No/Not Given Questions" },
-  { value: 4, label: "Matching Headings" },
-  { value: 5, label: "Matching Information" },
-  { value: 6, label: "Matching Features" },
-  { value: 7, label: "Matching Sentence Endings" },
-  { value: 8, label: "Sentence Completion" },
-  { value: 11, label: "Summary Completion" },
-  { value: 9, label: "Short-answer Questions" },
-  { value: 10, label: "Diagram Completion" },
-];
-
-const CreateCourseLesson = ({ coursePartId, onClose }) => {
+const CreateCourseLesson = ({ coursePartId, onClose, onCreated }) => {
   const [lesson, setLesson] = useState({
     coursePartId: coursePartId || "",
     title: "",
@@ -31,7 +17,6 @@ const CreateCourseLesson = ({ coursePartId, onClose }) => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
     if (loading) return;
 
     setLoading(true);
@@ -40,6 +25,7 @@ const CreateCourseLesson = ({ coursePartId, onClose }) => {
     try {
       await axios.post("https://localhost:7030/api/CourseLessons", lesson);
       alert("Course Lesson created successfully!");
+      onCreated();
       onClose();
     } catch (err) {
       setError(err.response?.data?.message || "Failed to create course lesson");
@@ -55,20 +41,15 @@ const CreateCourseLesson = ({ coursePartId, onClose }) => {
 
         <div className="mb-4">
           <label className="block text-gray-700 font-medium">Title</label>
-          <select
+          <input
+            type="text"
             name="title"
             value={lesson.title}
             onChange={handleChange}
             required
+            placeholder="Enter Lesson Topic"
             className="w-full border border-gray-300 rounded-md p-2 mt-1"
-          >
-            <option value="">Select Question Type</option>
-            {questionTypes.map((type) => (
-              <option key={type.value} value={type.label}>
-                {type.label}
-              </option>
-            ))}
-          </select>
+          />
         </div>
 
         <div className="flex justify-between">

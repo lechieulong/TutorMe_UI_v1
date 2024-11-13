@@ -50,9 +50,6 @@ const ClassCard = ({
         );
         if (typeof response.data.isEnabled === "boolean") {
           setIsSwitchOn(response.data.isEnabled);
-          console.log(
-            `Switch status: ${response.data.isEnabled ? "Enabled" : "Disabled"}`
-          );
           alert(
             `Class đã được ${
               response.data.isEnabled ? "hiển thị" : "ẩn"
@@ -73,7 +70,11 @@ const ClassCard = ({
       alert("Lớp học này không khả dụng.");
       onSelect(false);
     } else {
-      onSelect && onSelect(classItem.id); // Gọi hàm onSelect nếu có
+      onSelect && onSelect(classItem.id);
+
+      if (location.pathname.includes("/classOfCourse")) {
+        navigate(`/classDetail/${classItem.courseId}/${classItem.id}`);
+      }
     }
   };
 
@@ -81,10 +82,10 @@ const ClassCard = ({
     <div
       className={`flex-shrink-0 w-1/4 p-1 cursor-pointer transition-transform duration-300 ${
         isActive
-          ? "border-2 border-green-300 rounded-lg" // Có border nếu isActive là true
-          : "border border-transparent" // Không có border nếu isActive là false
+          ? "border-2 border-green-300 rounded-lg"
+          : "border border-transparent"
       }`}
-      onClick={handleCardClick} // Gọi handleCardClick khi click vào
+      onClick={handleCardClick}
     >
       <div className="border rounded-md shadow-md overflow-hidden transition-shadow duration-300 relative">
         <div className="p-4">

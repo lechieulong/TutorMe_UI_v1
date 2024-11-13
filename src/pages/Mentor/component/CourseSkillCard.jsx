@@ -3,7 +3,7 @@ import axios from "axios";
 import CoursePartCard from "../../Course/components/CoursePartCard";
 import CreateCoursePart from "./CreateCoursePart";
 
-const CourseSkillCard = ({ courseId, userRole }) => {
+const CourseSkillCard = ({ isReviewPath, courseId, userRole, isEnrolled }) => {
   const [skills, setSkills] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -85,7 +85,7 @@ const CourseSkillCard = ({ courseId, userRole }) => {
 
       <div className="mt-3">
         <div className="flex gap-2">
-          {userRole !== "USER" && (
+          {userRole !== "USER" && !isReviewPath && (
             <>
               <button
                 type="button"
@@ -128,12 +128,17 @@ const CourseSkillCard = ({ courseId, userRole }) => {
 
         {skills.map((skill) => (
           <div
-            key={skill.id}
+            key={skill.id} // Đảm bảo mỗi div có key duy nhất
             className={`${activeTab === skill.id ? "" : "hidden"}`}
             role="tabpanel"
             aria-labelledby={skill.id}
           >
-            <CoursePartCard skillId={skill.id} userRole={userRole} />
+            <CoursePartCard
+              isReviewPath={isReviewPath}
+              skillId={skill.id}
+              userRole={userRole}
+              isEnrolled={isEnrolled}
+            />
           </div>
         ))}
       </div>

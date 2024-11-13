@@ -33,7 +33,6 @@ import CourseDetail from "./pages/Mentor/CourseDetail";
 import CourseSkillCard from "./pages/Mentor/component/CourseSkillCard";
 import "preline";
 import TestLayout from "./pages/TestExam/TestLayout";
-import CourseDetail1 from "./pages/Course/CourseDetail1";
 import CourseTimeline from "./pages/Course/components/CourseTimeline";
 import CreateCourse from "./pages/Course/components/CreateCourse";
 import SpeakingGemini from "./service/SpeakingGemini";
@@ -49,8 +48,8 @@ import NotAuthorizedPage from "./pages/Error/NotAuthorizedPage";
 import QuestionBank from "./pages/ExamTest/questionBank/QuestionBank";
 import PayOS from "./pages/User/PayOS";
 import PaymentResult from "./pages/User/PayOSResult ";
-import CreateTestLayout from "./pages/course/CreateTestLayout";
-import CourseLayout from "./pages/course/CourseLayout";
+// import CreateTestLayout from "./pages/course/CreateTestLayout";
+// import CourseLayout from "./pages/course/CourseLayout";
 import ListTest from "./pages/ExamTest/ListTest";
 import CreateCourseLesson from "./pages/Mentor/component/CreateCourseLesson";
 import Term from "./pages/Terms";
@@ -73,7 +72,10 @@ const App = () => {
           <Route path="/changepassword" element={<ChangePassword />} />
           <Route path="/reset-password" element={<ResetPassword />} />
           <Route path="/beteacher" element={<BeTeacher />} />
-          <Route path="/updateteacherrequest" element={<UpdateTeacherRequest />} />
+          <Route
+            path="/updateteacherrequest"
+            element={<UpdateTeacherRequest />}
+          />
           {/* <Route path="/Payment" element={<PayOS />} /> */}
           {/* Test  common*/}
           <Route path="/" element={<Home />} />
@@ -109,7 +111,7 @@ const App = () => {
             element={<CoachingSchedule />}
           />
           <Route
-            path="/courseDetail/:courseId/classOfCourse/classDetail/:classId"
+            path="/classDetail/:courseId/:classId"
             element={<ClassDetail />}
           />
           <Route path="/schedulepaymentmethod" element={<ConfirmBook />} />
@@ -118,11 +120,13 @@ const App = () => {
           <Route path="/metorinfor" element={<MetorInfor />} />
           <Route path="/mentorCourseList" element={<MentorCourseList />} />
           {/* Course */}
-          <Route path="/courseLayout" element={<CourseLayout />} />
+          {/* <Route path="/courseLayout" element={<CourseLayout />} /> */}
           <Route path="/courseList" element={<CourseList />} />
           <Route path="/createCourse" element={<CreateCourse />} />
-          <Route path="/courseDetail/:courseId" element={<CourseDetail />} />
-          <Route path="/courseDetail/:courseId" element={<CourseDetail />} />
+          <Route
+            path="/courseDetail/:courseId/review?"
+            element={<CourseDetail />}
+          />
           <Route path="createCourseLesson" element={<CreateCourseLesson />} />
           <Route
             path="createCourseLessonContent"

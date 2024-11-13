@@ -1,43 +1,34 @@
-import { useState, useEffect, useCallback } from "react";
-import { useParams, useNavigate, useLocation } from "react-router-dom";
-import axios from "axios";
+import React, { useState, useEffect, useCallback } from "react";
+import { useParams, useLocation } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
 import MentorSidebar from "../../components/Mentor/MentorSideBar";
 import MainLayout from "../../layout/MainLayout";
 import { getUser } from "../../service/GetUser";
 import ClassCard from "../Class/components/ClassCard";
 import CourseSkillCard from "./component/CourseSkillCard";
+import Rating from "../../components/common/Rating";
+import { CheckUserEnrollment } from "../../redux/Enrollment/EnrollmentSlice";
+import { fetchClasses } from "../../redux/classes/ClassSlice";
+import { enrollUser } from "../../redux/Enrollment/EnrollmentSlice";
+import CreateClass from "../Class/CreateClass";
 
 const CourseDetail = () => {
   const { className, courseId } = useParams();
   const location = useLocation();
-  const Skill = location.state?.Skill;
   const [userId, setUserId] = useState(null);
   const [userRole, setUserRole] = useState(null);
   const [currentSlide, setCurrentSlide] = useState(0);
-  const [classes, setClasses] = useState([]);
   const [selectedClassId, setSelectedClassId] = useState(null);
-  const [switchStates, setSwitchStates] = useState({});
-  const [hasError, setHasError] = useState(false);
-  const [isEnrolled, setIsEnrolled] = useState(false); // Trạng thái đã đăng ký
-  const navigate = useNavigate();
+  const [isCreateClassOpen, setIsCreateClassOpen] = useState(false);
 
-  const fetchEnrollments = useCallback(async () => {
-    if (userId) {
-      try {
-        const response = await axios.get(
-          `https://localhost:7030/api/Enrollment/User/${userId}`
-        );
-        const userEnrollments = response.data;
-        // Kiểm tra nếu bất kỳ enrollment nào có courseId trùng với khóa học hiện tại
-        const enrolled = userEnrollments.some(
-          (enrollment) => enrollment.courseId === courseId
-        );
-        setIsEnrolled(enrolled); // Cập nhật isEnrolled dựa trên kết quả
-      } catch (error) {
-        console.error("Failed to fetch enrollments", error);
-      }
-    }
-  }, [userId, courseId]);
+  const dispatch = useDispatch();
+  const classes = useSelector((state) => state.classes.classes);
+  const switchStates = useSelector((state) => state.classes.switchStates);
+
+  const isEnrolled = useSelector((state) => state.enrollment.isEnrolled);
+
+  const isReviewPath = location.pathname.includes("/review");
+  console.log("URL contains /review:", isReviewPath);
 
   const initializeUser = useCallback(() => {
     const userFromToken = getUser();
@@ -48,51 +39,34 @@ const CourseDetail = () => {
     if (userRoleFromToken) setUserRole(userRoleFromToken);
   }, []);
 
-  const fetchClasses = useCallback(async () => {
-    try {
-      const response = await axios.get(
-        `https://localhost:7030/api/class/course/${courseId}/classes`
-      );
-      setClasses(response.data.result);
-      const initialSwitchStates = {};
-      response.data.result.forEach((classItem) => {
-        initialSwitchStates[classItem.id] = classItem.isEnabled;
-      });
-      setSwitchStates(initialSwitchStates);
-      setHasError(false);
-    } catch (error) {
-      console.error("Failed to fetch classes", error);
-      setHasError(true);
-    }
-  }, [courseId]);
-
   useEffect(() => {
     initializeUser();
-    fetchClasses();
-  }, [initializeUser, fetchClasses, courseId]);
+    dispatch(fetchClasses(courseId));
+  }, [initializeUser, dispatch, courseId]);
 
   useEffect(() => {
-    fetchEnrollments(); // Kiểm tra trạng thái đăng ký khi trang tải
-  }, [fetchEnrollments]);
+    if (userId) {
+      dispatch(CheckUserEnrollment({ userId, courseId })).then((result) => {
+        console.log("Enrollment check completed:", result);
+      });
+    }
+  }, [dispatch, userId, courseId]);
 
-  const handleEnroll = async () => {
+  const handleEnroll = () => {
     if (!selectedClassId || !userId || !courseId) {
       alert("Bạn chưa chọn lớp");
       return;
     }
-    try {
-      const enrollmentData = {
-        courseId,
-        userId,
-        classId: selectedClassId,
-      };
-      await axios.post("https://localhost:7030/api/enrollment", enrollmentData);
-      alert("Enrollment successful!");
-      fetchEnrollments(); // Cập nhật trạng thái sau khi đăng ký thành công
-    } catch (error) {
-      console.error("Enrollment failed", error);
-      alert("Enrollment failed.");
-    }
+    dispatch(enrollUser({ courseId, userId, classId: selectedClassId }))
+      .unwrap()
+      .then(() => {
+        alert("Enrollment successful!");
+        dispatch(CheckUserEnrollment({ userId, courseId }));
+      })
+      .catch((error) => {
+        console.error("Enrollment failed", error);
+        alert("Enrollment failed.");
+      });
   };
 
   const handlePrev = () => {
@@ -110,6 +84,14 @@ const CourseDetail = () => {
     console.log(`Selected ClassId: ${classId}`);
   };
 
+  const handleOpenCreateClass = () => setIsCreateClassOpen(true);
+  const handleCloseCreateClass = () => setIsCreateClassOpen(false);
+
+  const handleCreateClassSuccess = () => {
+    dispatch(fetchClasses(courseId));
+    handleCloseCreateClass();
+  };
+
   return (
     <MainLayout>
       <div className="flex flex-col w-screen">
@@ -120,7 +102,6 @@ const CourseDetail = () => {
               <p className="text-black font-bold text-4xl">{className}</p>
             </div>
 
-            {/* Chỉ render nút Enroll nếu người dùng chưa đăng ký */}
             {userRole === "USER" && !isEnrolled && (
               <button
                 type="button"
@@ -131,8 +112,7 @@ const CourseDetail = () => {
               </button>
             )}
 
-            {/* Chỉ render danh sách lớp nếu người dùng chưa đăng ký */}
-            {!isEnrolled && (
+            {userRole === "USER" && !isEnrolled && (
               <div className="flex flex-col bg-white border w-full shadow-sm rounded-xl p-4 md:p-5 relative group mb-4">
                 <div className="mt-4 relative">
                   <div className="flex justify-between items-center">
@@ -141,15 +121,12 @@ const CourseDetail = () => {
                       <button
                         type="button"
                         className="py-2 px-3 inline-flex items-center gap-x-2 text-sm font-medium rounded-lg border border-gray-200 bg-white text-gray-800 shadow-sm hover:bg-gray-50 focus:outline-none focus:bg-gray-50"
-                        onClick={() =>
-                          navigate("/createClass", { state: { courseId } })
-                        }
+                        onClick={handleOpenCreateClass}
                       >
                         Create Class
                       </button>
                     )}
                   </div>
-
                   <div className="overflow-hidden">
                     <div
                       className="flex transition-transform duration-500"
@@ -169,7 +146,6 @@ const CourseDetail = () => {
                       ))}
                     </div>
                   </div>
-
                   <div className="flex justify-between mt-2">
                     <button
                       onClick={handlePrev}
@@ -193,11 +169,29 @@ const CourseDetail = () => {
             )}
 
             <div className="mt-8">
-              <CourseSkillCard courseId={courseId} userRole={userRole} />
+              <CourseSkillCard
+                isReviewPath={isReviewPath}
+                courseId={courseId}
+                userRole={userRole}
+                isEnrolled={isEnrolled}
+              />
+            </div>
+            <div className="mt-8">
+              {/* {userRole === "USER" && isEnrolled && (
+                <Rating userId={userId} courseId={courseId} />
+              )} */}
             </div>
           </div>
         </div>
       </div>
+
+      {isCreateClassOpen && (
+        <CreateClass
+          courseId={courseId}
+          onClose={handleCloseCreateClass}
+          onCreateSuccess={handleCreateClassSuccess}
+        />
+      )}
     </MainLayout>
   );
 };

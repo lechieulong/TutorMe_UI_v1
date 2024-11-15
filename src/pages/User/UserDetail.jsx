@@ -11,10 +11,8 @@ import {
 import defaulAvatar from "../../assets/images/default-avatar.jpg";
 import Cookies from "js-cookie";
 import { Link, useNavigate } from "react-router-dom";
-import { Profile } from "../../redux/users/UserSlice";
 import { useDispatch, useSelector } from "react-redux";
 import { useEffect, useState } from "react";
-import { getUser } from "../../service/GetUser";
 import { formatDOB } from "../../utils/Validator";
 
 const UserDetail = () => {
@@ -25,16 +23,10 @@ const UserDetail = () => {
   const [showPhoneModal, setShowPhoneModal] = useState(false);
   const [newPhoneNumber, setNewPhoneNumber] = useState("");
 
-  const userFromToken = getUser();
-  useEffect(() => {
-    if (userFromToken?.userName) {
-      dispatch(Profile(userFromToken.userName));
-    }
-  }, [dispatch]);
-
   // Get user information and status from the Redux store
-  const { userInfor, status, error } = useSelector((state) => state.user);
+  const { user } = useSelector((state) => state.user);
 
+  console.log("user: ", user);
   // Check authentication token
   useEffect(() => {
     const token = Cookies.get("authToken");
@@ -53,20 +45,20 @@ const UserDetail = () => {
   return (
     <MainLayout>
       <div className="flex w-full bg-gray-100">
-        <Sidebar userInfor={userInfor} />
+        <Sidebar />
         <main className="flex-1 p-5">
           <div className="w-full max-w-full mx-auto bg-gray-100 py-10 flex flex-col">
             <div className="flex flex-col lg:flex-row items-start">
               <div className="lg:w-1/4 flex flex-col items-center mb-6 lg:mb-0 lg:mr-6">
                 <img
-                  src={userInfor?.imageURL || defaulAvatar}
+                  src={user?.imageURL || defaulAvatar}
                   alt="Avatar"
                   className="w-36 h-36 rounded-full object-cover border-4 border-white mb-4"
                   loading="lazy"
                 />
                 <Link
-                  to={`/user/edit/${userInfor?.userName}`}
-                  state={{ userInfor }}
+                  to={`/user/edit/${user?.userName}`}
+                  state={{ user }}
                   className="mt-2 bg-white text-black border border-black rounded-lg px-3 py-1 hover:bg-gray-100"
                 >
                   Edit Profile
@@ -75,12 +67,12 @@ const UserDetail = () => {
               <div className="lg:w-2/4 flex flex-col">
                 <div className="bg-black text-white p-4 rounded-t-lg flex flex-col lg:flex-row items-start">
                   <div className="flex-1 lg:ml-6">
-                    <h5 className="text-2xl font-bold">{userInfor?.name}</h5>
+                    <h5 className="text-2xl font-bold">{user?.name}</h5>
                     <div className="italic flex items-center my-1 text-sm text-amber-300">
                       <FaPhone className="mr-2 text-stone-400" />
                       <p>
-                        {userInfor?.phoneNumber ? (
-                          userInfor?.phoneNumber
+                        {user?.phoneNumber ? (
+                          user?.phoneNumber
                         ) : (
                           <button
                             onClick={() => setShowPhoneModal(true)}
@@ -93,7 +85,7 @@ const UserDetail = () => {
                     </div>
                     <div className="italic flex items-center text-sm text-amber-200">
                       <FaRegUser className="mt-1 mr-2 text-stone-400" />
-                      <p>{userInfor?.userName}</p>
+                      <p>{user?.userName}</p>
                     </div>
                   </div>
                 </div>
@@ -103,7 +95,7 @@ const UserDetail = () => {
                     <div className="p-4 bg-gray-200 rounded-lg">
                       <p className="italic mb-2 flex items-center">
                         <FaEnvelope className="mr-2 text-gray-400" />{" "}
-                        {userInfor?.email}
+                        {user?.email}
                       </p>
                       <p className="italic mb-2 flex items-center">
                         <FaLocationArrow className="mr-2 text-gray-400" /> Lives
@@ -111,7 +103,7 @@ const UserDetail = () => {
                       </p>
                       <p className="italic mb-2 flex items-center">
                         <FaCalendarDay className="mr-2 text-gray-400" />{" "}
-                        {formatDOB(userInfor?.dob)}
+                        {formatDOB(user?.dob)}
                       </p>
                     </div>
                   </div>

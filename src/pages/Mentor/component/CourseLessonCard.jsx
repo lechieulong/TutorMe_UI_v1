@@ -3,28 +3,28 @@ import axios from "axios";
 import Cookies from "js-cookie";
 import CreateCourseLessonContent from "./CreateCourseLessonContent";
 import CourseLessonContent from "./CourseLessonContent";
+import { FaAngleDown, FaAngleUp } from "react-icons/fa";
 
 const CourseLessonCard = ({
-  isReviewPath,
+  isCourseLecture,
   coursePartId,
   userRole,
   isEnrolled,
 }) => {
   const [collapsedLessons, setCollapsedLessons] = useState({});
   const [courseLessons, setCourseLessons] = useState([]);
+  const [lessionCount, setLessionCount] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [dynamicForms, setDynamicForms] = useState([]);
   const token = Cookies.get("authToken");
 
   const toggleCollapse = (lessonId) => {
-    // Chỉ cho phép toggle collapse khi cả isReviewPath và isEnrolled đều là true
-    if (isReviewPath && isEnrolled) {
-      setCollapsedLessons((prev) => ({
-        ...prev,
-        [lessonId]: !prev[lessonId],
-      }));
-    }
+    // Chỉ cho phép toggle collapse khi cả isCourseLecture và isEnrolled đều là true
+    setCollapsedLessons((prev) => ({
+      ...prev,
+      [lessonId]: !prev[lessonId],
+    }));
   };
 
   const fetchCourseLessons = async () => {
@@ -33,7 +33,17 @@ const CourseLessonCard = ({
         `https://localhost:7030/api/CourseLessons/CoursePart/${coursePartId}`,
         { headers: { Authorization: `Bearer ${token}` } }
       );
-      setCourseLessons(response.data);
+      setCourseLessons(response.data.courseLessons);
+
+      if (!isCourseLecture) {
+        // Set all lessons as collapsed initially
+        const initialCollapsedState = response.data.courseLessons.reduce(
+          (acc, lesson) => ({ ...acc, [lesson.id]: true }),
+          {}
+        );
+        setCollapsedLessons(initialCollapsedState);
+      }
+
       setLoading(false);
     } catch (err) {
       setError("Failed to fetch course lessons");
@@ -81,12 +91,12 @@ const CourseLessonCard = ({
     return <p>{error}</p>;
   }
 
-  console.log(isReviewPath + " " + isEnrolled); // Giữ nguyên dòng này
+  console.log(isCourseLecture + " " + isEnrolled); // Giữ nguyên dòng này
 
   return (
-    <div className="h-vh100 p-4 mb-4 shadow-md relative">
+    <div className="h-vh100 px-4 mb-4 relative">
       <div className="cursor-pointer">
-        <h3 className="text-lg font-semibold text-red-600">Lessons</h3>
+        <h3 className="text-sm font-semibold text-gray-400">{courseLessons.length} Lessons</h3>
       </div>
 
       <div className="mt-4 overflow-hidden transition-all duration-1000 ease-in-out">
@@ -99,19 +109,24 @@ const CourseLessonCard = ({
                 key={courseLesson.id}
                 className="border rounded-md p-2 mb-2 shadow-sm flex flex-col items-start"
               >
-                <h4
-                  className="text-md font-semibold cursor-pointer"
+                <div
+                  className="cursor-pointer flex items-center gap-2"
                   onClick={() => toggleCollapse(courseLesson.id)}
                 >
-                  {courseLesson.title}
-                </h4>
+                  {collapsedLessons[courseLesson.id] ? (
+                    <FaAngleDown className="text-gray-600" />
+                  ) : (
+                    <FaAngleUp className="text-gray-600" />
+                  )}
+                  <h4 className="text-md font-semibold">{courseLesson.title}</h4>
+                </div>
 
                 <div className="flex gap-2 mt-2">
-                  {userRole !== "USER" && !isReviewPath && (
+                  {isCourseLecture && (
                     <>
                       <button
                         type="button"
-                        className="py-2 px-3 text-sm font-medium bg-white text-gray-800 shadow-sm hover:bg-gray-50 focus:outline-none focus:bg-gray-50"
+                        className="py-2 px-3 text-sm font-medium bg-white text-gray-800 rounded-lg shadow-sm hover:bg-gray-50 focus:outline-none focus:bg-gray-50"
                         onClick={() => addDynamicForm(courseLesson.id)}
                       >
                         Thêm nội dung mới
@@ -127,14 +142,6 @@ const CourseLessonCard = ({
                   )}
                 </div>
 
-                {/* Hiển thị CourseLessonContent khi lesson không bị collapsed */}
-                {!collapsedLessons[courseLesson.id] && (
-                  <CourseLessonContent
-                    courseLessontId={courseLesson.id}
-                    key={courseLesson.id}
-                  />
-                )}
-
                 {/* Hiển thị dynamicForms nếu có */}
                 {!collapsedLessons[courseLesson.id] &&
                   dynamicForms
@@ -147,6 +154,14 @@ const CourseLessonCard = ({
                         />
                       </div>
                     ))}
+                {/* Hiển thị CourseLessonContent khi lesson không bị collapsed */}
+                {!collapsedLessons[courseLesson.id] && (
+                  <CourseLessonContent
+                    courseLessontId={courseLesson.id}
+                    key={courseLesson.id}
+                  />
+                )}
+
               </div>
             ))
           )}

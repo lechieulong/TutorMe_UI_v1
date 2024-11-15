@@ -105,7 +105,7 @@ const CourseList = () => {
 
   return (
     <MainLayout>
-      <div className="px-4 py-6">
+      <div className="px-4 py-6 bg-slate-100">
         {/* Banner Section */}
         <div className="bg-blue-100 p-4 rounded-lg mb-6 text-center">
           <h2 className="text-2xl font-semibold text-blue-700">
@@ -139,17 +139,16 @@ const CourseList = () => {
           </Link>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mt-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-6 gap-4">
           {currentCourses.map((course) => (
             <CourseCard
               key={course.id}
+              imageUrl={course.imageUrl}
               courseName={course.courseName}
-              content={course.content}
               title={course.title}
-              description={course.description}
-              Skill={course.Skill}
-              icon={getIcon(course.Skill)}
-              teacher={course.userId}
+              Skill={course.categories}
+              teacher={course.teacherName}
+              price={course.price}
               courseId={course.id}
               isEnabled={course.isEnabled}
               // onDelete={handleDelete} // Pass the handleDelete function
@@ -158,7 +157,7 @@ const CourseList = () => {
         </div>
 
         {/* Pagination controls */}
-        <div className="flex justify-center items-center mt-4">
+        <div className="flex justify-center items-center mt-2">
           <button
             onClick={handlePrevPage}
             disabled={currentPage === 1}

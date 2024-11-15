@@ -12,13 +12,14 @@ import {
 import { useDispatch } from "react-redux";
 
 const TestLayout = ({ practiceTestData, skillsData }) => {
-  const [currentSkillIndex, setCurrentSkillIndex] = useState(0); // Track the current skill index
-  const [testData, setTestData] = useState({}); // Initialize as an empty object
+  const [currentSkillIndex, setCurrentSkillIndex] = useState(0);
+  const [testData, setTestData] = useState({});
   const [userAnswers, setUserAnswers] = useState([]);
   const [loading, setLoading] = useState(true);
 
-  const dispatch = useDispatch();
+  const location = useLocation();
   const navigate = useNavigate();
+  const dispatch = useDispatch();
 
   const { duration, selectedParts, isPractice, skillId, testId } =
     practiceTestData;

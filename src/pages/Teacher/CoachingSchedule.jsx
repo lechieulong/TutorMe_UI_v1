@@ -14,6 +14,7 @@ import Search from './components/Search';
 import { ToastContainer, toast } from "react-toastify";
 import { Link, useNavigate } from "react-router-dom";
 import { GetUserEducationByUsername } from '../../redux/users/UserSlice';
+import BookedSchedule from '../Schedule/Scheduled';
 
 import "react-toastify/dist/ReactToastify.css";
 
@@ -145,7 +146,7 @@ const CoachingSchedule = () => {
                             <h1 className="text-2xl font-bold">CONNECTION BETWEEN TEACHERS AND STUDENTS</h1>
                             <p className="text-gray-600">Coaching 1:1
                                 {userFromToken?.role?.includes(Roles.TEACHER) && (
-                                    <Link to={`/coachingschedule/${user?.userName}`} className="text-blue-500"> - Your schedule</Link>
+                                    <a href={`/coachingschedule/${user?.userName}`} className="text-blue-500"> - Your schedule</a>
                                 )}
                             </p>
                         </div>
@@ -160,7 +161,7 @@ const CoachingSchedule = () => {
                                 </>
                             )}
                             <button className="bg-red-500 text-white px-4 py-2 rounded">Teacher</button>
-                            <button className="bg-yellow-300 text-white px-4 py-2 rounded">Scheduled</button>
+                            <Link to="/coachingschedule/bookedschedule" className="bg-yellow-300 text-white px-4 py-2 rounded">Scheduled</Link>
                         </div>
                     </header>
 
@@ -178,15 +179,15 @@ const CoachingSchedule = () => {
                                     </a>
                                 ))}
                                 <a href={`/teachers`} className="inline-block">
-                                    <p className="border bg-blue-400 rounded-full w-10 h-10 flex items-center justify-center">
-                                        All
+                                    <p className="border bg-blue-400 rounded-full w-10 h-10 flex items-center justify-center text-sm">
+                                        more
                                     </p>
                                 </a>
                             </>
                         ) : (
                             <p className="text-gray-600">No teachers available.</p>
                         )}
-                        <div className="flex items-center">
+                        <div className="items-center inline-block">
                             <button onClick={toggleSearch} className="bg-slate-100 text-blue-500 px-4 py-2 ml-2 rounded">
                                 <FaSearch className="text-2xl" />
                             </button>
@@ -203,17 +204,17 @@ const CoachingSchedule = () => {
                             <nav className="flex space-x-4 mb-2">
                                 <button
                                     onClick={() => handleTabChange('about')}
-                                    className={`pb-1 ${activeTab === 'about' ? 'text-red-500 border-b-2 border-red-500' : 'text-gray-600'}`}>
+                                    className={`pb-1 ${activeTab === 'about' ? 'text-red-500 border-b-2 border-b-red-500' : 'text-gray-600'}`}>
                                     Information
                                 </button>
                                 <button
                                     onClick={() => handleTabChange('certification')}
-                                    className={`pb-1 ${activeTab === 'certification' ? 'text-red-500 border-b-2 border-red-500' : 'text-gray-600'}`}>
+                                    className={`pb-1 ${activeTab === 'certification' ? 'text-red-500 border-b-2 border-b-red-500' : 'text-gray-600'}`}>
                                     Certification
                                 </button>
                                 <button
                                     onClick={() => handleTabChange('availableTime')}
-                                    className={`pb-1 ${activeTab === 'availableTime' ? 'text-red-500 border-b-2 border-red-500' : 'text-gray-600'}`}>
+                                    className={`pb-1 ${activeTab === 'availableTime' ? 'text-red-500 border-b-2 border-b-red-500' : 'text-gray-600'}`}>
                                     Available time
                                 </button>
                             </nav>

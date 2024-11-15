@@ -9,7 +9,7 @@ import { Roles } from "../../utils/config";
 import defaulAvatar from "../../assets/images/default-avatar.jpg";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { FaGraduationCap } from "react-icons/fa";
-import { FaInfinity } from "react-icons/fa";
+import { FaInfinity, FaPlusCircle } from "react-icons/fa";
 import {
   faHouse,
   faTv,
@@ -23,6 +23,7 @@ import { useEffect, useState } from "react";
 import LoginModal from "./LoginModal";
 import { CheckAuthUser } from "../../service/checkAuth";
 import { ConsoleLevel } from "@zegocloud/zego-uikit-prebuilt";
+import { GetUserBalanceByUserID } from "../../redux/users/BalanceSlice";
 
 const Header = () => {
   const dispatch = useDispatch();
@@ -42,6 +43,13 @@ const Header = () => {
   const [user, setUser] = useState(null);
   const [userFrormToken, setUserFromToke] = useState(null);
 
+  const { user_balance } = useSelector((state) => state.user_balance);
+
+  const formattedAmount = new Intl.NumberFormat('vi-VI', {
+    style: 'currency',
+    currency: 'VND',
+  }).format(user_balance);
+
   useEffect(() => {
     const fetchUserData = async () => {
       if (authToken && isAuthenticated) {
@@ -52,7 +60,7 @@ const Header = () => {
             setUserFromToke(userFromToken);
             //get user from DB by ID get from token
             const fetchedUser = await dispatch(
-              GetUserByID(userFromToken.sub)
+              GetUserByID(userFromToken.sub),
             ).unwrap();
             setUser(fetchedUser);
           } else {
@@ -68,6 +76,12 @@ const Header = () => {
     };
     fetchUserData();
   }, [authToken, isAuthenticated, dispatch]);
+
+  useEffect(() => {
+    if (user?.id) {
+      dispatch(GetUserBalanceByUserID(user.id));
+    }
+  }, [user?.id, dispatch]);
 
   const handleLogout = () => {
     Cookies.remove("authToken");
@@ -98,16 +112,29 @@ const Header = () => {
                     <FaInfinity className="text-xl" />
                   </Link>
                 )}
-                <button
+                <span
+                  type="button"
+                  className="inline-flex items-center text-sm font-medium rounded-lg border 
+                  border-gray-200 bg-white text-gray-800 shadow-sm hover:bg-gray-50 
+                  focus:outline-none focus:bg-gray-50 disabled:opacity-50 
+                  disabled:pointer-events-none dark:border-neutral-700 
+                  transition-hover transition-transform duration-500 dark:hover:scale-110 max-w-[150px]"
+                >
+                  <p className="p-2 text-black opacity-80 truncate">{formattedAmount}</p>
+                  <Link to="/Payment" className="flex-shrink-0 bg-gray-200 p-3 rounded-lg hover:bg-gray-100">
+                    <FaPlusCircle />
+                  </Link>
+                </span>
+                {/* <button
                   type="button"
                   className="py-2 px-3 inline-flex items-center gap-x-2 text-sm font-medium rounded-lg border border-gray-200 bg-lightGreen text-gray-800 shadow-sm hover:bg-gray-50 focus:outline-none focus:bg-gray-50 disabled:opacity-50 disabled:pointer-events-none   dark:border-neutral-700 transition-hover transition-transform duration-500 dark:hover:scale-110"
                 >
                   Stream now
                   <FontAwesomeIcon icon={faHeadset} />
-                </button>
+                </button> */}
                 <button
                   onClick={handleLogout}
-                  className="py-2 px-3 inline-flex items-center gap-x-2 text-sm font-medium rounded-lg border border-gray-200 bg-lightGreen text-gray-800 shadow-sm hover:bg-gray-50 focus:outline-none focus:bg-gray-50"
+                  className="py-2 px-3 inline-flex items-center gap-x-2 text-sm font-medium rounded-lg border border-gray-200 bg-white text-gray-800 shadow-sm hover:bg-gray-50 focus:outline-none focus:bg-gray-50"
                 >
                   Logout
                 </button>

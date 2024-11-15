@@ -1,70 +1,109 @@
 import React from 'react';
 import MainLayout from '../../layout/MainLayout';
-import { useLocation } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
+import { useDispatch, useSelector } from "react-redux";
+import { formatDOB } from '../../utils/Validator';
+import { CheckBanlance, GiveMeMyMoney } from '../../components/common/PayOS';
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+import { SetScheduleSession } from '../../redux/Schedule/BookedScheduleSessionSlice';
 
 function PaymentMethod() {
+    const dispatch = useDispatch();
+    const navigate = useNavigate();
     const location = useLocation();
-    const { scheduleId, teacherName, startTime, endTime, price } = location.state || {};
+    const { scheduleId, teacherId, teacherName, date, startTime, endTime, price, status } = location.state || {};
     const formattedAmount = new Intl.NumberFormat('vi-VI', {
         style: 'currency',
         currency: 'VND',
     }).format(price);
 
-    console.log(scheduleId);
+    const handleBack = () => {
+        // Navigate back to the previous page
+        navigate(-1);
+    };
 
-    {/*
-        Xu ly button Continue:
-        - Get Schedule by Id: 
-        - Check status Schedule: neu = 2 || 1 thi return thong bao la not available, neu = 0 thi tiep tuc
-        - Check paymend method
+    const { user } = useSelector((state) => state.user);
 
-        - Book thanh cong -> update Schedule status, add to table BookedTeacherSession, add new event, assign cho learner va teacher
-        */}
+    const handleCheckOut = async (e) => {
+        if (status !== 0) {
+            toast.error("This time is not available now. Plese choose other time!");
+        } else if (await CheckBanlance(price)) {
+            await GiveMeMyMoney(user.id, price * -1, `Book schedule with teacher ${teacherName}`);
+            await GiveMeMyMoney(teacherId, price, `Your schedule has been booked by ${user.name}`);
+            //Xu ly so du, add schedule book session
+            // After successful payment, create the schedule session
+            try {
+                const learnerId = user.id;
+                const sessionData = {
+                    scheduleId,
+                    learnerId
+                };
+
+                // Dispatch SetScheduleSession to save the schedule session
+                const response = await dispatch(SetScheduleSession(sessionData));
+                if (response.payload) {
+                    toast.success("Session booked successfully!");
+                    // Optionally, navigate to a confirmation or session details page
+                    navigate("/coachingschedule/bookedschedule"); // Replace with your confirmation route
+                }
+            } catch (error) {
+                toast.error("Failed to book the session. Please try again.");
+            }
+
+        } else {
+            const userChoice = window.confirm("Số dư không đủ. Bạn có muốn nạp tiền không?");
+            if (userChoice) {
+                window.location.href = "/Payment";
+            } else {
+                toast.error("Fail to book schedule.");
+            }
+        }
+    };
+
     return (
         <MainLayout>
+            <ToastContainer autoClose={3000} newestOnTop closeOnClick />
             <div className="flex flex-col items-center justify-center min-h-screen bg-gray-100">
-                <div className="w-full max-w-2xl p-4 bg-white shadow-md rounded-md">
-                    <div className="bg-gray-500 text-white text-center py-2 rounded-t-md">
-                        <h2 className="text-lg font-semibold">PAYMENT METHOD</h2>
+                <div className="w-full max-w-2xl bg-white shadow-md rounded-md">
+                    <div className="bg-gray-800 text-white py-4 rounded-t-md">
+                        <h2 className="text-lg font-semibold text-center">CHECK INFORMATION</h2>
                     </div>
-                    <div className="p-4">
-                        <div className="flex justify-center space-x-4 mb-4">
+                    <div className="p-6 space-y-6">
+                        <div className="flex justify-center mb-4">
                             <label className="flex items-center space-x-2">
-                                <input type="radio" name="payment" className="form-radio" defaultChecked />
-                                <span>Pay with VNPay</span>
-                            </label>
-                            <label className="flex items-center space-x-2">
-                                <input type="radio" name="payment" className="form-radio" />
-                                <span>Pay with Momo</span>
-                            </label>
-                            <label className="flex items-center space-x-2">
-                                <input type="radio" name="payment" className="form-radio" />
+                                <input type="radio" name="payment" className="form-radio text-blue-600" defaultChecked />
                                 <span>Pay with Diamond</span>
                             </label>
                         </div>
-                        <div className="border p-4 rounded-md">
-                            <h3 className="text-xl font-semibold mb-4">Payment Information</h3>
-                            <div className="space-y-2">
-                                <div className="flex justify-between">
-                                    <span className="font-semibold">Set schedule with Teacher:</span>
-                                    <span>{teacherName || 'N/A'}</span>
-                                </div>
-                                <div className="flex justify-between">
-                                    <span className="font-semibold">Start Date:</span>
-                                    <span>{startTime || 'N/A'}</span>
-                                </div>
-                                <div className="flex justify-between">
-                                    <span className="font-semibold">End Time:</span>
-                                    <span>{endTime || 'N/A'}</span>
-                                </div>
-                                <div className="flex justify-between">
-                                    <span className="font-semibold">Total:</span>
-                                    <span>{formattedAmount || 'N/A'}</span>
-                                </div>
+                        {status === 1 || status === 2 && (
+                            <p className="font-mono text-red-500 text-xs mt-1">This schedule is not available now.</p>
+                        )}
+                        <div className="border border-gray-300 p-4 rounded-md space-y-4">
+                            <div className="flex justify-between">
+                                <span className="font-semibold text-gray-700">Set schedule with Teacher:</span>
+                                <span>{teacherName || 'N/A'}</span>
+                            </div>
+                            <div className="flex justify-between">
+                                <span className="font-semibold text-gray-700">Date:</span>
+                                <span>{formatDOB(date) || 'N/A'}</span>
+                            </div>
+                            <div className="flex justify-between">
+                                <span className="font-semibold text-gray-700">Start Time:</span>
+                                <span>{startTime || 'N/A'}</span>
+                            </div>
+                            <div className="flex justify-between">
+                                <span className="font-semibold text-gray-700">End Time:</span>
+                                <span>{endTime || 'N/A'}</span>
+                            </div>
+                            <div className="flex justify-between">
+                                <span className="font-semibold text-gray-700">Total:</span>
+                                <span>{formattedAmount || 'N/A'}</span>
                             </div>
                         </div>
-                        <div className="flex justify-center mt-4">
-                            <button className="bg-gray-500 text-white py-2 px-4 rounded-md">CONTINUE</button>
+                        <div className="flex justify-between space-x-4 mt-6">
+                            <button onClick={handleBack} className="w-full bg-gray-500 hover:bg-gray-600 text-white py-2 rounded-md">BACK</button>
+                            <button onClick={handleCheckOut} className="w-full bg-blue-500 hover:bg-blue-600 text-white py-2 rounded-md">CHECK OUT</button>
                         </div>
                     </div>
                 </div>

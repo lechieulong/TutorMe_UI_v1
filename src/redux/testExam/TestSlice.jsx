@@ -2,6 +2,7 @@ import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import axios from "axios";
 import { SLICE_NAMES, ACTIONS, STATUS } from "../../constant/SliceName";
 import Cookies from "js-cookie";
+import { getUser } from "../../service/GetUser";
 
 const API_BASE_URL = "https://localhost:7030/api";
 
@@ -20,12 +21,38 @@ export const fetchTests = createAsyncThunk(
   }
 );
 
+export const submitAnswerTest = createAsyncThunk(
+  `${SLICE_NAMES.TEST}/${ACTIONS.SUBMIT_TEST}`,
+  async ({ userAnswers, testId }, { rejectWithValue }) => {
+    const token = Cookies.get("authToken");
+    const userId = getUser().sub;
+
+    try {
+      const response = await axios.post(
+        `${API_BASE_URL}/test/${userId}/submitTest/${testId}`,
+        userAnswers,
+        {
+          Authorization: `Bearer ${token}`,
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      );
+
+      return response.data;
+    } catch (error) {
+      return rejectWithValue(
+        error.response?.data?.message || "Failed to fetch tests"
+      );
+    }
+  }
+);
+
 export const getTest = createAsyncThunk(
   `${SLICE_NAMES.TEST}/${ACTIONS.GET_TEST}`,
   async (id, { rejectWithValue }) => {
     try {
       const response = await axios.get(`${API_BASE_URL}/test/${id}/testDetail`);
-      console.log(response.data);
 
       return response.data;
     } catch (error) {

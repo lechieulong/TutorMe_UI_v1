@@ -36,6 +36,7 @@ export const ACTIONS = {
   UPDATE_ROLE: "update-role",
 
   FETCH_TESTS: "getTests",
+  SUBMIT_TEST: "submitTest",
   GET_TEST: "getTest",
   GET_HISTORY_TEST: "gethistorytest",
   GET_TEST_SECTION_COURSE: "getTestBySectionCourseId",

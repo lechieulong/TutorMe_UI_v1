@@ -97,6 +97,7 @@ const App = () => {
           <Route path="/listTest" element={<ListTest />} />
           <Route path="/create-skill" element={<CreateTest />} />
           <Route path="/create-test/:sectionCourseId" element={<TestForm />} />
+          <Route path="/create-test/:classId" element={<TestForm />} />
           <Route path="/create-test" element={<TestForm />} />
           <Route path="/questionbank" element={<QuestionBank />} />
           {/* LiveStream  exam*/}

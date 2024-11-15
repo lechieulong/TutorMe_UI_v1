@@ -7,6 +7,7 @@ const MultipleChoiceAnswers = ({
   handleChangeWrap,
   skill,
   partData,
+  sectionType,
 }) => (
   <div className="flex flex-col gap-2">
     {question.answers.map((answer, index) => (
@@ -22,7 +23,14 @@ const MultipleChoiceAnswers = ({
               ) || false
             }
             onChange={(e) =>
-              handleChangeWrap(e, skill, partData.id, question.id, answer.id)
+              handleChangeWrap(
+                e,
+                skill,
+                partData.id,
+                question.id,
+                answer.id,
+                sectionType
+              )
             }
             className="h-4 w-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
           />

@@ -2,35 +2,28 @@ import React, { useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { FaTrash } from "react-icons/fa";
 import axios from "axios";
+import { formatCurrency } from "../../../utils/Validator";
 
 const CourseCard = ({
   content,
   courseName,
-  title,
-  description,
-  category,
-  icon,
+  Skill,
   teacher,
   courseId,
+  imageUrl,
+  price,
   onDelete = null,
   isEnabled,
 }) => {
   const location = useLocation();
-
-  // Kiểm tra xem có phải trang mentorCourseList không
   const isMentorCourseList = location.pathname === "/mentorCourseList";
-
-  // Nếu là mentorCourseList thì switch sẽ lấy trạng thái từ isEnabled, ngược lại mặc định là true
   const [isSwitchOn, setIsSwitchOn] = useState(
     isMentorCourseList ? isEnabled : true
   );
 
-  // Nếu không phải mentorCourseList và isEnabled là false, không hiển thị CourseCard
   if (!isMentorCourseList && !isEnabled) {
     return null;
   }
-
-  // Log giá trị của category
 
   const handleDelete = async () => {
     if (onDelete) {
@@ -68,17 +61,20 @@ const CourseCard = ({
     }
   };
 
+  const handleClick = () => {
+    console.log("Skill:", Skill); // Log Skill khi nhấn vào card
+  };
+
   let destinationPath;
   if (location.pathname === "/mentorCourseList") {
-    destinationPath = `/mentorCourseDetail/${courseId}`;
+    destinationPath = `/courseinfo/${courseId}/infor`;
   } else if (location.pathname === "/courseList") {
-    destinationPath = `/courseDetail/${courseId}`;
+    destinationPath = `/courseinfo/${courseId}/infor`;
   }
 
   return (
-    <div className="relative bg-white h-52 shadow-md rounded-lg p-4 flex flex-col items-center hover:bg-gray-100 transition-all">
+    <div className="relative bg-white shadow-md rounded-lg flex flex-col hover:bg-gray-100 transition-all">
       <div className="absolute top-1 right-1 flex items-center space-x-2">
-        {/* Chỉ hiển thị nút delete và switch nếu đang ở trang mentorCourseList */}
         {isMentorCourseList && (
           <>
             <button
@@ -106,38 +102,38 @@ const CourseCard = ({
       </div>
       <Link
         to={destinationPath}
-        state={{ category }} // Truyền categories vào state
-        className="flex-grow flex flex-col items-center"
+        state={{ Skill }}
+        className="flex-grow flex flex-col items-start"
+        onClick={handleClick}
       >
-        <div className="text-2xl mb-1">{icon}</div>
-        <h3 className="text-lg font-bold">{courseName}</h3>
-        <h3 className="text-xl font-semibold mb-1 text-center">{title}</h3>
-        <p
-          className="text-gray-700 mb-1 text-center overflow-hidden text-ellipsis"
-          style={{
-            display: "-webkit-box",
-            WebkitLineClamp: 2,
-            WebkitBoxOrient: "vertical",
-          }}
-        >
-          {description}
-        </p>
-        <p
-          className="text-gray-600 mb-1 text-center overflow-hidden text-ellipsis"
-          style={{
-            display: "-webkit-box",
-            WebkitLineClamp: 3,
-            WebkitBoxOrient: "vertical",
-          }}
-        >
-          {content}
-        </p>
-        <span className="text-sm font-medium text-blue-600 mb-2">
-          {category}
-        </span>
-        <div className="text-sm text-gray-600">
-          <span className="font-semibold">Teacher: </span>
-          {teacher}
+        {/* Hiển thị ảnh ở đầu card */}
+        {imageUrl && (
+          <img
+            src={imageUrl}
+            alt={courseName}
+            className="w-full h-32 object-cover rounded-t-lg mb-4"
+          />
+        )}
+        <div className="p-4">
+          <h3 className="text-lg text-black mb-1">{courseName}</h3>
+          <p
+            className="text-gray-600 mb-2 text-left overflow-hidden text-ellipsis"
+            style={{
+              display: "-webkit-box",
+              WebkitLineClamp: 3,
+              WebkitBoxOrient: "vertical",
+            }}
+          >
+            {content}
+          </p>
+          <span className="text-sm font-medium text-blue-600 mb-2">{Skill}</span>
+          <div className="text-sm text-gray-600 mb-2">
+            <span className="font-bold">Teacher: </span>
+            {teacher}
+          </div>
+          <div className="text-lg font-thin text-red-500">
+            {price ? formatCurrency(price) : "Free"}
+          </div>
         </div>
       </Link>
     </div>

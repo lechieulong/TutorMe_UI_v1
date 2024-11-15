@@ -18,9 +18,12 @@ export const SLICE_NAMES = {
 
 export const ACTIONS = {
   GET_COURSES: "getCourses",
+  GET_COURSE_BY_ID: "getCourseById",
+  GET_CREATED_COURSES: "getCreatedCourses",
   GET_CLASSESOFCOURSE: "getClassesOfCourse",
   GET_CLASS: "getClass",
   CREATE_CLASS: "createClass",
+  CHECK_LECTURER_OF_COURSE: "checkLectirerOfCourse",
 
   LOGIN: "login",
   REGIS: "register",

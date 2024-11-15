@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import MentorSidebar from "../../components/Mentor/MentorSideBar";
 import TestForm from "../ExamTest/TestForm";
 import MainLayout from "../../layout/MainLayout";
-import CourseDetail from "./CourseDetail";
+import CourseDetail from "../Mentor/CourseDetail";
 import TestFormLayout from "../ExamTest/TestFormLayout";
 
 const CourseLayout = () => {

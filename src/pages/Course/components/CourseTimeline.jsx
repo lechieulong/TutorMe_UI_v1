@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 
-const CourseTimeline = ({ courseId, onUpdateStatus, categories }) => {
+const CourseTimeline = ({ courseId, onUpdateStatus, categories, onError }) => {
   const [timelines, setTimelines] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -13,25 +13,18 @@ const CourseTimeline = ({ courseId, onUpdateStatus, categories }) => {
           `https://localhost:7030/api/CourseTimeline/Course/${courseId}`
         );
         setTimelines(response.data);
+        setError(null); // Reset error if successful
+        if (onError) onError(false); // No error
       } catch (error) {
         setError("Hiện chưa có lịch học nào");
-        console.error("Error fetching timelines:", error);
+        if (onError) onError(true); // Notify error
       } finally {
         setLoading(false);
       }
     };
 
     fetchTimelines();
-  }, [courseId]);
-
-  useEffect(() => {
-    const categoryString =
-      typeof categories === "object" && categories !== null
-        ? JSON.stringify(categories)
-        : String(categories);
-
-    console.log("Received categories:", categoryString);
-  }, [categories]);
+  }, [courseId, onError]);
 
   const handleSwitchChange = async (timelineId, currentState) => {
     const newStatus = !currentState;
@@ -66,6 +59,17 @@ const CourseTimeline = ({ courseId, onUpdateStatus, categories }) => {
     }
   };
 
+  const handleCreateTest = (timelineId) => {
+    const SkillString =
+      typeof categories === "object" && categories !== null
+        ? JSON.stringify(categories)
+        : String(categories);
+
+    console.log("Skill for test:", SkillString);
+    console.log("CourseTimeline ID:", timelineId);
+    alert(`Skill for test: ${SkillString}\nCourseTimeline ID: ${timelineId}`);
+  };
+
   if (loading) return <div>Đang tải...</div>;
   if (error) return <div className="text-red-500">{error}</div>;
 
@@ -96,6 +100,13 @@ const CourseTimeline = ({ courseId, onUpdateStatus, categories }) => {
                 <p className="mt-1 text-sm text-gray-600">
                   {timeline.description}
                 </p>
+                <button
+                  type="button"
+                  onClick={() => handleCreateTest(timeline.id)}
+                  className="py-2 px-3 inline-flex items-center gap-x-2 text-sm font-medium rounded-lg border border-gray-200 bg-white text-gray-800 shadow-sm hover:bg-gray-50 focus:outline-none focus:bg-gray-50"
+                >
+                  Create Test
+                </button>
               </div>
               <div className="flex items-center">
                 <input

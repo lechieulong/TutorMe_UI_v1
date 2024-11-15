@@ -2,7 +2,7 @@ import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import "regenerator-runtime/runtime";
 import { GoogleOAuthProvider } from "@react-oauth/google";
 import { AdminRoute } from "./service/checkAuth";
-
+import CreateCourseLessonContent from "./pages/Mentor/component/CreateCourseLessonContent";
 import Home from "./pages/Home";
 import NotFound from "./components/common/NotFound";
 import TestSetting from "./pages/TestExam/TestSetting";
@@ -28,19 +28,19 @@ import SkillPart from "./pages/TestExam/SkillPart";
 import LiveStream from "./pages/LiveStream";
 import MetorInfor from "./pages/Mentor/MentorInforTest";
 import CourseList from "./pages/Course/CourseList";
-import ClassOfCourse from "./pages/Course/ClassList";
+import ClassOfCourse from "./pages/Course/ClassOfCourseList";
 import TestList from "./pages/User/TestList";
-import MentorCourseDetail from "./pages/Mentor/MentorCourseDetail";
+import CourseDetail from "./pages/Mentor/CourseDetail";
+import CourseInfo from "./pages/Course/CourseInfo";
 // import MyLearning from "./pages/Class/MyLearning";
 // import CourseDetail from './CourseDetail';
-
+import CourseSkillCard from "./pages/Mentor/component/CourseSkillCard";
 import "preline";
 import TestLayout from "./pages/TestExam/TestLayout";
-import CourseDetail from "./pages/Course/CourseDetail";
 import CourseTimeline from "./pages/Course/components/CourseTimeline";
 import CreateCourse from "./pages/Course/components/CreateCourse";
 import SpeakingGemini from "./service/SpeakingGemini";
-
+import ClassOfCourseList from "./pages/Course/ClassOfCourseList";
 import MyLearning from "./pages/Class/MyLearning";
 // import PayOS from "./pages/User/PayOS";
 import TestForm from "./pages/ExamTest/TestForm";
@@ -52,15 +52,15 @@ import NotAuthorizedPage from "./pages/Error/NotAuthorizedPage";
 import QuestionBank from "./pages/ExamTest/questionBank/QuestionBank";
 import PayOS from "./pages/User/PayOS";
 import PaymentResult from "./pages/User/PayOSResult ";
-import CreateTestLayout from "./pages/course/CreateTestLayout";
-import CourseLayout from "./pages/course/CourseLayout";
+// import CreateTestLayout from "./pages/course/CreateTestLayout";
+// import CourseLayout from "./pages/course/CourseLayout";
 import ListTest from "./pages/ExamTest/ListTest";
-
+import CreateCourseLesson from "./pages/Mentor/component/CreateCourseLesson";
 import Term from "./pages/Terms";
-
+import DynamicForm from "./pages/Course/components/DynamicForm";
 //ADMIN
 import AdminApp from "./pages/ADMIN/Index";
-
+import ClassDetail from "./pages/Class/ClassDetail";
 import CreateClass from "./pages/Class/CreateClass";
 const App = () => {
   return (
@@ -100,16 +100,22 @@ const App = () => {
           {/* LiveStream  exam*/}
           <Route path="/live-stream" element={<LiveStream />} />
           {/* Test  class*/}
-          {/* <Route
-            path="/courseDetail/:courseId/classList"
-            element={< />}
-          /> */}
+          <Route
+            path="/courseDetail/:courseId/classOfCourse"
+            element={<ClassOfCourse />}
+          />
+          <Route path="/dynamicForm" element={<DynamicForm />} />
+          <Route path="/skillCard" element={<CourseSkillCard />} />
           {/* Calender */}
           <Route path="/calendar" element={<Calendar />} />
           <Route path="/coachingschedule" element={<CoachingSchedule />} />
           <Route
             path="/coachingschedule/:teachername"
             element={<CoachingSchedule />}
+          />
+          <Route
+            path="/classDetail/:courseId/:classId"
+            element={<ClassDetail />}
           />
           <Route path="/schedulepaymentmethod" element={<ConfirmBook />} />
           <Route path="/coachingschedule/bookedschedule" element={<BookedSchedule />} />
@@ -119,13 +125,22 @@ const App = () => {
           <Route path="/metorinfor" element={<MetorInfor />} />
           <Route path="/mentorCourseList" element={<MentorCourseList />} />
           {/* Course */}
-          <Route path="/courseLayout" element={<CourseLayout />} />
+          {/* <Route path="/courseLayout" element={<CourseLayout />} /> */}
           <Route path="/courseList" element={<CourseList />} />
+          <Route path="/courseinfo" element={<CourseInfo />} />
           <Route path="/createCourse" element={<CreateCourse />} />
-          <Route path="/courseDetail/:courseId" element={<CourseDetail />} />
           <Route
-            path="/mentorCourseDetail/:courseId"
-            element={<MentorCourseDetail />}
+            path="/courseDetail/:courseId/review?"
+            element={<CourseDetail />}
+          />
+          <Route
+            path="/courseinfo/:courseId/infor"
+            element={<CourseInfo />}
+          />
+          <Route path="createCourseLesson" element={<CreateCourseLesson />} />
+          <Route
+            path="createCourseLessonContent"
+            element={<CreateCourseLessonContent />}
           />
           <Route
             path="/courseDetail/:courseId/classes"

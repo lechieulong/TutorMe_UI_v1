@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback } from "react";
-import { useParams, useLocation } from "react-router-dom";
+import { useParams, useLocation, Link } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import MainLayout from '../../layout/MainLayout';
 import MentorSidebar from '../../components/Mentor/MentorSideBar';
@@ -10,7 +10,10 @@ import { CheckUserEnrollment } from "../../redux/Enrollment/EnrollmentSlice";
 import { fetchClasses } from "../../redux/classes/ClassSlice";
 import { enrollUser } from "../../redux/Enrollment/EnrollmentSlice";
 import CreateClass from "../Class/CreateClass";
-import { FaStopwatch, FaRegLightbulb, FaRegListAlt, FaRegStickyNote, FaRegPlayCircle } from "react-icons/fa";
+import { CheckLecturerOfCourse } from "../../redux/courses/CourseSlice";
+import { GetCourseById } from "../../redux/courses/CourseSlice";
+import {formatCurrency} from "../../utils/Validator";
+import { FaStopwatch, FaRegLightbulb, FaRegListAlt, FaRegStickyNote, FaRegPlayCircle, FaRegGrinStars  } from "react-icons/fa";
 
 const CourseInfo = () => {
     const { className, courseId } = useParams();
@@ -21,15 +24,13 @@ const CourseInfo = () => {
     const [selectedClassId, setSelectedClassId] = useState(null);
     const [isCreateClassOpen, setIsCreateClassOpen] = useState(false);
 
+    const {course, checkLecturer } = useSelector((state) => state.courses);
+    console.log("course ", course);
     const dispatch = useDispatch();
     const classes = useSelector((state) => state.classes.classes);
     const switchStates = useSelector((state) => state.classes.switchStates);
 
     const isEnrolled = useSelector((state) => state.enrollment.isEnrolled);
-
-    const isReviewPath = location.pathname.includes("/review");
-    console.log("URL contains /review:", isReviewPath);
-
     const initializeUser = useCallback(() => {
         const userFromToken = getUser();
         const userIdFromToken = userFromToken?.sub;
@@ -50,6 +51,8 @@ const CourseInfo = () => {
                 console.log("Enrollment check completed:", result);
             });
         }
+        dispatch(CheckLecturerOfCourse(courseId));
+        dispatch(GetCourseById(courseId));
     }, [dispatch, userId, courseId]);
 
     const handleEnroll = () => {
@@ -101,34 +104,33 @@ const CourseInfo = () => {
 
                         {/* Left Section - Course Details */}
                         <div className="flex flex-col lg:w-2/3">
-                            <h1 className="text-3xl font-bold mb-4">C# cơ bản</h1>
+                            <h1 className="text-3xl font-bold mb-4">{course?.courseName}</h1>
                             <p className="mb-4 leading-relaxed">
-                                Khóa học lập trình C# kèm thực hành, khóa học sẽ giúp bạn làm quen với lập trình cũng như tạo
-                                nền tảng tư duy và kỹ năng cơ bản khi giải các bài tập.
+                                {course?.content}
                             </p>
                             <div className="flex items-center text-sm space-x-4 mb-4">
                                 <span>
-                                    Tác giả <a href="#" className="text-blue-300 underline">namle</a>
+                                    Lecturer: <Link to={`/coachingschedule/${course?.username}`} className="text-blue-300 underline">{course?.teacherName}</Link>
                                 </span>
                                 <span className="flex items-center">
-                                    <i className="fas fa-user mr-1"></i> 44486 Học viên
+                                    44486 students
                                 </span>
                                 <span className="flex items-center">
-                                    <i className="fas fa-star text-yellow-400 mr-1"></i> 4.4
+                                    4.4  <FaRegGrinStars/><FaRegGrinStars/><FaRegGrinStars/><FaRegGrinStars/>
                                 </span>
                             </div>
                         </div>
 
                         {/* Right Section - Course Information and CTA */}
-                        <div className="bg-lightGreen p-6 rounded-lg w-full lg:w-1/3 flex flex-col items-center text-center shadow-md">
-                            <h2 className="text-2xl text-black font-bold mb-4">Miễn phí</h2>
+                        <div className="bg-lightGreen p-4 rounded-lg w-full lg:w-1/3 flex flex-col items-center text-center shadow-md">
+                            <h2 className="text-2xl text-black font-bold mb-4">{formatCurrency(course?.price)}</h2>
 
-                            <h3 className="text-lg text-houseGreen font-semibold mb-4">The course information</h3>
+                            <h3 className="text-lg text-houseGreen font-semibold mb-2">The course information</h3>
 
                             <ul className="space-y-3 mb-6 text-sm text-black">
                                 <li className="flex items-center justify-center space-x-2">
                                     <FaStopwatch className="text-houseGreen" />
-                                    <span>26 hours</span>
+                                    <span>{course?.hours} hours</span>
                                 </li>
                                 <li className="flex items-center justify-center space-x-2">
                                     <FaRegLightbulb className="text-houseGreen" />
@@ -147,16 +149,24 @@ const CourseInfo = () => {
                                     <span>25 lessons</span>
                                 </li>
                             </ul>
-                            <button className="bg-accentGreen hover:bg-accentGreen-dark text-white py-2 px-4 rounded-lg w-full flex items-center justify-center transition duration-300">
-                                Enroll now
-                            </button>
+                            {checkLecturer ? (
+                                <p className="bg-accentGreen hover:bg-accentGreen-dark text-white py-2 px-4 rounded-lg w-full flex items-center justify-center transition duration-300">Manage course</p>
+                            ) : isEnrolled?.isEnrolled ? (
+                                <button className="bg-accentGreen hover:bg-accentGreen-dark text-white py-2 px-4 rounded-lg w-full flex items-center justify-center transition duration-300">
+                                    Go to course
+                                </button>
+                            ) : (
+                                <button className="bg-accentGreen hover:bg-accentGreen-dark text-white py-2 px-4 rounded-lg w-full flex items-center justify-center transition duration-300">
+                                    Enroll now
+                                </button>
+                            )}
                         </div>
                     </div>
 
-                    <div className="flex-1 p-4" style={{ maxHeight: 'calc(100vh - 65px)', overflowY: 'auto' }}>
+                    <div className="flex-1 p-4">
                         <div className="mt-2">
                             <CourseSkillCard
-                                isReviewPath={isReviewPath}
+                                isCourseLecture={checkLecturer}
                                 courseId={courseId}
                                 userRole={userRole}
                                 isEnrolled={isEnrolled}

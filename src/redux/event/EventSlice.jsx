@@ -19,7 +19,6 @@ export const GetEventByUserId = createAsyncThunk(
           },
         }
       );
-      console.log("Event response: ", response);
       return response.data.result; // Return the result from the response
     } catch (error) {
       return rejectWithValue(

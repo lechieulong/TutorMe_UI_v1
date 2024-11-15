@@ -1,6 +1,5 @@
 import { useEffect, useState, useMemo } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { useNavigate } from "react-router-dom";
 import {
   FaBook,
   FaSurprise,
@@ -14,28 +13,28 @@ import { fetchCoursesByUserId } from "../../redux/courses/CourseSlice";
 import axios from "axios";
 import { STATUS } from "../../constant/SliceName";
 import { getUser } from "../../service/GetUser";
+import CreateCourse from "../Course/components/CreateCourse";
+import { GetCreatedCourses } from "../../redux/courses/CourseSlice";
 
 const MentorCourseList = () => {
   const dispatch = useDispatch();
-  const navigate = useNavigate();
   const [user, setUser] = useState(null);
-  const { courses = [], status, error } = useSelector((state) => state.courses);
+  const { courses = [], createdCourses = [], getCreatedCoursesStatus, getCreatedCoursesError, status, error } = useSelector((state) => state.courses);
 
-  const [selectedCategory, setSelectedCategory] = useState("All");
+  const [selectedSkill, setSelectedSkill] = useState("All");
   const [currentPage, setCurrentPage] = useState(1);
   const [searchTerm, setSearchTerm] = useState("");
+  const [isCreateCourseOpen, setIsCreateCourseOpen] = useState(false);
   const coursesPerPage = 8;
 
   useEffect(() => {
     const userFromToken = getUser();
     setUser(userFromToken);
-  }, []);
-
-  useEffect(() => {
-    if (user?.sub) {
-      dispatch(fetchCoursesByUserId(user.sub));
+    if (userFromToken) {
+      console.log("Dispatching GetCreatedCourses action");
+      dispatch(GetCreatedCourses());
     }
-  }, [dispatch, user]);
+  }, [dispatch]);
 
   const categories = useMemo(
     () => ["All", "Listening", "Reading", "Writing", "Speaking"],
@@ -46,8 +45,8 @@ const MentorCourseList = () => {
     if (status === STATUS.SUCCESS) {
       return courses
         .filter((course) => {
-          if (selectedCategory === "All") return true;
-          return course.categories.includes(selectedCategory);
+          if (selectedSkill === "All") return true;
+          return course.categories.includes(selectedSkill);
         })
         .filter((course) => {
           const courseTitle = course.courseName || "";
@@ -56,14 +55,8 @@ const MentorCourseList = () => {
         });
     }
     return [];
-  }, [courses, selectedCategory, searchTerm, status]);
+  }, [courses, selectedSkill, searchTerm, status]);
 
-  const indexOfLastCourse = currentPage * coursesPerPage;
-  const indexOfFirstCourse = indexOfLastCourse - coursesPerPage;
-  const currentCourses = filteredCourses.slice(
-    indexOfFirstCourse,
-    indexOfLastCourse
-  );
   const totalPages = Math.ceil(filteredCourses.length / coursesPerPage);
 
   const handleNextPage = () => {
@@ -88,8 +81,8 @@ const MentorCourseList = () => {
     }
   };
 
-  const getIcon = (category) => {
-    switch (category) {
+  const getIcon = (Skill) => {
+    switch (Skill) {
       case "Reading":
         return <FaBook className="text-blue-500 text-2xl" />;
       case "Listening":
@@ -106,7 +99,12 @@ const MentorCourseList = () => {
   };
 
   if (status === STATUS.PENDING) return <p>Loading...</p>;
-  if (status === STATUS.FAILED) return <p>Error: {error}</p>;
+  const handleOpenCreateCourse = () => setIsCreateCourseOpen(true);
+  const handleCloseCreateCourse = () => setIsCreateCourseOpen(false);
+  const handleCreateSuccess = () => {
+    setIsCourseCreated(true);
+    handleCloseCreateCourse();
+  };
 
   return (
     <MainLayout>
@@ -123,24 +121,50 @@ const MentorCourseList = () => {
         <div className="flex items-center justify-between mb-4">
           <Filter
             categories={categories}
-            selectedCategory={selectedCategory}
-            onCategorySelect={(category) => {
-              setSelectedCategory(category);
+            selectedSkill={selectedSkill}
+            onSkillSelect={(Skill) => {
+              setSelectedSkill(Skill);
               setCurrentPage(1);
             }}
             searchTerm={searchTerm}
             onSearchChange={(term) => setSearchTerm(term)}
           />
-          <button
-            type="button"
-            className="py-2 px-3 inline-flex items-center gap-x-2 text-sm font-medium rounded-lg border border-gray-200 bg-white text-gray-800 shadow-sm hover:bg-gray-50 focus:outline-none focus:bg-gray-50"
-            onClick={() => navigate("/createCourse")}
-          >
+          <button onClick={handleOpenCreateCourse} className="btn">
             Create Course
           </button>
+
+          {isCreateCourseOpen && (
+            <CreateCourse
+              onClose={handleOpenCreateCourse}
+              onCreateSuccess={handleCreateSuccess}
+            />
+          )}
         </div>
 
-        {currentCourses.length === 0 && status !== "pending" && (
+        {/* Hiển thị lỗi nếu có */}
+        {error && (
+          <div className="text-red-500 text-center mb-4">Error: {error}</div>
+        )}
+
+        {Array.isArray(createdCourses) && createdCourses.length > 0 ? (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mt-6">
+            {createdCourses.map((course) => (
+              <CourseCard
+                key={course.id}
+                courseName={course.courseName}
+                content={course.content}
+                title={course.title}
+                description={course.description}
+                Skill={course.categories}
+                icon={getIcon(course.categories)}
+                teacher={course.teacherName}
+                courseId={course.id}
+                onDelete={handleDelete}
+                isEnabled={course.isEnabled}
+              />
+            ))}
+          </div>
+        ) : (
           <div className="flex justify-center items-center h-32">
             <p className="text-red-500 text-lg font-semibold text-center">
               Bạn chưa có khoá học nào
@@ -148,34 +172,13 @@ const MentorCourseList = () => {
           </div>
         )}
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mt-6">
-          {currentCourses.map((course) => {
-            return (
-              <CourseCard
-                key={course.id}
-                courseName={course.courseName}
-                content={course.content}
-                title={course.title}
-                description={course.description}
-                category={course.categories}
-                icon={getIcon(course.categories)}
-                teacher={course.userId}
-                courseId={course.id}
-                onDelete={handleDelete}
-                isEnabled={course.isEnabled}
-              />
-            );
-          })}
-        </div>
-
         <div className="flex justify-center items-center mt-4">
           <button
             onClick={handlePrevPage}
             disabled={currentPage === 1}
             aria-label="Previous Page"
-            className={`px-3 py-1.5 mx-1 text-sm font-medium ${
-              currentPage === 1 ? "bg-gray-300" : "bg-blue-600"
-            } text-white border border-blue-600 rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-400`}
+            className={`px-3 py-1.5 mx-1 text-sm font-medium ${currentPage === 1 ? "bg-gray-300" : "bg-blue-600"
+              } text-white border border-blue-600 rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-400`}
           >
             Previous
           </button>
@@ -186,9 +189,8 @@ const MentorCourseList = () => {
             onClick={handleNextPage}
             disabled={currentPage === totalPages}
             aria-label="Next Page"
-            className={`px-3 py-1.5 mx-1 text-sm font-medium ${
-              currentPage === totalPages ? "bg-gray-300" : "bg-blue-600"
-            } text-white border border-blue-600 rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-400`}
+            className={`px-3 py-1.5 mx-1 text-sm font-medium ${currentPage === totalPages ? "bg-gray-300" : "bg-blue-600"
+              } text-white border border-blue-600 rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-400`}
           >
             Next
           </button>

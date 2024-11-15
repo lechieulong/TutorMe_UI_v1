@@ -23,7 +23,6 @@ const TeacherProfile = () => {
     // Get user information and status from the Redux store
     const { user, userEducation } = useSelector((state) => state.user);
 
-    console.log("user: ", user);
     // Check authentication token
     useEffect(() => {
         const token = Cookies.get("authToken");
@@ -92,7 +91,7 @@ const TeacherProfile = () => {
         <MainLayout>
             <div className="flex w-full bg-gray-100">
                 <Sidebar />
-                <main className="flex-1 p-5">
+                <main className="flex-1 p-5" style={{ maxHeight: 'calc(100vh - 65px)', overflowY: 'auto' }}>
                     <div className="mx-auto p-6 bg-white shadow-md rounded-md">
                         <h1 className="text-2xl font-bold mb-2">Teacher info</h1>
                         <p className="text-gray-600 mb-6">Bio: {userEducation?.aboutMe}</p>

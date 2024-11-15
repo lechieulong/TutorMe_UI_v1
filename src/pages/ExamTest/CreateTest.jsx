@@ -56,7 +56,7 @@ const CreateTest = ({ testId, skills }) => {
 
   return (
     <form onSubmit={handleSubmit(onSubmit)}>
-      <div className="mt-16 p-10 ">
+      <div className="mt-16 ">
         <div className="">
           <ul className="relative flex flex-row justify-between gap-x-2">
             {steps.map((step, index) => (

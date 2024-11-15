@@ -28,6 +28,8 @@ const AnswerView = ({
       skill = undefined;
       break;
   }
+  console.log("skill", skill);
+  console.log("currentSkillKey", currentSkillKey);
 
   const handleChangeWrap = (
     e,
@@ -57,7 +59,6 @@ const AnswerView = ({
     const answerData = updatedAnswers
       ? {
           skill,
-          part: partId,
           questionId,
           sectionType,
           answers: updatedAnswers,

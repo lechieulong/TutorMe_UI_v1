@@ -1,32 +1,50 @@
 // TestLayout.jsx
 import { useState, useEffect, useCallback } from "react";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import Header from "../../components/Test/Header";
 import TestView from "./TestView";
 import mockTestData from "../../data/mockTestData";
-import { getSkill, getTesting } from "../../redux/testExam/TestSlice";
+import {
+  getSkill,
+  getTesting,
+  submitAnswerTest,
+} from "../../redux/testExam/TestSlice";
 import { useDispatch } from "react-redux";
-import { useLocation } from "react-router-dom";
 
-const TestLayout = ({ skillsData }) => {
+const TestLayout = ({ practiceTestData, skillsData }) => {
   const [currentSkillIndex, setCurrentSkillIndex] = useState(0); // Track the current skill index
   const [testData, setTestData] = useState({}); // Initialize as an empty object
   const [userAnswers, setUserAnswers] = useState([]);
   const [loading, setLoading] = useState(true);
 
-  const location = useLocation();
   const dispatch = useDispatch();
-  const { duration, selectedParts } = location.state || {};
+  const navigate = useNavigate();
 
-  const { testId, skillId } = useParams();
+  const { duration, selectedParts, isPractice, skillId, testId } =
+    practiceTestData;
+
+  // const { testId, skillId } = useParams();
+  const finalTest = true;
+
+  // const fetchTestData = async () => {
+  //   try {
+  //     setLoading(true);
+  //     const fetchedTestData = await new Promise((resolve) => {
+  //       setTimeout(() => resolve(mockTestData), 1000);
+  //     });
+  //     setTestData(fetchedTestData);
+  //   } catch (error) {
+  //     console.error("Error fetching test data:", error);
+  //   } finally {
+  //     setLoading(false);
+  //   }
+  // };
 
   const fetchTestData = async () => {
     try {
       setLoading(true);
-      const fetchedTestData = await new Promise((resolve) => {
-        setTimeout(() => resolve(mockTestData), 1000);
-      });
-      setTestData(fetchedTestData);
+      const result = await dispatch(getTesting(testId));
+      setTestData(result.payload);
     } catch (error) {
       console.error("Error fetching test data:", error);
     } finally {
@@ -41,15 +59,13 @@ const TestLayout = ({ skillsData }) => {
 
       if (result.payload) {
         const skillData = result.payload;
-        const skillKey = Object.keys(skillData)[0]; // Get the main skill key (e.g., "writing")
+        const skillKey = Object.keys(skillData)[0];
         const skillDetails = skillData[skillKey];
 
         skillDetails.duration = duration || skillDetails.duration;
         skillDetails.parts = skillDetails.parts.filter((part) =>
           selectedParts.includes(part.partNumber)
         );
-
-        console.log("skillData", skillData);
 
         setTestData(skillData);
       }
@@ -61,20 +77,20 @@ const TestLayout = ({ skillsData }) => {
   };
 
   useEffect(() => {
-    if (testId) {
-      fetchTestData();
-    } else if (skillId) {
+    if (finalTest) {
+      fetchTestData(testId);
+    } else if (isPractice) {
       fetchSkillData();
     } else {
       setTestData(skillsData);
       setLoading(false);
     }
-  }, [testId]);
+  }, []);
 
   const handleAnswerChange = useCallback(({ questionId, answerData }) => {
     setUserAnswers((prevAnswers) => ({
       ...prevAnswers,
-      [questionId]: answerData === undefined ? undefined : answerData, // Set to undefined if cleared
+      [questionId]: answerData === undefined ? undefined : answerData,
     }));
   }, []);
 
@@ -83,29 +99,42 @@ const TestLayout = ({ skillsData }) => {
       console.log("No answers to submit");
       return;
     }
+    if (skillId) {
+      Object.values(userAnswers).forEach((entry) => {
+        entry.skillId = skillId;
+      });
+    }
+    const keys = Object.keys(testData);
+    const lastSkillKey = keys[keys.length - 1];
     const firstAnswer = Object.values(userAnswers)[0];
     const { skill } = firstAnswer;
 
-    console.log("Skill type for submission:", skill);
-
     switch (skill) {
       case 0:
-        console.log("Calling Reading API");
-        break;
-      case 1: // Listening skill
+        const result = dispatch(submitAnswerTest({ userAnswers, testId }));
+        setUserAnswers([]);
+        if (lastSkillKey) {
+          console.log("last ne");
+
+          navigate(`/testExplain/${testId}`);
+        }
+      case 1:
         console.log("Calling Listening API");
+        setUserAnswers([]);
         break;
-      case 2: // Writing skill
+      case 2:
         console.log("Calling Writing API");
+        setUserAnswers([]);
+
         break;
-      case 3: // Speaking skill
+      case 3:
         console.log("Calling Speaking API");
+        setUserAnswers([]);
+
         break;
       default:
         console.log("Unknown skill type");
     }
-
-    console.log("userAnswers", userAnswers);
   };
 
   const handleNextSkill = useCallback(() => {
@@ -124,6 +153,7 @@ const TestLayout = ({ skillsData }) => {
   }
 
   const currentSkillKey = Object.keys(testData)[currentSkillIndex];
+
   const currentSkillData = testData[currentSkillKey];
 
   return (

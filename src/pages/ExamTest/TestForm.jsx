@@ -14,7 +14,7 @@ import CreateTest from "./CreateTest";
 import MainLayout from "../../layout/MainLayout";
 import { useLocation } from "react-router-dom";
 
-const TestForm = ({ sectionCourseId, skills, classId }) => {
+const TestForm = ({ classId }) => {
   const {
     register,
     handleSubmit,
@@ -53,7 +53,7 @@ const TestForm = ({ sectionCourseId, skills, classId }) => {
   const startTime = watch("startTime");
 
   return (
-    <MainLayout>
+    <div className="w-full">
       {isSubmitted && testInfo ? (
         !showTestFormDetail ? (
           <div className="p-6 max-w-lg mx-auto bg-white shadow-lg rounded-xl">
@@ -83,16 +83,16 @@ const TestForm = ({ sectionCourseId, skills, classId }) => {
         )
       ) : (
         <div className="">
-          <h3 className="text-center mt-7 text-3xl font-bold text-mainColor ">
+          {/* <h3 className="text-center mt-7 text-3xl font-bold text-mainColor ">
             Create Test Exam
-          </h3>
+          </h3> */}
           <form
             onSubmit={handleSubmit(onSubmit)}
-            className="space-y-6 mt-8 max-w-lg mx-auto p-6  shadow-2xl rounded-2xl border border-gray-200"
+            className="space-y-4 mt-8 max-w-lg mx-auto p-6   rounded-2xl border border-gray-200"
           >
             {/* Test Name */}
             <div className="relative">
-              <label className="block text-lg font-semibold text-gray-700">
+              <label className="block text-sm font-semibold text-gray-700">
                 Test Name
               </label>
               <div className="flex items-center mt-2">
@@ -120,9 +120,9 @@ const TestForm = ({ sectionCourseId, skills, classId }) => {
             </div>
 
             {/* Class */}
-            {classId && (
+            {/* {classId && (
               <div className="relative">
-                <label className="block text-lg font-semibold text-gray-700">
+                <label className="block text-sm font-semibold text-gray-700">
                   Class
                 </label>
                 <div className="flex items-center mt-2">
@@ -153,11 +153,11 @@ const TestForm = ({ sectionCourseId, skills, classId }) => {
                   </span>
                 )}
               </div>
-            )}
+            )} */}
 
             {/* Start Time */}
             <div className="relative">
-              <label className="block text-lg font-semibold text-gray-700">
+              <label className="block text-sm font-semibold text-gray-700">
                 Start Time
               </label>
               <div className="flex items-center mt-2">
@@ -194,7 +194,7 @@ const TestForm = ({ sectionCourseId, skills, classId }) => {
 
             {/* End Time */}
             <div className="relative">
-              <label className="block text-lg font-semibold text-gray-700">
+              <label className="block text-sm font-semibold text-gray-700">
                 End Time
               </label>
               <div className="flex items-center mt-2">
@@ -240,7 +240,7 @@ const TestForm = ({ sectionCourseId, skills, classId }) => {
           </form>
         </div>
       )}
-    </MainLayout>
+    </div>
   );
 };
 

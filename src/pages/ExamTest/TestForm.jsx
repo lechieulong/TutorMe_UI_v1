@@ -24,10 +24,12 @@ const TestForm = ({ sectionCourseId, skills, classId }) => {
   const dispatch = useDispatch();
 
   const location = useLocation();
-  const { courseTimelineDetailId, categories } = location.state || {
-    courseTimelineDetailId: null,
-    categories: [],
-  };
+  // const { courseTimelineDetailId, categories } = location.state || {
+  //   courseTimelineDetailId: null,
+  //   categories: [],
+  // };
+  const categories = ["Reading", "Listening", "Writing", "Speaking"];
+  const courseTimelineDetailId = "123";
 
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [testInfo, setTestInfo] = useState(null);
@@ -47,6 +49,7 @@ const TestForm = ({ sectionCourseId, skills, classId }) => {
       console.error("Submission failed:", error);
       alert("Submission failed.");
     }
+    setTestInfo("result");
   };
 
   const currentDateTime = new Date().toISOString().slice(0, 16);

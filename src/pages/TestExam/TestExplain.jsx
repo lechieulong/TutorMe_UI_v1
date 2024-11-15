@@ -1,26 +1,17 @@
-// TestLayout.jsx
 import { useState, useEffect, useCallback } from "react";
-import { useParams } from "react-router-dom";
-import Header from "../../components/Test/Header";
-import TestView from "./TestView";
-import mockTestData from "../../data/mockTestData";
-import { getSkill, getTesting } from "../../redux/testExam/TestSlice";
+import HeaderExplain from "../../components/Test/HeaderExplain";
+import TestViewExplain from "./TestViewExplain";
+import mockTestData from "../../data/mockTestExplain";
+import { getSkill } from "../../redux/testExam/TestSlice";
 import { useDispatch } from "react-redux";
-import { useLocation, useNavigate } from "react-router-dom";
 
-const TestLayout = ({ skillsData }) => {
-  const [currentSkillIndex, setCurrentSkillIndex] = useState(0);
-  const [testData, setTestData] = useState({});
-  const [userAnswers, setUserAnswers] = useState([]);
+const TestExplain = ({ skillId, testId }) => {
+  const [currentSkillIndex, setCurrentSkillIndex] = useState(0); // Track the current skill index
+  const [testData, setTestData] = useState({}); // Initialize as an empty object
   const [loading, setLoading] = useState(true);
-
-  const location = useLocation();
-  const navigate = useNavigate();
   const dispatch = useDispatch();
-  const { duration, selectedParts } = location.state || {};
 
-  const { testId, skillId } = useParams();
-
+  const testIdDemo = "1";
   const fetchTestData = async () => {
     try {
       setLoading(true);
@@ -42,7 +33,7 @@ const TestLayout = ({ skillsData }) => {
 
       if (result.payload) {
         const skillData = result.payload;
-        const skillKey = Object.keys(skillData)[0];
+        const skillKey = Object.keys(skillData)[0]; // Get the main skill key (e.g., "writing")
         const skillDetails = skillData[skillKey];
 
         skillDetails.duration = duration || skillDetails.duration;
@@ -62,26 +53,10 @@ const TestLayout = ({ skillsData }) => {
   };
 
   useEffect(() => {
-    if (testId) {
+    if (testIdDemo) {
       fetchTestData();
-    } else if (skillId) {
-      fetchSkillData();
-    } else {
-      setTestData(skillsData);
-      setLoading(false);
-    }
+    } else fetchSkillData();
   }, [testId]);
-
-  const handleAnswerChange = useCallback(({ questionId, answerData }) => {
-    setUserAnswers((prevAnswers) => ({
-      ...prevAnswers,
-      [questionId]: answerData === undefined ? undefined : answerData, // Set to undefined if cleared
-    }));
-  }, []);
-
-  const handleSubmit = () => {
-    console.log("userAnswers", userAnswers);
-  };
 
   const handleNextSkill = useCallback(() => {
     const skillKeys = Object.keys(testData);
@@ -98,31 +73,26 @@ const TestLayout = ({ skillsData }) => {
     return <div>Loading test data...</div>;
   }
 
-  console.log(testData, "testData");
-
   const currentSkillKey = Object.keys(testData)[currentSkillIndex];
   const currentSkillData = testData[currentSkillKey];
 
   return (
     <div className="w-screen">
-      <form onSubmit={handleSubmit}>
+      <div>
         <div className="flex flex-col">
-          <Header
+          <HeaderExplain
             testData={testData}
             currentSkillIndex={currentSkillIndex}
             handleNextSkill={handleNextSkill}
-            handleSubmit={handleSubmit}
           />
-          <TestView
+          <TestViewExplain
             skillData={currentSkillData}
             currentSkillKey={currentSkillKey}
-            handleAnswerChange={handleAnswerChange}
-            userAnswers={userAnswers}
           />
         </div>
-      </form>
+      </div>
     </div>
   );
 };
 
-export default TestLayout;
+export default TestExplain;

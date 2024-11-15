@@ -58,6 +58,7 @@ import DynamicForm from "./pages/Course/components/DynamicForm";
 import AdminApp from "./pages/ADMIN/Index";
 import ClassDetail from "./pages/Class/ClassDetail";
 import CreateClass from "./pages/Class/CreateClass";
+import TestExplain from "./pages/TestExam/TestExplain";
 const App = () => {
   return (
     <div className=" min-h-screen ">
@@ -83,6 +84,7 @@ const App = () => {
           <Route path="/gemini" element={<SpeakingGemini />} />
           {/* Test  exam*/}
           <Route path="/testing/:testId" element={<TestLayout />} />
+          <Route path="/testExplain/:testId" element={<TestExplain />} />
           <Route path="/testing/:skillId/skill" element={<TestLayout />} />
           <Route
             path="/test/:testId/settings/:skillId"

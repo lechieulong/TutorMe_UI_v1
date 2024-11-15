@@ -23,7 +23,7 @@ const TestFormDetail = ({
   };
 
   return (
-    <div className="p-4">
+    <div className="p-10">
       <div className="flex gap-2 mb-4">
         <div className="flex flex-wrap space-x-4 mb-4">
           {skills.map((skill) => (

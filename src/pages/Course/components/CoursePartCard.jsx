@@ -2,8 +2,9 @@ import React, { useEffect, useCallback, useState } from "react";
 import axios from "axios";
 import CourseLessonCard from "../../Mentor/component/CourseLessonCard";
 import CreateCourseLesson from "../../Mentor/component/CreateCourseLesson";
+import { FaAngleDown, FaAngleUp } from "react-icons/fa";
 
-const CoursePartCard = ({ isReviewPath, skillId, userRole, isEnrolled }) => {
+const CoursePartCard = ({ isCourseLecture, skillId, userRole, isEnrolled }) => {
   const [courseParts, setCourseParts] = useState([]);
   const [collapsedParts, setCollapsedParts] = useState({});
   const [showLessonForm, setShowLessonForm] = useState({});
@@ -25,9 +26,10 @@ const CoursePartCard = ({ isReviewPath, skillId, userRole, isEnrolled }) => {
         return acc;
       }, {});
       setCollapsedParts(initialCollapsedState);
+
       setError(null);
     } catch (err) {
-      setError("Failed to fetch course parts.");
+      setError("No course part found.");
     }
   }, [skillId]);
 
@@ -86,8 +88,8 @@ const CoursePartCard = ({ isReviewPath, skillId, userRole, isEnrolled }) => {
           key={coursePart.id}
           className="border rounded-md p-4 mb-4 shadow-md bg-[#EEEDEB]"
         >
-          <div className="flex gap-2 justify-end mb-2">
-            {userRole !== "USER" && !isReviewPath && (
+          <div className="flex gap-2 justify-end">
+            {isCourseLecture && (
               <>
                 <button
                   type="button"
@@ -106,20 +108,30 @@ const CoursePartCard = ({ isReviewPath, skillId, userRole, isEnrolled }) => {
               </>
             )}
           </div>
-
+          
           <div
             onClick={() => toggleCollapse(coursePart.id)}
-            className="cursor-pointer"
+            className="cursor-pointer flex items-center gap-2"
           >
+            {collapsedParts[coursePart.id] ? (
+              <FaAngleDown className="text-gray-500" />
+            ) : (
+              <FaAngleUp className="text-gray-500" />
+            )}
             <h3 className="text-lg font-semibold">{coursePart.title}</h3>
           </div>
-
+          {showLessonForm[coursePart.id] && (
+            <CreateCourseLesson
+              coursePartId={coursePart.id}
+              onClose={() => handleFormClose(coursePart.id)}
+              onCreated={handleLessonCreated}
+            />
+          )}
           <div
-            className={`mt-4 transition-all duration-500 ease-in-out ${
-              collapsedParts[coursePart.id]
+            className={`transition-all duration-500 ease-in-out ${collapsedParts[coursePart.id]
                 ? "max-h-0 opacity-0"
                 : "opacity-100"
-            }`}
+              }`}
             style={{
               maxHeight: collapsedParts[coursePart.id] ? 0 : "60vh",
               overflowY: collapsedParts[coursePart.id] ? "hidden" : "auto",
@@ -127,20 +139,13 @@ const CoursePartCard = ({ isReviewPath, skillId, userRole, isEnrolled }) => {
             }}
           >
             <CourseLessonCard
-              isReviewPath={isReviewPath}
+              isCourseLecture={isCourseLecture}
               coursePartId={coursePart.id}
               onLessonCreated={handleLessonCreated}
               userRole={userRole}
               isEnrolled={isEnrolled}
             />
 
-            {showLessonForm[coursePart.id] && (
-              <CreateCourseLesson
-                coursePartId={coursePart.id}
-                onClose={() => handleFormClose(coursePart.id)}
-                onCreated={handleLessonCreated}
-              />
-            )}
           </div>
         </div>
       ))}

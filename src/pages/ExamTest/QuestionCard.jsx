@@ -58,9 +58,9 @@ const QuestionCard = ({
   };
 
   return (
-    <div className="right-0 bottom-0 bg-white z-10 p-4">
+    <div className="right-0 bottom-0 bg-white z-10 h-3/4 p-4 w-8/12">
       <div className="flex justify-between items-center">
-        <h2 className="text-lg font-bold mb-4">Select Questions</h2>
+        <h2 className="text-lg font-bold mb-4"> Questions Bank</h2>
         <button onClick={onClose} className="bg-red-500 text-white p-2 mb-4">
           Close
         </button>
@@ -106,14 +106,16 @@ const QuestionCard = ({
           );
         })}
       </div>
-      <button
-        type="button"
-        onClick={handleAddQuestions}
-        className="bg-green-500 text-white p-2 rounded mt-4"
-        disabled={selectedQuestions.length === 0}
-      >
-        Add Selected Questions
-      </button>
+      {questions.length > 0 && (
+        <button
+          type="button"
+          onClick={handleAddQuestions}
+          className="bg-green-500 text-white p-2 rounded mt-4"
+          disabled={selectedQuestions.length === 0}
+        >
+          Add Selected Questions
+        </button>
+      )}
     </div>
   );
 };

@@ -63,6 +63,24 @@ export const getTest = createAsyncThunk(
   }
 );
 
+export const getHistorytest = createAsyncThunk(
+  `${SLICE_NAMES.TEST}/${ACTIONS.GET_HISTORY_TEST}`,
+  async (userId, { rejectWithValue }) => {
+    try {
+      const response = await axios.get(
+        `${API_BASE_URL}/test/${userId}/history`
+      );
+      console.log(response.data);
+
+      return response.data;
+    } catch (error) {
+      return rejectWithValue(
+        error.response?.data?.message || "Failed to fetch history tests"
+      );
+    }
+  }
+);
+
 export const getParts = createAsyncThunk(
   `${SLICE_NAMES.TEST}/${ACTIONS.GET_PARTS}`,
   async (skillId, { rejectWithValue }) => {

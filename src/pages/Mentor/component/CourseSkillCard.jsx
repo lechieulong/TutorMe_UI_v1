@@ -3,7 +3,7 @@ import axios from "axios";
 import CoursePartCard from "../../Course/components/CoursePartCard";
 import CreateCoursePart from "./CreateCoursePart";
 
-const CourseSkillCard = ({ isReviewPath, courseId, userRole, isEnrolled }) => {
+const CourseSkillCard = ({ isCourseLecture, courseId, userRole, isEnrolled }) => {
   const [skills, setSkills] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -85,7 +85,7 @@ const CourseSkillCard = ({ isReviewPath, courseId, userRole, isEnrolled }) => {
 
       <div className="mt-3">
         <div className="flex gap-2">
-          {userRole !== "USER" && !isReviewPath && (
+          {isCourseLecture && (
             <>
               <button
                 type="button"
@@ -134,7 +134,7 @@ const CourseSkillCard = ({ isReviewPath, courseId, userRole, isEnrolled }) => {
             aria-labelledby={skill.id}
           >
             <CoursePartCard
-              isReviewPath={isReviewPath}
+              isCourseLecture={isCourseLecture}
               skillId={skill.id}
               userRole={userRole}
               isEnrolled={isEnrolled}

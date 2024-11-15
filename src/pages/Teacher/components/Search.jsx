@@ -29,9 +29,9 @@ const Search = ({ onSearch }) => {
     };
 
     return (
-        <div className="absolute top-16 right-0 mt-20 transform -translate-x-1/2 w-full max-w-md">
+        <div className="right-0 transform w-full max-w-md inline-block">
             <div className="relative">
-                <form onSubmit={handleSubmit} className="flex items-center mt-6">
+                <form onSubmit={handleSubmit} className="flex items-center">
                     <input
                         type="text"
                         name="searchTerm"

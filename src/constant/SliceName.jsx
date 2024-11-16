@@ -7,18 +7,23 @@ export const SLICE_NAMES = {
   AUTH: "auth",
   TEST: "test",
   USER: "user",
+  USERBALANCE: "userBalance",
   TEACHER: "teacher",
   EVENT: "event",
   SCHEDULE: "schedule",
+  SCHEDULESESSION: "scheduleSession",
   COMMON: "common",
   SPECIALIZATION: "specialization",
 };
 
 export const ACTIONS = {
   GET_COURSES: "getCourses",
+  GET_COURSE_BY_ID: "getCourseById",
+  GET_CREATED_COURSES: "getCreatedCourses",
   GET_CLASSESOFCOURSE: "getClassesOfCourse",
   GET_CLASS: "getClass",
   CREATE_CLASS: "createClass",
+  CHECK_LECTURER_OF_COURSE: "checkLectirerOfCourse",
 
   LOGIN: "login",
   REGIS: "register",
@@ -28,9 +33,12 @@ export const ACTIONS = {
   CHANGE_PASSWORD: "change-password",
   REQUEST_FORGOT: "forgot-password",
   RESET_PASSWORD: "reset-password",
+  UPDATE_ROLE: "update-role",
 
   FETCH_TESTS: "getTests",
+  SUBMIT_TEST: "submitTest",
   GET_TEST: "getTest",
+  GET_HISTORY_TEST: "gethistorytest",
   GET_TEST_SECTION_COURSE: "getTestBySectionCourseId",
   GET_SKILLS: "getSkills",
   GET_SKILL: "getSkill",
@@ -59,11 +67,13 @@ export const ACTIONS = {
   UPDATE_TEACHER_REQUEST: "updateTeacherRequest",
   UPDATE_PROFILE: "updateprofile",
 
+  GET_USER_BALANCE: "getuserbalance",
   //Event
   GET_EVENT_BY_USERID: "geteventbyuserid",
 
   //Schedule
   SET_SCHEDULE: "setschedule",
+  SET_SCHEDULE_SESSION: "setscheduleSession",
   GET_SCHEDULE_7DAYS: "getschedule7days",
 
   //Specialization

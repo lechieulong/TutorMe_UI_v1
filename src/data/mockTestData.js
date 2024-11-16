@@ -25,6 +25,11 @@ const mockTestData = {
                   { id: 'e9a2a776-61ba-4b74-8a7f-84deff6e1037', answerText: "Correct answer", isCorrect: 1 }, // Correct
                   { id: '2e8cf23d-8ca3-44e7-a04f-638f4af31ec8', answerText: "Incorrect answer", isCorrect: 0 }, // Incorrect
                 ],
+                userAnswer:[{
+                  answerText: "hydra",
+                  answerId: "e9a2a776-61ba-4b74-8a7f-84deff6e1052"
+                }
+                ]
               },
               {
                 id: '0d5855f4-2556-470e-bd5d-01d51aa7e90e', // GUID for question 2
@@ -33,6 +38,11 @@ const mockTestData = {
                   { id: '4c9e7e87-b9ae-4bc1-8c1f-b73371ab2df8', answerText: "Correct answer", isCorrect: 1 }, // Correct
                   { id: '511c3e91-0082-4d2b-b46b-dc4b6e23038a', answerText: "Incorrect answer", isCorrect: 0 }, // Incorrect
                 ],
+                userAnswer:[{
+                  answerText: "Hhahahydyeefsdfdsfsf",
+                  answerId: "e9a2a776-61ba-4b74-8a7f-84deff6e1234"
+                }
+                ]
               },
             ],
           },
@@ -48,6 +58,11 @@ const mockTestData = {
                 answers: [
                   { id: 'b1824b0a-38aa-4db9-8ef1-c05f45c327f1', answerText: "Real marid", isCorrect: 1 }, // Correct
                 ],
+                userAnswer:[{
+                  answerText: "hydra",
+                  answerId: "e2a3a776-61ba-4b74-8a7f-84deff6e1052"
+                }
+                ]
               },
               {
                 id: '0d7bc25e-5db1-42ca-9bde-32efc08d9cf1', // GUID for question 4
@@ -57,6 +72,11 @@ const mockTestData = {
                   { id: '6bc14fc4-7bba-475e-9173-3e3a3a45bc8a', answerText: "cdfssdf", isCorrect: 1 }, // Correct
                   { id: '6bc14fc4-7bba-475e-9173-3e3a3a45bc8a', answerText: "cdfssdf", isCorrect: 1 }, // Correct
                 ],
+                userAnswer:[{
+                  answerText: "nhi",
+                  answerId: "e2g9a776-61ba-4b74-8a7f-84deff6e1052"
+                }
+                ]
               },
              
             ],
@@ -295,6 +315,7 @@ const mockTestData = {
                   { id: '44bdb90d-f6b5-4086-9f01-fdc2deaa7d73', answerText: "Correct answer", isCorrect: 1 },
                   { id: '4c3d2e96-fb39-4658-9a56-5bcbab0281cc', answerText: "Incorrect answer", isCorrect: 0 },
                 ],
+                
               },
             ],
           },
@@ -436,30 +457,123 @@ const mockTestData = {
     ],
   },
   writing: {
+      id: '7f0ec5a8-8017-47b1-b848-53a7bc6de993', // GUID for writing
+      duration: 60,
+      type: 2,
+      parts: [
+        {
+          id: 'b65b2391-5dbf-4673-81c1-5271d055482b', // GUID for part 5
+          partNumber: 1,
+          contentText: "<p>Write about the following topic.</p>",
+          audio: null,
+          image:
+            "https://www.pexels.com/photo/document-on-top-of-stationery-669619.jpeg",
+          questionName: "Writing Section 1",
+          sections: [
+            {
+              id: '3a537a52-1c94-4973-9f4e-d1bd953d8ef8', // GUID for section 7
+              sectionGuide: "Write at least 250 words on the following topic:",
+              sectionType: 1,
+              image: "",
+              questions: [
+                {
+                  id: '74e032d5-e672-4e53-b2d1-c4dbf8ee2b1e', // GUID for question 14
+                  questionName:
+                    "Discuss the impact of technology on communication.",
+                  answers: [], // No answers for writing questions
+                },
+              ],
+            },
+          ],
+        },
+        {
+          id: 'd7400c7a-c66e-4010-b5ba-3b5e1c74afc8', // GUID for part 6
+          partNumber: 2,
+          contentText: "<p>Writing Task 2 prompt.</p>",
+          audio: null,
+          image:
+            "https://www.pexels.com/photo/close-up-photo-of-ballpoint-pen-on-paper-590582.jpeg",
+          questionName: "Writing Section 2",
+          sections: [
+            {
+              id: 'd3d41483-82eb-4d88-b87a-95f86eebc5f7', // GUID for section 8
+              sectionGuide:
+                "Write a letter to your friend inviting them to your birthday party:",
+              sectionType: 1,
+              image: "",
+              questions: [
+                {
+                  id: 'd8d2c7ee-f76e-4f00-b058-70893bc21d43', // GUID for question 15
+                  questionName:
+                    "Some people think that parents should teach their children how to be good members of society. Others, however, believe that school is the best place to learn this. Discuss both views and give your own opinion",
+                  answers: [], // No answers for writing questions
+                },
+              ],
+            },
+          ],
+        },
+      ],
+  },
+  speaking: {
     id: '7f0ec5a8-8017-47b1-b848-53a7bc6de993', // GUID for writing
     duration: 60,
-    type: 2,
+    type: 3,
     parts: [
       {
         id: 'b65b2391-5dbf-4673-81c1-5271d055482b', // GUID for part 5
         partNumber: 1,
-        contentText: "<p>Write about the following topic.</p>",
+        contentText: "",
         audio: null,
         image:
           "https://www.pexels.com/photo/document-on-top-of-stationery-669619.jpeg",
-        questionName: "Writing Section 1",
         sections: [
           {
             id: '3a537a52-1c94-4973-9f4e-d1bd953d8ef8', // GUID for section 7
-            sectionGuide: "Write at least 250 words on the following topic:",
+            sectionGuide: "",
             sectionType: 1,
             image: "",
             questions: [
               {
-                id: '74e032d5-e672-4e53-b2d1-c4dbf8ee2b1e', // GUID for question 14
-                questionName:
-                  "Discuss the impact of technology on communication.",
-                answers: [], // No answers for writing questions
+                id: '1a2e4b6e-72a1-4a3b-912e-3cd63e8f3f87',
+                questionName: "Do you work or are you a student?",
+                answers: [
+                  { answerText: '', isCorrect: false }, // Placeholder for answer
+                ],
+              },
+              {
+                id: '2b3d6c8f-04f8-4b79-85a4-cf675ad1bb1a',
+                questionName: "Where are you from?",
+                answers: [
+                  { answerText: '', isCorrect: false }, // Placeholder for answer
+                ],
+              },
+              {
+                id: '3d1e3f9b-5c2c-4019-b6a4-6780ea8db73b',
+                questionName: "Do you like to cook?",
+                answers: [
+                  { answerText: '', isCorrect: false }, // Placeholder for answer
+                ],
+              },
+              {
+                id: '4c4a9f1e-8b5e-450a-9887-32eddbb03492',
+                questionName: "How do you usually spend your weekends?",
+                answers: [
+                  { answerText: '', isCorrect: false }, // Placeholder for answer
+                ],
+              },
+              {
+                id: '5e2c1d5a-1040-4909-95c4-2e2f5e8c1678',
+                questionName: "Do you enjoy traveling?",
+                answers: [
+                  { answerText: '', isCorrect: false }, // Placeholder for answer
+                ],
+              },
+              {
+                id: '6b7e98af-0b3d-49d7-83ed-b6f929e578c6',
+                questionName: "Do you like reading?",
+                answers: [
+                  { answerText: '', isCorrect: false }, // Placeholder for answer
+                ],
               },
             ],
           },
@@ -472,7 +586,6 @@ const mockTestData = {
         audio: null,
         image:
           "https://www.pexels.com/photo/close-up-photo-of-ballpoint-pen-on-paper-590582.jpeg",
-        questionName: "Writing Section 2",
         sections: [
           {
             id: 'd3d41483-82eb-4d88-b87a-95f86eebc5f7', // GUID for section 8
@@ -482,11 +595,57 @@ const mockTestData = {
             image: "",
             questions: [
               {
-                id: 'd8d2c7ee-f76e-4f00-b058-70893bc21d43', // GUID for question 15
-                questionName:
-                  "What details should you include in the invitation?",
-                answers: [], // No answers for writing questions
+                id: 'a3e2c5d7-f82a-429f-92a6-098a9b7c91b2', // GUID for Part 2 question
+                questionName: "Describe a time when you organized an event. You should say: What the event was, Where it took place, Who was involved, and explain how you felt about organizing the event.",
+                answers: [], // No answers for speaking questions
+              }
+            ],
+          },
+        ],
+      },
+      {
+        id: 'd7400c7a-c66e-4010-b5ba-3b5e1c74afc9',
+        partNumber: 3,
+        contentText: "",
+        audio: null,
+        image: "",
+        sections: [
+          {
+            id: 2,
+            sectionGuide: "Use the following words in a sentence:",
+            sectionType: 5,
+            image: "",
+            questions: [
+              {
+                id: 'b2d3c9a5-7fd2-47be-ae56-c4a1c8f5d88a',
+                questionName: "What are some challenges people face when organizing events, and how can these be overcome?",
+                answers: [],
               },
+              {
+                id: 'c9e1d8b6-b639-4e55-9b23-e47b725a69c9',
+                questionName: "Do you think it's important to have professional event organizers, or can people manage events themselves?",
+                answers: [],
+              },
+              {
+                id: 'd1c7a67b-e759-48db-831f-bb42f8a4b211',
+                questionName: "How do modern technologies help in the planning and organizing of events?",
+                answers: [],
+              },
+              {
+                id: 'e2a0f3a2-0c9a-4ad2-89c1-b0541ac3e777',
+                questionName: "In your opinion, how has the way people organize events changed over the last few decades?",
+                answers: [],
+              },
+              {
+                id: 'f8e2b5e4-89c7-4a79-b9d2-3f7e2cf80e13',
+                questionName: "Why do you think some events are more successful than others? What factors contribute to their success?",
+                answers: [],
+              },
+              {
+                id: 'd3b6c8a2-9e2f-42e7-b515-53a8b88c8329',
+                questionName: "Do you think organizing large-scale events will be more common in the future? Why or why not?",
+                answers: [],
+              }
             ],
           },
         ],

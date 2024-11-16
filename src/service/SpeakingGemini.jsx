@@ -45,7 +45,7 @@ const SpeakingGemini = () => {
     try {
       setThinking(true);
       const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
-      const prompt = `Give an overall score and scores for grammar, vocabulary, fluency, coherence on the B1 Goethe score scale, and provide feedback based on this corrected answer: "${userAnswer}"`;
+      const prompt = `Give an overall score and scores for grammar, vocabulary, fluency, coherence base on Ielts score scale, and provide feedback based on this corrected answer: "${userAnswer}"`;
 
       const result = await model.generateContent(prompt);
       setAiText(result.response.candidates[0].content.parts[0].text.trim());

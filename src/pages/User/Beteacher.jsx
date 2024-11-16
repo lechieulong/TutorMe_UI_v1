@@ -9,6 +9,7 @@ import { GetSpecialization } from '../../redux/specialization/SpecializationSlic
 import { uploadFile } from '../../redux/testExam/TestSlice';
 import { GetUserEducation } from '../../redux/users/UserSlice';;
 import { GetTeacherRequestByUserId } from '../../redux/users/UserSlice';
+import { UpdateRole } from '../../redux/users/UserSlice';
 
 const EducationSection = () => {
     const navigate = useNavigate();
@@ -16,7 +17,7 @@ const EducationSection = () => {
 
     // Extracting specializations and user data from Redux state
     const { specializations, getspecializationstatus } = useSelector((state) => state.specialization);
-    const { beTeacherStatus, beTeacherError, userEducation, getUserEducationStatus, teacherRequest } = useSelector((state) => state.user);
+    const { userInfor, beTeacherStatus, beTeacherError, userEducation, getUserEducationStatus, teacherRequest, roleToUpdate, roleUpdateStatus, roleUpdateError } = useSelector((state) => state.user);
 
     useEffect(() => {
         dispatch(GetSpecialization());
@@ -142,6 +143,23 @@ const EducationSection = () => {
             }
         } else {
             setFormErrors(errors);
+        }
+    };
+
+    const updateRole = async (e) => {
+        e.preventDefault();
+        try {
+            const response = await dispatch(UpdateRole());
+            console.log("Response: ", response);
+            if (UpdateRole.fulfilled.match(response)) {
+                const newToken = response.payload;
+                console.log("New roken: ", newToken);
+                // Set the new token in cookies with an expiration of 7 days
+                Cookies.set('authToken', newToken, { expires: 7 });
+                navigate(`/user/${userInfor.userName}`);
+            }
+        } catch (error) {
+            console.error("Role update failed:", error);
         }
     };
 
@@ -293,8 +311,8 @@ const EducationSection = () => {
                                         <div className="flex justify-end">
                                             {!teacherRequest && (
                                                 <button type="submit" className="px-4 py-2 bg-green-500 text-white rounded hover:bg-green-400">
-                                                Next
-                                            </button>
+                                                    Next
+                                                </button>
                                             )}
                                             {teacherRequest?.status === 0 && (
                                                 <>
@@ -315,12 +333,26 @@ const EducationSection = () => {
 
                                             {teacherRequest?.status === 1 && (
                                                 <>
-                                                    <p className="font-mono px-4 py-2 text-xs text-red-500 text-center mt-2">
+                                                    <p className="font-mono px-4 py-2 text-xs text-yellow-400 text-center mt-2">
                                                         Your request has been approved...
                                                     </p>
-                                                    <Link to="/update" className="px-4 py-2 bg-red-500 text-white rounded hover:bg-red-400">
-                                                        Update role
-                                                    </Link>
+                                                    {roleUpdateStatus === 'pending' && (
+                                                        <Link to="#"
+                                                            onClick={(e) => e.preventDefault()}
+                                                            className="px-4 py-2 bg-yellow-500 text-white rounded hover:bg-red-400">
+                                                            Updating...
+                                                        </Link>
+                                                    )}
+                                                    {roleUpdateStatus === 'failed' && (
+                                                        <button onClick={updateRole} className="px-4 py-2 bg-red-500 text-white rounded hover:bg-red-400">
+                                                            Retry
+                                                        </button>
+                                                    )}
+                                                    {!roleUpdateStatus && (
+                                                        <button onClick={updateRole} className="px-4 py-2 bg-red-500 text-white rounded hover:bg-red-400">
+                                                            Update role
+                                                        </button>
+                                                    )}
                                                 </>
                                             )}
 

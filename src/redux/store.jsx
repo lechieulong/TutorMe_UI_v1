@@ -14,6 +14,7 @@ import ADMIN_usersReducer from "./ADMIN/UserSlice";
 import ADMIN_teachersReducer from "./ADMIN/TeacherSlice";
 import enrollmentReducer from "./Enrollment/EnrollmentSlice";
 import ratingReducer from "./common/RatingSlice";
+import User_BalanceReducer from "./users/BalanceSlice";
 import courseSkillReducer from "./courses/CourseSkillSlice";
 
 export const store = configureStore({
@@ -28,6 +29,7 @@ export const store = configureStore({
     auth: authReducer,
     test: testReducer,
     user: userReducer,
+    user_balance: User_BalanceReducer,
     event: eventReducer,
     answer: answerReducer,
     schedule: scheduleReducer,

@@ -114,9 +114,9 @@ const CourseDetail = () => {
   return (
     <MainLayout>
       <div className="flex flex-col w-screen">
-        <div className="flex flex-1 mt-16 w-full">
+        <div className="flex flex-1 w-full">
           <MentorSidebar />
-          <div className="flex-1 p-4">
+          <div className="flex-1 p-4" style={{ maxHeight: 'calc(100vh - 65px)', overflowY: 'auto' }}>
             <div className="flex justify-start items-center mb-4">
               <p className="text-black font-bold text-4xl">{className}</p>
             </div>
@@ -187,7 +187,7 @@ const CourseDetail = () => {
               </div>
             )}
 
-            <div className="mt-8">
+            <div className="mt-2">
               <CourseSkillCard
                 isReviewPath={isReviewPath}
                 courseId={courseId}

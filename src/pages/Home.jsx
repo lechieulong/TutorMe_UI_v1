@@ -35,10 +35,10 @@ const Home = () => {
       {/* Livestream and Subjects Section */}
       <div className="bg-white">
         <div className="ml-10 text-2xl font-bold">
-          <h1 className="text-black">
+          <h2 className="text-black">
             Hot Livestream{" "}
             <Link className="font-normal text-base opacity-40">more</Link>
-          </h1>
+          </h2>
         </div>
         <div className="p-5">
           <div className="container mx-auto px-4">
@@ -60,10 +60,10 @@ const Home = () => {
         </div>
         <br />
         <div className="ml-10 text-2xl font-bold">
-          <h1 className="text-black">
+          <h2 className="text-black">
             Hot Teacher{" "}
             <Link className="font-normal text-base opacity-40">more</Link>
-          </h1>
+          </h2>
         </div>
         <div className="p-5">
           <div className="container mx-auto px-4">

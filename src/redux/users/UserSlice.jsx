@@ -211,6 +211,31 @@ export const GetTeacherRequestByUserId = createAsyncThunk(
     }
 );
 
+// Action to update role
+export const UpdateRole = createAsyncThunk(
+    `${SLICE_NAMES.USER}/${ACTIONS.UPDATE_ROLE}`,
+    async (_, { rejectWithValue }) => {
+        try {
+            const token = Cookies.get("authToken");
+            const response = await axios.post(
+                `${apiURLConfig.baseURL}/user/update-role`,
+                {},
+                {
+                    headers: {
+                        'Authorization': `Bearer ${token}`, // Include token in the request headers
+                    },
+                }
+            );
+
+            return response.data.result; // Adjusting to use response.data
+        } catch (error) {
+            return rejectWithValue(
+                error.response?.data?.message || "Failed to update role."
+            );
+        }
+    }
+);
+
 const initialState = {
     user: null,
     userEducation: null,
@@ -220,12 +245,14 @@ const initialState = {
     searchTeachers: [],
     userInfor: null,
     updateResponse: null,
+    roleToUpdate: null,
     status: STATUS.IDLE, // Trạng thái mặc định
     getuserstatus: STATUS.IDLE,
     getUserEducationStatus: STATUS.IDLE,
     getTeacherRequestStatus: STATUS.IDLE,
     updateTeacherRequestStatus: STATUS.IDLE,
     updateStatus: STATUS.IDLE,
+    roleUpdateStatus: STATUS.IDLE,
     error: null, // Thông báo lỗi nếu có
     updateError: null, // Thông báo lỗi nếu có
     getUserEducationError: null, // Thông báo lỗi nếu có
@@ -235,6 +262,7 @@ const initialState = {
     beTeacherResponse: null,
     beTeacherStatus: STATUS.IDLE,
     beTeacherError: null,
+    roleUpdateError: null,
 };
 
 const UserSlice = createSlice({
@@ -378,6 +406,20 @@ const UserSlice = createSlice({
             .addCase(GetTeacherRequestByUserId.rejected, (state, action) => {
                 state.getTeacherRequestStatus = STATUS.FAILED;
                 state.getTeacherRequestError = action.payload || action.error.message;
+            })
+
+            // Handle update role
+            .addCase(UpdateRole.pending, (state) => {
+                state.roleUpdateStatus = STATUS.PENDING;
+                state.roleUpdateError = null;
+            })
+            .addCase(UpdateRole.fulfilled, (state, action) => {
+                state.roleUpdateStatus = STATUS.SUCCESS;
+                state.roleToUpdate = action.payload;
+            })
+            .addCase(UpdateRole.rejected, (state, action) => {
+                state.roleUpdateStatus = STATUS.FAILED;
+                state.roleUpdateError = action.payload || action.error.message;
             })
     },
 });

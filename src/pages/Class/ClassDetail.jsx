@@ -40,7 +40,7 @@ const ClassDetail = () => {
         const descriptions = response.data.map(
           (item) => item.description || ""
         );
-        console.log(courseId);
+        console.log(classId);
 
         console.log(descriptions);
       } else {

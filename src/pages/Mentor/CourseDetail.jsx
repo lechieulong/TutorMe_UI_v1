@@ -6,10 +6,13 @@ import MainLayout from "../../layout/MainLayout";
 import { getUser } from "../../service/GetUser";
 import ClassCard from "../Class/components/ClassCard";
 import CourseSkillCard from "./component/CourseSkillCard";
-import Rating from "../../components/common/Rating";
 import { CheckUserEnrollment } from "../../redux/Enrollment/EnrollmentSlice";
 import { fetchClasses } from "../../redux/classes/ClassSlice";
 import { enrollUser } from "../../redux/Enrollment/EnrollmentSlice";
+import {
+  fetchSkills,
+  fetchSkillDescription,
+} from "../../redux/courses/CourseSkillSlice";
 import CreateClass from "../Class/CreateClass";
 
 const CourseDetail = () => {
@@ -24,8 +27,11 @@ const CourseDetail = () => {
   const dispatch = useDispatch();
   const classes = useSelector((state) => state.classes.classes);
   const switchStates = useSelector((state) => state.classes.switchStates);
-
   const isEnrolled = useSelector((state) => state.enrollment.isEnrolled);
+  // const courseSkills = useSelector((state) => state.courses.courseSkills);
+  // const skillDescriptions = useSelector(
+  //   (state) => state.courses.skillDescriptions
+  // );
 
   const isReviewPath = location.pathname.includes("/review");
   console.log("URL contains /review:", isReviewPath);
@@ -42,6 +48,7 @@ const CourseDetail = () => {
   useEffect(() => {
     initializeUser();
     dispatch(fetchClasses(courseId));
+    dispatch(fetchSkills(courseId)); // Sử dụng fetchSkills từ Slice
   }, [initializeUser, dispatch, courseId]);
 
   useEffect(() => {
@@ -92,6 +99,18 @@ const CourseDetail = () => {
     handleCloseCreateClass();
   };
 
+  const handleCreateTestClick = (skillId) => {
+    dispatch(fetchSkillDescription(skillId)) // Sử dụng fetchSkillDescription từ Slice
+      .unwrap()
+      .then((result) => {
+        console.log("Create Test clicked for Skill ID:", skillId);
+        console.log("Description:", result.description);
+      })
+      .catch((error) => {
+        console.error("Failed to fetch description:", error);
+      });
+  };
+
   return (
     <MainLayout>
       <div className="flex flex-col w-screen">
@@ -102,7 +121,7 @@ const CourseDetail = () => {
               <p className="text-black font-bold text-4xl">{className}</p>
             </div>
 
-            {userRole === "USER" && !isEnrolled && (
+            {!isEnrolled && (
               <button
                 type="button"
                 className="py-2 px-3 inline-flex items-center gap-x-2 text-sm font-medium rounded-lg border border-gray-200 bg-white text-gray-800 shadow-sm hover:bg-gray-50 focus:outline-none focus:bg-gray-50"
@@ -112,7 +131,7 @@ const CourseDetail = () => {
               </button>
             )}
 
-            {userRole === "USER" && !isEnrolled && (
+            {!isEnrolled && (
               <div className="flex flex-col bg-white border w-full shadow-sm rounded-xl p-4 md:p-5 relative group mb-4">
                 <div className="mt-4 relative">
                   <div className="flex justify-between items-center">
@@ -174,12 +193,8 @@ const CourseDetail = () => {
                 courseId={courseId}
                 userRole={userRole}
                 isEnrolled={isEnrolled}
+                onCreateTestClick={handleCreateTestClick}
               />
-            </div>
-            <div className="mt-8">
-              {/* {userRole === "USER" && isEnrolled && (
-                <Rating userId={userId} courseId={courseId} />
-              )} */}
             </div>
           </div>
         </div>

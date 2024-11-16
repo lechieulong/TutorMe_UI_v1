@@ -65,14 +65,14 @@ const Header = ({
   }, [currentSkillIndex, testData, handleNextSkill]);
 
   return (
-    <div className="flex justify-between items-center p-4 bg-green-600 shadow-lg rounded-lg">
+    <div className="flex justify-between  items-center p-4 bg-green-600 shadow-lg rounded-lg">
       <Link to={"/"}>
         <p className="text-lg font-semibold text-white flex items-center gap-2">
           IELTS <FontAwesomeIcon icon={faLanguage} />
         </p>
       </Link>
 
-      <div className="text-lg font-semibold text-white flex items-center gap-2">
+      <div className="text-lg font-semibold text-customText flex items-center gap-2">
         <FontAwesomeIcon icon={faClock} className="mr-2" />
         <span className="text-sm">Time left:</span>
         <span className="text-xl font-bold">{formatTime(timeLeft)}</span>

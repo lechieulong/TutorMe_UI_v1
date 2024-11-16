@@ -7,6 +7,7 @@ import MultipleChoiceAnswers from "./MultipleChoiceAnswers";
 const AnswerView = ({
   partData,
   currentSkillKey,
+  currentSkillId,
   handleAnswerChange,
   userAnswers,
 }) => {
@@ -28,8 +29,6 @@ const AnswerView = ({
       skill = undefined;
       break;
   }
-  console.log("skill", skill);
-  console.log("currentSkillKey", currentSkillKey);
 
   const handleChangeWrap = (
     e,
@@ -62,6 +61,7 @@ const AnswerView = ({
           questionId,
           sectionType,
           answers: updatedAnswers,
+          skillId: currentSkillId,
         }
       : undefined;
 

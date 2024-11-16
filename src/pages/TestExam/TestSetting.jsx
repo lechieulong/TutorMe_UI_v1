@@ -78,8 +78,6 @@ const TestSetting = () => {
     return <div>Loading...</div>; // Show loading state while fetching data
   }
 
-  console.log(selectedParts);
-
   const isFullPartsChecked = selectedParts.length === parts.length;
 
   return (

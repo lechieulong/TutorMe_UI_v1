@@ -4,7 +4,13 @@ import Topic from "../../components/Test/Topic";
 import NavigationPart from "../../components/Test/NavigationPart";
 
 const TestView = React.memo(
-  ({ skillData, currentSkillKey, handleAnswerChange, userAnswers }) => {
+  ({
+    skillData,
+    currentSkillKey,
+    currentSkillId,
+    handleAnswerChange,
+    userAnswers,
+  }) => {
     const questionRef = useRef({});
     const [isLoading, setIsLoading] = useState(true);
     const [isOpenSideView, setOpenSideView] = useState(false);
@@ -103,6 +109,7 @@ const TestView = React.memo(
               partData={partDatas[selectedPart]}
               refs={questionRef}
               currentSkillKey={currentSkillKey}
+              currentSkillId={currentSkillId}
               handleAnswerChange={handleAnswerChange}
               userAnswers={userAnswers}
             />

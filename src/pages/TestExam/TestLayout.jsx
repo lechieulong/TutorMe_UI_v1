@@ -11,20 +11,15 @@ import {
 } from "../../redux/testExam/TestSlice";
 import { useDispatch } from "react-redux";
 
-const TestLayout = ({ practiceTestData, skillsData }) => {
+const TestLayout = ({ skillsData, practiceTestData, fullTestId }) => {
   const [currentSkillIndex, setCurrentSkillIndex] = useState(0);
   const [testData, setTestData] = useState({});
   const [userAnswers, setUserAnswers] = useState([]);
   const [loading, setLoading] = useState(true);
-
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
-  const { duration, selectedParts, isPractice, skillId, testId } =
-    practiceTestData;
-
   // const { testId, skillId } = useParams();
-  const finalTest = true;
 
   // const fetchTestData = async () => {
   //   try {
@@ -43,7 +38,7 @@ const TestLayout = ({ practiceTestData, skillsData }) => {
   const fetchTestData = async () => {
     try {
       setLoading(true);
-      const result = await dispatch(getTesting(testId));
+      const result = await dispatch(getTesting(fullTestId));
       setTestData(result.payload);
     } catch (error) {
       console.error("Error fetching test data:", error);
@@ -55,16 +50,17 @@ const TestLayout = ({ practiceTestData, skillsData }) => {
   const fetchSkillData = async () => {
     try {
       setLoading(true);
-      const result = await dispatch(getSkill(skillId));
+      const result = await dispatch(getSkill(practiceTestData.skillId));
 
       if (result.payload) {
         const skillData = result.payload;
         const skillKey = Object.keys(skillData)[0];
         const skillDetails = skillData[skillKey];
 
-        skillDetails.duration = duration || skillDetails.duration;
+        skillDetails.duration =
+          practiceTestData.duration || skillDetails.duration;
         skillDetails.parts = skillDetails.parts.filter((part) =>
-          selectedParts.includes(part.partNumber)
+          practiceTestData.selectedParts.includes(part.partNumber)
         );
 
         setTestData(skillData);
@@ -77,9 +73,9 @@ const TestLayout = ({ practiceTestData, skillsData }) => {
   };
 
   useEffect(() => {
-    if (finalTest) {
-      fetchTestData(testId);
-    } else if (isPractice) {
+    if (fullTestId) {
+      fetchTestData();
+    } else if (practiceTestData) {
       fetchSkillData();
     } else {
       setTestData(skillsData);
@@ -94,28 +90,41 @@ const TestLayout = ({ practiceTestData, skillsData }) => {
     }));
   }, []);
 
+  const handleNextSkill = useCallback(() => {
+    const skillKeys = Object.keys(testData);
+    setCurrentSkillIndex((prevIndex) => {
+      const nextIndex = prevIndex + 1;
+      if (nextIndex < skillKeys.length) {
+        return nextIndex;
+      }
+      return prevIndex;
+    });
+  }, [testData]);
+
+  if (loading) {
+    return <div>Loading test data...</div>;
+  }
+
+  const currentSkillKey = Object.keys(testData)[currentSkillIndex];
+  const currentSkillId = testData[currentSkillKey]?.id;
+  const currentSkillData = testData[currentSkillKey];
   const handleSubmit = () => {
     if (!userAnswers || Object.keys(userAnswers).length === 0) {
       console.log("No answers to submit");
       return;
     }
-    if (skillId) {
-      Object.values(userAnswers).forEach((entry) => {
-        entry.skillId = skillId;
-      });
-    }
+    console.log(userAnswers);
+
     const keys = Object.keys(testData);
     const lastSkillKey = keys[keys.length - 1];
     const firstAnswer = Object.values(userAnswers)[0];
     const { skill } = firstAnswer;
-
+    const testId = fullTestId ? fullTestId : practiceTestData.testId;
     switch (skill) {
       case 0:
         const result = dispatch(submitAnswerTest({ userAnswers, testId }));
         setUserAnswers([]);
-        if (lastSkillKey) {
-          console.log("last ne");
-
+        if (lastSkillKey === currentSkillKey) {
           navigate(`/testExplain/${testId}`);
         }
       case 1:
@@ -137,25 +146,6 @@ const TestLayout = ({ practiceTestData, skillsData }) => {
     }
   };
 
-  const handleNextSkill = useCallback(() => {
-    const skillKeys = Object.keys(testData);
-    setCurrentSkillIndex((prevIndex) => {
-      const nextIndex = prevIndex + 1;
-      if (nextIndex < skillKeys.length) {
-        return nextIndex;
-      }
-      return prevIndex;
-    });
-  }, [testData]);
-
-  if (loading) {
-    return <div>Loading test data...</div>;
-  }
-
-  const currentSkillKey = Object.keys(testData)[currentSkillIndex];
-
-  const currentSkillData = testData[currentSkillKey];
-
   return (
     <div className="w-screen">
       <form onSubmit={handleSubmit}>
@@ -169,6 +159,7 @@ const TestLayout = ({ practiceTestData, skillsData }) => {
           <TestView
             skillData={currentSkillData}
             currentSkillKey={currentSkillKey}
+            currentSkillId={currentSkillId}
             handleAnswerChange={handleAnswerChange}
             userAnswers={userAnswers}
           />

@@ -18,6 +18,7 @@ export default {
         warmNeutral: "#F2F0EB", // Warm neutral
         coolNeutral: "#EFEFF0", // Cool neutral
         white: "#FFFFFF", // White
+        customText: "#FEF6c7", //
       },
     },
   },

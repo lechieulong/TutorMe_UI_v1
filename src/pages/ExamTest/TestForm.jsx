@@ -38,7 +38,7 @@ const TestForm = ({ classId }) => {
   const onSubmit = async (data) => {
     setIsSubmitted(true);
     try {
-      const sectionCourseId = courseTimelineDetailId; // Ensure courseTimelineDetailId is valid
+      const sectionCourseId = classId; // Ensure courseTimelineDetailId is valid
       const payload = { ...data, sectionCourseId };
 
       const result = await dispatch(createTest(payload)).unwrap();

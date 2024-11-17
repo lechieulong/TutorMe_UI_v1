@@ -66,7 +66,7 @@ const QuestionCard = ({
         </button>
       </div>
 
-      <div className="grid grid-cols-1 gap-4">
+      <div className="grid grid-cols-1 gap-4 h-[380px] overflow-auto">
         {questions.map((question) => {
           const isAlreadySelected = disabledQuestions.some(
             (q) => q.questionName === question.questionName // Ensure the comparison is correct

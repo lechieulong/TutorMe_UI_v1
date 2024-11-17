@@ -1,6 +1,6 @@
 // TestLayout.jsx
-import { useState, useEffect, useCallback } from "react";
-import { useNavigate, useParams } from "react-router-dom";
+import { useState, useEffect, useRef, useCallback } from "react";
+import { useNavigate } from "react-router-dom";
 import Header from "../../components/Test/Header";
 import TestView from "./TestView";
 import mockTestData from "../../data/mockTestData";
@@ -23,8 +23,10 @@ const TestLayout = ({ skillsData, practiceTestData, fullTestId }) => {
     timeMinutesTaken: 0,
     timeSecondsTaken: 0,
   });
-  const [startTime, setStartTime] = useState(null); // Track start time
-  const [timerInterval, setTimerInterval] = useState(null);
+
+  const startTimeRef = useRef(null); // Ref to store the start time
+  const elapsedTimeRef = useRef(0); // Ref to store elapsed time in seconds
+  const timerRef = useRef(null); // Ref to store the interval ID
 
   const navigate = useNavigate();
   const dispatch = useDispatch();
@@ -93,35 +95,36 @@ const TestLayout = ({ skillsData, practiceTestData, fullTestId }) => {
     }
   }, []);
 
-  // Set start time only once
   useEffect(() => {
-    if (testData && currentSkillIndex === 0 && startTime === null) {
-      setStartTime(Date.now()); // Set start time when the test begins
-    }
-  }, [testData, currentSkillIndex, startTime]);
+    if (testData && currentSkillIndex === 0 && !startTimeRef.current) {
+      startTimeRef.current = Date.now(); // Set start time when the test begins
 
-  // Timer logic: Update timeTakenData every second
-  useEffect(() => {
-    if (startTime) {
-      const interval = setInterval(() => {
-        const elapsedTime = Math.floor((Date.now() - startTime) / 1000); // Time elapsed in seconds
+      timerRef.current = setInterval(() => {
+        const elapsedTime = Math.floor(
+          (Date.now() - startTimeRef.current) / 1000
+        );
+        elapsedTimeRef.current = elapsedTime;
+
+        // Update timeTakenData state only if necessary
         const minutes = Math.floor(elapsedTime / 60);
         const seconds = elapsedTime % 60;
 
-        setTimeTakenData({
-          timeMinutesTaken: minutes,
-          timeSecondsTaken: seconds,
+        setTimeTakenData((prev) => {
+          if (
+            prev.timeMinutesTaken !== minutes ||
+            prev.timeSecondsTaken !== seconds
+          ) {
+            return { timeMinutesTaken: minutes, timeSecondsTaken: seconds };
+          }
+          return prev;
         });
       }, 1000);
-
-      setTimerInterval(interval); // Save the interval ID for clearing it later
-
-      // Cleanup the interval on component unmount or when the timer is no longer needed
-      return () => {
-        clearInterval(interval);
-      };
     }
-  }, [startTime]);
+
+    return () => {
+      clearInterval(timerRef.current);
+    };
+  }, [testData, currentSkillIndex]);
 
   const handleAnswerChange = useCallback(({ questionId, answerData }) => {
     setUserAnswers((prevAnswers) => ({
@@ -154,7 +157,7 @@ const TestLayout = ({ skillsData, practiceTestData, fullTestId }) => {
       console.log("No answers to submit");
       return;
     }
-
+    clearInterval(timerRef.current); // Clear the timer
     const keys = Object.keys(testData);
     const lastSkillKey = keys[keys.length - 1];
     const firstAnswer = Object.values(userAnswers)[0];
@@ -220,10 +223,7 @@ const TestLayout = ({ skillsData, practiceTestData, fullTestId }) => {
       default:
         console.log("Unknown skill type");
     }
-    if (timerInterval) clearInterval(timerInterval);
   };
-
-  console.log(skillResultIds);
 
   return (
     <>

@@ -109,22 +109,22 @@ const QuestionBank = () => {
   };
 
   return (
-    <div className="p-4">
+    <div>
       {loading ? (
         <div className="flex justify-center my-4">
           <span>Loading...</span>
         </div>
       ) : (
-        <>
-          <div className="mb-4 flex justify-end items-center space-x-2">
+        <div>
+          <div className=" mb-2 flex justify-between items-center space-x-2">
             <button
               onClick={addNewQuestion}
-              className="flex items-center text-[12px] p-2 bg-blue-500 text-white rounded"
+              className="flex items-center text-[12px] p-2 bg-accentGreen text-customText rounded"
             >
               <FontAwesomeIcon icon={faPlus} className="mr-2" />
               Add New Question
             </button>
-            <div>
+            <div className="flex gap-2">
               <label className="flex items-center cursor-pointer">
                 <input
                   type="file"
@@ -139,60 +139,66 @@ const QuestionBank = () => {
               </label>
 
               <button
+                type="button"
                 onClick={handleDownloadTemplate}
-                className="p-2 bg-red-50"
+                className=" bg-red-50 border text-sm border-gray-300"
               >
                 Download Template
               </button>
             </div>
-          </div>
-          <table className="min-w-full bg-white border border-gray-200">
-            <thead>
-              <tr>
-                <th className="border px-4 py-2">Question</th>
-                <th className="border px-4 py-2">Actions</th>
-              </tr>
-            </thead>
-            <tbody>
-              {Array.isArray(questions) && questions.length > 0 ? (
-                questions.map((question) => (
-                  <tr key={question.id}>
-                    <td className="border px-4 py-2">
-                      {question.questionName}
-                    </td>
-                    <td className="border px-4 py-2 flex space-x-2">
-                      <button onClick={() => updateQuestion(question)}>
-                        <FontAwesomeIcon
-                          icon={faEdit}
-                          className="text-blue-500"
-                        />
-                      </button>
-                      <button onClick={() => handleDeleteQuestion(question.id)}>
-                        <FontAwesomeIcon
-                          icon={faTrash}
-                          className="text-red-500"
-                        />
-                      </button>
+          </div>{" "}
+          <div className="h-[450px] overflow-auto">
+            {" "}
+            {/* Added overflow-auto here */}
+            <table className="min-w-full   border border-gray-200">
+              <thead>
+                <tr>
+                  <th className="border px-4 py-2">Question</th>
+                  <th className="border px-4 py-2">Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                {Array.isArray(questions) && questions.length > 0 ? (
+                  questions.map((question) => (
+                    <tr key={question.id}>
+                      <td className="border px-4 py-2">
+                        {question.questionName}
+                      </td>
+                      <td className="border px-4 py-2 flex space-x-2">
+                        <button onClick={() => updateQuestion(question)}>
+                          <FontAwesomeIcon
+                            icon={faEdit}
+                            className="text-blue-500"
+                          />
+                        </button>
+                        <button
+                          onClick={() => handleDeleteQuestion(question.id)}
+                        >
+                          <FontAwesomeIcon
+                            icon={faTrash}
+                            className="text-red-500"
+                          />
+                        </button>
+                      </td>
+                    </tr>
+                  ))
+                ) : (
+                  <tr>
+                    <td className="border px-4 py-2" colSpan="2">
+                      No questions available
                     </td>
                   </tr>
-                ))
-              ) : (
-                <tr>
-                  <td className="border px-4 py-2" colSpan="2">
-                    No questions available
-                  </td>
-                </tr>
-              )}
-            </tbody>
-          </table>
-
+                )}
+              </tbody>
+            </table>
+          </div>
           {isModalOpen && (
             <QuestionFormBank
               setIsModalOpen={setIsModalOpen}
               question={editQuestion}
             />
           )}
-        </>
+        </div>
       )}
     </div>
   );

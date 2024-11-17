@@ -23,14 +23,21 @@ export const fetchTests = createAsyncThunk(
 
 export const submitAnswerTest = createAsyncThunk(
   `${SLICE_NAMES.TEST}/${ACTIONS.SUBMIT_TEST}`,
-  async ({ userAnswers, testId }, { rejectWithValue }) => {
+  async (
+    { userAnswers, testId, timeMinutesTaken, timeSecondsTaken },
+    { rejectWithValue }
+  ) => {
     const token = Cookies.get("authToken");
     const userId = getUser().sub;
 
     try {
       const response = await axios.post(
-        `${API_BASE_URL}/test/${userId}/submitTest/${testId}`,
-        userAnswers,
+        `${API_BASE_URL}/test/${testId}/submitTest/${userId}`,
+        {
+          userAnswers,
+          timeMinutesTaken, // Add time in minutes
+          timeSecondsTaken, // Add time in seconds
+        },
         {
           Authorization: `Bearer ${token}`,
           headers: {
@@ -38,7 +45,6 @@ export const submitAnswerTest = createAsyncThunk(
           },
         }
       );
-
       return response.data;
     } catch (error) {
       return rejectWithValue(
@@ -168,6 +174,36 @@ export const uploadFile = createAsyncThunk(
     } catch (error) {
       return rejectWithValue(
         error.response?.data?.message || "Failed to upload file"
+      );
+    }
+  }
+);
+export const getResultTest = createAsyncThunk(
+  `${SLICE_NAMES.TEST}/${ACTIONS.GET_RESULT_TEST}`,
+  async (skillResultIds, { rejectWithValue }) => {
+    try {
+      const userId = getUser().sub;
+      const token = Cookies.get("authToken");
+
+      const payload = { skillResultIds };
+
+      const response = await axios.post(
+        `${API_BASE_URL}/test/${userId}/result`,
+        payload,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+        }
+      );
+
+      console.log("API Response:", response.data);
+      return response.data; // Data will be dispatched to the reducer
+    } catch (error) {
+      console.error("Error in getResultTest:", error); // Log the full error for more details
+      return rejectWithValue(
+        error.response?.data?.message || "Failed to fetch test result"
       );
     }
   }
@@ -304,7 +340,7 @@ export const deleteQuestion = createAsyncThunk(
   `${SLICE_NAMES.TEST}/${ACTIONS.DELETE_QUESTION}`,
   async (id, { rejectWithValue }) => {
     try {
-      await axios.delete(`${API_BASE_URL}/test/questionsBank/${id}`);
+      await axios.delete(`${API_BASE_URL}/test/questionsBank/${id}/delete`);
       return id;
     } catch (error) {
       return rejectWithValue(
@@ -319,7 +355,7 @@ export const updateQuestion = createAsyncThunk(
   async ({ id, updatedQuestion }, { rejectWithValue }) => {
     try {
       const response = await axios.put(
-        `${API_BASE_URL}/test/questionsBank/${id}`,
+        `${API_BASE_URL}/test/questionsBank/${id}/update`,
         updatedQuestion
       );
       return response.data;

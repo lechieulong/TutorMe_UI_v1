@@ -295,12 +295,62 @@ export const importQuestion = createAsyncThunk(
     }
   }
 );
+
+// Get question bank base on sectionType
+export const getAllQuestionsById = createAsyncThunk(
+  `${SLICE_NAMES.TEST}/${ACTIONS.GET_QUESTIONS_BANK}`,
+  async ({ userId, page }, { rejectWithValue }) => {
+    // Add pageSize with default value
+    try {
+      const pageSize = 10;
+      const response = await axios.get(
+        `${API_BASE_URL}/test/questionsBank/${userId}`,
+        {
+          params: { page, pageSize }, // Pass both page and pageSize as query parameters
+        }
+      );
+      return response.data;
+    } catch (error) {
+      return rejectWithValue(
+        error.response?.data?.message || "Failed to retrieve questions bank"
+      );
+    }
+  }
+);
+
+export const getResultsHistory = createAsyncThunk(
+  `${SLICE_NAMES.TEST}/${ACTIONS.GET_HISTORY_TEST}`,
+  async ({ userId, page }, { rejectWithValue }) => {
+    // Add pageSize with default value
+    try {
+      const pageSize = 10;
+      const response = await axios.get(
+        `${API_BASE_URL}/test/testSubmitted/${userId}`,
+        {
+          params: { page, pageSize }, // Pass both page and pageSize as query parameters
+        }
+      );
+      return response.data;
+    } catch (error) {
+      return rejectWithValue(
+        error.response?.data?.message || "Failed to retrieve questions bank"
+      );
+    }
+  }
+);
+
+// Get question bank base on sectionType
 export const getQuestionsBank = createAsyncThunk(
   `${SLICE_NAMES.TEST}/${ACTIONS.GET_QUESTIONS_BANK}`,
-  async ({ userId }, { rejectWithValue }) => {
+  async ({ userId, sectionType, page }, { rejectWithValue }) => {
+    // Add pageSize with default value
     try {
+      const pageSize = 10;
       const response = await axios.get(
-        `${API_BASE_URL}/test/questionsBank/${userId}`
+        `${API_BASE_URL}/test/${sectionType}/questionsBank/${userId}`,
+        {
+          params: { page, pageSize }, // Pass both page and pageSize as query parameters
+        }
       );
       return response.data;
     } catch (error) {

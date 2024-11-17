@@ -3,6 +3,7 @@ import QuestionBank from "./questionBank/QuestionBank";
 import MentorSidebar from "../../components/Mentor/MentorSideBar";
 import MainLayout from "../../layout/MainLayout";
 import Header from "../../components/common/Header";
+import TestSubmitted from "./TestSubmitted";
 
 const TestFormLayout = () => {
   const [activeTab, setActiveTab] = useState("QuestionBanks");
@@ -12,7 +13,7 @@ const TestFormLayout = () => {
       case "QuestionBanks":
         return <QuestionBank />;
       case "Dashboard":
-        return <div>Dashboard Component</div>;
+        return <TestSubmitted />;
       case "Settings":
         return <div>Settings Component</div>;
       default:

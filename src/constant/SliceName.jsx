@@ -52,6 +52,7 @@ export const ACTIONS = {
   IMPORT_QUESTION: "importQuestion",
   DOWNLOAD_TEMPLATE: "downloadTemplate",
   GET_QUESTIONS_BANK: "getQuestionsBank",
+  GET_HISTORY_TEST: "getHistoryTest",
   ADD_QUESTIONS: "addQuestions",
   DELETE_QUESTION: "deleteQuestion",
   UPDATE_QUESTION: "updateQuestion",

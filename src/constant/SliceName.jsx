@@ -38,6 +38,7 @@ export const ACTIONS = {
   FETCH_TESTS: "getTests",
   SUBMIT_TEST: "submitTest",
   GET_TEST: "getTest",
+  GET_RESULT_TEST: "getResultTest",
   GET_HISTORY_TEST: "gethistorytest",
   GET_TEST_SECTION_COURSE: "getTestBySectionCourseId",
   GET_SKILLS: "getSkills",

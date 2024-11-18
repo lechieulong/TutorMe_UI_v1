@@ -38,11 +38,16 @@ const QuestionForm = ({
       questionId: question.id, // Assuming `id` is the questionId you want to save
     }));
 
-    dispatch(addQuestion(questionsToAdd));
+    dispatch(addQuestion(questionsToAdd)); // add question to store redux
 
-    // Append questions to the form
     questionsToAdd.forEach((question) => {
-      append(question);
+      append({
+        questionName: question.questionName,
+        answers: question.answers,
+        isFromQuestionBank: question.isFromQuestionBank,
+        questionType: question.questionType,
+        questionId: question.questionId,
+      });
     });
 
     setShowQuestionCard(false);
@@ -215,7 +220,9 @@ const QuestionForm = ({
           <div className="flex gap-2">
             <button
               type="button"
-              onClick={() => setShowQuestionCard(true)}
+              onClick={() =>
+                setShowQuestionCard({ visible: true, sectionType })
+              }
               className="bg-blue-500 text-white p-2 rounded"
             >
               Select Questions
@@ -248,6 +255,7 @@ const QuestionForm = ({
                 selectedQuestions={fields}
                 onSelectQuestions={handleAddSelectedQuestions}
                 onClose={() => setShowQuestionCard(false)}
+                sectionType={showQuestionCard.sectionType}
                 disabledQuestions={fields}
               />
             </div>

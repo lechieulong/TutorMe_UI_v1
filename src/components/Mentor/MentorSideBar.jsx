@@ -102,10 +102,9 @@ const MentorSidebar = ({ setSelectedComponent }) => {
             </li>
 
             <li>
-              <button
-                type="button"
-                className="flex items-center gap-x-3.5 py-2 px-2.5 text-sm text-gray-700 rounded-lg hover:bg-gray-100 focus:outline-none focus:bg-gray-100"
-                onClick={() => setSelectedComponent("TestFormLayout")}
+              <Link
+                className="flex items-center gap-x-3.5 py-2 px-2.5 text-sm text-gray-700 rounded-lg hover:bg-gray-100"
+                to={`/manageTest/${courseId}`}
               >
                 <svg
                   className="size-4"
@@ -119,12 +118,11 @@ const MentorSidebar = ({ setSelectedComponent }) => {
                   strokeLinecap="round"
                   strokeLinejoin="round"
                 >
-                  <path d="M15.5 2H8.6c-.4 0-.8.2-1.1.5-.3.3-.5.7-.5 1.1v12.8c0 .4.2.8.5 1.1.3.3.7.5 1.1.5h9.8c.4 0 .8-.2 1.1-.5.3-.3.5-.7.5-1.1V6.5L15.5 2z" />
-                  <path d="M3 7.6v12.8c0 .4.2.8.5 1.1.3.3.7.5 1.1.5h9.8" />
-                  <path d="M15 2v5h5" />
+                  <path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" />
+                  <polyline points="9 22 9 12 15 12 15 22" />
                 </svg>
                 Test
-              </button>
+              </Link>
             </li>
 
             <li>

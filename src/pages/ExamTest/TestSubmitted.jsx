@@ -12,14 +12,26 @@ const TestSubmitted = () => {
   const dispatch = useDispatch();
   const { user } = useSelector((state) => state.user);
 
+  const skillTypes = {
+    0: "Reading",
+    1: "Listening",
+    2: "Writing",
+    3: "Speaking",
+  };
+
   const fetchResults = async (page) => {
     try {
       setLoading(true);
       const response = await dispatch(
         getResultsHistory({ userId: user.id, page })
       ).unwrap();
-      setResults(response.payload || []);
-      setTotalPages(response.payload.length || 1);
+
+      // Assuming response contains `payload` as an array of results
+
+      setResults(response);
+
+      // Assuming totalPages is provided in response or calculate from results
+      setTotalPages(1); // Adjust based on API implementation
     } catch (err) {
       console.error("Failed to fetch results history:", err);
       setError("Failed to load results history.");
@@ -46,13 +58,10 @@ const TestSubmitted = () => {
   };
 
   return (
-    <div className="p-6 bg-gray-50 min-h-screen">
-      <h2 className="text-2xl font-bold text-gray-800 mb-6">
-        Test Results History
-      </h2>
+    <div className=" h-[400px]">
       {loading ? (
         <div className="flex justify-center items-center h-64">
-          <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500"></div>
+          <div className="animate-spin rounded-full  w-12 border-t-2 border-b-2 border-blue-500"></div>
         </div>
       ) : error ? (
         <div className="text-red-500 text-center">{error}</div>
@@ -60,24 +69,24 @@ const TestSubmitted = () => {
         <div className="text-gray-500 text-center">No results available.</div>
       ) : (
         <div>
-          <div className="overflow-auto rounded-lg shadow mb-4">
+          <div className="overflow-auto h-[400px] rounded-lg shadow mb-4">
             <table className="min-w-full bg-white border border-gray-200 rounded-lg">
-              <thead className="bg-blue-500 text-white">
+              <thead className="bg-green-500 text-white sticky">
                 <tr>
                   <th className="px-6 py-3 text-left text-sm font-semibold">
-                    Test Name
+                    Skill
+                  </th>
+                  <th className="px-6 py-3 text-left text-sm font-semibold">
+                    Student
                   </th>
                   <th className="px-6 py-3 text-left text-sm font-semibold">
                     Date
                   </th>
                   <th className="px-6 py-3 text-left text-sm font-semibold">
-                    Skill
-                  </th>
-                  <th className="px-6 py-3 text-left text-sm font-semibold">
                     Score
                   </th>
                   <th className="px-6 py-3 text-left text-sm font-semibold">
-                    Status
+                    Correct/Total
                   </th>
                 </tr>
               </thead>
@@ -85,27 +94,18 @@ const TestSubmitted = () => {
                 {results.map((result) => (
                   <tr key={result.id} className="hover:bg-gray-100">
                     <td className="px-6 py-4 text-gray-700">
-                      {result.testName}
+                      {skillTypes[result.skillType] || "Unknown"}
                     </td>
-                    <td className="px-6 py-4 text-gray-700">
-                      {new Date(result.date).toLocaleDateString()}
-                    </td>
+                    {/* dang test thu student */}
+                    <td className="px-6 py-4 text-gray-700">{user.name}</td>
                     <td className="px-6 py-4 text-gray-700 capitalize">
-                      {result.skill}
+                      {new Date(result.testDate).toLocaleDateString()}
                     </td>
                     <td className="px-6 py-4 text-gray-700 font-medium">
-                      {result.score}
+                      {result.score.toFixed(2)}
                     </td>
-                    <td
-                      className={`px-6 py-4 text-gray-700 font-medium ${
-                        result.status === "Pass"
-                          ? "text-green-600"
-                          : result.status === "Fail"
-                          ? "text-red-600"
-                          : "text-yellow-600"
-                      }`}
-                    >
-                      {result.status}
+                    <td className="px-6 py-4 text-gray-700">
+                      {result.numberOfCorrect} / {result.totalQuestion}
                     </td>
                   </tr>
                 ))}

@@ -23,6 +23,7 @@ const TestLayout = ({ skillsData, practiceTestData, fullTestId }) => {
     timeMinutesTaken: 0,
     timeSecondsTaken: 0,
   });
+  console.log("FullTestId", fullTestId);
 
   const startTimeRef = useRef(null); // Ref to store the start time
   const elapsedTimeRef = useRef(0); // Ref to store elapsed time in seconds
@@ -228,7 +229,11 @@ const TestLayout = ({ skillsData, practiceTestData, fullTestId }) => {
   return (
     <>
       {submitted ? (
-        <TestExplain skillResultIds={skillResultIds} testId={testId} />
+        <TestExplain
+          skillResultIds={skillResultIds}
+          testId={testId}
+          skillId={practiceTestData?.skillId}
+        />
       ) : (
         <div className="w-screen">
           <form onSubmit={handleSubmit}>

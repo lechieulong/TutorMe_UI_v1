@@ -3,7 +3,11 @@ import HeaderExplain from "../../components/Test/HeaderExplain";
 import TestViewExplain from "./TestViewExplain";
 
 import mockTestData from "../../data/mockTestExplain";
-import { getSkill, getResultTest } from "../../redux/testExam/TestSlice";
+import {
+  getSkill,
+  getResultTest,
+  getExplainTest,
+} from "../../redux/testExam/TestSlice";
 import { useDispatch, useSelector } from "react-redux";
 import MainLayout from "../../layout/MainLayout";
 import { useParams } from "react-router-dom";
@@ -18,17 +22,18 @@ import {
   faMicrophone,
 } from "@fortawesome/free-solid-svg-icons";
 
-const TestExplain = ({ skillResultIds, testId }) => {
+const TestExplain = ({ skillResultIds, testId, skillId }) => {
   const [currentSkillIndex, setCurrentSkillIndex] = useState(0); // Track the current skill index
   const [testData, setTestData] = useState({}); // Initialize as an empty object
   const [loading, setLoading] = useState(true);
   const [testResult, setTestResult] = useState([]);
   const [overallScore, setOverallScore] = useState(0);
 
+  console.log("testId ", testId);
+
   const dispatch = useDispatch();
 
   const { user } = useSelector((state) => state.user);
-  console.log(user);
 
   const skillTypeMap = {
     0: { name: "Reading", icon: faBookOpen },
@@ -47,39 +52,26 @@ const TestExplain = ({ skillResultIds, testId }) => {
     }
   };
 
-  const fetchTestData = async () => {
-    try {
-      setLoading(true);
-      const fetchedTestData = await new Promise((resolve) => {
-        setTimeout(() => resolve(mockTestData), 1000);
-      });
-      setTestData(fetchedTestData);
-    } catch (error) {
-      console.error("Error fetching test data:", error);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const skillId = "123";
+  // const fetchTestData = async () => {
+  //   try {
+  //     setLoading(true);
+  //     const fetchedTestData = await new Promise((resolve) => {
+  //       setTimeout(() => resolve(mockTestData), 1000);
+  //     });
+  //     setTestData(fetchedTestData);
+  //   } catch (error) {
+  //     console.error("Error fetching test data:", error);
+  //   } finally {
+  //     setLoading(false);
+  //   }
+  // };
 
   const fetchSkillData = async () => {
     try {
       setLoading(true);
       const result = await dispatch(getSkill(skillId));
-
       if (result.payload) {
         const skillData = result.payload;
-        const skillKey = Object.keys(skillData)[0]; // Get the main skill key (e.g., "writing")
-        const skillDetails = skillData[skillKey];
-
-        skillDetails.duration = duration || skillDetails.duration;
-        skillDetails.parts = skillDetails.parts.filter((part) =>
-          selectedParts.includes(part.partNumber)
-        );
-
-        console.log("skillData", skillData);
-
         setTestData(skillData);
       }
     } catch (error) {
@@ -108,11 +100,31 @@ const TestExplain = ({ skillResultIds, testId }) => {
     }
   };
 
+  const getTestExplain = async () => {
+    try {
+      setLoading(true);
+      const result = await dispatch(
+        getExplainTest({
+          testId,
+          userId: user.id,
+          skillId: skillId || null, // Ensure null is passed if skillId is undefined
+        })
+      );
+
+      if (result.payload) {
+        const skillData = result.payload;
+        setTestData(skillData);
+      }
+    } catch (error) {
+      console.error("Error fetching test data:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   useEffect(() => {
     getTestResult();
-    if (testId) {
-      fetchTestData();
-    }
+    getTestExplain();
   }, []);
 
   const handleNextSkill = useCallback(() => {
@@ -141,15 +153,15 @@ const TestExplain = ({ skillResultIds, testId }) => {
   const currentSkillKey = Object.keys(testData)[currentSkillIndex];
   const currentSkillData = testData[currentSkillKey];
 
-  const formattedDate = new Date(testResult[0].testDate).toLocaleDateString(
-    "en-US",
-    {
-      weekday: "long", // Full weekday name (e.g., Monday)
-      year: "numeric", // Full year (e.g., 2024)
-      month: "long", // Full month name (e.g., November)
-      day: "numeric", // Day of the month (e.g., 4)
-    }
-  );
+  const formattedDate =
+    testResult.length > 0 && testResult[0].testDate
+      ? new Date(testResult[0].testDate).toLocaleDateString("en-US", {
+          weekday: "long",
+          year: "numeric",
+          month: "long",
+          day: "numeric",
+        })
+      : "N/A";
 
   return (
     <MainLayout>
@@ -245,17 +257,26 @@ const TestExplain = ({ skillResultIds, testId }) => {
       </div>
 
       <div>
-        {/* <div className="flex flex-col">
-          <HeaderExplain
-            testData={testData}
-            currentSkillIndex={currentSkillIndex}
-            handleNextSkill={handleNextSkill}
-          />
-          <TestViewExplain
-            skillData={currentSkillData}
-            currentSkillKey={currentSkillKey}
-          />
-        </div> */}
+        <div>
+          {testData != undefined && (
+            <div className="flex flex-col">
+              <HeaderExplain
+                testData={testData}
+                currentSkillIndex={currentSkillIndex}
+                handleNextSkill={handleNextSkill}
+              />
+              <TestViewExplain
+                skillData={currentSkillData}
+                currentSkillKey={currentSkillKey}
+              />
+            </div>
+          )}
+        </div>
+      </div>
+
+      <div className="mt-20 p-10">
+        <h3>Related Test</h3>
+        <div className="h-[200px]"></div>
       </div>
     </MainLayout>
   );

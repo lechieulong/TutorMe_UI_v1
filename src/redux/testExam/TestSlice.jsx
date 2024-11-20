@@ -143,6 +143,24 @@ export const getTesting = createAsyncThunk(
   }
 );
 
+export const getExplainTest = createAsyncThunk(
+  `${SLICE_NAMES.TEST}/${ACTIONS.GET_EXPLAIN_TEST}`,
+  async ({ testId, userId, skillId }, { rejectWithValue }) => {
+    try {
+      const response = await axios.post(`${API_BASE_URL}/test/testExplain`, {
+        userId,
+        testId,
+        skillId,
+      });
+      return response.data;
+    } catch (error) {
+      return rejectWithValue(
+        error.response?.data?.message || "Failed to fetch tests"
+      );
+    }
+  }
+);
+
 export const downloadTemplate = createAsyncThunk(
   `${SLICE_NAMES.TEST}/${ACTIONS.DOWNLOAD_TEMPLATE}`,
   async (id, { rejectWithValue }) => {

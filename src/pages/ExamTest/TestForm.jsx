@@ -23,12 +23,6 @@ const TestForm = ({ classId, categories }) => {
   } = useForm();
   const dispatch = useDispatch();
 
-  const location = useLocation();
-  // const { courseTimelineDetailId, categories } = location.state || {
-  //   courseTimelineDetailId: null,
-  //   categories: [],
-  // };
-
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [testInfo, setTestInfo] = useState(null);
   const [showTestFormDetail, setShowTestFormDetail] = useState(false); // New state to control TestFormDetail display
@@ -88,7 +82,7 @@ const TestForm = ({ classId, categories }) => {
           </h3> */}
           <form
             onSubmit={handleSubmit(onSubmit)}
-            className="space-y-4 mt-8 max-w-lg mx-auto p-6   rounded-2xl border border-gray-200"
+            className="space-y-4 mt-8 max-w-lg mx-auto p-6 bg-white  rounded-2xl border border-gray-200"
           >
             {/* Test Name */}
             <div className="relative">

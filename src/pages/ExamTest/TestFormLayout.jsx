@@ -4,6 +4,7 @@ import MentorSidebar from "../../components/Mentor/MentorSideBar";
 import MainLayout from "../../layout/MainLayout";
 import Header from "../../components/common/Header";
 import TestSubmitted from "./TestSubmitted";
+import ContributionAttempt from "./general/ContributionAttempt";
 
 const TestFormLayout = () => {
   const [activeTab, setActiveTab] = useState("QuestionBanks");
@@ -15,7 +16,7 @@ const TestFormLayout = () => {
       case "Dashboard":
         return <TestSubmitted />;
       case "Settings":
-        return <div>Settings Component</div>;
+        return <ContributionAttempt />;
       default:
         return null;
     }
@@ -65,7 +66,7 @@ const TestFormLayout = () => {
                       : "hover:text-gray-600 hover:border-gray-300"
                   } dark:hover:text-gray-300`}
                 >
-                  Settings
+                  Test Analysis
                 </button>
               </li>
             </ul>

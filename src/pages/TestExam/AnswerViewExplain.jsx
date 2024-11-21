@@ -63,9 +63,7 @@ const AnswerViewExplain = ({
                   className={`flex items-center space-x-2 border-2 rounded p-2 ${
                     question.answers[0].isCorrect === 1
                       ? "border-green-500" // Correct answer
-                      : question.userAnswer[0]?.isCorrect === 1 &&
-                        question.userAnswer[0]?.isCorrect !==
-                          question.answers[0].isCorrect
+                      : question.userAnswers[0]?.answerText != 1
                       ? "border-red-500" // Incorrect user selection
                       : "border-gray-300"
                   }`}
@@ -74,7 +72,7 @@ const AnswerViewExplain = ({
                     type="radio"
                     name={`question_${question.id}`}
                     value={1} // The value for "True"
-                    checked={question.answers[0].isCorrect === 1} // Check if isCorrect is 1
+                    checked={question.userAnswers[0].answerText == 1} // Check if isCorrect is 1
                     disabled
                     className="h-4 w-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
                   />
@@ -84,9 +82,7 @@ const AnswerViewExplain = ({
                   className={`flex items-center space-x-2 border-2 rounded p-2 ${
                     question.answers[0].isCorrect === 0
                       ? "border-green-500" // Correct answer
-                      : question.userAnswer[0]?.isCorrect === 0 &&
-                        question.userAnswer[0]?.isCorrect !==
-                          question.answers[0].isCorrect
+                      : question.userAnswers[0]?.answerText == 0
                       ? "border-red-500" // Incorrect user selection
                       : "border-gray-300"
                   }`}
@@ -94,7 +90,7 @@ const AnswerViewExplain = ({
                   <input
                     type="radio"
                     name={`question_${question.id}`}
-                    checked={question.answers[0].isCorrect === 0} // Check if isCorrect is 0
+                    checked={question.userAnswers[0]?.answerText == 0} // Check if isCorrect is 0
                     value={0}
                     disabled
                     className="h-4 w-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
@@ -107,9 +103,7 @@ const AnswerViewExplain = ({
                     className={`flex items-center space-x-2 border-2 rounded p-2 ${
                       question.answers[0].isCorrect === 2
                         ? "border-green-500" // Correct answer
-                        : question.userAnswer[0]?.isCorrect === 2 &&
-                          question.userAnswer[0]?.isCorrect !==
-                            question.answers[0].isCorrect
+                        : question.userAnswers[0]?.answerText == 2
                         ? "border-red-500" // Incorrect user selection
                         : "border-gray-300"
                     }`}
@@ -128,7 +122,7 @@ const AnswerViewExplain = ({
 
                 <p>
                   Explaination:{" "}
-                  {question.userAnswer[0]?.answerText || "No answer selected"}
+                  {question.userAnswers[0]?.answerText || "No answer selected"}
                 </p>
               </div>
             </>
@@ -141,9 +135,11 @@ const AnswerViewExplain = ({
         ) {
           const questionParts = question.questionName.split("[]");
           return (
-            <div className="font-medium  ">
+            <div className="font-medium flex gap-6 items-center">
               {questionParts[0]}
               <input
+                disabled
+                defaultValue={question.userAnswers[0].answerText}
                 type="text"
                 placeholder={`enter text here `}
                 className="border border-gray-300 rounded px-2 py-1 focus:outline-none focus:ring-2 focus:ring-blue-500 inline-block align-middle"
@@ -151,19 +147,29 @@ const AnswerViewExplain = ({
               />
               <span className="font-bold"> {questionCounter}</span>
               {questionParts[1]} {/* Part after [] */}
+              <p className="p-2 border rounded-lg border-green-500">
+                <span className="font-bold">Correct Answer</span>:{" "}
+                {question.answers[0].answerText}
+              </p>
             </div>
           );
         }
         if (sectionType === 10) {
           return (
-            <>
+            <div className="flex items-center gap-6">
               <span className="font-bold mr-2"> {questionCounter}</span>
               <input
+                disabled
+                defaultValue={question.userAnswers[0].answerText}
                 type="text"
                 placeholder="Your answer"
                 className="border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
               />
-            </>
+              <p className="p-2 border rounded-lg border-green-500">
+                <span className="font-bold">Correct Answer</span>:{" "}
+                {question.answers[0].answerText}
+              </p>
+            </div>
           );
         }
       case 1:
@@ -199,16 +205,22 @@ const AnswerViewExplain = ({
         if (sectionType === 2 || sectionType === 3 || sectionType === 7) {
           const questionParts = question.questionName.split("[]");
           return (
-            <div className="font-medium  ">
+            <div className="font-medium  flex items-center gap-6 ">
               {questionParts[0]}
               <input
                 type="text"
+                disabled
+                defaultValue={question.userAnswers[0].answerText}
                 placeholder={`enter text here `}
                 className="border border-gray-300 rounded px-2 py-1 focus:outline-none focus:ring-2 focus:ring-blue-500 inline-block align-middle"
                 style={{ display: "inline-block", width: "auto" }}
               />
               <span className="font-bold"> {questionCounter}</span>
               {questionParts[1]} {/* Part after [] */}
+              <p className="p-2 border rounded-lg border-green-500">
+                <span className="font-bold">Correct Answer</span>:{" "}
+                {question.answers[0].answerText}
+              </p>
             </div>
           );
         }
@@ -216,11 +228,19 @@ const AnswerViewExplain = ({
           return (
             <div>
               <span className="font-bold"> {questionCounter}</span>
-              <input
-                type="text"
-                placeholder="Your answer"
-                className="border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
-              />
+              <div className="flex items-center gap-6">
+                <input
+                  disabled
+                  defaultValue={question.userAnswers[0].answerText}
+                  type="text"
+                  placeholder="Your answer"
+                  className="border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                />
+                <p className="p-2 border rounded-lg border-green-500">
+                  <span className="font-bold">Correct Answer</span>:{" "}
+                  {question.answers[0].answerText}
+                </p>
+              </div>
             </div>
           );
         }

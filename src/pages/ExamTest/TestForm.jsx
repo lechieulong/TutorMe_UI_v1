@@ -14,7 +14,7 @@ import CreateTest from "./CreateTest";
 import MainLayout from "../../layout/MainLayout";
 import { useLocation } from "react-router-dom";
 
-const TestForm = ({ classId }) => {
+const TestForm = ({ classId, categories }) => {
   const {
     register,
     handleSubmit,
@@ -28,8 +28,6 @@ const TestForm = ({ classId }) => {
   //   courseTimelineDetailId: null,
   //   categories: [],
   // };
-  const categories = ["Reading", "Listening", "Writing", "Speaking"];
-  const courseTimelineDetailId = "123";
 
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [testInfo, setTestInfo] = useState(null);
@@ -38,8 +36,7 @@ const TestForm = ({ classId }) => {
   const onSubmit = async (data) => {
     setIsSubmitted(true);
     try {
-      const sectionCourseId = classId; // Ensure courseTimelineDetailId is valid
-      const payload = { ...data, sectionCourseId };
+      const payload = { ...data, classId };
 
       const result = await dispatch(createTest(payload)).unwrap();
       setTestInfo(result);

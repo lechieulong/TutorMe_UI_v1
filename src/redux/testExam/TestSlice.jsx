@@ -357,6 +357,39 @@ export const getResultsHistory = createAsyncThunk(
   }
 );
 
+export const getTestAnalysisAttempt = createAsyncThunk(
+  `${SLICE_NAMES.TEST}/${ACTIONS.GET_TEST_ATTEMPT}`,
+  async (userId, { rejectWithValue }) => {
+    // Add pageSize with default value
+    try {
+      const response = await axios.get(
+        `${API_BASE_URL}/test/testAnalysis/${userId}`
+      );
+      return response.data;
+    } catch (error) {
+      return rejectWithValue(
+        error.response?.data?.message || "Failed to retrieve questions bank"
+      );
+    }
+  }
+);
+
+export const getAttemptTests = createAsyncThunk(
+  `${SLICE_NAMES.TEST}/${ACTIONS.GET_ATTEMPT_TOTAL}`,
+  async (userId, { rejectWithValue }) => {
+    try {
+      const response = await axios.get(
+        `${API_BASE_URL}/test/attempts/${userId}`
+      );
+      return response.data;
+    } catch (error) {
+      return rejectWithValue(
+        error.response?.data?.message || "Failed to retrieve questions bank"
+      );
+    }
+  }
+);
+
 // Get question bank base on sectionType
 export const getQuestionsBank = createAsyncThunk(
   `${SLICE_NAMES.TEST}/${ACTIONS.GET_QUESTIONS_BANK}`,

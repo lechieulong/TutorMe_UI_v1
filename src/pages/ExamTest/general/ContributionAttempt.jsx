@@ -1,78 +1,132 @@
 import React, { useState, useEffect } from "react";
 import img from "../../../assets/images/pull-shark.png";
+import { Bar } from "react-chartjs-2";
+import {
+  Chart as ChartJS,
+  BarElement,
+  CategoryScale,
+  LinearScale,
+  Tooltip,
+  Legend,
+} from "chart.js";
+import {
+  getTestAnalysisAttempt,
+  getAttemptTests,
+} from "../../../redux/testExam/TestSlice";
+import { useDispatch, useSelector } from "react-redux";
+
+ChartJS.register(BarElement, CategoryScale, LinearScale, Tooltip, Legend);
 
 const ContributionAttempt = () => {
-  const contributeTaketest = [
-    { id: 1, testDate: "2024-11-23", attempNumber: 2 },
-    { id: 2, testDate: "2024-11-21", attempNumber: 9 },
-  ];
-
-  const yearsOfTakeTest = [
-    {
-      id: 1,
-      year: 2023,
-      totalAttempt: 12, // Total attempts in 2023
-    },
-    {
-      id: 2,
-      year: 2024,
-      totalAttempt: 18, // Total attempts in 2024
-    },
-    {
-      id: 3,
-      year: 2025,
-      totalAttempt: 25, // Total attempts in 2025
-    },
-  ];
-
+  const [contributeTaketest, setContributeTaketest] = useState([]);
+  const [yearsOfTakeTest, setYearsOfTakeTest] = useState([]);
   const [selectedYear, setSelectedYear] = useState(2024);
+  const [loading, setLoading] = useState(true);
 
-  const isLeapYear = (year) => {
-    return (year % 4 === 0 && year % 100 !== 0) || year % 400 === 0;
-  };
+  const [contributions, setContributions] = useState(Array(366).fill(0)); // Default to leap year (366 days)
+  const [monthlyData, setMonthlyData] = useState(Array(12).fill(0));
 
-  const daysInYear = isLeapYear(selectedYear) ? 366 : 365; // Adjust based on leap year
+  const { user } = useSelector((state) => state.user);
 
-  const [contributions, setContributions] = useState(Array(daysInYear).fill(0)); // Dynamically adjust to 365 or 366 days
+  const dispatch = useDispatch();
+
+  // Function to check if a year is a leap year
+  const isLeapYear = (year) =>
+    (year % 4 === 0 && year % 100 !== 0) || year % 400 === 0;
+
+  // Calculate number of days in the selected year (leap year or regular year)
+  const daysInYear = isLeapYear(selectedYear) ? 366 : 365;
 
   const months = [
-    "Nov",
-    "Dec",
-    "Jan",
-    "Feb",
-    "Mar",
-    "Apr",
+    "January",
+    "February",
+    "March",
+    "April",
     "May",
-    "Jun",
-    "Jul",
-    "Aug",
-    "Sep",
-    "Oct",
+    "June",
+    "July",
+    "August",
+    "September",
+    "October",
+    "November",
+    "December",
   ];
 
-  const weeks = Array(7).fill(1);
+  const weeks = Array(7).fill(1); // Placeholder for weekday labels
 
+  // Fetch test analysis data and available years on component mount
   useEffect(() => {
-    const updatedContributions = Array(daysInYear).fill(0); // Reset contributions for the new year
+    const fetchData = async () => {
+      setLoading(true); // Start loading
+      try {
+        const contributeResponseData = await dispatch(
+          getTestAnalysisAttempt(user.id)
+        );
+        const contributeResponse = contributeResponseData.payload;
+
+        const yearsResponseData = await dispatch(getAttemptTests(user.id));
+        const yearsResponse = yearsResponseData.payload;
+        // Check and handle response data
+        if (Array.isArray(contributeResponse)) {
+          setContributeTaketest(contributeResponse);
+        } else {
+          console.error(
+            "Unexpected response for contributeTaketest",
+            contributeResponse
+          );
+          setContributeTaketest([]);
+        }
+
+        if (Array.isArray(yearsResponse)) {
+          setYearsOfTakeTest(yearsResponse);
+          if (yearsResponse.length > 0) {
+            setSelectedYear(yearsResponse[0].year);
+          }
+        } else {
+          console.error(
+            "Unexpected response for yearsOfTakeTest",
+            yearsResponse
+          );
+          setYearsOfTakeTest([]);
+        }
+      } catch (error) {
+        console.error("Error fetching test data:", error);
+      } finally {
+        setLoading(false); // Stop loading
+      }
+    };
+
+    fetchData();
+  }, [dispatch, user.id]);
+
+  // Update contribution and monthly data whenever selected year or contributions change
+  useEffect(() => {
+    const updatedContributions = Array(daysInYear).fill(0);
+    const monthlyCounts = Array(12).fill(0);
 
     contributeTaketest.forEach((test) => {
-      const testDate = new Date(test.testDate);
-
+      const testDateFormat = test.testDate.split("T")[0];
+      const testDate = new Date(testDateFormat);
       if (testDate.getFullYear() === selectedYear) {
+        // Calculate the day of the year
         const startOfYear = new Date(testDate.getFullYear(), 0, 0);
         const dayOfYear = Math.floor(
           (testDate - startOfYear) / (1000 * 60 * 60 * 24)
         );
 
         if (dayOfYear < updatedContributions.length) {
-          updatedContributions[dayOfYear] = test.attempNumber;
+          updatedContributions[dayOfYear] = test.attemptNumber;
         }
+        const monthIndex = testDate.getMonth();
+        monthlyCounts[monthIndex] += test.attemptNumber;
       }
     });
 
-    setContributions(updatedContributions); // Update the state with new contributions data
-  }, [selectedYear]); // Recalculate contributions when selectedYear changes
+    setContributions(updatedContributions);
+    setMonthlyData(monthlyCounts);
+  }, [selectedYear, contributeTaketest]);
 
+  // Function to get background color based on value
   const getColor = (value) => {
     if (value > 4) {
       return "bg-green-700";
@@ -87,34 +141,66 @@ const ContributionAttempt = () => {
       case 4:
         return "bg-green-700";
       default:
-        return "bg-gray-200"; // Default color for no contribution
+        return "bg-gray-200";
     }
   };
 
+  // Chart data and options
+  const chartData = {
+    labels: months,
+    datasets: [
+      {
+        label: `Attempts in ${selectedYear}`,
+        data: monthlyData,
+        backgroundColor: "rgba(75, 192, 192, 0.6)",
+        borderColor: "rgba(75, 192, 192, 1)",
+        borderWidth: 1,
+      },
+    ],
+  };
+
+  const chartOptions = {
+    responsive: true,
+    plugins: {
+      legend: { display: true },
+      tooltip: { enabled: true },
+    },
+  };
+
+  // Loading state while fetching data
+  if (loading) {
+    return (
+      <div className="flex justify-center items-center h-screen">
+        <div className="text-gray-500">Loading data...</div>
+      </div>
+    );
+  }
+
   return (
-    <div className="p-3">
-      <h1 className="text-xl font-semibold mb-6">Attempt to take test</h1>
+    <div className="p-3 w-full">
+      <div>
+        <h3 className="font-semibold">Achievements</h3>
+        <div className="w-40">
+          <img
+            src={img}
+            alt="Shark Image"
+            className="w-full h-full object-contain"
+          />
+        </div>
+      </div>
 
       <div className="flex gap-10">
-        <div className="text-center ">
-          <h3 className="font-semibold ">Achievements</h3>
-          <div className="w-40">
-            <img src={img} alt="" className="w-full h-full object-contain" />
-          </div>
-        </div>
+        {/* Grid of Days */}
         <div>
           <div className="flex items-center justify-around ml-10 text-sm text-gray-600 mb-2">
-            {/* Display months */}
             {months.map((month, index) => (
               <span key={index} className="w-8 text-center">
-                {month}
+                {month.slice(0, 3)}
               </span>
             ))}
           </div>
 
-          {/* Main Grid */}
           <div className="flex gap-4">
-            {/* Display weekday names */}
             <div className="flex flex-col items-center gap-1">
               {weeks.map((_, index) => (
                 <span key={index} className="text-[10px] h-4 w-4 text-gray-500">
@@ -123,20 +209,17 @@ const ContributionAttempt = () => {
               ))}
             </div>
 
-            {/* Render calendar days */}
             <div className="flex gap-1">
-              {Array(
-                Math.ceil(daysInYear / 7)
-              ) /* Dynamically adjust based on days in year */
+              {Array(Math.ceil(daysInYear / 7))
                 .fill(0)
                 .map((_, weekIndex) => (
                   <div key={weekIndex} className="flex flex-col gap-1">
-                    {Array(7) /* 7 days per week */
+                    {Array(7)
                       .fill(0)
                       .map((_, dayIndex) => {
-                        const index = weekIndex * 7 + dayIndex + 1; // Get index for contribution block
-                        if (index >= daysInYear) return null; // Avoid rendering invalid days
-                        const value = contributions[index]; // Get the attempt value from contributions
+                        const index = weekIndex * 7 + dayIndex + 1;
+                        if (index >= daysInYear) return null;
+                        const value = contributions[index];
                         return (
                           <div
                             key={dayIndex}
@@ -150,49 +233,35 @@ const ContributionAttempt = () => {
           </div>
         </div>
 
+        {/* Year Selection */}
         <div className="flex flex-col mt-6 gap-2 items-center">
-          {/* Render buttons dynamically based on yearsOfTakeTest data */}
-          {yearsOfTakeTest.map((yearData) => (
-            <button
-              key={yearData.id}
-              onClick={() => setSelectedYear(yearData.year)}
-              className={`px-5 py-1 rounded ${
-                yearData.year === selectedYear
-                  ? "bg-green-500 text-white"
-                  : "text-gray-600"
-              }`}
-            >
-              {yearData.year}
-            </button>
-          ))}
+          {yearsOfTakeTest && yearsOfTakeTest.length > 0 ? (
+            yearsOfTakeTest.map((yearData) => (
+              <button
+                key={yearData.id}
+                onClick={() => setSelectedYear(yearData.year)}
+                className={`px-5 py-1 rounded ${
+                  yearData.year === selectedYear
+                    ? "bg-green-500 text-white"
+                    : "text-gray-600"
+                }`}
+              >
+                {yearData.year}
+              </button>
+            ))
+          ) : (
+            <div className="text-gray-500">No data available for years.</div>
+          )}
         </div>
       </div>
 
-      {/* <div className="flex gap-2 items-center mt-2">
-        <p>Less</p>
-        <div className="flex gap-1">
-          {[1, 2, 4, 5].map((i) => {
-            // Determine the background color based on the value of i
-            let bgColor;
-            if (i === 1) {
-              bgColor = "bg-green-100"; // Lighter green
-            } else if (i === 2) {
-              bgColor = "bg-green-300"; // Medium green
-            } else if (i === 4) {
-              bgColor = "bg-green-500"; // Darker green
-            } else if (i === 5) {
-              bgColor = "bg-green-700"; // Even darker green
-            }
-
-            return (
-              <div className="flex" key={i}>
-                <div className={`w-4 h-4 rounded-sm ${bgColor}`} />
-              </div>
-            );
-          })}
-        </div>
-        <p>More</p>
-      </div> */}
+      {/* Bar Chart Visualization */}
+      <div className="mt-8">
+        <h3 className="font-semibold text-center mb-4">
+          Monthly Attempts in {selectedYear}
+        </h3>
+        <Bar data={chartData} options={chartOptions} />
+      </div>
     </div>
   );
 };

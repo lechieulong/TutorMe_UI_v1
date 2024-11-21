@@ -39,7 +39,7 @@ export const ACTIONS = {
   SUBMIT_TEST: "submitTest",
   GET_TEST: "getTest",
   GET_RESULT_TEST: "getResultTest",
-  GET_HISTORY_TEST: "gethistorytest",
+  // GET_HISTORY_TEST: "gethistorytest",
   GET_TEST_SECTION_COURSE: "getTestBySectionCourseId",
   GET_SKILLS: "getSkills",
   GET_SKILL: "getSkill",
@@ -54,6 +54,9 @@ export const ACTIONS = {
   DOWNLOAD_TEMPLATE: "downloadTemplate",
   GET_QUESTIONS_BANK: "getQuestionsBank",
   GET_HISTORY_TEST: "getHistoryTest",
+  GET_TEST_ATTEMPT: "getTestAttempt",
+  GET_ATTEMPT_TOTAL: "getAttemptTotal",
+
   ADD_QUESTIONS: "addQuestions",
   DELETE_QUESTION: "deleteQuestion",
   UPDATE_QUESTION: "updateQuestion",

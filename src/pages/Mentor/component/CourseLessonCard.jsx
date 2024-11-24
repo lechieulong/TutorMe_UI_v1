@@ -20,7 +20,8 @@ const CourseLessonCard = ({
   const token = Cookies.get("authToken");
 
   const toggleCollapse = (lessonId) => {
-    // Chỉ cho phép toggle collapse khi cả isCourseLecture và isEnrolled đều là true
+    if (!mentorAndList && !isEnrolled) return;
+
     setCollapsedLessons((prev) => ({
       ...prev,
       [lessonId]: !prev[lessonId],
@@ -123,28 +124,6 @@ const CourseLessonCard = ({
                   </h4>
                 </div>
 
-                <div className="flex gap-2 mt-2">
-                  {mentorAndList && (
-                    <>
-                      <button
-                        type="button"
-                        className="py-2 px-3 text-sm font-medium bg-white text-gray-800 rounded-lg shadow-sm hover:bg-gray-50 focus:outline-none focus:bg-gray-50"
-                        onClick={() => addDynamicForm(courseLesson.id)}
-                      >
-                        Thêm nội dung mới
-                      </button>
-                      <button
-                        type="button"
-                        onClick={() => handleCreateTest(courseLesson.id)}
-                        className="py-2 px-3 inline-flex items-center gap-x-2 text-sm font-medium rounded-lg border border-gray-200 bg-white text-gray-800 shadow-sm hover:bg-gray-50 focus:outline-none focus:bg-gray-50"
-                      >
-                        Create Test
-                      </button>
-                    </>
-                  )}
-                </div>
-
-                {/* Hiển thị dynamicForms nếu có */}
                 {!collapsedLessons[courseLesson.id] &&
                   dynamicForms
                     .filter((form) => form.lessonId === courseLesson.id)

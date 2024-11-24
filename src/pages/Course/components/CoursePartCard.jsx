@@ -124,7 +124,6 @@ const CoursePartCard = ({ mentorAndList, skillId, userRole, isEnrolled }) => {
               mentorAndList={mentorAndList}
               coursePartId={coursePart.id}
               onLessonCreated={handleLessonCreated}
-              userRole={userRole}
               isEnrolled={isEnrolled}
             />
           </div>

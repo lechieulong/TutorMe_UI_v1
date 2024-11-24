@@ -23,7 +23,6 @@ const ClassOfCourseList = () => {
         setError("Dữ liệu không hợp lệ.");
       }
     } catch (error) {
-      setError("Không thể lấy danh sách lớp.");
     } finally {
       setLoading(false);
     }
@@ -72,17 +71,25 @@ const ClassOfCourseList = () => {
             <h2 className="text-2xl font-bold text-gray-700 mb-6">
               Class List
             </h2>
-            <div className="grid grid-cols-1 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-4">
-              {classes.map((classItem) => (
-                <ClassCard
-                  key={classItem.id}
-                  classItem={classItem}
-                  switchState={classItem.isEnabled}
-                  onSwitchChange={handleSwitchChange}
-                  onSelect={handleSelectClass}
-                />
-              ))}
-            </div>
+
+            {/* Kiểm tra nếu không có lớp nào */}
+            {classes.length === 0 ? (
+              <div className="flex justify-center items-center h-full">
+                <p className="text-red-500 text-lg">No classes found.</p>
+              </div>
+            ) : (
+              <div className="grid grid-cols-1 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-4">
+                {classes.map((classItem) => (
+                  <ClassCard
+                    key={classItem.id}
+                    classItem={classItem}
+                    switchState={classItem.isEnabled}
+                    onSwitchChange={handleSwitchChange}
+                    onSelect={handleSelectClass}
+                  />
+                ))}
+              </div>
+            )}
           </div>
         </div>
       </div>

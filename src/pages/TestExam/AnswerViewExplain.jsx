@@ -440,7 +440,7 @@ const AnswerViewExplain = ({
                                   className="border border-gray-300 rounded px-2 py-1"
                                 >
                                   <option value="">
-                                    {question.userAnswer[0].answerText}
+                                    {question.userAnswers[0].answerText}
                                   </option>
                                 </select>
                               </div>

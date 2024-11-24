@@ -163,7 +163,7 @@ const Writing = ({ partData, currentSkillId, handleAnswerChange, skill }) => {
         placeholder="Start writing your article here..."
       />
 
-      <button
+      {/* <button
         type="button"
         onClick={evaluateAnswer}
         className="bg-green-600 text-white p-2 rounded shadow hover:bg-mainColor"
@@ -220,7 +220,7 @@ const Writing = ({ partData, currentSkillId, handleAnswerChange, skill }) => {
             </div>
           )}
         </div>
-      )}
+      )} */}
     </div>
   );
 };

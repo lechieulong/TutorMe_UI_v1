@@ -12,6 +12,7 @@ import {
 import { useDispatch } from "react-redux";
 import TestExplain from "./TestExplain";
 import { GoogleGenerativeAI } from "@google/generative-ai";
+import Modal from "react-modal";
 
 const genAI = new GoogleGenerativeAI(import.meta.env.VITE_GEN_AI);
 
@@ -21,6 +22,7 @@ const TestLayout = ({ skillsData, practiceTestData, fullTestId }) => {
   const [userAnswers, setUserAnswers] = useState([]);
   const [loading, setLoading] = useState(true);
   const [submitted, setSubmitted] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
   const [skillResultIds, setSkillResultIds] = useState([]);
   const [timeTakenData, setTimeTakenData] = useState({
     timeMinutesTaken: 0,
@@ -270,6 +272,7 @@ const TestLayout = ({ skillsData, practiceTestData, fullTestId }) => {
 
     switch (skill) {
       case 0:
+        setSubmitting(true);
         dispatch(
           submitAnswerTest({
             userAnswers,
@@ -286,13 +289,18 @@ const TestLayout = ({ skillsData, practiceTestData, fullTestId }) => {
               result.error.message
             );
           }
+          setSubmitting(false);
+
           setUserAnswers([]);
           if (lastSkillKey === currentSkillKey) {
             setSubmitted(true);
           }
         });
+        setSubmitting(false);
+        handleNextSkill();
         break;
       case 1:
+        setSubmitting(true);
         dispatch(
           submitAnswerTest({
             userAnswers,
@@ -314,8 +322,12 @@ const TestLayout = ({ skillsData, practiceTestData, fullTestId }) => {
             setSubmitted(true);
           }
         });
+        setSubmitting(false);
+        handleNextSkill();
         break;
       case 2:
+        setSubmitting(true);
+
         (async () => {
           try {
             const responseWriting = await evaluateAnswer(userAnswers);
@@ -350,6 +362,9 @@ const TestLayout = ({ skillsData, practiceTestData, fullTestId }) => {
                 result.error.message
               );
             }
+            setSubmitting(false);
+            handleNextSkill();
+
             setUserAnswers([]);
             if (lastSkillKey === currentSkillKey) {
               setSubmitted(true);
@@ -360,6 +375,8 @@ const TestLayout = ({ skillsData, practiceTestData, fullTestId }) => {
         })();
         break;
       case 3:
+        setSubmitting(true);
+
         const updateUserAnswers = dispatch(
           submitAnswerTest({
             userAnswers,
@@ -381,6 +398,10 @@ const TestLayout = ({ skillsData, practiceTestData, fullTestId }) => {
             setSubmitted(true);
           }
         });
+
+        setSubmitting(false);
+        handleNextSkill();
+
         setUserAnswers([]);
 
         break;
@@ -402,6 +423,7 @@ const TestLayout = ({ skillsData, practiceTestData, fullTestId }) => {
           <form onSubmit={handleSubmit}>
             <div className="flex flex-col">
               <Header
+                submitting={submitting}
                 testData={testData}
                 currentSkillIndex={currentSkillIndex}
                 handleNextSkill={handleNextSkill}
@@ -417,6 +439,17 @@ const TestLayout = ({ skillsData, practiceTestData, fullTestId }) => {
             </div>
           </form>
         </div>
+      )}
+      {submitting && (
+        <>
+          <Modal
+            isOpen={submitting}
+            className="bg-warmNeutral rounded-lg shadow-lg p-6 max-w-md mx-auto text-black"
+            overlayClassName="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center"
+          >
+            <h3>Submitting........</h3>
+          </Modal>
+        </>
       )}
     </>
   );

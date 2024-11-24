@@ -11,6 +11,7 @@ import NoteCard from "./NoteCard";
 import { Link } from "react-router-dom";
 
 const Header = ({
+  submitting,
   testData,
   currentSkillIndex,
   handleNextSkill,
@@ -28,7 +29,6 @@ const Header = ({
 
   const handleConfirmNextSkill = () => {
     handleSubmit(); // Wait for submission to complete
-    handleNextSkill(); // Move to the next skill
     closeWarningModal(); // Close the modal after handling next skill
   };
 
@@ -93,17 +93,27 @@ const Header = ({
             type="button"
             onClick={openWarningModal}
             className="border border-white bg-black hover:bg-green-800 text-white font-medium rounded-lg px-4 py-2"
+            disabled={submitting}
           >
-            Next Skill
+            {submitting ? (
+              <span>Submitting...</span> // Show submitting message
+            ) : (
+              "Next Skill"
+            )}
           </button>
         ) : (
           <button
             type="button"
             onClick={handleSubmit}
             className="bg-red-600 hover:bg-red-700 text-white font-medium rounded-lg px-4 py-2 flex items-center gap-2"
+            disabled={submitting} // Disable button if submitting is true
           >
             <FontAwesomeIcon icon={faPaperPlane} className="text-sm" />
-            Submit Test
+            {submitting ? (
+              <span>Submitting...</span> // Show submitting message
+            ) : (
+              "Submit Test"
+            )}
           </button>
         )}
       </div>

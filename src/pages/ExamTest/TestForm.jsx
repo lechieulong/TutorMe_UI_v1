@@ -14,7 +14,7 @@ import CreateTest from "./CreateTest";
 import MainLayout from "../../layout/MainLayout";
 import { useLocation } from "react-router-dom";
 
-const TestForm = ({ classId, categories }) => {
+const TestForm = ({ classId, lessonId, categories }) => {
   const {
     register,
     handleSubmit,
@@ -30,7 +30,7 @@ const TestForm = ({ classId, categories }) => {
   const onSubmit = async (data) => {
     setIsSubmitted(true);
     try {
-      const payload = { ...data, classId };
+      const payload = { ...data, classId, lessonId };
 
       const result = await dispatch(createTest(payload)).unwrap();
       setTestInfo(result);

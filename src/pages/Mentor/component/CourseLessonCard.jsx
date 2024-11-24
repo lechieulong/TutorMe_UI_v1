@@ -123,24 +123,32 @@ const CourseLessonCard = ({
                     {courseLesson.title}
                   </h4>
                 </div>
-
-                {!collapsedLessons[courseLesson.id] &&
-                  dynamicForms
-                    .filter((form) => form.lessonId === courseLesson.id)
-                    .map((form) => (
-                      <div key={form.id} className="mt-2 w-full">
-                        <CreateCourseLessonContent
-                          courseLessonId={courseLesson.id}
-                          onClose={() => removeDynamicForm(form.id)}
-                        />
-                      </div>
-                    ))}
-                {/* Hiển thị CourseLessonContent khi lesson không bị collapsed */}
+                <button
+                  type="button"
+                  onClick={() => handleCreateTest(courseLesson.id)}
+                  className="py-2 px-3 text-sm font-medium rounded-lg border border-gray-200 bg-white text-gray-800 shadow-sm hover:bg-gray-50 focus:outline-none focus:bg-gray-50"
+                >
+                  Create Test
+                </button>
                 {!collapsedLessons[courseLesson.id] && (
-                  <CourseLessonContent
-                    courseLessontId={courseLesson.id}
-                    key={courseLesson.id}
-                  />
+                  <>
+                    {mentorAndList &&
+                      dynamicForms
+                        .filter((form) => form.lessonId === courseLesson.id)
+                        .map((form) => (
+                          <div key={form.id} className="mt-2 w-full">
+                            <CreateCourseLessonContent
+                              courseLessonId={courseLesson.id}
+                              onClose={() => removeDynamicForm(form.id)}
+                            />
+                          </div>
+                        ))}
+
+                    <CourseLessonContent
+                      courseLessontId={courseLesson.id}
+                      key={courseLesson.id}
+                    />
+                  </>
                 )}
               </div>
             ))

@@ -70,9 +70,9 @@ const ClassOfCourseList = () => {
           <MentorSidebar />
           <div className="flex-1 p-6 bg-white rounded-lg shadow-md mx-4">
             <h2 className="text-2xl font-bold text-gray-700 mb-6">
-              Danh sách các lớp học
+              Class List
             </h2>
-            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+            <div className="grid grid-cols-1 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-4">
               {classes.map((classItem) => (
                 <ClassCard
                   key={classItem.id}

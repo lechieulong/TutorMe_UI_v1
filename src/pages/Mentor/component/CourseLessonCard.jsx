@@ -6,7 +6,7 @@ import CourseLessonContent from "./CourseLessonContent";
 import { FaAngleDown, FaAngleUp } from "react-icons/fa";
 
 const CourseLessonCard = ({
-  isCourseLecture,
+  mentorAndList,
   coursePartId,
   userRole,
   isEnrolled,
@@ -20,7 +20,8 @@ const CourseLessonCard = ({
   const token = Cookies.get("authToken");
 
   const toggleCollapse = (lessonId) => {
-    // Chỉ cho phép toggle collapse khi cả isCourseLecture và isEnrolled đều là true
+    if (!mentorAndList && !isEnrolled) return;
+
     setCollapsedLessons((prev) => ({
       ...prev,
       [lessonId]: !prev[lessonId],
@@ -35,7 +36,7 @@ const CourseLessonCard = ({
       );
       setCourseLessons(response.data.courseLessons);
 
-      if (!isCourseLecture) {
+      if (!mentorAndList) {
         // Set all lessons as collapsed initially
         const initialCollapsedState = response.data.courseLessons.reduce(
           (acc, lesson) => ({ ...acc, [lesson.id]: true }),
@@ -91,12 +92,12 @@ const CourseLessonCard = ({
     return <p>{error}</p>;
   }
 
-  console.log(isCourseLecture + " " + isEnrolled); // Giữ nguyên dòng này
-
   return (
     <div className="h-vh100 px-4 mb-4 relative">
       <div className="cursor-pointer">
-        <h3 className="text-sm font-semibold text-gray-400">{courseLessons.length} Lessons</h3>
+        <h3 className="text-sm font-semibold text-gray-400">
+          {courseLessons.length} Lessons
+        </h3>
       </div>
 
       <div className="mt-4 overflow-hidden transition-all duration-1000 ease-in-out">
@@ -118,31 +119,11 @@ const CourseLessonCard = ({
                   ) : (
                     <FaAngleUp className="text-gray-600" />
                   )}
-                  <h4 className="text-md font-semibold">{courseLesson.title}</h4>
+                  <h4 className="text-md font-semibold">
+                    {courseLesson.title}
+                  </h4>
                 </div>
 
-                <div className="flex gap-2 mt-2">
-                  {isCourseLecture && (
-                    <>
-                      <button
-                        type="button"
-                        className="py-2 px-3 text-sm font-medium bg-white text-gray-800 rounded-lg shadow-sm hover:bg-gray-50 focus:outline-none focus:bg-gray-50"
-                        onClick={() => addDynamicForm(courseLesson.id)}
-                      >
-                        Thêm nội dung mới
-                      </button>
-                      <button
-                        type="button"
-                        onClick={() => handleCreateTest(courseLesson.id)}
-                        className="py-2 px-3 inline-flex items-center gap-x-2 text-sm font-medium rounded-lg border border-gray-200 bg-white text-gray-800 shadow-sm hover:bg-gray-50 focus:outline-none focus:bg-gray-50"
-                      >
-                        Create Test
-                      </button>
-                    </>
-                  )}
-                </div>
-
-                {/* Hiển thị dynamicForms nếu có */}
                 {!collapsedLessons[courseLesson.id] &&
                   dynamicForms
                     .filter((form) => form.lessonId === courseLesson.id)
@@ -161,7 +142,6 @@ const CourseLessonCard = ({
                     key={courseLesson.id}
                   />
                 )}
-
               </div>
             ))
           )}

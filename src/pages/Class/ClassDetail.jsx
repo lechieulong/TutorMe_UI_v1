@@ -13,8 +13,6 @@ const ClassDetail = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
 
-  const navigate = useNavigate();
-
   const fetchClassDetail = async () => {
     try {
       const response = await axios.get(

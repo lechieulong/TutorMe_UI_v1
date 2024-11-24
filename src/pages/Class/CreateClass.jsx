@@ -66,15 +66,19 @@ const CreateClass = ({ courseId, onClose, onCreateSuccess }) => {
       return;
     }
 
+    const startDateTime = new Date(`${startDate}T${startTime}`).toISOString();
+    const endDateTime = new Date(`${endDate}T${endTime}`).toISOString();
+
+    console.log("Start DateTime:", startDateTime); // Debug
+    console.log("End DateTime:", endDateTime); // Debug
+
     const newClass = {
       className,
       classDescription,
       count,
       courseId,
-      startDate,
-      endDate,
-      startTime: { ticks: new Date(startTime).getTime() * 10000 },
-      endTime: { ticks: new Date(endTime).getTime() * 10000 },
+      startDate: startDateTime,
+      endDate: endDateTime,
       isEnabled,
       imageUrl,
     };
@@ -87,25 +91,6 @@ const CreateClass = ({ courseId, onClose, onCreateSuccess }) => {
       console.log("Class created successfully:", response.data);
       alert("Lớp học đã được tạo thành công!");
 
-      setClassName("");
-      setClassDescription("");
-      setCount(0);
-      setStartDate("");
-      setEndDate("");
-      setStartTime("");
-      setEndTime("");
-      setIsEnabled(true);
-      setImageUrl("");
-      setInputErrors({
-        className: false,
-        classDescription: false,
-        count: false,
-        startDate: false,
-        endDate: false,
-        startTime: false,
-        endTime: false,
-        imageUrl: false,
-      });
       onCreateSuccess();
       onClose();
     } catch (error) {
@@ -128,7 +113,7 @@ const CreateClass = ({ courseId, onClose, onCreateSuccess }) => {
               value={className}
               onChange={(e) => {
                 setClassName(e.target.value);
-                setInputErrors((prev) => ({ ...prev, className: false })); // Reset lỗi khi người dùng nhập
+                setInputErrors((prev) => ({ ...prev, className: false }));
               }}
               required
               className={`w-full border p-2 rounded focus:outline-none focus:border-blue-500 ${
@@ -146,7 +131,7 @@ const CreateClass = ({ courseId, onClose, onCreateSuccess }) => {
                 setInputErrors((prev) => ({
                   ...prev,
                   classDescription: false,
-                })); // Reset lỗi khi người dùng nhập
+                }));
               }}
               required
               className={`w-full border p-2 rounded focus:outline-none focus:border-blue-500 ${
@@ -167,7 +152,7 @@ const CreateClass = ({ courseId, onClose, onCreateSuccess }) => {
               value={count}
               onChange={(e) => {
                 setCount(e.target.value);
-                setInputErrors((prev) => ({ ...prev, count: false })); // Reset lỗi khi người dùng nhập
+                setInputErrors((prev) => ({ ...prev, count: false }));
               }}
               required
               className={`w-full border p-2 rounded focus:outline-none focus:border-blue-500 ${
@@ -175,8 +160,6 @@ const CreateClass = ({ courseId, onClose, onCreateSuccess }) => {
               }`}
             />
           </div>
-
-          <input type="hidden" value={courseId} />
 
           <div className="mb-4 grid grid-cols-2 gap-4">
             <div>
@@ -188,7 +171,7 @@ const CreateClass = ({ courseId, onClose, onCreateSuccess }) => {
                 value={startDate}
                 onChange={(e) => {
                   setStartDate(e.target.value);
-                  validateStartDate(); // Kiểm tra khi thay đổi
+                  validateStartDate();
                 }}
                 required
                 className={`w-full border p-2 rounded focus:outline-none focus:border-blue-500 ${
@@ -205,7 +188,7 @@ const CreateClass = ({ courseId, onClose, onCreateSuccess }) => {
                 value={endDate}
                 onChange={(e) => {
                   setEndDate(e.target.value);
-                  validateEndDate(); // Kiểm tra khi thay đổi
+                  validateEndDate();
                 }}
                 required
                 className={`w-full border p-2 rounded focus:outline-none focus:border-blue-500 ${
@@ -225,7 +208,7 @@ const CreateClass = ({ courseId, onClose, onCreateSuccess }) => {
                 value={startTime}
                 onChange={(e) => {
                   setStartTime(e.target.value);
-                  validateStartTime(); // Kiểm tra khi thay đổi
+                  validateStartTime();
                 }}
                 required
                 className={`w-full border p-2 rounded focus:outline-none focus:border-blue-500 ${
@@ -242,7 +225,7 @@ const CreateClass = ({ courseId, onClose, onCreateSuccess }) => {
                 value={endTime}
                 onChange={(e) => {
                   setEndTime(e.target.value);
-                  validateEndTime(); // Kiểm tra khi thay đổi
+                  validateEndTime();
                 }}
                 required
                 className={`w-full border p-2 rounded focus:outline-none focus:border-blue-500 ${
@@ -261,7 +244,7 @@ const CreateClass = ({ courseId, onClose, onCreateSuccess }) => {
               value={imageUrl}
               onChange={(e) => {
                 setImageUrl(e.target.value);
-                setInputErrors((prev) => ({ ...prev, imageUrl: false })); // Reset lỗi khi người dùng nhập
+                setInputErrors((prev) => ({ ...prev, imageUrl: false }));
               }}
               required
               className={`w-full border p-2 rounded focus:outline-none focus:border-blue-500 ${

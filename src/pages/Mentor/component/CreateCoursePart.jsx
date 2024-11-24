@@ -1,7 +1,15 @@
 import { useState } from "react";
 import axios from "axios";
 
-const CreateCoursePart = ({ courseSkillId, onClose, onCreated }) => {
+const CreateCoursePart = ({
+  courseSkillId,
+  onClose,
+  onCreated,
+  mentorAndList,
+}) => {
+  // Kiểm tra giá trị props
+  console.log("Props in CreateCoursePart:", { courseSkillId, mentorAndList });
+
   const [coursePart, setCoursePart] = useState({
     courseSkillId: courseSkillId || "", // Gán giá trị mặc định là courseSkillId
     title: "",
@@ -19,8 +27,6 @@ const CreateCoursePart = ({ courseSkillId, onClose, onCreated }) => {
   };
 
   const handleSubmit = async (e) => {
-    console.log(courseSkillId);
-
     e.preventDefault();
     setLoading(true);
     setError(null);
@@ -28,14 +34,17 @@ const CreateCoursePart = ({ courseSkillId, onClose, onCreated }) => {
     try {
       await axios.post("https://localhost:7030/api/CourseParts", coursePart);
       alert("Course Part created successfully!");
-      onClose(); // Đóng form khi tạo thành công
-      onCreated(); // Gọi onCreated để component cha cập nhật CoursePartCard
+      onClose();
+      onCreated();
     } catch (err) {
       setError(err.response?.data?.message || "Failed to create course part");
     } finally {
       setLoading(false);
     }
   };
+
+  // Debug state
+  console.log("State in CreateCoursePart:", coursePart);
 
   return (
     <div>

@@ -1,6 +1,9 @@
 import { useState, useEffect } from "react";
 import axios from "axios";
 import { getUser } from "../../../service/GetUser";
+import { Checkbox, FormControlLabel } from "@mui/material";
+import Notification from "../../../components/common/Notification";
+import Confirm from "../../../components/common/Confirm";
 
 const SkillMapping = {
   Reading: "0",
@@ -20,6 +23,11 @@ const CreateCourse = ({ onClose, onCreateSuccess }) => {
     userId: "",
     imageUrl: "default_image_url.jpg",
   });
+
+  const [notification, setNotification] = useState("");
+  const [isConfirmOpen, setIsConfirmOpen] = useState(false);
+  const [confirmMessage, setConfirmMessage] = useState("");
+  const [confirmAction, setConfirmAction] = useState(() => {});
 
   useEffect(() => {
     const userFromToken = getUser();
@@ -47,40 +55,54 @@ const CreateCourse = ({ onClose, onCreateSuccess }) => {
     });
   };
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = (e) => {
     e.preventDefault();
 
     if (course.hours < 0 || course.days < 0 || course.price < 0) {
-      alert("Số giờ, số ngày và giá không được phép âm.");
+      setNotification("Số giờ, số ngày và giá không được phép âm.");
       return;
     }
 
-    try {
-      await axios.post("https://localhost:7030/api/Courses", course);
-      alert("Tạo khoá học thành công!");
-      onCreateSuccess(); // Gọi callback để load lại danh sách khóa học
-    } catch (error) {
-      console.error("Lỗi khi tạo khoá học", error.response?.data);
-      alert(
-        "Tạo khoá học thất bại: " +
-          (error.response?.data.message || error.message)
-      );
-    }
+    setConfirmMessage("Are you sure you want to create new course?");
+    setConfirmAction(() => async () => {
+      try {
+        await axios.post("https://localhost:7030/api/Courses", course);
+        setNotification("Create new course success!");
+        onCreateSuccess();
+        onClose();
+      } catch (error) {
+        console.error("Fail to create new course!", error.response?.data);
+        setNotification(
+          "Fail to create new course!" +
+            (error.response?.data.message || error.message)
+        );
+      } finally {
+        setIsConfirmOpen(false);
+      }
+    });
+    setIsConfirmOpen(true);
   };
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
+      {notification && (
+        <Notification
+          message={notification}
+          onClose={() => setNotification("")}
+        />
+      )}
+      <Confirm
+        isOpen={isConfirmOpen}
+        onClose={() => setIsConfirmOpen(false)}
+        onConfirm={confirmAction}
+        message={confirmMessage}
+        status="Create new course"
+      />
       <div className="bg-white p-6 rounded-lg shadow-lg w-1/3 relative">
-        <button
-          onClick={onClose}
-          className="absolute top-2 right-2 text-gray-500 hover:text-gray-700"
-        >
-          &times;
-        </button>
-        <h2 className="text-xl font-semibold mb-4">Tạo Khoá Học</h2>
+        <h2 className="text-xl font-semibold mb-4">Create New Course</h2>
         <form onSubmit={handleSubmit}>
           <div className="mb-4">
-            <label className="block text-gray-700">Tên Khoá Học</label>
+            <label className="block text-gray-700">Course's Name</label>
             <input
               type="text"
               name="courseName"
@@ -91,7 +113,7 @@ const CreateCourse = ({ onClose, onCreateSuccess }) => {
             />
           </div>
           <div className="mb-4">
-            <label className="block text-gray-700">Nội Dung</label>
+            <label className="block text-gray-700">Content</label>
             <textarea
               name="content"
               value={course.content}
@@ -101,7 +123,7 @@ const CreateCourse = ({ onClose, onCreateSuccess }) => {
             />
           </div>
           <div className="mb-4">
-            <label className="block text-gray-700">Số Giờ</label>
+            <label className="block text-gray-700">Hours</label>
             <input
               type="number"
               name="hours"
@@ -113,7 +135,7 @@ const CreateCourse = ({ onClose, onCreateSuccess }) => {
             />
           </div>
           <div className="mb-4">
-            <label className="block text-gray-700">Số Ngày</label>
+            <label className="block text-gray-700">Days</label>
             <input
               type="number"
               name="days"
@@ -125,48 +147,30 @@ const CreateCourse = ({ onClose, onCreateSuccess }) => {
             />
           </div>
           <div className="mb-4">
-            <label className="block text-gray-700">Danh Mục</label>
-            <div className="mt-2">
-              <label className="inline-flex items-center">
-                <input
-                  type="checkbox"
-                  value="Listening"
-                  onChange={handleCheckboxChange}
-                  className="mr-2"
+            <label className="block text-gray-700">Skill</label>
+            <div className="mt-2 grid grid-cols-2 gap-4">
+              {Object.keys(SkillMapping).map((skill) => (
+                <FormControlLabel
+                  key={skill}
+                  control={
+                    <Checkbox
+                      value={skill}
+                      onChange={handleCheckboxChange}
+                      sx={{
+                        color: "teal",
+                        "&.Mui-checked": {
+                          color: "teal",
+                        },
+                      }}
+                    />
+                  }
+                  label={skill}
                 />
-                Listening
-              </label>
-              <label className="inline-flex items-center">
-                <input
-                  type="checkbox"
-                  value="Reading"
-                  onChange={handleCheckboxChange}
-                  className="mr-2"
-                />
-                Reading
-              </label>
-              <label className="inline-flex items-center">
-                <input
-                  type="checkbox"
-                  value="Writing"
-                  onChange={handleCheckboxChange}
-                  className="mr-2"
-                />
-                Writing
-              </label>
-              <label className="inline-flex items-center">
-                <input
-                  type="checkbox"
-                  value="Speaking"
-                  onChange={handleCheckboxChange}
-                  className="mr-2"
-                />
-                Speaking
-              </label>
+              ))}
             </div>
           </div>
           <div className="mb-4">
-            <label className="block text-gray-700">Giá</label>
+            <label className="block text-gray-700">Price</label>
             <input
               type="number"
               name="price"
@@ -180,16 +184,16 @@ const CreateCourse = ({ onClose, onCreateSuccess }) => {
           <div className="flex justify-end gap-2">
             <button
               type="button"
-              onClick={onClose} // Nút Cancel
+              onClick={onClose}
               className="px-4 py-2 bg-gray-400 text-white rounded-md hover:bg-gray-500"
             >
               Cancel
             </button>
             <button
               type="submit"
-              className="px-4 py-2 bg-blue-600 text-white font-semibold rounded-md hover:bg-blue-700"
+              className="px-4 py-2 bg-green-600 text-white font-semibold rounded-md hover:bg-blue-700"
             >
-              Tạo Khoá Học
+              Create
             </button>
           </div>
         </form>

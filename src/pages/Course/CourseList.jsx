@@ -83,22 +83,22 @@ const CourseList = () => {
     }
   };
 
-  const getIcon = (Skill) => {
-    switch (Skill) {
-      case "Reading":
-        return <FaBook className="text-blue-500 text-2xl" />;
-      case "Listening":
-        return (
-          <FaAssistiveListeningSystems className="text-blue-500 text-2xl" />
-        );
-      case "Writing":
-        return <FaPenAlt className="text-blue-500 text-2xl" />;
-      case "Speaking":
-        return <FaSurprise className="text-blue-500 text-2xl" />;
-      default:
-        return <FaBook className="text-blue-500 text-2xl" />;
-    }
-  };
+  // const getIcon = (Skill) => {
+  //   switch (Skill) {
+  //     case "Reading":
+  //       return <FaBook className="text-blue-500 text-2xl" />;
+  //     case "Listening":
+  //       return (
+  //         <FaAssistiveListeningSystems className="text-blue-500 text-2xl" />
+  //       );
+  //     case "Writing":
+  //       return <FaPenAlt className="text-blue-500 text-2xl" />;
+  //     case "Speaking":
+  //       return <FaSurprise className="text-blue-500 text-2xl" />;
+  //     default:
+  //       return <FaBook className="text-blue-500 text-2xl" />;
+  //   }
+  // };
 
   if (status === STATUS.PENDING) return <p>Loading...</p>;
   if (status === STATUS.FAILED) return <p>Error: {error}</p>;

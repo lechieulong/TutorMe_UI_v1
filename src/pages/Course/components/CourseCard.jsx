@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { FaTrash } from "react-icons/fa";
 import axios from "axios";
+import Notification from "../../../components/common/Notification";
 import { formatCurrency } from "../../../utils/Validator";
 
 const CourseCard = ({
@@ -10,6 +11,7 @@ const CourseCard = ({
   Skill,
   teacher,
   courseId,
+  classId,
   imageUrl,
   price,
   onDelete = null,
@@ -17,68 +19,67 @@ const CourseCard = ({
 }) => {
   const location = useLocation();
   const isMentorCourseList = location.pathname === "/mentorCourseList";
+  const isMyLearning = location.pathname === "/mylearning";
   const [isSwitchOn, setIsSwitchOn] = useState(
     isMentorCourseList ? isEnabled : true
   );
+  const [notification, setNotification] = useState("");
 
   if (!isMentorCourseList && !isEnabled) {
     return null;
   }
 
-  const handleDelete = async () => {
+  const handleDeleteClick = () => {
     if (onDelete) {
-      try {
-        await axios.delete(`https://localhost:7030/api/Courses/${courseId}`);
-        onDelete(courseId);
-      } catch (error) {
-        console.error("Error deleting course", error);
-        alert("Failed to delete course.");
-      }
+      onDelete(courseId);
+      setNotification("Khóa học đã được xóa thành công.");
     }
   };
 
   const handleSwitchChange = async () => {
     const newStatus = !isSwitchOn;
-    const confirmationMessage = newStatus
-      ? "Bạn có chắc muốn bật hiển thị course không?"
-      : "Bạn có chắc muốn tắt hiển thị course không?";
 
-    if (window.confirm(confirmationMessage)) {
-      try {
-        await axios.put(
-          `https://localhost:7030/api/Courses/${courseId}/enabled`,
-          newStatus,
-          {
-            headers: { "Content-Type": "application/json" },
-          }
-        );
-        setIsSwitchOn(newStatus);
-        alert(`Course đã được ${newStatus ? "hiển thị" : "ẩn"} thành công.`);
-      } catch (error) {
-        console.error("Error updating course status", error);
-        alert("Cập nhật trạng thái course thất bại.");
-      }
+    try {
+      await axios.put(
+        `https://localhost:7030/api/Courses/${courseId}/update-status`,
+        newStatus,
+        {
+          headers: { "Content-Type": "application/json" },
+        }
+      );
+      setIsSwitchOn(newStatus);
+      setNotification(
+        `Khóa học đã được ${newStatus ? "hiển thị" : "ẩn"} thành công.`
+      );
+    } catch (error) {
+      console.error("Error updating course status", error);
+      setNotification("Cập nhật trạng thái khóa học thất bại.");
     }
-  };
-
-  const handleClick = () => {
-    console.log("Skill:", Skill); // Log Skill khi nhấn vào card
   };
 
   let destinationPath;
   if (location.pathname === "/mentorCourseList") {
-    destinationPath = `/courseinfo/${courseId}/infor`;
+    destinationPath = `/courseDetail/${courseId}`;
   } else if (location.pathname === "/courseList") {
-    destinationPath = `/courseinfo/${courseId}/infor`;
+    destinationPath = `/courseDetail/${courseId}`;
+  } else if (isMyLearning) {
+    destinationPath = `/classDetail/${courseId}/${classId}`;
   }
 
   return (
     <div className="relative bg-white shadow-md rounded-lg flex flex-col hover:bg-gray-100 transition-all">
+      {notification && (
+        <Notification
+          message={notification}
+          onClose={() => setNotification("")}
+        />
+      )}
       <div className="absolute top-1 right-1 flex items-center space-x-2">
         {isMentorCourseList && (
           <>
             <button
-              onClick={handleDelete}
+              type="button"
+              onClick={handleDeleteClick}
               className="bg-transparent text-red-400 hover:text-red-700"
               aria-label="Delete Course"
             >
@@ -102,11 +103,9 @@ const CourseCard = ({
       </div>
       <Link
         to={destinationPath}
-        state={{ Skill }}
+        state={{ Skill, fromMentorCourseList: isMentorCourseList }}
         className="flex-grow flex flex-col items-start"
-        onClick={handleClick}
       >
-        {/* Hiển thị ảnh ở đầu card */}
         {imageUrl && (
           <img
             src={imageUrl}
@@ -126,7 +125,9 @@ const CourseCard = ({
           >
             {content}
           </p>
-          <span className="text-sm font-medium text-blue-600 mb-2">{Skill}</span>
+          <span className="text-sm font-medium text-blue-600 mb-2">
+            {Skill}
+          </span>
           <div className="text-sm text-gray-600 mb-2">
             <span className="font-bold">Teacher: </span>
             {teacher}

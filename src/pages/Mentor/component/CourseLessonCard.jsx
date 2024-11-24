@@ -6,7 +6,7 @@ import CourseLessonContent from "./CourseLessonContent";
 import { FaAngleDown, FaAngleUp } from "react-icons/fa";
 
 const CourseLessonCard = ({
-  isCourseLecture,
+  mentorAndList,
   coursePartId,
   userRole,
   isEnrolled,
@@ -35,7 +35,7 @@ const CourseLessonCard = ({
       );
       setCourseLessons(response.data.courseLessons);
 
-      if (!isCourseLecture) {
+      if (!mentorAndList) {
         // Set all lessons as collapsed initially
         const initialCollapsedState = response.data.courseLessons.reduce(
           (acc, lesson) => ({ ...acc, [lesson.id]: true }),
@@ -91,12 +91,12 @@ const CourseLessonCard = ({
     return <p>{error}</p>;
   }
 
-  console.log(isCourseLecture + " " + isEnrolled); // Giữ nguyên dòng này
-
   return (
     <div className="h-vh100 px-4 mb-4 relative">
       <div className="cursor-pointer">
-        <h3 className="text-sm font-semibold text-gray-400">{courseLessons.length} Lessons</h3>
+        <h3 className="text-sm font-semibold text-gray-400">
+          {courseLessons.length} Lessons
+        </h3>
       </div>
 
       <div className="mt-4 overflow-hidden transition-all duration-1000 ease-in-out">
@@ -118,11 +118,13 @@ const CourseLessonCard = ({
                   ) : (
                     <FaAngleUp className="text-gray-600" />
                   )}
-                  <h4 className="text-md font-semibold">{courseLesson.title}</h4>
+                  <h4 className="text-md font-semibold">
+                    {courseLesson.title}
+                  </h4>
                 </div>
 
                 <div className="flex gap-2 mt-2">
-                  {isCourseLecture && (
+                  {mentorAndList && (
                     <>
                       <button
                         type="button"
@@ -161,7 +163,6 @@ const CourseLessonCard = ({
                     key={courseLesson.id}
                   />
                 )}
-
               </div>
             ))
           )}

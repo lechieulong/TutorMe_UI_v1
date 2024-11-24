@@ -78,7 +78,8 @@ const CreateCourseLessonContent = ({
       setContentData((prev) => ({
         ...prev,
         file: file,
-        contentUrl: `https://hydra13.blob.core.windows.net/${contentData.userId}/${file.name}`,
+        // contentUrl: `https://hydra13.blob.core.windows.net/${contentData.userId}/${file.name}`,
+        contentUrl: `https://thientvhde160268.blob.core.windows.net/course/courseLesson/${courseLessonId}/${file.name}`,
       }));
     }
   };

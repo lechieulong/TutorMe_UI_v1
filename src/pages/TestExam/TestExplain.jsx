@@ -29,8 +29,6 @@ const TestExplain = ({ skillResultIds, testId, skillId }) => {
   const [testResult, setTestResult] = useState([]);
   const [overallScore, setOverallScore] = useState(0);
 
-  console.log("testId ", testId);
-
   const dispatch = useDispatch();
 
   const { user } = useSelector((state) => state.user);

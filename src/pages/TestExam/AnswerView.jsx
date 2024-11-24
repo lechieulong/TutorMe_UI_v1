@@ -11,6 +11,8 @@ const AnswerView = ({
   handleAnswerChange,
   userAnswers,
 }) => {
+  console.log("currentSkillKey", currentSkillKey);
+
   let skill;
   switch (currentSkillKey) {
     case "reading":
@@ -593,16 +595,18 @@ const AnswerView = ({
       {currentSkillKey === "writing" && (
         <Writing
           partData={partData}
-          currentSkillKey={currentSkillKey}
           handleAnswerChange={handleAnswerChange}
+          currentSkillId={currentSkillId}
+          skill={skill}
         />
       )}
 
       {currentSkillKey === "speaking" && (
         <Speaking
           partData={partData}
-          currentSkillKey={currentSkillKey}
           handleAnswerChange={handleAnswerChange}
+          currentSkillId={currentSkillId}
+          skill={skill}
         />
       )}
     </form>

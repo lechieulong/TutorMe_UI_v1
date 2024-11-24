@@ -68,7 +68,7 @@ const Speaking = ({ partData, currentSkillId, handleAnswerChange, skill }) => {
           questionId: partData.sections[0]?.questions[currentQuestionIndex]?.id,
           sectionType: 0,
           explain: errorMessage, // Feedback for no answer
-          overallScore: 0, // Set score to 0
+          overallScore: "0", // Set score to 0
           answers: [
             {
               answerText: "", // No answer provided
@@ -146,6 +146,7 @@ const Speaking = ({ partData, currentSkillId, handleAnswerChange, skill }) => {
   const handleTimer = () => {
     SpeechRecognition.stopListening();
     evaluateAnswer(transcript);
+    goToNextQuestion();
     resetTranscript();
     setAiText("");
     window.speechSynthesis.cancel();

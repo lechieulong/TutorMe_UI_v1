@@ -2,10 +2,14 @@ import React, { useState } from "react";
 import { useForm } from "react-hook-form";
 import TestFormDetail from "./TestFormDetail";
 import PreviewTest from "./PreviewTest";
+import { Link, useNavigate } from "react-router-dom";
+
 import { useDispatch } from "react-redux";
 import { addSkills } from "../../redux/testExam/TestSlice";
 
-const CreateTest = ({ testId, skills }) => {
+const CreateTest = ({ testId, skills, pageType }) => {
+  const navigate = useNavigate();
+
   const { control, resetField, handleSubmit, setValue, getValues } = useForm();
 
   const [activeStep, setActiveStep] = useState(0);
@@ -35,7 +39,9 @@ const CreateTest = ({ testId, skills }) => {
   const handleFinish = () => {
     if (formData) {
       dispatch(addSkills({ skillsData: formData, testId }));
-      alert("Test Created!");
+      if (pageType == "admin") navigate("/admin/app");
+      else if (pageType == "lesson") navigate("");
+      else navigate("/");
     } else {
       alert("Please fill out the form before finishing.");
     }

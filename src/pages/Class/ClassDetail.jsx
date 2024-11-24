@@ -71,7 +71,11 @@ const ClassDetail = () => {
         <div className="flex flex-1 w-full">
           <MentorSidebar />
           {isCreateTest ? (
-            <TestForm classId={classId} categories={categories} />
+            <TestForm
+              classId={classId}
+              categories={categories}
+              pageType={"class"}
+            />
           ) : (
             <>
               <div className="flex-1 p-4">

@@ -170,7 +170,11 @@ const CourseLessonCard = ({
           </div>
         </>
       ) : (
-        <TestForm lessonId={lessonId} categories={categories} />
+        <TestForm
+          lessonId={lessonId}
+          categories={categories}
+          pageType={"lesson"}
+        />
       )}
     </>
   );

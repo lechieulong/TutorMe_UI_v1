@@ -13,7 +13,7 @@ const MentorSidebar = ({ setSelectedComponent }) => {
         tabIndex="-1"
         aria-label="Sidebar"
         style={{
-          height: "100%",
+          height: "calc(100vh - 67px)",
         }}
       >
         <nav className="p-6 w-full flex flex-col flex-wrap">

@@ -9,6 +9,7 @@ const ClassDetail = () => {
   const { courseId, classId } = useParams();
   const [classDetail, setClassDetail] = useState(null);
   const [isCreateTest, setIsCreateTest] = useState(false);
+  const [categories, setCategories] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
 
@@ -42,6 +43,7 @@ const ClassDetail = () => {
         const descriptions = response.data.map(
           (item) => item.description || ""
         );
+        setCategories(descriptions);
         setIsCreateTest(true);
       } else {
         console.log("Không có dữ liệu hợp lệ trong response.");
@@ -69,7 +71,7 @@ const ClassDetail = () => {
         <div className="flex flex-1 w-full">
           <MentorSidebar />
           {isCreateTest ? (
-            <TestForm classId={classId} />
+            <TestForm classId={classId} categories={categories} />
           ) : (
             <>
               <div className="flex-1 p-4">

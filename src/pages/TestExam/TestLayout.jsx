@@ -1,6 +1,6 @@
 // TestLayout.jsx
-import { useState, useEffect, useCallback } from "react";
-import { useNavigate, useParams } from "react-router-dom";
+import { useState, useEffect, useRef, useCallback } from "react";
+import { useNavigate } from "react-router-dom";
 import Header from "../../components/Test/Header";
 import TestView from "./TestView";
 import mockTestData from "../../data/mockTestData";
@@ -10,12 +10,25 @@ import {
   submitAnswerTest,
 } from "../../redux/testExam/TestSlice";
 import { useDispatch } from "react-redux";
+import TestExplain from "./TestExplain";
 
 const TestLayout = ({ skillsData, practiceTestData, fullTestId }) => {
   const [currentSkillIndex, setCurrentSkillIndex] = useState(0);
   const [testData, setTestData] = useState({});
   const [userAnswers, setUserAnswers] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [submitted, setSubmitted] = useState(false);
+  const [skillResultIds, setSkillResultIds] = useState([]);
+  const [timeTakenData, setTimeTakenData] = useState({
+    timeMinutesTaken: 0,
+    timeSecondsTaken: 0,
+  });
+  console.log("FullTestId", fullTestId);
+
+  const startTimeRef = useRef(null); // Ref to store the start time
+  const elapsedTimeRef = useRef(0); // Ref to store elapsed time in seconds
+  const timerRef = useRef(null); // Ref to store the interval ID
+
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
@@ -83,6 +96,37 @@ const TestLayout = ({ skillsData, practiceTestData, fullTestId }) => {
     }
   }, []);
 
+  useEffect(() => {
+    if (testData && currentSkillIndex === 0 && !startTimeRef.current) {
+      startTimeRef.current = Date.now(); // Set start time when the test begins
+
+      timerRef.current = setInterval(() => {
+        const elapsedTime = Math.floor(
+          (Date.now() - startTimeRef.current) / 1000
+        );
+        elapsedTimeRef.current = elapsedTime;
+
+        // Update timeTakenData state only if necessary
+        const minutes = Math.floor(elapsedTime / 60);
+        const seconds = elapsedTime % 60;
+
+        setTimeTakenData((prev) => {
+          if (
+            prev.timeMinutesTaken !== minutes ||
+            prev.timeSecondsTaken !== seconds
+          ) {
+            return { timeMinutesTaken: minutes, timeSecondsTaken: seconds };
+          }
+          return prev;
+        });
+      }, 1000);
+    }
+
+    return () => {
+      clearInterval(timerRef.current);
+    };
+  }, [testData, currentSkillIndex]);
+
   const handleAnswerChange = useCallback(({ questionId, answerData }) => {
     setUserAnswers((prevAnswers) => ({
       ...prevAnswers,
@@ -105,6 +149,7 @@ const TestLayout = ({ skillsData, practiceTestData, fullTestId }) => {
     return <div>Loading test data...</div>;
   }
 
+  const testId = fullTestId ? fullTestId : practiceTestData.testId;
   const currentSkillKey = Object.keys(testData)[currentSkillIndex];
   const currentSkillId = testData[currentSkillKey]?.id;
   const currentSkillData = testData[currentSkillKey];
@@ -113,23 +158,58 @@ const TestLayout = ({ skillsData, practiceTestData, fullTestId }) => {
       console.log("No answers to submit");
       return;
     }
-    console.log(userAnswers);
-
+    clearInterval(timerRef.current); // Clear the timer
     const keys = Object.keys(testData);
     const lastSkillKey = keys[keys.length - 1];
     const firstAnswer = Object.values(userAnswers)[0];
     const { skill } = firstAnswer;
-    const testId = fullTestId ? fullTestId : practiceTestData.testId;
+
     switch (skill) {
       case 0:
-        const result = dispatch(submitAnswerTest({ userAnswers, testId }));
-        setUserAnswers([]);
-        if (lastSkillKey === currentSkillKey) {
-          navigate(`/testExplain/${testId}`);
-        }
+        dispatch(
+          submitAnswerTest({
+            userAnswers,
+            testId,
+            timeMinutesTaken: timeTakenData.timeMinutesTaken,
+            timeSecondsTaken: timeTakenData.timeSecondsTaken,
+          })
+        ).then((result) => {
+          if (result.meta.requestStatus === "fulfilled") {
+            setSkillResultIds((prev) => [...prev, result.payload.id]);
+          } else {
+            console.error(
+              "Error submitting reading test:",
+              result.error.message
+            );
+          }
+          setUserAnswers([]);
+          if (lastSkillKey === currentSkillKey) {
+            setSubmitted(true);
+          }
+        });
+        break;
       case 1:
-        console.log("Calling Listening API");
-        setUserAnswers([]);
+        dispatch(
+          submitAnswerTest({
+            userAnswers,
+            testId,
+            timeMinutesTaken: timeTakenData.timeMinutesTaken,
+            timeSecondsTaken: timeTakenData.timeSecondsTaken,
+          })
+        ).then((result) => {
+          if (result.meta.requestStatus === "fulfilled") {
+            setSkillResultIds((prev) => [...prev, result.payload.id]);
+          } else {
+            console.error(
+              "Error submitting reading test:",
+              result.error.message
+            );
+          }
+          setUserAnswers([]);
+          if (lastSkillKey === currentSkillKey) {
+            setSubmitted(true);
+          }
+        });
         break;
       case 2:
         console.log("Calling Writing API");
@@ -147,25 +227,35 @@ const TestLayout = ({ skillsData, practiceTestData, fullTestId }) => {
   };
 
   return (
-    <div className="w-screen">
-      <form onSubmit={handleSubmit}>
-        <div className="flex flex-col">
-          <Header
-            testData={testData}
-            currentSkillIndex={currentSkillIndex}
-            handleNextSkill={handleNextSkill}
-            handleSubmit={handleSubmit}
-          />
-          <TestView
-            skillData={currentSkillData}
-            currentSkillKey={currentSkillKey}
-            currentSkillId={currentSkillId}
-            handleAnswerChange={handleAnswerChange}
-            userAnswers={userAnswers}
-          />
+    <>
+      {submitted ? (
+        <TestExplain
+          skillResultIds={skillResultIds}
+          testId={testId}
+          skillId={practiceTestData?.skillId}
+        />
+      ) : (
+        <div className="w-screen">
+          <form onSubmit={handleSubmit}>
+            <div className="flex flex-col">
+              <Header
+                testData={testData}
+                currentSkillIndex={currentSkillIndex}
+                handleNextSkill={handleNextSkill}
+                handleSubmit={handleSubmit}
+              />
+              <TestView
+                skillData={currentSkillData}
+                currentSkillKey={currentSkillKey}
+                currentSkillId={currentSkillId}
+                handleAnswerChange={handleAnswerChange}
+                userAnswers={userAnswers}
+              />
+            </div>
+          </form>
         </div>
-      </form>
-    </div>
+      )}
+    </>
   );
 };
 

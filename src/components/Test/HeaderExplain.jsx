@@ -19,13 +19,14 @@ const HeaderExplain = ({ testData, currentSkillIndex, handleNextSkill }) => {
         <h3>Explaination</h3>
       </div>
       <div className="flex gap-8 items-center">
-        <button
-          type="button"
-          onClick={handleConfirmNextSkill}
-          className="border border-white bg-black hover:bg-green-800 text-white font-medium rounded-lg px-4 py-2"
-        >
-          Next Skill
-        </button>
+        {currentSkillIndex < Object.keys(testData).length - 1 && (
+          <button
+            type="button"
+            className="border border-white bg-black hover:bg-green-800 text-white font-medium rounded-lg px-4 py-2"
+          >
+            Next Skill
+          </button>
+        )}
       </div>
     </div>
   );

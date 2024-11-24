@@ -14,7 +14,7 @@ import CreateTest from "./CreateTest";
 import MainLayout from "../../layout/MainLayout";
 import { useLocation } from "react-router-dom";
 
-const TestForm = ({ classId }) => {
+const TestForm = ({ classId, categories }) => {
   const {
     register,
     handleSubmit,
@@ -23,14 +23,6 @@ const TestForm = ({ classId }) => {
   } = useForm();
   const dispatch = useDispatch();
 
-  const location = useLocation();
-  // const { courseTimelineDetailId, categories } = location.state || {
-  //   courseTimelineDetailId: null,
-  //   categories: [],
-  // };
-  const categories = ["Reading", "Listening", "Writing", "Speaking"];
-  const courseTimelineDetailId = "123";
-
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [testInfo, setTestInfo] = useState(null);
   const [showTestFormDetail, setShowTestFormDetail] = useState(false); // New state to control TestFormDetail display
@@ -38,8 +30,7 @@ const TestForm = ({ classId }) => {
   const onSubmit = async (data) => {
     setIsSubmitted(true);
     try {
-      const sectionCourseId = classId; // Ensure courseTimelineDetailId is valid
-      const payload = { ...data, sectionCourseId };
+      const payload = { ...data, classId };
 
       const result = await dispatch(createTest(payload)).unwrap();
       setTestInfo(result);
@@ -91,7 +82,7 @@ const TestForm = ({ classId }) => {
           </h3> */}
           <form
             onSubmit={handleSubmit(onSubmit)}
-            className="space-y-4 mt-8 max-w-lg mx-auto p-6   rounded-2xl border border-gray-200"
+            className="space-y-4 mt-8 max-w-lg mx-auto p-6 bg-white  rounded-2xl border border-gray-200"
           >
             {/* Test Name */}
             <div className="relative">

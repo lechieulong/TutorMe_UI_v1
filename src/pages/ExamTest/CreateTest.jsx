@@ -26,10 +26,10 @@ const CreateTest = ({ testId, skills }) => {
         />
       ),
     },
-    {
-      label: "Preview",
-      content: <PreviewTest data={formData} />,
-    },
+    // {
+    //   label: "Preview",
+    //   content: <PreviewTest data={formData} />,
+    // },
   ];
 
   const handleFinish = () => {
@@ -85,19 +85,18 @@ const CreateTest = ({ testId, skills }) => {
   };
 
   const handleNext = () => {
-    console.log(formData);
-
     if (selectedSkills.length === 0) {
       alert("Please select at least one skill.");
       return;
     }
+    console.log(formData);
 
-    if (!validateFormData()) {
-      alert(
-        "Each skill must have at least one part, each part must have at least one section, each section must have at least one question, and each question must have at least one answer."
-      );
-      return;
-    }
+    // if (!validateFormData()) {
+    //   alert(
+    //     "Each skill must have at least one part, each part must have at least one section, each section must have at least one question, and each question must have at least one answer."
+    //   );
+    //   return;
+    // }
 
     handleSubmit((data) => {
       setFormData(data);

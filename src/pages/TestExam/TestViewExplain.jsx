@@ -13,6 +13,11 @@ const TestViewExplain = React.memo(({ skillData, currentSkillKey }) => {
   const [leftWidth, setLeftWidth] = useState(50);
 
   useEffect(() => {
+    if (!skillData) {
+      setIsLoading(true);
+      return;
+    }
+
     setIsLoading(true);
     setOpenSideView(skillData.type !== 1 && skillData.type !== 3);
 
@@ -52,7 +57,7 @@ const TestViewExplain = React.memo(({ skillData, currentSkillKey }) => {
     return <div>Loading...</div>;
   }
 
-  if (!partDatas || partDatas.length === 0) {
+  if (!skillData || !partDatas || partDatas.length === 0) {
     return <div>No parts available for this test.</div>;
   }
 

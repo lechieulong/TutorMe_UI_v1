@@ -76,12 +76,22 @@ const PartForm = ({ skill, control }) => {
                           "italic",
                           "link",
                           "|",
+                          "insertTable", // Add table button to the toolbar
                           "blockQuote",
                           "|",
                           "undo",
                           "redo",
                         ],
-                        height: 300, // Set the desired height here
+                        table: {
+                          contentToolbar: [
+                            "tableColumn",
+                            "tableRow",
+                            "mergeTableCells",
+                            "tableProperties",
+                            "tableCellProperties",
+                          ],
+                        },
+                        height: 300, // Optional: Customize height of editor
                       }}
                       onChange={(event, editor) => {
                         const data = editor.getData();

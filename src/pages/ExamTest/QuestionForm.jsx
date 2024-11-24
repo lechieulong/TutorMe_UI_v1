@@ -12,7 +12,8 @@ import {
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { addQuestion } from "../../redux/testExam/TestSlice";
 import { useDispatch } from "react-redux";
-
+import { CKEditor } from "@ckeditor/ckeditor5-react";
+import ClassicEditor from "@ckeditor/ckeditor5-build-classic";
 const QuestionForm = ({
   skill,
   partIndex,
@@ -208,6 +209,55 @@ const QuestionForm = ({
                   sectionType={sectionType}
                 />
               )}
+              <div className="mb-4 border p-4 rounded">
+                <p className="mb-2 text-gray-600">Explain</p>
+                <Controller
+                  name={`skills.${skill}.parts.${index}.sections.${sectionIndex}.questions.${index}.explain`}
+                  control={control}
+                  render={({ field, fieldState }) => (
+                    <div className="mb-2">
+                      <CKEditor
+                        editor={ClassicEditor}
+                        data={field.value || ""} // Set value to CKEditor
+                        config={{
+                          toolbar: [
+                            "heading",
+                            "|",
+                            "bold",
+                            "italic",
+                            "link",
+                            "|",
+                            "insertTable", // Add table button to the toolbar
+                            "blockQuote",
+                            "|",
+                            "undo",
+                            "redo",
+                          ],
+                          table: {
+                            contentToolbar: [
+                              "tableColumn",
+                              "tableRow",
+                              "mergeTableCells",
+                              "tableProperties",
+                              "tableCellProperties",
+                            ],
+                          },
+                          height: 300, // Optional: Customize height of editor
+                        }}
+                        onChange={(event, editor) => {
+                          const data = editor.getData();
+                          field.onChange(data); // Update value for validation
+                        }}
+                      />
+                      {fieldState.error && (
+                        <p className="text-red-500">
+                          {fieldState.error.message}
+                        </p>
+                      )}
+                    </div>
+                  )}
+                />
+              </div>
             </>
           ) : (
             <p>{question.questionName}</p>
@@ -239,6 +289,7 @@ const QuestionForm = ({
                   summary: "",
                   isFromQuestionBank: false,
                   questionType: sectionType,
+                  explain: "",
                 })
               }
               className="bg-green-500 text-white p-2 rounded"

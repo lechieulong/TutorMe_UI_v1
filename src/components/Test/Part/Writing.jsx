@@ -3,7 +3,7 @@ import { GoogleGenerativeAI } from "@google/generative-ai";
 
 const genAI = new GoogleGenerativeAI(import.meta.env.VITE_GEN_AI);
 
-const Writing = ({ partData, currentSkillKey, handleAnswerChange }) => {
+const Writing = ({ partData, currentSkillId, handleAnswerChange, skill }) => {
   const [text, setText] = useState("");
   const [feedback, setFeedback] = useState("");
   const [suggestions, setSuggestions] = useState([]);
@@ -29,14 +29,18 @@ const Writing = ({ partData, currentSkillKey, handleAnswerChange }) => {
     setText(value);
 
     const answerData = {
-      skill: currentSkillKey,
-      part: partData.partId,
+      part: partData.partNumber,
       questionId: partData.sections[0]?.questions[0]?.id,
-      answerText: value,
-      answerId: "",
+      sectionType: 0,
+      questionName: partData.sections[0]?.questions[0]?.questionName,
+      answers: [
+        { answerText: value, answerId: "00000000-0000-0000-0000-000000000000" },
+      ],
+      skill: skill,
+      skillId: currentSkillId,
     };
 
-    handleAnswerChange({ index: 0, answerData });
+    handleAnswerChange({ questionId: answerData.questionId, answerData });
   };
 
   const evaluateAnswer = async () => {

@@ -7,14 +7,13 @@ import { useEffect, useMemo, useState } from "react";
 
 const genAI = new GoogleGenerativeAI(import.meta.env.VITE_GEN_AI);
 
-const Speaking = ({ partData, currentSkillKey, handleAnswerChange }) => {
+const Speaking = ({ partData, currentSkillId, handleAnswerChange, skill }) => {
   const { transcript, listening, resetTranscript } = useSpeechRecognition();
 
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(-1); // Start with welcome message
   const [thinking, setThinking] = useState(false);
   const [aiText, setAiText] = useState("");
   const [timeLeft, setTimeLeft] = useState(5); // Default time for Part 1 (45 seconds)
-
   const [showWelcome, setShowWelcome] = useState(true);
   const [guidelineMessage, setGuidelineMessage] = useState("");
   const [questionRead, setQuestionRead] = useState(false);
@@ -38,7 +37,7 @@ const Speaking = ({ partData, currentSkillKey, handleAnswerChange }) => {
       const utterance = new SpeechSynthesisUtterance(text);
       utterance.lang = "en-US";
       utterance.voice = examinerVoice();
-      utterance.rate = 1;
+      utterance.rate = 5;
       utterance.onend = callback;
       window.speechSynthesis.speak(utterance);
     } else {
@@ -47,34 +46,94 @@ const Speaking = ({ partData, currentSkillKey, handleAnswerChange }) => {
   };
 
   const cleanText = (text) => {
-    // Strip unwanted special characters and format the text for speech and rendering
     return text
-      .replace(/[\*\n\r]+/g, " ") // Remove bullet points, asterisks, newlines
-      .replace(/\*\s*\*/g, "") // Remove double asterisks (for example, in markdown)
-      .replace(/[-\u200B-\u200D\uFEFF\u202F]/g, "") // Remove zero-width characters and other non-visible characters
-      .replace(/\s+/g, " ") // Replace multiple spaces with a single space
-      .trim(); // Remove leading/trailing spaces
+      .replace(/[\*\n\r]+/g, " ")
+      .replace(/\*\s*\*/g, "")
+      .replace(/[-\u200B-\u200D\uFEFF\u202F]/g, "")
+      .replace(/\s+/g, " ")
+      .trim();
   };
 
   const evaluateAnswer = async (userAnswer) => {
     try {
-      console.log(userAnswer);
+      // Check if userAnswer is empty or null
+      if (!userAnswer || userAnswer.trim() === "") {
+        const errorMessage =
+          "No answer provided. Score is 0. Please provide a valid response.";
+        setAiText(errorMessage);
+
+        // Prepare the answer data payload with a score of 0
+        const answerData = {
+          part: partData.partNumber,
+          questionId: partData.sections[0]?.questions[currentQuestionIndex]?.id,
+          sectionType: 0,
+          explain: errorMessage, // Feedback for no answer
+          overallScore: 0, // Set score to 0
+          answers: [
+            {
+              answerText: "", // No answer provided
+              answerId: "00000000-0000-0000-0000-000000000000",
+            },
+          ],
+          skill: skill,
+          skillId: currentSkillId,
+        };
+        console.log("skill", skill);
+
+        handleAnswerChange({ questionId: answerData.questionId, answerData });
+        setThinking(false);
+        return; // Exit early
+      }
+
       setThinking(true);
       const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
       const prompt = `
+      This is a question: ${currentQuestion}
+      User Answer: ${userAnswer}
       Evaluate this response based on IELTS Speaking criteria:
       1. Fluency and Coherence (0-9)
       2. Lexical Resource (0-9)
       3. Grammatical Range and Accuracy (0-9)
       4. Pronunciation (0-9)
       
-      Provide scores for each criterion and a summary of feedback.
-      Response: "${userAnswer}"`;
+      Provide scores for each criterion, summary feedback, wrong structure/grammar/words, and recommendations for improvement.
+    `;
+
       const result = await model.generateContent(prompt);
       const aiResponse =
-        result.response.candidates[0].content.parts[0].text.trim();
+        result.response.candidates[0]?.content?.parts[0]?.text?.trim() || "";
       setAiText(aiResponse);
 
+      // Extract scores from AI response (example: parse scores if the response format is consistent)
+      const scorePattern = /\b(0|[1-9])\b/g; // Match individual scores between 0-9
+      const scoresArray = aiResponse.match(scorePattern)?.map(Number) || [
+        0, 0, 0, 0,
+      ];
+
+      // Calculate overall score as the average of the criteria scores
+      const overallScore = (
+        scoresArray.reduce((sum, score) => sum + score, 0) / scoresArray.length
+      ).toString();
+
+      // Save the score for the current question
+      // Prepare the answer data payload
+      const answerData = {
+        part: partData.partNumber,
+        questionId: partData.sections[0]?.questions[currentQuestionIndex]?.id,
+        sectionType: 0,
+        explain: aiResponse, // Detailed feedback from AI
+        overallScore: overallScore, // Stored as string
+        answers: [
+          {
+            answerText: userAnswer,
+            answerId: "00000000-0000-0000-0000-000000000000",
+          },
+        ],
+        skill: skill,
+        skillId: currentSkillId,
+      };
+
+      handleAnswerChange({ questionId: answerData.questionId, answerData });
       setThinking(false);
       const cleanedText = cleanText(aiResponse);
       speakText(cleanedText);
@@ -93,11 +152,12 @@ const Speaking = ({ partData, currentSkillKey, handleAnswerChange }) => {
   };
 
   const goToNextQuestion = () => {
+    if (transcript) {
+      evaluateAnswer(transcript);
+    }
     setCurrentQuestionIndex((prevIndex) => prevIndex + 1);
     setQuestionRead(false); // Reset question read state
-    setTimeLeft(
-      partData.partNumber === 1 || partData.partNumber === 3 ? 5 : 180
-    ); // Reset timer based on partNumber
+    setTimeLeft(partData.partNumber === 1 || partData.partNumber === 3 ? 5 : 5); // Reset timer based on partNumber
     resetTranscript(); // Clear the transcript for the next question
     setAiText(""); // Clear feedback
   };
@@ -136,10 +196,9 @@ const Speaking = ({ partData, currentSkillKey, handleAnswerChange }) => {
     let welcomeMessage = "";
 
     if (partData?.partNumber === 1) {
-      welcomeMessage = "a";
-      // welcomeMessage = `Hello, and welcome to the IELTS Speaking test. My name is Hydra, and I will be your examiner today. This test is recorded for assessment purposes.
-      //   The Speaking test is divided into three parts. I will explain each part as we go along, and I will ask you to speak on a variety of topics. You are encouraged to speak as much as possible and give full answers. There are no right or wrong answers, so feel free to share your thoughts and opinions.
-      //   In Part 1, I will ask you some general questions about yourself, your life, and familiar topics. This is just to help you feel comfortable.`;
+      welcomeMessage = `Hello, and welcome to the IELTS Speaking test. My name is Hydra, and I will be your examiner today. This test is recorded for assessment purposes.
+        The Speaking test is divided into three parts. I will explain each part as we go along, and I will ask you to speak on a variety of topics. You are encouraged to speak as much as possible and give full answers. There are no right or wrong answers, so feel free to share your thoughts and opinions.
+        In Part 1, I will ask you some general questions about yourself, your life, and familiar topics. This is just to help you feel comfortable.`;
     } else if (partData?.partNumber === 2) {
       welcomeMessage = `In Part 2, I will give you a task card with a topic and prompts. You will have 1 minute to prepare, and then I would like you to speak for 1-2 minutes on the topic.`;
     } else if (partData?.partNumber === 3) {

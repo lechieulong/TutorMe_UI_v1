@@ -169,11 +169,12 @@ const TestLayout = ({ skillsData, practiceTestData, fullTestId }) => {
           try {
             console.log(`Attempt ${attempt} to fetch AI response...`);
             const result = await model.generateContent(prompt);
-            aiResponse =
+            aiResponse = aiResponse =
               result?.response?.candidates?.[0]?.content?.parts?.[0]?.text;
 
             if (aiResponse) {
               console.log("AI Response received successfully.");
+              break; // Exit loop if valid response is received
               break; // Exit loop if valid response is received
             }
           } catch (error) {
@@ -182,6 +183,12 @@ const TestLayout = ({ skillsData, practiceTestData, fullTestId }) => {
           // Wait for a specified delay before the next attempt
           await new Promise((resolve) => setTimeout(resolve, delay));
         }
+        if (!aiResponse) {
+          throw new Error(
+            "Failed to fetch AI response after multiple attempts."
+          );
+        }
+        return aiResponse;
         if (!aiResponse) {
           throw new Error(
             "Failed to fetch AI response after multiple attempts."
@@ -472,11 +479,13 @@ const TestLayout = ({ skillsData, practiceTestData, fullTestId }) => {
             handleNextSkill();
 
             setUserAnswers([]); // Clear user answers after submission
+            setUserAnswers([]); // Clear user answers after submission
             if (lastSkillKey === currentSkillKey) {
               setSubmitted(true);
             }
           } catch (error) {
             console.error("Error handling writing test submission:", error);
+            setSubmitting(false);
             setSubmitting(false);
           }
         })();

@@ -13,7 +13,7 @@ const Speaking = ({ partData, currentSkillId, handleAnswerChange, skill }) => {
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(-1); // Start with welcome message
   const [thinking, setThinking] = useState(false);
   const [aiText, setAiText] = useState("");
-  const [timeLeft, setTimeLeft] = useState(5); // Default time for Part 1 (45 seconds)
+  const [timeLeft, setTimeLeft] = useState(15); // Default time for Part 1 (45 seconds)
   const [showWelcome, setShowWelcome] = useState(true);
   const [guidelineMessage, setGuidelineMessage] = useState("");
   const [questionRead, setQuestionRead] = useState(false);
@@ -37,7 +37,7 @@ const Speaking = ({ partData, currentSkillId, handleAnswerChange, skill }) => {
       const utterance = new SpeechSynthesisUtterance(text);
       utterance.lang = "en-US";
       utterance.voice = examinerVoice();
-      utterance.rate = 5;
+      utterance.rate = 1;
       utterance.onend = callback;
       window.speechSynthesis.speak(utterance);
     } else {
@@ -78,7 +78,6 @@ const Speaking = ({ partData, currentSkillId, handleAnswerChange, skill }) => {
           skill: skill,
           skillId: currentSkillId,
         };
-        console.log("skill", skill);
 
         handleAnswerChange({ questionId: answerData.questionId, answerData });
         setThinking(false);
@@ -135,8 +134,8 @@ const Speaking = ({ partData, currentSkillId, handleAnswerChange, skill }) => {
 
       handleAnswerChange({ questionId: answerData.questionId, answerData });
       setThinking(false);
-      const cleanedText = cleanText(aiResponse);
-      speakText(cleanedText);
+      // const cleanedText = cleanText(aiResponse);
+      // speakText(cleanedText);
     } catch (error) {
       console.error("Error evaluating answer:", error);
       setThinking(false);
@@ -158,7 +157,9 @@ const Speaking = ({ partData, currentSkillId, handleAnswerChange, skill }) => {
     }
     setCurrentQuestionIndex((prevIndex) => prevIndex + 1);
     setQuestionRead(false); // Reset question read state
-    setTimeLeft(partData.partNumber === 1 || partData.partNumber === 3 ? 5 : 5); // Reset timer based on partNumber
+    setTimeLeft(
+      partData.partNumber === 1 || partData.partNumber === 3 ? 15 : 180
+    ); // Reset timer based on partNumber
     resetTranscript(); // Clear the transcript for the next question
     setAiText(""); // Clear feedback
   };

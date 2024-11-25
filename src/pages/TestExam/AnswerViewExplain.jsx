@@ -477,13 +477,13 @@ const AnswerViewExplain = ({
         </>
       )}
 
-      {currentSkillKey === "writing" && (
+      {/* {currentSkillKey === "writing" && (
         <Writing
           partData={partData}
           currentSkillKey={currentSkillKey}
           handleAnswerChange={handleAnswerChange}
         />
-      )}
+      )} */}
 
       {currentSkillKey === "speaking" && (
         <Speaking

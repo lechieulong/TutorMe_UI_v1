@@ -95,18 +95,10 @@ const CreateTest = ({ testId, skills, pageType }) => {
       alert("Please select at least one skill.");
       return;
     }
-    console.log(formData);
-
-    // if (!validateFormData()) {
-    //   alert(
-    //     "Each skill must have at least one part, each part must have at least one section, each section must have at least one question, and each question must have at least one answer."
-    //   );
-    //   return;
-    // }
 
     handleSubmit((data) => {
-      setFormData(data);
-      setActiveStep((prev) => Math.min(prev + 1, steps.length - 1));
+      setFormData(data); // Update formData
+      setActiveStep((prev) => Math.min(prev + 1, steps.length - 1)); // Move to next step
     })();
   };
 
@@ -171,7 +163,13 @@ const CreateTest = ({ testId, skills, pageType }) => {
             className={`py-2 px-4 rounded bg-green-500 text-white ${
               activeStep !== steps.length - 1 ? "hidden" : ""
             }`}
-            onClick={handleFinish}
+            onClick={handleSubmit((data) => {
+              setFormData(data); // Update formData
+              dispatch(addSkills({ skillsData: data, testId })); // Dispatch action with current data
+              if (pageType == "admin") navigate("/admin/app");
+              else if (pageType == "lesson") navigate("");
+              else navigate("/");
+            })}
           >
             Finish
           </button>

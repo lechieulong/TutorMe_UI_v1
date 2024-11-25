@@ -38,38 +38,34 @@ const TestLayout = ({ skillsData, practiceTestData, fullTestId }) => {
 
   const evaluateAnswer = async (userAnswers) => {
     try {
-      console.log("Evaluating user answers...");
-      console.log(`${Object.values(userAnswers)[0].questionName}`);
-      console.log(`${Object.values(userAnswers)[0].answers[0].answerText}`);
-      console.log(`${Object.values(userAnswers)[0].part}`);
-
       const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
       const prompt = `
-      This is a question: ${Object.values(userAnswers)[0].questionName}
-      User Answer: ${Object.values(userAnswers)[0].answers[0].answerText}
+    This is a question: ${userAnswers.questionName}
+    User Answer: ${userAnswers.answers[0].answerText}
 
-      Evaluate the following response based on IELTS Writing Task 2 
-      criteria:
-      - Task Achievement (Score: 0-9)
-      - Coherence and Cohesion (Score: 0-9)
-      - Lexical Resource (Score: 0-9)
-      - Grammatical Range and Accuracy (Score: 0-9)
-      - Highlight any grammar or syntax issues in the text, and suggest corrections.
-      - Provide an overall score as the average of the four criteria.
+    Evaluate the following response based on IELTS Writing Task 2 
+    criteria:
+    - Task Achievement (Score: 0-9)
+    - Coherence and Cohesion (Score: 0-9)
+    - Lexical Resource (Score: 0-9)
+    - Grammatical Range and Accuracy (Score: 0-9)
+    - Highlight any grammar or syntax issues in the text, and suggest corrections.
+    - Provide an overall score as the average of the four criteria.
     `;
 
       // Retry mechanism
-      const retryFetchAIResponse = async (retries = 3, delay = 2000) => {
+      const retryFetchAIResponse = async (retries = 3, delay = 1000) => {
+        let aiResponse = null;
         for (let attempt = 1; attempt <= retries; attempt++) {
           try {
             console.log(`Attempt ${attempt} to fetch AI response...`);
             const result = await model.generateContent(prompt);
-            const aiResponse =
+            aiResponse =
               result?.response?.candidates?.[0]?.content?.parts?.[0]?.text;
 
             if (aiResponse) {
               console.log("AI Response received successfully.");
-              return aiResponse;
+              break; // Exit loop if valid response is received
             }
           } catch (error) {
             console.error(`Attempt ${attempt} failed. Error:`, error);
@@ -77,7 +73,12 @@ const TestLayout = ({ skillsData, practiceTestData, fullTestId }) => {
           // Wait for a specified delay before the next attempt
           await new Promise((resolve) => setTimeout(resolve, delay));
         }
-        throw new Error("Failed to fetch AI response after multiple attempts.");
+        if (!aiResponse) {
+          throw new Error(
+            "Failed to fetch AI response after multiple attempts."
+          );
+        }
+        return aiResponse;
       };
 
       const aiResponse = await retryFetchAIResponse();
@@ -109,9 +110,29 @@ const TestLayout = ({ skillsData, practiceTestData, fullTestId }) => {
         }
       );
 
+      // Ensure that all scores are valid (not null)
+      const isValidScore = (score) => score !== null && !isNaN(score);
+      const checkScores = () => {
+        return (
+          isValidScore(parsedResponse.scores.task) &&
+          isValidScore(parsedResponse.scores.coherence) &&
+          isValidScore(parsedResponse.scores.lexical) &&
+          isValidScore(parsedResponse.scores.grammar)
+        );
+      };
+
+      // Retry if any score is missing or invalid
+      let retryCount = 0;
+      while (!checkScores() && retryCount < 3) {
+        console.log("Invalid score detected. Retrying...");
+        retryCount++;
+        const aiResponse = await retryFetchAIResponse();
+        return await evaluateAnswer(userAnswers); // Recursively call to retry
+      }
+
       // Calculate overall score
       const totalScores = Object.values(parsedResponse.scores).filter(
-        (score) => score !== null
+        (score) => score !== null && !isNaN(score)
       );
 
       const avgScore =
@@ -330,24 +351,26 @@ const TestLayout = ({ skillsData, practiceTestData, fullTestId }) => {
 
         (async () => {
           try {
-            const responseWriting = await evaluateAnswer(userAnswers);
-            console.log("ResponseWriting", responseWriting);
+            const updatedAnswers = {};
+            const questionIds = Object.keys(userAnswers);
 
-            const questionId = Object.keys(userAnswers)[0];
-            const updateAnswers = {
-              ...userAnswers,
-              [questionId]: {
-                ...userAnswers[questionId],
+            for (const questionId of questionIds) {
+              const userAnswer = userAnswers[questionId];
+
+              // Evaluate each answer using the AI service
+              const responseWriting = await evaluateAnswer(userAnswer);
+
+              updatedAnswers[questionId] = {
+                ...userAnswer,
                 explain: responseWriting.feedBack,
                 overallScore: responseWriting.overallScore,
-              },
-            };
+              };
+            }
 
-            // console.log("Updated Answers:", updateAnswers);
-
+            // Now submit the updated answers for all questions
             const result = await dispatch(
               submitAnswerTest({
-                userAnswers: updateAnswers,
+                userAnswers: updatedAnswers,
                 testId,
                 timeMinutesTaken: timeTakenData.timeMinutesTaken,
                 timeSecondsTaken: timeTakenData.timeSecondsTaken,
@@ -362,18 +385,21 @@ const TestLayout = ({ skillsData, practiceTestData, fullTestId }) => {
                 result.error.message
               );
             }
+
             setSubmitting(false);
             handleNextSkill();
 
-            setUserAnswers([]);
+            setUserAnswers([]); // Clear user answers after submission
             if (lastSkillKey === currentSkillKey) {
               setSubmitted(true);
             }
           } catch (error) {
             console.error("Error handling writing test submission:", error);
+            setSubmitting(false);
           }
         })();
         break;
+
       case 3:
         setSubmitting(true);
 

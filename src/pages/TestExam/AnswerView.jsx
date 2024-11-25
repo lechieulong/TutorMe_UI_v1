@@ -598,6 +598,7 @@ const AnswerView = ({
           handleAnswerChange={handleAnswerChange}
           currentSkillId={currentSkillId}
           skill={skill}
+          userAnswers={userAnswers}
         />
       )}
 

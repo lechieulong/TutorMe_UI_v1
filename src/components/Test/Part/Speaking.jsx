@@ -2,10 +2,8 @@ import "regenerator-runtime/runtime";
 import SpeechRecognition, {
   useSpeechRecognition,
 } from "react-speech-recognition";
-import { GoogleGenerativeAI } from "@google/generative-ai";
 import { useEffect, useMemo, useState } from "react";
-
-const genAI = new GoogleGenerativeAI(import.meta.env.VITE_GEN_AI);
+import { getWelcomeMessage } from "./getWelcomeMessage";
 
 const Speaking = ({
   partData,
@@ -15,12 +13,8 @@ const Speaking = ({
   userAnswers,
 }) => {
   const { transcript, listening, resetTranscript } = useSpeechRecognition();
-
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(-1); // Start with welcome message
-  const [thinking, setThinking] = useState(false);
-  const [aiText, setAiText] = useState("");
-  const [timeLeft, setTimeLeft] = useState(15); // Default time for Part 1 (45 seconds)
-  const [showWelcome, setShowWelcome] = useState(true);
+  const [timeLeft, setTimeLeft] = useState(15);
   const [guidelineMessage, setGuidelineMessage] = useState("");
   const [questionRead, setQuestionRead] = useState(false);
 
@@ -40,7 +34,6 @@ const Speaking = ({
 
   const speakText = (text, callback) => {
     if ("speechSynthesis" in window) {
-      // First, cancel any ongoing speech synthesis to avoid conflicts
       window.speechSynthesis.cancel();
 
       const utterance = new SpeechSynthesisUtterance(text);
@@ -65,69 +58,11 @@ const Speaking = ({
 
   const evaluateAnswer = async (userAnswer) => {
     try {
-      // Check if userAnswer is empty or null
-      if (!userAnswer || userAnswer.trim() === "") {
-        const errorMessage =
-          "No answer provided. Score is 0. Please provide a valid response.";
-        setAiText(errorMessage);
-
-        // Prepare the answer data payload with a score of 0
-        const answerData = {
-          part: partData.partNumber,
-          questionId: partData.sections[0]?.questions[currentQuestionIndex]?.id,
-          sectionType: 0,
-          explain: errorMessage, // Feedback for no answer
-          overallScore: "0", // Set score to 0
-          answers: [
-            {
-              answerText: "", // No answer provided
-              answerId: "00000000-0000-0000-0000-000000000000",
-            },
-          ],
-          skill: skill,
-          skillId: currentSkillId,
-        };
-
-        handleAnswerChange({ questionId: answerData.questionId, answerData });
-        setThinking(false);
-        return;
-      }
-
-      setThinking(true);
-      const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
-      const prompt = `
-      This is a question: ${currentQuestion}
-      User Answer: ${userAnswer}
-      Evaluate this response based on IELTS Speaking criteria:
-      1. Fluency and Coherence (0-9)
-      2. Lexical Resource (0-9)
-      3. Grammatical Range and Accuracy (0-9)
-      4. Pronunciation (0-9)
-      
-      Provide scores for each criterion, summary feedback, wrong structure/grammar/words, and recommendations for improvement.
-    `;
-
-      const result = await model.generateContent(prompt);
-      const aiResponse =
-        result.response.candidates[0]?.content?.parts[0]?.text?.trim() || "";
-      setAiText(aiResponse);
-
-      // Extract scores from AI response (example: parse scores if the response format is consistent)
-      const scorePattern = /\b(0|[1-9])\b/g; // Match individual scores between 0-9
-      const scoresArray = aiResponse.match(scorePattern)?.map(Number) || [
-        0, 0, 0, 0,
-      ];
-
-      const overallScore = (
-        scoresArray.reduce((sum, score) => sum + score, 0) / scoresArray.length
-      ).toString();
-
       const answerData = {
         part: partData.partNumber,
         questionId: partData.sections[0]?.questions[currentQuestionIndex]?.id,
         sectionType: 0,
-        explain: aiResponse, // Detailed feedback from AI
-        overallScore: overallScore, // Stored as string
+        questionName: partData.sections[0]?.questions[0]?.questionName,
         answers: [
           {
             answerText: userAnswer,
@@ -139,12 +74,8 @@ const Speaking = ({
       };
 
       handleAnswerChange({ questionId: answerData.questionId, answerData });
-      setThinking(false);
-      // const cleanedText = cleanText(aiResponse);
-      // speakText(cleanedText);
     } catch (error) {
       console.error("Error evaluating answer:", error);
-      setThinking(false);
     }
   };
 
@@ -158,16 +89,27 @@ const Speaking = ({
   };
 
   const goToNextQuestion = () => {
-    if (transcript) {
-      evaluateAnswer(transcript);
+    if (isLastQuestion) {
+      SpeechRecognition.stopListening();
+      setTimeLeft(0);
+      setAiText("");
+      resetTranscript();
+      window.speechSynthesis.cancel();
+      setCurrentQuestionIndex(-1);
+      setShowWelcome(true);
+    } else {
+      SpeechRecognition.stopListening();
+      if (transcript) {
+        evaluateAnswer(transcript);
+      }
+      setCurrentQuestionIndex((prevIndex) => prevIndex + 1);
+      setQuestionRead(false);
+      setTimeLeft(
+        partData.partNumber === 1 || partData.partNumber === 3 ? 10 : 180
+      );
+      resetTranscript();
+      setAiText("");
     }
-    setCurrentQuestionIndex((prevIndex) => prevIndex + 1);
-    setQuestionRead(false);
-    setTimeLeft(
-      partData.partNumber === 1 || partData.partNumber === 3 ? 15 : 180
-    );
-    resetTranscript();
-    setAiText("");
   };
 
   useEffect(() => {
@@ -202,18 +144,7 @@ const Speaking = ({
 
   useEffect(() => {
     window.speechSynthesis.cancel();
-    let welcomeMessage = "";
-
-    if (partData?.partNumber === 1) {
-      welcomeMessage = `Hello, and welcome to the IELTS Speaking test. My name is Hydra, and I will be your examiner today. This test is recorded for assessment purposes.
-        The Speaking test is divided into three parts. I will explain each part as we go along, and I will ask you to speak on a variety of topics. You are encouraged to speak as much as possible and give full answers. There are no right or wrong answers, so feel free to share your thoughts and opinions.
-        In Part 1, I will ask you some general questions about yourself, your life, and familiar topics. This is just to help you feel comfortable.`;
-    } else if (partData?.partNumber === 2) {
-      welcomeMessage = `In Part 2, I will give you a task card with a topic and prompts. You will have 1 minute to prepare, and then I would like you to speak for 1-2 minutes on the topic.`;
-    } else if (partData?.partNumber === 3) {
-      welcomeMessage = `In Part 3, we will have a discussion based on the topic in Part 2. I will ask you more detailed questions, and we will explore your ideas in more depth.`;
-    }
-
+    let welcomeMessage = getWelcomeMessage(partData?.partNumber);
     setGuidelineMessage(welcomeMessage);
 
     speakText(welcomeMessage, () => {
@@ -226,6 +157,7 @@ const Speaking = ({
       setCurrentQuestionIndex(-1);
     };
   }, [partData.partNumber]);
+
   useEffect(() => {
     const handleUnload = () => {
       window.speechSynthesis.cancel();
@@ -284,29 +216,17 @@ const Speaking = ({
                 Start Speaking
               </button>
 
-              <button
+              {/* <button
                 type="button"
                 onClick={SpeechRecognition.stopListening}
                 className="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600"
               >
-                Stop
-              </button>
+                Stop speaking
+              </button> */}
             </div>
           </div>
 
-          <div className="w-full text-gray-700">
-            {thinking && (
-              <p className="text-gray-800 text-center">Thinking...</p>
-            )}
-            {!thinking && aiText && (
-              <div>
-                <p>Feedback:</p>
-                <div className="bg-gray-100 p-2 rounded">{aiText}</div>
-              </div>
-            )}
-          </div>
-
-          {!isLastQuestion && (
+          {/* {!isLastQuestion && (
             <button
               type="button"
               onClick={goToNextQuestion}
@@ -314,7 +234,7 @@ const Speaking = ({
             >
               Next Question
             </button>
-          )}
+          )} */}
         </>
       )}
     </div>

@@ -175,7 +175,6 @@ const TestLayout = ({ skillsData, practiceTestData, fullTestId }) => {
             if (aiResponse) {
               console.log("AI Response received successfully.");
               break; // Exit loop if valid response is received
-              break; // Exit loop if valid response is received
             }
           } catch (error) {
             console.error(`Attempt ${attempt} failed. Error:`, error);
@@ -183,12 +182,6 @@ const TestLayout = ({ skillsData, practiceTestData, fullTestId }) => {
           // Wait for a specified delay before the next attempt
           await new Promise((resolve) => setTimeout(resolve, delay));
         }
-        if (!aiResponse) {
-          throw new Error(
-            "Failed to fetch AI response after multiple attempts."
-          );
-        }
-        return aiResponse;
         if (!aiResponse) {
           throw new Error(
             "Failed to fetch AI response after multiple attempts."
@@ -235,9 +228,6 @@ const TestLayout = ({ skillsData, practiceTestData, fullTestId }) => {
               totalScores.length
             ).toFixed(1)
           : null;
-
-      console.log("Parsed Response:", avgScore);
-
       return {
         overallScore: avgScore,
         feedBack: feedback,
@@ -300,19 +290,22 @@ const TestLayout = ({ skillsData, practiceTestData, fullTestId }) => {
   }, []);
 
   useEffect(() => {
-    if (testData && currentSkillIndex === 0 && !startTimeRef.current) {
-      startTimeRef.current = Date.now(); // Set start time when the test begins
+    if (testData && !startTimeRef.current) {
+      // Initialize start time
+      startTimeRef.current = Date.now();
 
+      // Start timer
       timerRef.current = setInterval(() => {
         const elapsedTime = Math.floor(
           (Date.now() - startTimeRef.current) / 1000
         );
         elapsedTimeRef.current = elapsedTime;
 
-        // Update timeTakenData state only if necessary
+        // Calculate minutes and seconds
         const minutes = Math.floor(elapsedTime / 60);
         const seconds = elapsedTime % 60;
 
+        // Update state only if there is a change
         setTimeTakenData((prev) => {
           if (
             prev.timeMinutesTaken !== minutes ||
@@ -325,10 +318,13 @@ const TestLayout = ({ skillsData, practiceTestData, fullTestId }) => {
       }, 1000);
     }
 
+    // Cleanup on unmount or re-render
     return () => {
       clearInterval(timerRef.current);
+      timerRef.current = null; // Ensure cleanup
+      startTimeRef.current = null; // Reset start time for next use
     };
-  }, [testData, currentSkillIndex]);
+  }, [testData]); // Only depend on testData
 
   const handleAnswerChange = useCallback(({ questionId, answerData }) => {
     setUserAnswers((prevAnswers) => ({
@@ -388,6 +384,7 @@ const TestLayout = ({ skillsData, practiceTestData, fullTestId }) => {
             testId,
             timeMinutesTaken: timeTakenData.timeMinutesTaken,
             timeSecondsTaken: timeTakenData.timeSecondsTaken,
+            totalQuestions: 0,
           })
         ).then((result) => {
           if (result.meta.requestStatus === "fulfilled") {
@@ -416,6 +413,7 @@ const TestLayout = ({ skillsData, practiceTestData, fullTestId }) => {
             testId,
             timeMinutesTaken: timeTakenData.timeMinutesTaken,
             timeSecondsTaken: timeTakenData.timeSecondsTaken,
+            totalQuestions: 0,
           })
         ).then((result) => {
           if (result.meta.requestStatus === "fulfilled") {
@@ -445,7 +443,6 @@ const TestLayout = ({ skillsData, practiceTestData, fullTestId }) => {
             for (const questionId of questionIds) {
               const userAnswer = userAnswers[questionId];
 
-              // Evaluate each answer using the AI service
               const responseWriting = await evaluateAnswer(userAnswer);
 
               updatedAnswers[questionId] = {
@@ -454,7 +451,6 @@ const TestLayout = ({ skillsData, practiceTestData, fullTestId }) => {
                 overallScore: responseWriting.overallScore,
               };
             }
-
             const totalQuestions = getTotalQuestions(currentSkillData);
             const result = await dispatch(
               submitAnswerTest({

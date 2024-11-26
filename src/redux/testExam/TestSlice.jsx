@@ -24,7 +24,7 @@ export const fetchTests = createAsyncThunk(
 export const submitAnswerTest = createAsyncThunk(
   `${SLICE_NAMES.TEST}/${ACTIONS.SUBMIT_TEST}`,
   async (
-    { userAnswers, testId, timeMinutesTaken, timeSecondsTaken },
+    { userAnswers, testId, timeMinutesTaken, timeSecondsTaken, totalQuestions },
     { rejectWithValue }
   ) => {
     const token = Cookies.get("authToken");
@@ -37,6 +37,7 @@ export const submitAnswerTest = createAsyncThunk(
           userAnswers,
           timeMinutesTaken, // Add time in minutes
           timeSecondsTaken, // Add time in seconds
+          totalQuestions,
         },
         {
           Authorization: `Bearer ${token}`,

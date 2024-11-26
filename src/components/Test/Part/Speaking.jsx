@@ -7,7 +7,13 @@ import { useEffect, useMemo, useState } from "react";
 
 const genAI = new GoogleGenerativeAI(import.meta.env.VITE_GEN_AI);
 
-const Speaking = ({ partData, currentSkillId, handleAnswerChange, skill }) => {
+const Speaking = ({
+  partData,
+  currentSkillId,
+  handleAnswerChange,
+  skill,
+  userAnswers,
+}) => {
   const { transcript, listening, resetTranscript } = useSpeechRecognition();
 
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(-1); // Start with welcome message
@@ -34,6 +40,9 @@ const Speaking = ({ partData, currentSkillId, handleAnswerChange, skill }) => {
 
   const speakText = (text, callback) => {
     if ("speechSynthesis" in window) {
+      // First, cancel any ongoing speech synthesis to avoid conflicts
+      window.speechSynthesis.cancel();
+
       const utterance = new SpeechSynthesisUtterance(text);
       utterance.lang = "en-US";
       utterance.voice = examinerVoice();
@@ -81,7 +90,7 @@ const Speaking = ({ partData, currentSkillId, handleAnswerChange, skill }) => {
 
         handleAnswerChange({ questionId: answerData.questionId, answerData });
         setThinking(false);
-        return; // Exit early
+        return;
       }
 
       setThinking(true);
@@ -109,13 +118,10 @@ const Speaking = ({ partData, currentSkillId, handleAnswerChange, skill }) => {
         0, 0, 0, 0,
       ];
 
-      // Calculate overall score as the average of the criteria scores
       const overallScore = (
         scoresArray.reduce((sum, score) => sum + score, 0) / scoresArray.length
       ).toString();
 
-      // Save the score for the current question
-      // Prepare the answer data payload
       const answerData = {
         part: partData.partNumber,
         questionId: partData.sections[0]?.questions[currentQuestionIndex]?.id,
@@ -142,9 +148,9 @@ const Speaking = ({ partData, currentSkillId, handleAnswerChange, skill }) => {
     }
   };
 
-  const handleTimer = () => {
+  const handleTimer = async () => {
     SpeechRecognition.stopListening();
-    evaluateAnswer(transcript);
+    await evaluateAnswer(transcript);
     goToNextQuestion();
     resetTranscript();
     setAiText("");
@@ -156,12 +162,12 @@ const Speaking = ({ partData, currentSkillId, handleAnswerChange, skill }) => {
       evaluateAnswer(transcript);
     }
     setCurrentQuestionIndex((prevIndex) => prevIndex + 1);
-    setQuestionRead(false); // Reset question read state
+    setQuestionRead(false);
     setTimeLeft(
       partData.partNumber === 1 || partData.partNumber === 3 ? 15 : 180
-    ); // Reset timer based on partNumber
-    resetTranscript(); // Clear the transcript for the next question
-    setAiText(""); // Clear feedback
+    );
+    resetTranscript();
+    setAiText("");
   };
 
   useEffect(() => {
@@ -195,6 +201,7 @@ const Speaking = ({ partData, currentSkillId, handleAnswerChange, skill }) => {
   }, [transcript, listening]);
 
   useEffect(() => {
+    window.speechSynthesis.cancel();
     let welcomeMessage = "";
 
     if (partData?.partNumber === 1) {
@@ -210,16 +217,28 @@ const Speaking = ({ partData, currentSkillId, handleAnswerChange, skill }) => {
     setGuidelineMessage(welcomeMessage);
 
     speakText(welcomeMessage, () => {
-      setGuidelineMessage(); // Hide the welcome message after it's spoken
-      goToNextQuestion(); // Proceed to the first question after the welcome message
+      setGuidelineMessage();
+      goToNextQuestion();
     });
 
     return () => {
       window.speechSynthesis.cancel();
       setCurrentQuestionIndex(-1);
     };
-  }, [partData.partNumber]); // Trigger effect when partData changes
+  }, [partData.partNumber]);
+  useEffect(() => {
+    const handleUnload = () => {
+      window.speechSynthesis.cancel();
+      SpeechRecognition.stopListening();
+      resetTranscript();
+      setAiText("");
+    };
 
+    window.addEventListener("beforeunload", handleUnload);
+    return () => {
+      window.removeEventListener("beforeunload", handleUnload);
+    };
+  }, []);
   return (
     <div className="flex flex-col items-center space-y-4 p-4">
       {guidelineMessage && (

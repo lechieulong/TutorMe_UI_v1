@@ -490,33 +490,44 @@ const TestLayout = ({ skillsData, practiceTestData, fullTestId }) => {
       case 3:
         setSubmitting(true);
 
-        const updateUserAnswers = dispatch(
-          submitAnswerTest({
-            userAnswers,
-            testId,
-            timeMinutesTaken: timeTakenData.timeMinutesTaken,
-            timeSecondsTaken: timeTakenData.timeSecondsTaken,
-          })
-        ).then((result) => {
-          if (result.meta.requestStatus === "fulfilled") {
-            setSkillResultIds((prev) => [...prev, result.payload.id]);
-          } else {
-            console.error(
-              "Error submitting reading test:",
-              result.error.message
+        console.log("userAnswers", userAnswers);
+
+        (async () => {
+          try {
+            const totalQuestions = getTotalQuestions(currentSkillData);
+            const result = await dispatch(
+              submitAnswerTest({
+                userAnswers: userAnswers,
+                testId,
+                timeMinutesTaken: timeTakenData.timeMinutesTaken,
+                timeSecondsTaken: timeTakenData.timeSecondsTaken,
+                totalQuestions,
+              })
             );
+
+            if (result.meta.requestStatus === "fulfilled") {
+              setSkillResultIds((prev) => [...prev, result.payload.id]);
+            } else {
+              console.error(
+                "Error submitting writing test:",
+                result.error.message
+              );
+            }
+
+            setSubmitting(false);
+            handleNextSkill();
+
+            setUserAnswers([]); // Clear user answers after submission
+            setUserAnswers([]); // Clear user answers after submission
+            if (lastSkillKey === currentSkillKey) {
+              setSubmitted(true);
+            }
+          } catch (error) {
+            console.error("Error handling writing test submission:", error);
+            setSubmitting(false);
+            setSubmitting(false);
           }
-          setUserAnswers([]);
-          if (lastSkillKey === currentSkillKey) {
-            setSubmitted(true);
-          }
-        });
-
-        setSubmitting(false);
-        handleNextSkill();
-
-        setUserAnswers([]);
-
+        })();
         break;
       default:
         console.log("Unknown skill type");

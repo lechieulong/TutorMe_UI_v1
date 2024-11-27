@@ -6,6 +6,7 @@ import Cookies from "js-cookie"; // Import js-cookie
 import { useNavigate } from "react-router-dom";
 import { GetUserByID } from '../redux/users/UserSlice';
 import { useDispatch, useSelector } from "react-redux";
+import { checkLocked } from '../redux/auth/AuthSlice';
 
 const CheckAuthUser = () => {
     const dispatch = useDispatch();
@@ -44,6 +45,54 @@ const CheckAuthUser = () => {
     return isAuthenticated; // Return the authentication status
 };
 
+const CheckLockUser = () => {
+    const dispatch = useDispatch();
+    const [isLocked, setIsLocked] = useState(false);
+    const [lockMessage, setLockMessage] = useState(null);
+
+    useEffect(() => {
+        const TOKEN = Cookies.get("authToken");
+
+        // Check if the token exists
+        if (!TOKEN) {
+            setIsLocked(false);
+            setLockMessage("No token found, user not authenticated.");
+            return;
+        }
+
+        try {
+            const decodedToken = jwtDecode(TOKEN);
+            const email = decodedToken.email;
+
+            // Dispatch action to check lock status
+            const checkLockStatus = async () => {
+                try {
+                    const data = await dispatch(checkLocked({ email })).unwrap();  // unwrap to handle resolved or rejected action
+                    if (data && data.result) {
+                        setIsLocked(true);
+                        setLockMessage(data.message || "User is locked.");
+                    } else {
+                        setIsLocked(false);
+                        setLockMessage(data.message || "User is not locked.");
+                    }
+                } catch (error) {
+                    console.error("Error checking lock status:", error);
+                    setIsLocked(false);
+                    setLockMessage("Error occurred while checking lock status.");
+                }
+            };
+
+            checkLockStatus();
+        } catch (error) {
+            console.error("Invalid token:", error);
+            setIsLocked(false);
+            setLockMessage("Invalid token, user not authenticated.");
+        }
+    }, [dispatch]);
+
+    return { isLocked, lockMessage };
+};
+
 // AdminRoute component to check admin authentication
 const AdminRoute = ({ children }) => {
     const navigate = useNavigate();
@@ -74,4 +123,4 @@ const AdminRoute = ({ children }) => {
     return children; // Render the children (AdminApp) if authenticated
 };
 
-export { AdminRoute, CheckAuthUser };
+export { AdminRoute, CheckAuthUser, CheckLockUser };

@@ -103,7 +103,7 @@ function PaymentMethod() {
                             </div>
                         </div>
                         <div className="flex justify-between space-x-4 mt-6">
-                            <button onClick={handleBack} className="w-full bg-gray-500 hover:bg-gray-600 text-white py-2 rounded-md">BACK</button>
+                            <button onClick={handleBack} className="w-full bg-gray-500 hover:bg-gray-600 text-white py-2 rounded-md">CANCEL</button>
                             <button onClick={handleCheckOut} className="w-full bg-blue-500 hover:bg-blue-600 text-white py-2 rounded-md">CHECK OUT</button>
                         </div>
                     </div>

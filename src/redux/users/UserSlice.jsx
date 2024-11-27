@@ -132,7 +132,7 @@ export const GetRandomAdminTest = createAsyncThunk(
                     },
                 }
             );
-            return response.data; // Return API response data
+            return response.data.result; // Return API response data
         } catch (error) {
             return rejectWithValue(
                 error.response?.data?.message || "Failed to fetch random admin test."

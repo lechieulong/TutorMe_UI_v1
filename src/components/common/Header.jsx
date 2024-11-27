@@ -21,13 +21,15 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 import { useEffect, useState } from "react";
 import LoginModal from "./LoginModal";
-import { CheckAuthUser } from "../../service/checkAuth";
+import { CheckAuthUser, CheckLockUser } from "../../service/checkAuth";
 import { ConsoleLevel } from "@zegocloud/zego-uikit-prebuilt";
 import { GetUserBalanceByUserID } from "../../redux/users/BalanceSlice";
+import LockedNotifyModal from "./LockedNotifyModal";
 
 const Header = () => {
   const dispatch = useDispatch();
   const isAuthenticated = CheckAuthUser();
+  const { isLocked, lockMessage } = CheckLockUser();
   const [isModalOpen, setModalOpen] = useState(false); // State to manage modal visibility
 
   const handleOpenModal = () => {
@@ -218,6 +220,13 @@ const Header = () => {
           </div>
         </nav>
       </header>
+      {isLocked && (
+        <LockedNotifyModal
+          isOpen={isLocked}
+          onLogout={handleLogout}
+          message={lockMessage}
+        />
+      )}
       <LoginModal isOpen={isModalOpen} onClose={handleCloseModal} />{" "}
       {/* Render the modal */}
     </>

@@ -242,8 +242,8 @@ const SectionForm = ({ skill, partIndex, control, setValue }) => {
                   <h3 className="text-xl font-bold mb-4 ">
                     Explains for section
                   </h3>
-                  <Controller
-                    name={`skills.${skill}.parts.${partIndex}.sections.${index}.explains`}
+                  {/* <Controller
+                    name={`skills.${skill}.parts.${partIndex}.sections.${index}.explain`}
                     control={control}
                     rules={{ required: "Section context is required" }} // Add validation
                     render={({ field }) => (
@@ -296,7 +296,7 @@ const SectionForm = ({ skill, partIndex, control, setValue }) => {
                         />
                       </div>
                     )}
-                  />
+                  /> */}
                 </div>
               )}
           </div>
@@ -310,6 +310,7 @@ const SectionForm = ({ skill, partIndex, control, setValue }) => {
             sectionType: 0,
             sectionContext: "",
             image: "",
+            explain: "",
             questions: [],
           })
         }

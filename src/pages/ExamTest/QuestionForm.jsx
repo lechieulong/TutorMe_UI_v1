@@ -212,7 +212,7 @@ const QuestionForm = ({
                   <div className="mb-4 border p-4 rounded">
                     <p className="mb-2 text-gray-600">Explain</p>
                     <Controller
-                      name={`skills.${skill}.parts.${index}.sections.${sectionIndex}.questions.${index}.explain`}
+                      name={`skills.${skill}.parts.${partIndex}.sections.${sectionIndex}.questions.${index}.explain`}
                       control={control}
                       render={({ field, fieldState }) => (
                         <div className="mb-2">
@@ -297,6 +297,7 @@ const QuestionForm = ({
                   questionName: "",
                   answers: [{ answerText: "", isCorrect: 0 }],
                   summary: "",
+                  answer: "",
                   isFromQuestionBank: false,
                   questionType: sectionType,
                   explain: "",

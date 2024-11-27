@@ -45,7 +45,12 @@ const Demo = ({
     if (existingAnswerIndex >= 0) {
       newAnswers[existingAnswerIndex].answer = value;
     } else {
-      newAnswers.push({ questionId, answer: value }); // Add a new answer with the questionId
+      newAnswers.push({
+        questionId,
+        answer: value,
+        questionType: sectionType,
+        isFromQuestionBank: false,
+      });
     }
     const name = `skills.${skill}.parts.${partIndex}.sections.${sectionIndex}.questions`;
     setValue(name, newAnswers);

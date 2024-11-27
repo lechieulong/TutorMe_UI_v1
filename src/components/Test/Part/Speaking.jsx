@@ -105,7 +105,7 @@ const Speaking = ({
       setCurrentQuestionIndex((prevIndex) => prevIndex + 1);
       setQuestionRead(false);
       setTimeLeft(
-        partData.partNumber === 1 || partData.partNumber === 3 ? 10 : 180
+        partData.partNumber === 1 || partData.partNumber === 3 ? 30 : 180
       );
       resetTranscript();
       setAiText("");

@@ -11,6 +11,7 @@ import TestExplain from "./TestExplain";
 import { GoogleGenerativeAI } from "@google/generative-ai";
 import Modal from "react-modal";
 import { generateSpeakingPrompt } from "../../components/Test/Part/generateSpeakingPrompt";
+import { generateWritingPrompt } from "../../components/Test/Part/generateSpeakingPrompt";
 
 const genAI = new GoogleGenerativeAI(import.meta.env.VITE_GEN_AI);
 
@@ -236,10 +237,12 @@ const TestLayout = ({ skillsData, practiceTestData, fullTestId }) => {
 
       const prompt = generateSpeakingPrompt(
         userAnswers.questionName,
-        userAnswers.answers[0].answerText
+        userAnswers.answers[0].answerText,
+        1
       );
 
       const result = await model.generateContent(prompt);
+      console.log("response AI finish ");
 
       const aiResponse =
         result?.response?.candidates?.[0]?.content?.parts?.[0]?.text;
@@ -253,9 +256,7 @@ const TestLayout = ({ skillsData, practiceTestData, fullTestId }) => {
       }
 
       const avgScore =
-        overallScoreLine
-          .split(":")[1] // Extract part after the colon
-          ?.match(/[\d.]+/)?.[0] || "N/A"; // Extract the numeric score (e.g., 3.5, 7.0) // Default to "N/A" if no numeric score is found
+        overallScoreLine.split(":")[1]?.match(/[\d.]+/)?.[0] || "N/A";
 
       return {
         overallScore: avgScore,

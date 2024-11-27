@@ -183,6 +183,8 @@ const QuestionBank = () => {
           <thead>
             <tr>
               <th className="border px-4 py-2">Question</th>
+              <th className="border px-4 py-2">Question type</th>
+              <th className="border px-4 py-2">Answers</th>
               <th className="border px-4 py-2">Actions</th>
             </tr>
           </thead>
@@ -191,6 +193,14 @@ const QuestionBank = () => {
               questions.map((question) => (
                 <tr key={question.id}>
                   <td className="border px-4 py-2">{question.questionName}</td>
+                  <td className="border px-4 py-2">{question.questionType}</td>
+                  <td className="border px-4 py-2">
+                    {"["}
+                    {question.answers.map((a) => (
+                      <p>{a.answerText} , </p>
+                    ))}
+                    {"]"}
+                  </td>
                   <td className="border px-4 py-2 flex space-x-2">
                     <button onClick={() => updateQuestion(question)}>
                       <FontAwesomeIcon

@@ -34,6 +34,7 @@ export const ACTIONS = {
   REQUEST_FORGOT: "forgot-password",
   RESET_PASSWORD: "reset-password",
   UPDATE_ROLE: "update-role",
+  IS_LOCKED: "is-locked",
 
   FETCH_TESTS: "getTests",
   SUBMIT_TEST: "submitTest",

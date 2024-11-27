@@ -166,16 +166,22 @@ const EducationSection = () => {
 
     const handleTestSkills = async () => {
         try {
-            const response = await dispatch(GetRandomAdminTest());
-            if (response?.id) {
-                // Chuyển hướng đến trang chi tiết bài kiểm tra
-                window.location.href = `/testDetail/${response.id}`;
+            const resultAction = await dispatch(GetRandomAdminTest());
+            if (GetRandomAdminTest.fulfilled.match(resultAction)) {
+                const testExam = resultAction.payload; // Lấy dữ liệu từ payload
+                console.log("Test exam: ", testExam);
+    
+                if (testExam?.id) {
+                    window.location.href = `/testDetail/${testExam.id}`;
+                } else {
+                    toast.error("No test exam available now!");
+                }
             } else {
-                toast.error("No test exam available now!");
+                toast.error("Failed to fetch test. Please try again.");
             }
         } catch (error) {
             console.error("Error fetching test:", error);
-            alert("An error occurred while fetching the test. Please try again.");
+            toast.error("An error occurred while fetching the test. Please try again.");
         }
     };
 

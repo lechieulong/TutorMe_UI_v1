@@ -27,6 +27,7 @@ const CreateTest = ({ testId, skills, pageType }) => {
           setSelectedSkills={setSelectedSkills}
           selectedSkills={selectedSkills}
           skillsCourse={skills}
+          setValue={setValue}
         />
       ),
     },
@@ -103,7 +104,7 @@ const CreateTest = ({ testId, skills, pageType }) => {
   };
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)}>
+    <form onSubmit={handleSubmit(onSubmit)} className="w-screen">
       <div className="mt-16 ">
         <div className="">
           <ul className="relative flex flex-row justify-between gap-x-2">

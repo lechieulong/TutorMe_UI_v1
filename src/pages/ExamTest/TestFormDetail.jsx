@@ -7,6 +7,7 @@ const TestFormDetail = ({
   selectedSkills,
   setSelectedSkills,
   skillsCourse,
+  setValue,
 }) => {
   let skills = ["Reading", "Listening", "Writing", "Speaking"];
   skills = skillsCourse ? skillsCourse : skills;
@@ -43,7 +44,12 @@ const TestFormDetail = ({
       </div>
 
       {selectedSkills.map((skill) => (
-        <SkillForm key={skill} skill={skill} control={control} />
+        <SkillForm
+          key={skill}
+          skill={skill}
+          control={control}
+          setValue={setValue}
+        />
       ))}
     </div>
   );

@@ -89,6 +89,12 @@ const App = () => {
           {/* Test  common*/}
           <Route path="/" element={<Home />} />
           <Route path="/demo" element={<Demo />} />
+          <Route
+            path="/demoTiny"
+            element={
+              <CreateTest testId="1" skills={["Listening"]} pageType="lesson" />
+            }
+          />
           <Route path="*" element={<NotFound />} />
           <Route path="/gemini" element={<SpeakingGemini />} />
           {/* Test  exam*/}

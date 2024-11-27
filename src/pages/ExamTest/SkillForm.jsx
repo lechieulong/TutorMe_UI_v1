@@ -10,7 +10,7 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
-const SkillForm = ({ skill, control }) => {
+const SkillForm = ({ skill, control, setValue }) => {
   // Define type mapping for skills
   const skillTypeMap = {
     Reading: 0,
@@ -92,7 +92,7 @@ const SkillForm = ({ skill, control }) => {
 
       {/* Render PartForm */}
       <div className="mt-6">
-        <PartForm skill={skill} control={control} />
+        <PartForm skill={skill} control={control} setValue={setValue} />
       </div>
     </div>
   );

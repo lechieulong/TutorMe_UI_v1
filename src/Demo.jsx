@@ -1,5 +1,7 @@
 import React, { useState, useRef, useEffect } from "react";
 import { Editor } from "@tinymce/tinymce-react";
+import { useFieldArray, Controller } from "react-hook-form";
+import { v4 as uuidv4 } from "uuid";
 
 // Separate InputAnswer component to handle input field
 const InputAnswer = ({ index, onChange, value, questionId }) => {
@@ -20,14 +22,23 @@ const InputAnswer = ({ index, onChange, value, questionId }) => {
   );
 };
 
-const Demo = () => {
+const Demo = ({
+  skill,
+  partIndex,
+  sectionIndex,
+  control,
+  sectionType,
+  setValue,
+}) => {
+  const { fields, append, remove } = useFieldArray({
+    name: `skills.${skill}.parts.${partIndex}.sections.${sectionIndex}`,
+    control,
+  });
+
   const [answers, setAnswers] = useState([]); // To store user answers with questionId
-  console.log("🚀 ~ Demo ~ answers:", answers);
   const [answersInput, setAnswersInput] = useState([]); // To store user answers with questionId
-  console.log("🚀 ~ Demo ~ answersInput:", answersInput);
   const [inputFields, setInputFields] = useState([]); // To store detected input fields
   const [submittedContent, setSubmittedContent] = useState(""); // To store the submitted content
-  console.log("🚀 ~ Demo ~ submittedContent:", submittedContent);
   const editorRef = useRef(null);
 
   //   Handle the input change
@@ -43,7 +54,8 @@ const Demo = () => {
     } else {
       newAnswers.push({ questionId, answer: value }); // Add a new answer with the questionId
     }
-
+    const name = `skills.${skill}.parts.${partIndex}.sections.${sectionIndex}.questions`;
+    setValue(name, newAnswers);
     setAnswers(newAnswers);
   };
 
@@ -66,16 +78,21 @@ const Demo = () => {
 
   // Collect all content including answers from the input fields
   const logContent = () => {
-    if (editorRef.current) {
-      answers.forEach((answer, index) => {
-        console.log(
-          `Answer from question ${answer.questionId}: ${answer.answer}`
-        );
-      });
+    // if (editorRef.current) {
+    //   answers.forEach((answer, index) => {
+    //     console.log(
+    //       `Answer from question ${answer.questionId}: ${answer.answer}`
+    //     );
+    //   });
 
-      // Log the entire content of the editor
-      console.log("Full editor content:", editorRef.current.getContent());
-    }
+    //   // Log the entire content of the editor
+    //   console.log("Full editor content:", editorRef.current.getContent());
+    // }
+    answersInput.forEach((answer, index) => {
+      console.log(
+        `Answer from question ${answer.questionId}: ${answer.answerText}`
+      );
+    });
   };
 
   // Handle form submission
@@ -100,99 +117,75 @@ const Demo = () => {
   };
 
   // Detect input fields dynamically in the editor's content
-  const detectInputFields = () => {
-    if (editorRef.current) {
-      const inputs = editorRef.current.getBody().querySelectorAll("input");
-      setInputFields(inputs); // Set input fields to state
-    }
+  const detectInputFields = (content) => {
+    const parser = new DOMParser();
+    const doc = parser.parseFromString(content, "text/html");
+    const inputs = doc.querySelectorAll("input");
+    setInputFields(inputs); // Set input fields to state
   };
 
-  // Monitor the editor content changes and detect input fields
-  useEffect(() => {
-    // Make sure the editor reference is initialized and not null
-    if (editorRef.current) {
-      // Initially detect input fields
-      detectInputFields();
-
-      // Set up an event listener to detect content changes
-      const editor = editorRef.current;
-      editor.on("change", detectInputFields); // Detect input fields on content change
-
-      // Cleanup the event listener when the component is unmounted
-      return () => {
-        if (editor) {
-          editor.off("change", detectInputFields);
-        }
-      };
-    }
-  }, []); // Only run once, after the initial mount
-
-  // Function to handle the dynamic rendering of content with input fields
-  const renderContentWithInputs = () => {
-    let questionbank;
-    let contentWithInputs = submittedContent;
-    // answers.forEach((answer) => {
-    //   // Replace placeholders with input elements (or just show the answer if it exists)
-    //   const inputElement = `<input type="text" class="editor-input" value="${answer.answer}" data-question-id="${answer.questionId}" />`;
-    //   contentWithInputs = contentWithInputs.replace(
-    //     `{{questionId:${answer.questionId}}}`,
-    //     inputElement
-    //   );
-    // });
-    return contentWithInputs;
+  const onEditorChange = (field, content) => {
+    detectInputFields(content);
+    field.onChange(content);
   };
 
   return (
     <div>
-      <Editor
-        onInit={(evt, editor) => (editorRef.current = editor)} // Initialize editor reference
-        apiKey={import.meta.env.VITE_TINI_APIKEY} // Your TinyMCE API key
-        initialValue="<p>Start typing here...</p>"
-        init={{
-          height: "300px",
-          menubar: "file edit view insert format tools table help",
-          plugins: [
-            "advlist",
-            "autolink",
-            "lists",
-            "link",
-            "image",
-            "charmap",
-            "preview",
-            "anchor",
-            "searchreplace",
-            "visualblocks",
-            "code",
-            "fullscreen",
-            "insertdatetime",
-            "media",
-            "table",
-            "help",
-            "wordcount",
-          ],
-          toolbar:
-            "undo redo | blocks | bold italic underline | backcolor forecolor | alignleft aligncenter " +
-            "alignright alignjustify | bullist numlist outdent indent | removeformat | help | fullscreen | insertinput",
-          setup: (editor) => {
-            // Custom button for inserting InputAnswer components
-            editor.ui.registry.addButton("insertinput", {
-              text: "Insert Input",
-              onAction: () => {
-                const questionId = new Date().getTime(); // Generate a unique questionId
-                editor.insertContent(
-                  ` <input type="text" placeholder="Enter your answer" class="editor-input" data-question-id="${questionId}" />`
-                );
-                // Trigger input field detection after content is changed
-                detectInputFields();
-              },
-            });
-          },
-          content_style:
-            "body { font-family:Helvetica,Arial,sans-serif; font-size:14px }",
-        }}
+      <Controller
+        name={`skills.${skill}.parts.${partIndex}.sections.${sectionIndex}.sectionContext`}
+        control={control}
+        rules={{ required: "Section context is required" }} // Add validation
+        render={({ field }) => (
+          <div className="mb-2">
+            <Editor
+              onInit={(_, editor) => (editorRef.current = editor)}
+              apiKey={import.meta.env.VITE_TINI_APIKEY}
+              onEditorChange={(v) => onEditorChange(field, v)}
+              initialValue={"<p>Start typing here...</p>"} // Set initial value
+              init={{
+                height: "300px",
+                menubar: "file edit view insert format tools table help",
+                plugins: [
+                  "advlist",
+                  "autolink",
+                  "lists",
+                  "link",
+                  "image",
+                  "charmap",
+                  "preview",
+                  "anchor",
+                  "searchreplace",
+                  "visualblocks",
+                  "code",
+                  "fullscreen",
+                  "insertdatetime",
+                  "media",
+                  "table",
+                  "help",
+                  "wordcount",
+                ],
+                toolbar:
+                  "undo redo | blocks | bold italic underline | backcolor forecolor | alignleft aligncenter " +
+                  "alignright alignjustify | bullist numlist outdent indent | removeformat | help | fullscreen | insertinput",
+                setup: (editor) => {
+                  editor.ui.registry.addButton("insertinput", {
+                    text: "Insert Input",
+                    onAction: () => {
+                      const questionId = uuidv4(); // Generate unique questionId
+                      editor.insertContent(
+                        `<input type="text" placeholder="Enter your answer" class="editor-input" data-question-id="${questionId}" />`
+                      );
+                    },
+                  });
+                },
+                content_style:
+                  "body { font-family:Helvetica,Arial,sans-serif; font-size:14px; padding:10px; margin:0; }",
+              }}
+            />
+          </div>
+        )}
       />
 
-      {/* Conditionally render InputAnswer components based on presence of input elements */}
       {inputFields.length > 0 && (
         <div id="input-placeholder">
           {Array.from({ length: inputFields.length }).map((_, index) => {
@@ -200,14 +193,15 @@ const Demo = () => {
               inputFields[index].getAttribute("data-question-id");
             return (
               <InputAnswer
-                key={questionId} // Use questionId as key
+                key={questionId}
                 index={index}
                 onChange={handleAnswerChange}
                 value={
                   answers.find((answer) => answer.questionId === questionId)
                     ?.answer || ""
-                } // Bind answer state to the input field
-                questionId={questionId} // Pass questionId to InputAnswer
+                }
+                questionId={questionId}
+                control={control}
               />
             );
           })}
@@ -229,7 +223,6 @@ const Demo = () => {
         Submit
       </button>
 
-      {/* Render submitted content with input fields */}
       {submittedContent && (
         <div className="mt-6 p-4 border border-gray-300">
           <h2>Submitted Content:</h2>

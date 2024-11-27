@@ -46,7 +46,7 @@ const sectionTypesBySkill = {
     { value: 3, label: "Part 3" },
   ],
 };
-const SectionForm = ({ skill, partIndex, control }) => {
+const SectionForm = ({ skill, partIndex, control, setValue }) => {
   const { fields, append, remove } = useFieldArray({
     name: `skills.${skill}.parts.${partIndex}.sections`,
     control,
@@ -175,14 +175,24 @@ const SectionForm = ({ skill, partIndex, control }) => {
             {skill === "Reading" || skill === "Listening" ? (
               sectionType ? (
                 <>
-                  <QuestionForm
-                    skill={skill}
-                    partIndex={partIndex}
-                    sectionIndex={index}
-                    control={control}
-                    sectionType={Number(sectionType)}
-                  />
-                  <Demo />
+                  {skill === "Listening" && sectionType == 1 ? (
+                    <Demo
+                      skill={skill}
+                      partIndex={partIndex}
+                      sectionIndex={index}
+                      control={control}
+                      sectionType={Number(sectionType)}
+                      setValue={setValue}
+                    />
+                  ) : (
+                    <QuestionForm
+                      skill={skill}
+                      partIndex={partIndex}
+                      sectionIndex={index}
+                      control={control}
+                      sectionType={Number(sectionType)}
+                    />
+                  )}
                 </>
               ) : (
                 <p className="text-red-500">
@@ -207,6 +217,7 @@ const SectionForm = ({ skill, partIndex, control }) => {
           append({
             sectionGuide: "",
             sectionType: 0,
+            sectionContext: "",
             image: "",
             questions: [],
           })

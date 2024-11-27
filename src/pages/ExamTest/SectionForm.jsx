@@ -5,6 +5,7 @@ import { faMultiply } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useDispatch } from "react-redux";
 import { uploadFile } from "../../redux/testExam/TestSlice";
+import Demo from "../../Demo";
 
 const sectionTypesBySkill = {
   Reading: [
@@ -45,7 +46,7 @@ const sectionTypesBySkill = {
     { value: 3, label: "Part 3" },
   ],
 };
-const SectionForm = ({ skill, partIndex, control }) => {
+const SectionForm = ({ skill, partIndex, control, setValue }) => {
   const { fields, append, remove } = useFieldArray({
     name: `skills.${skill}.parts.${partIndex}.sections`,
     control,
@@ -173,13 +174,26 @@ const SectionForm = ({ skill, partIndex, control }) => {
 
             {skill === "Reading" || skill === "Listening" ? (
               sectionType ? (
-                <QuestionForm
-                  skill={skill}
-                  partIndex={partIndex}
-                  sectionIndex={index}
-                  control={control}
-                  sectionType={Number(sectionType)}
-                />
+                <>
+                  {skill === "Listening" && sectionType == 1 ? (
+                    <Demo
+                      skill={skill}
+                      partIndex={partIndex}
+                      sectionIndex={index}
+                      control={control}
+                      sectionType={Number(sectionType)}
+                      setValue={setValue}
+                    />
+                  ) : (
+                    <QuestionForm
+                      skill={skill}
+                      partIndex={partIndex}
+                      sectionIndex={index}
+                      control={control}
+                      sectionType={Number(sectionType)}
+                    />
+                  )}
+                </>
               ) : (
                 <p className="text-red-500">
                   Please select a Section Type before adding questions.
@@ -203,6 +217,7 @@ const SectionForm = ({ skill, partIndex, control }) => {
           append({
             sectionGuide: "",
             sectionType: 0,
+            sectionContext: "",
             image: "",
             questions: [],
           })

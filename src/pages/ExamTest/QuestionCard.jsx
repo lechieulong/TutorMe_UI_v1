@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useCallback } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { getQuestionsBank } from "../../redux/testExam/TestSlice";
-import { selectQuestions } from "../../redux/testExam/TestSlice"; // Import the selector
+import { selectQuestions } from "../../redux/testExam/TestSlice";
 import { toast } from "react-toastify";
 
 const QuestionCard = ({
@@ -10,24 +10,23 @@ const QuestionCard = ({
   disabledQuestions = [],
   sectionType,
 }) => {
-  const questionsSelected = useSelector(selectQuestions); // Get selected questions from the Redux store
-  const [questions, setQuestions] = useState([]); // Initialize as an empty array
+  const questionsSelected = useSelector(selectQuestions);
+  const [questions, setQuestions] = useState([]);
   const [selectedQuestions, setSelectedQuestions] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const [hasMore, setHasMore] = useState(true);
-  const [page, setPage] = useState(1); // Track the current page
+  const [page, setPage] = useState(1);
   const dispatch = useDispatch();
 
   const { user } = useSelector((state) => state.user);
 
-  // Fetch questions from the backend with pagination
   const fetchQuestions = useCallback(async () => {
     if (isLoading || !hasMore) return;
 
     setIsLoading(true);
     try {
       const fetchedQuestions = await dispatch(
-        getQuestionsBank({ userId: user.id, sectionType, page }) // Pass page as a param
+        getQuestionsBank({ userId: user.id, sectionType, page })
       ).unwrap();
 
       if (fetchedQuestions.length > 0) {

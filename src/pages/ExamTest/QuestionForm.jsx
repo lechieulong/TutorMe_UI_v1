@@ -134,18 +134,6 @@ const QuestionForm = ({
         </div>
       )}
 
-      {skill === "Listening" && sectionType === 1 && (
-        <div className="mb-4 border p-4 rounded">
-          <label className="block mb-2 font-bold">Enter Table Content:</label>
-          <TableInput
-            control={control}
-            skill={skill}
-            partIndex={partIndex}
-            sectionIndex={sectionIndex}
-          />
-        </div>
-      )}
-
       {fields.map((question, index) => (
         <div key={question.id} className="mb-4 border p-4 rounded">
           <div className="flex p-2 justify-between gap-2 items-center">
@@ -263,7 +251,16 @@ const QuestionForm = ({
                 ))}
             </>
           ) : (
-            <p>{question.questionName}</p>
+            <>
+              <p>{question.questionName}</p>
+              <p>{question.questionType}</p>
+              {question.answers.length > 0 &&
+                question.answers.map((a) => (
+                  <div>
+                    <p>AnswerText: {a.answerText}</p>
+                  </div>
+                ))}
+            </>
           )}
         </div>
       ))}

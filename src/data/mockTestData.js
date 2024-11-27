@@ -25,6 +25,11 @@ const mockTestData = {
                   { id: 'e9a2a776-61ba-4b74-8a7f-84deff6e1037', answerText: "Correct answer", isCorrect: 1 }, // Correct
                   { id: '2e8cf23d-8ca3-44e7-a04f-638f4af31ec8', answerText: "Incorrect answer", isCorrect: 0 }, // Incorrect
                 ],
+                userAnswer:[{
+                  answerText: "hydra",
+                  answerId: "e9a2a776-61ba-4b74-8a7f-84deff6e1052"
+                }
+                ]
               },
               {
                 id: '0d5855f4-2556-470e-bd5d-01d51aa7e90e', // GUID for question 2
@@ -33,6 +38,11 @@ const mockTestData = {
                   { id: '4c9e7e87-b9ae-4bc1-8c1f-b73371ab2df8', answerText: "Correct answer", isCorrect: 1 }, // Correct
                   { id: '511c3e91-0082-4d2b-b46b-dc4b6e23038a', answerText: "Incorrect answer", isCorrect: 0 }, // Incorrect
                 ],
+                userAnswer:[{
+                  answerText: "Hhahahydyeefsdfdsfsf",
+                  answerId: "e9a2a776-61ba-4b74-8a7f-84deff6e1234"
+                }
+                ]
               },
             ],
           },
@@ -48,6 +58,11 @@ const mockTestData = {
                 answers: [
                   { id: 'b1824b0a-38aa-4db9-8ef1-c05f45c327f1', answerText: "Real marid", isCorrect: 1 }, // Correct
                 ],
+                userAnswer:[{
+                  answerText: "hydra",
+                  answerId: "e2a3a776-61ba-4b74-8a7f-84deff6e1052"
+                }
+                ]
               },
               {
                 id: '0d7bc25e-5db1-42ca-9bde-32efc08d9cf1', // GUID for question 4
@@ -57,6 +72,11 @@ const mockTestData = {
                   { id: '6bc14fc4-7bba-475e-9173-3e3a3a45bc8a', answerText: "cdfssdf", isCorrect: 1 }, // Correct
                   { id: '6bc14fc4-7bba-475e-9173-3e3a3a45bc8a', answerText: "cdfssdf", isCorrect: 1 }, // Correct
                 ],
+                userAnswer:[{
+                  answerText: "nhi",
+                  answerId: "e2g9a776-61ba-4b74-8a7f-84deff6e1052"
+                }
+                ]
               },
              
             ],
@@ -295,6 +315,7 @@ const mockTestData = {
                   { id: '44bdb90d-f6b5-4086-9f01-fdc2deaa7d73', answerText: "Correct answer", isCorrect: 1 },
                   { id: '4c3d2e96-fb39-4658-9a56-5bcbab0281cc', answerText: "Incorrect answer", isCorrect: 0 },
                 ],
+                
               },
             ],
           },
@@ -436,90 +457,62 @@ const mockTestData = {
     ],
   },
   writing: {
-    id: '7f0ec5a8-8017-47b1-b848-53a7bc6de993', // GUID for writing
-    duration: 60,
-    type: 2,
-    parts: [
-      {
-        id: 'b65b2391-5dbf-4673-81c1-5271d055482b', // GUID for part 5
-        partNumber: 1,
-        contentText: "<p>Write about the following topic.</p>",
-        audio: null,
-        image:
-          "https://www.pexels.com/photo/document-on-top-of-stationery-669619.jpeg",
-        questionName: "Writing Section 1",
-        sections: [
-          {
-            id: '3a537a52-1c94-4973-9f4e-d1bd953d8ef8', // GUID for section 7
-            sectionGuide: "Write at least 250 words on the following topic:",
-            sectionType: 1,
-            image: "",
-            questions: [
-              {
-                id: '74e032d5-e672-4e53-b2d1-c4dbf8ee2b1e', // GUID for question 14
-                questionName:
-                  "Discuss the impact of technology on communication.",
-                answers: [], // No answers for writing questions
-              },
-            ],
-          },
-        ],
-      },
-      {
-        id: 'd7400c7a-c66e-4010-b5ba-3b5e1c74afc8', // GUID for part 6
-        partNumber: 2,
-        contentText: "<p>Writing Task 2 prompt.</p>",
-        audio: null,
-        image:
-          "https://www.pexels.com/photo/close-up-photo-of-ballpoint-pen-on-paper-590582.jpeg",
-        questionName: "Writing Section 2",
-        sections: [
-          {
-            id: 'd3d41483-82eb-4d88-b87a-95f86eebc5f7', // GUID for section 8
-            sectionGuide:
-              "Write a letter to your friend inviting them to your birthday party:",
-            sectionType: 1,
-            image: "",
-            questions: [
-              {
-                id: 'd8d2c7ee-f76e-4f00-b058-70893bc21d43', // GUID for question 15
-                questionName:
-                  "What details should you include in the invitation?",
-                answers: [], // No answers for writing questions
-              },
-            ],
-          },
-        ],
-      },
-      {
-        id: 2,
-        partNumber: 2,
-        contentText: "<p>Learn additional vocabulary words.</p>",
-        audio: null,
-        image: "https://unsplash.com/photos/jGm1kjkVp8I",
-        questionName: "Vocabulary Section 2",
-        sections: [
-          {
-            id: 2,
-            sectionGuide: "Use the following words in a sentence:",
-            sectionType: 5,
-            image: "",
-            questions: [
-              {
-                id: 3,
-                questionName: "Use 'ambiguous' in a sentence.",
-                answers: [],
-              },
-              {
-                id: 4,
-                questionName: "Use 'cognizant' in a sentence.",
-                answers: [],
-              },
-            ],
-          },
-        ],
-      },
-    ],
+      id: '7f0ec5a8-8017-47b1-b848-53a7bc6de993', // GUID for writing
+      duration: 60,
+      type: 2,
+      parts: [
+        {
+          id: 'b65b2391-5dbf-4673-81c1-5271d055482b', // GUID for part 5
+          partNumber: 1,
+          contentText: "<p>Write about the following topic.</p>",
+          audio: null,
+          image:
+            "https://www.pexels.com/photo/document-on-top-of-stationery-669619.jpeg",
+          questionName: "Writing Section 1",
+          sections: [
+            {
+              id: '3a537a52-1c94-4973-9f4e-d1bd953d8ef8', // GUID for section 7
+              sectionGuide: "Write at least 250 words on the following topic:",
+              sectionType: 1,
+              image: "",
+              questions: [
+                {
+                  id: '74e032d5-e672-4e53-b2d1-c4dbf8ee2b1e', // GUID for question 14
+                  questionName:
+                    "Discuss the impact of technology on communication.",
+                  answers: [], // No answers for writing questions
+                },
+              ],
+            },
+          ],
+        },
+        {
+          id: 'd7400c7a-c66e-4010-b5ba-3b5e1c74afc8', // GUID for part 6
+          partNumber: 2,
+          contentText: "<p>Writing Task 2 prompt.</p>",
+          audio: null,
+          image:
+            "https://www.pexels.com/photo/close-up-photo-of-ballpoint-pen-on-paper-590582.jpeg",
+          questionName: "Writing Section 2",
+          sections: [
+            {
+              id: 'd3d41483-82eb-4d88-b87a-95f86eebc5f7', // GUID for section 8
+              sectionGuide:
+                "Write a letter to your friend inviting them to your birthday party:",
+              sectionType: 1,
+              image: "",
+              questions: [
+                {
+                  id: 'd8d2c7ee-f76e-4f00-b058-70893bc21d43', // GUID for question 15
+                  questionName:
+                    "Some people think that parents should teach their children how to be good members of society. Others, however, believe that school is the best place to learn this. Discuss both views and give your own opinion",
+                  answers: [], // No answers for writing questions
+                },
+              ],
+            },
+          ],
+        },
+      ],
   },
   speaking: {
     id: '7f0ec5a8-8017-47b1-b848-53a7bc6de993', // GUID for writing

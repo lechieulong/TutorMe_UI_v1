@@ -4,7 +4,7 @@ import CourseLessonCard from "../../Mentor/component/CourseLessonCard";
 import CreateCourseLesson from "../../Mentor/component/CreateCourseLesson";
 import { FaAngleDown, FaAngleUp } from "react-icons/fa";
 
-const CoursePartCard = ({ isCourseLecture, skillId, userRole, isEnrolled }) => {
+const CoursePartCard = ({ mentorAndList, skillId, userRole, isEnrolled }) => {
   const [courseParts, setCourseParts] = useState([]);
   const [collapsedParts, setCollapsedParts] = useState({});
   const [showLessonForm, setShowLessonForm] = useState({});
@@ -20,7 +20,6 @@ const CoursePartCard = ({ isCourseLecture, skillId, userRole, isEnrolled }) => {
       // Sắp xếp courseParts theo trường order trước khi set vào state
       const sortedCourseParts = response.data.sort((a, b) => a.order - b.order);
       setCourseParts(sortedCourseParts);
-
       const initialCollapsedState = sortedCourseParts.reduce((acc, part) => {
         acc[part.id] = true;
         return acc;
@@ -55,17 +54,6 @@ const CoursePartCard = ({ isCourseLecture, skillId, userRole, isEnrolled }) => {
     }));
   };
 
-  const handleCreateTestClick = async (partId) => {
-    try {
-      const response = await axios.get(
-        `https://localhost:7030/api/CourseSkills/DescriptionByCoursePart/${partId}`
-      );
-      console.log("Course Part Description:", response.data);
-    } catch (error) {
-      console.error("Failed to fetch description:", error);
-    }
-  };
-
   const handleFormClose = (partId) => {
     setShowLessonForm((prev) => ({
       ...prev,
@@ -89,7 +77,7 @@ const CoursePartCard = ({ isCourseLecture, skillId, userRole, isEnrolled }) => {
           className="border rounded-md p-4 mb-4 shadow-md bg-[#EEEDEB]"
         >
           <div className="flex gap-2 justify-end">
-            {isCourseLecture && (
+            {mentorAndList && (
               <>
                 <button
                   type="button"
@@ -98,17 +86,10 @@ const CoursePartCard = ({ isCourseLecture, skillId, userRole, isEnrolled }) => {
                 >
                   Create Lesson
                 </button>
-                <button
-                  type="button"
-                  onClick={() => handleCreateTestClick(coursePart.id)}
-                  className="py-2 px-3 text-sm font-medium rounded-lg border border-gray-200 bg-white text-gray-800 shadow-sm hover:bg-gray-50 focus:outline-none focus:bg-gray-50"
-                >
-                  Create Test
-                </button>
               </>
             )}
           </div>
-          
+
           <div
             onClick={() => toggleCollapse(coursePart.id)}
             className="cursor-pointer flex items-center gap-2"
@@ -128,10 +109,11 @@ const CoursePartCard = ({ isCourseLecture, skillId, userRole, isEnrolled }) => {
             />
           )}
           <div
-            className={`transition-all duration-500 ease-in-out ${collapsedParts[coursePart.id]
+            className={`transition-all duration-500 ease-in-out ${
+              collapsedParts[coursePart.id]
                 ? "max-h-0 opacity-0"
                 : "opacity-100"
-              }`}
+            }`}
             style={{
               maxHeight: collapsedParts[coursePart.id] ? 0 : "60vh",
               overflowY: collapsedParts[coursePart.id] ? "hidden" : "auto",
@@ -139,13 +121,11 @@ const CoursePartCard = ({ isCourseLecture, skillId, userRole, isEnrolled }) => {
             }}
           >
             <CourseLessonCard
-              isCourseLecture={isCourseLecture}
+              mentorAndList={mentorAndList}
               coursePartId={coursePart.id}
               onLessonCreated={handleLessonCreated}
-              userRole={userRole}
               isEnrolled={isEnrolled}
             />
-
           </div>
         </div>
       ))}

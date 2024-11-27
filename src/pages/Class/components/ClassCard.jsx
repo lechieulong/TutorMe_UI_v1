@@ -1,8 +1,23 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import axios from "axios";
+import { styled, alpha } from "@mui/material/styles";
+import Switch from "@mui/material/Switch";
+
+const GreenSwitch = styled(Switch)(({ theme }) => ({
+  "& .MuiSwitch-switchBase.Mui-checked": {
+    color: "#007549",
+    "&:hover": {
+      backgroundColor: alpha("#007549", theme.palette.action.hoverOpacity),
+    },
+  },
+  "& .MuiSwitch-switchBase.Mui-checked + .MuiSwitch-track": {
+    backgroundColor: "#007549",
+  },
+}));
 
 const ClassCard = ({
+  mentorAndList,
   classItem,
   switchState,
   onSwitchChange,
@@ -33,11 +48,15 @@ const ClassCard = ({
     fetchEnabledStatus();
   }, [classItem.id]);
 
-  const handleSwitchChange = async () => {
-    const newStatus = !isSwitchOn;
+  if (!isSwitchOn && !mentorAndList) {
+    return null;
+  }
+
+  const handleSwitchChange = async (event) => {
+    const newStatus = event.target.checked;
     const confirmationMessage = newStatus
-      ? "Bạn có chắc muốn bật hiển thị class không?"
-      : "Bạn có chắc muốn tắt hiển thị class không?";
+      ? "Bạn có chắc muốn bật hiển thị lớp học này không?"
+      : "Bạn có chắc muốn tắt hiển thị lớp học này không?";
 
     if (window.confirm(confirmationMessage)) {
       try {
@@ -51,72 +70,66 @@ const ClassCard = ({
         if (typeof response.data.isEnabled === "boolean") {
           setIsSwitchOn(response.data.isEnabled);
           alert(
-            `Class đã được ${
+            `Lớp học đã được ${
               response.data.isEnabled ? "hiển thị" : "ẩn"
             } thành công.`
           );
-          onSwitchChange(classItem.id, response.data.isEnabled);
+          onSwitchChange &&
+            onSwitchChange(classItem.id, response.data.isEnabled);
         } else {
           throw new Error("Phản hồi từ API không hợp lệ");
         }
       } catch (error) {
-        console.error("Cập nhật trạng thái class thất bại", error);
+        console.error("Cập nhật trạng thái lớp học thất bại", error);
       }
     }
   };
 
   const handleCardClick = () => {
     if (!isSwitchOn) {
-      alert("Lớp học này không khả dụng.");
-      onSelect(false);
+      alert("Lớp học này hiện không khả dụng.");
+      onSelect && onSelect(false);
     } else {
       onSelect && onSelect(classItem.id);
-
       if (location.pathname.includes("/classOfCourse")) {
         navigate(`/classDetail/${classItem.courseId}/${classItem.id}`);
       }
     }
   };
 
+  const cardClassName = location.pathname.includes("/classOfCourse")
+    ? "flex-shrink-0 w-full sm:w-1/1 md:w-1/2 lg:w-1/2 p-2 cursor-pointer"
+    : "flex-shrink-0 w-full sm:w-1/2 md:w-1/3 lg:w-1/4 p-2 cursor-pointer";
+
   return (
-    <div
-      className={`flex-shrink-0 w-1/4 p-1 cursor-pointer transition-transform duration-300 ${
-        isActive
-          ? "border-2 border-green-300 rounded-lg"
-          : "border border-transparent"
-      }`}
-      onClick={handleCardClick}
-    >
-      <div className="border rounded-md shadow-md overflow-hidden transition-shadow duration-300 relative">
-        <div className="p-4">
-          <h5 className="font-bold text-gray-700">{classItem.className}</h5>
-          <p className="text-gray-600">{classItem.classDescription}</p>
-          <p className="text-gray-500">
+    <div className={cardClassName} onClick={handleCardClick}>
+      <div
+        className={`border rounded-lg shadow hover:shadow-lg transition-transform duration-200 ${
+          isActive ? "border-green-400" : "border-gray-200"
+        }`}
+      >
+        <div className="pl-4 pr-4 pt-4 bg-white">
+          <h5 className="text-lg font-semibold text-gray-800">
+            {classItem.className}
+          </h5>
+          <p className="text-sm text-gray-500 mt-1">
             Thời gian: {classItem.startTime} - {classItem.endTime}
           </p>
-          <p className="text-gray-500">
-            Ngày bắt đầu: {new Date(classItem.startDate).toLocaleDateString()}
+          <p className="text-sm text-gray-500 mt-1">
+            Người ghi danh: {classItem.enrollmentCount}
           </p>
-          <p className="text-gray-500">
-            Ngày kết thúc: {new Date(classItem.endDate).toLocaleDateString()}
+          <p className="text-sm text-gray-500 mt-1">
+            Ngày bắt đầu: {classItem.startDate}
           </p>
         </div>
 
-        {userRole !== "USER" && (
-          <div className="absolute bottom-4 right-4 flex items-center">
-            <input
-              type="checkbox"
-              className="hidden peer"
-              id={`switch-${classItem.id}`}
+        {mentorAndList && (
+          <div className="pl-4 pr-4 flex items-center justify-end">
+            <GreenSwitch
               checked={isSwitchOn}
               onChange={handleSwitchChange}
+              inputProps={{ "aria-label": "Green switch" }}
             />
-            <label
-              htmlFor={`switch-${classItem.id}`}
-              className="cursor-pointer w-10 h-6 flex items-center bg-gray-200 rounded-full p-1 transition-colors duration-300 ease-in-out peer-checked:bg-green-400"
-            >
-              <div className="bg-white w-4 h-4 rounded-full shadow-md transform transition-transform duration-300 ease-in-out peer-checked:translate-x-4"></div>
-            </label>
           </div>
         )}
       </div>

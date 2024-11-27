@@ -17,7 +17,7 @@ const CreateCourseLessonContent = ({
     userId: "",
     contentType: "",
     contentText: "",
-    contentUrl: "",
+    contentUrl: "", // Đây sẽ là API endpoint
     order: 0,
     file: null,
   });
@@ -56,30 +56,42 @@ const CreateCourseLessonContent = ({
 
   const handleContentUrlChange = (e) => {
     const value = e.target.value;
-    let videoId = value;
-
-    if (contentData.contentType === "video") {
-      const match = value.match(/[?&]v=([^&]+)/);
-      if (match) {
-        videoId = match[1];
-      }
-    }
-
-    setContentData((prev) => ({ ...prev, contentUrl: videoId }));
+    setContentData((prev) => ({ ...prev, contentUrl: value })); // Gán giá trị mới cho contentUrl
   };
 
-  const handleJoditChange = (value) => {
-    setContentData((prev) => ({ ...prev, contentText: value }));
-  };
-
-  const handleFileChange = (e) => {
+  const handleFileChange = async (e) => {
     const file = e.target.files[0];
+
     if (file && contentData.userId) {
-      setContentData((prev) => ({
-        ...prev,
-        file: file,
-        contentUrl: `https://hydra13.blob.core.windows.net/${contentData.userId}/${file.name}`,
-      }));
+      try {
+        const formData = new FormData();
+        formData.append("file", file);
+
+        console.log("Uploading file with data:", {
+          file: file.name,
+          courseLessonId,
+        });
+
+        const response = await axios.post(
+          `https://localhost:7030/api/upload-course-file?type=courseLesson&id=${courseLessonId}`,
+          formData,
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+              "Content-Type": "multipart/form-data",
+            },
+          }
+        );
+
+        const fileUrl = response.data.FileUrl;
+        setContentData((prev) => ({
+          ...prev,
+          file: file,
+          contentUrl: fileUrl, // Cập nhật contentUrl từ kết quả upload
+        }));
+      } catch (error) {
+        console.error("Error uploading file:", error.response || error.message);
+      }
     }
   };
 
@@ -90,18 +102,14 @@ const CreateCourseLessonContent = ({
     setSuccess(false);
 
     try {
-      if (contentData.contentType !== "video" && contentData.file) {
-        const fileUploadData = new FormData();
-        fileUploadData.append("file", contentData.file);
-        fileUploadData.append("userId", contentData.userId);
-
-        await axios.post(`https://localhost:7030/api/upload`, fileUploadData, {
-          headers: {
-            Authorization: `Bearer ${token}`,
-            "Content-Type": "multipart/form-data",
-          },
-        });
-      }
+      console.log("Data sent to API:", {
+        courseLessonId: contentData.courseLessonId,
+        contentType: contentData.contentType,
+        contentText: contentData.contentText,
+        contentUrl: contentData.contentUrl, // Log giá trị contentUrl
+        order: contentData.order,
+        userId: contentData.userId,
+      });
 
       const lessonContentData = {
         courseLessonId: contentData.courseLessonId,
@@ -112,10 +120,17 @@ const CreateCourseLessonContent = ({
         userId: contentData.userId,
       };
 
+      // Gửi request API với contentUrl là một phần payload
       await axios.post(
         "https://localhost:7030/api/CourseLessonContent",
-        lessonContentData
+        lessonContentData,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
       );
+
       setSuccess(true);
 
       if (onContentCreated) onContentCreated();

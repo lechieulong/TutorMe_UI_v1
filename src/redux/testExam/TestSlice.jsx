@@ -2,6 +2,7 @@ import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import axios from "axios";
 import { SLICE_NAMES, ACTIONS, STATUS } from "../../constant/SliceName";
 import Cookies from "js-cookie";
+import { getUser } from "../../service/GetUser";
 
 const API_BASE_URL = "https://localhost:7030/api";
 
@@ -20,17 +21,68 @@ export const fetchTests = createAsyncThunk(
   }
 );
 
+export const submitAnswerTest = createAsyncThunk(
+  `${SLICE_NAMES.TEST}/${ACTIONS.SUBMIT_TEST}`,
+  async (
+    { userAnswers, testId, timeMinutesTaken, timeSecondsTaken, totalQuestions },
+    { rejectWithValue }
+  ) => {
+    const token = Cookies.get("authToken");
+    const userId = getUser().sub;
+
+    try {
+      const response = await axios.post(
+        `${API_BASE_URL}/test/${testId}/submitTest/${userId}`,
+        {
+          userAnswers,
+          timeMinutesTaken, // Add time in minutes
+          timeSecondsTaken, // Add time in seconds
+          totalQuestions,
+        },
+        {
+          Authorization: `Bearer ${token}`,
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      );
+      return response.data;
+    } catch (error) {
+      return rejectWithValue(
+        error.response?.data?.message || "Failed to fetch tests"
+      );
+    }
+  }
+);
+
 export const getTest = createAsyncThunk(
   `${SLICE_NAMES.TEST}/${ACTIONS.GET_TEST}`,
   async (id, { rejectWithValue }) => {
     try {
       const response = await axios.get(`${API_BASE_URL}/test/${id}/testDetail`);
-      console.log(response.data);
 
       return response.data;
     } catch (error) {
       return rejectWithValue(
         error.response?.data?.message || "Failed to fetch tests"
+      );
+    }
+  }
+);
+
+export const getHistorytest = createAsyncThunk(
+  `${SLICE_NAMES.TEST}/${ACTIONS.GET_HISTORY_TEST}`,
+  async (userId, { rejectWithValue }) => {
+    try {
+      const response = await axios.get(
+        `${API_BASE_URL}/test/${userId}/history`
+      );
+      console.log(response.data);
+
+      return response.data;
+    } catch (error) {
+      return rejectWithValue(
+        error.response?.data?.message || "Failed to fetch history tests"
       );
     }
   }
@@ -92,6 +144,24 @@ export const getTesting = createAsyncThunk(
   }
 );
 
+export const getExplainTest = createAsyncThunk(
+  `${SLICE_NAMES.TEST}/${ACTIONS.GET_EXPLAIN_TEST}`,
+  async ({ testId, userId, skillId }, { rejectWithValue }) => {
+    try {
+      const response = await axios.post(`${API_BASE_URL}/test/testExplain`, {
+        userId,
+        testId,
+        skillId,
+      });
+      return response.data;
+    } catch (error) {
+      return rejectWithValue(
+        error.response?.data?.message || "Failed to fetch tests"
+      );
+    }
+  }
+);
+
 export const downloadTemplate = createAsyncThunk(
   `${SLICE_NAMES.TEST}/${ACTIONS.DOWNLOAD_TEMPLATE}`,
   async (id, { rejectWithValue }) => {
@@ -123,6 +193,36 @@ export const uploadFile = createAsyncThunk(
     } catch (error) {
       return rejectWithValue(
         error.response?.data?.message || "Failed to upload file"
+      );
+    }
+  }
+);
+export const getResultTest = createAsyncThunk(
+  `${SLICE_NAMES.TEST}/${ACTIONS.GET_RESULT_TEST}`,
+  async (skillResultIds, { rejectWithValue }) => {
+    try {
+      const userId = getUser().sub;
+      const token = Cookies.get("authToken");
+
+      const payload = { skillResultIds };
+
+      const response = await axios.post(
+        `${API_BASE_URL}/test/${userId}/result`,
+        payload,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+        }
+      );
+
+      console.log("API Response:", response.data);
+      return response.data; // Data will be dispatched to the reducer
+    } catch (error) {
+      console.error("Error in getResultTest:", error); // Log the full error for more details
+      return rejectWithValue(
+        error.response?.data?.message || "Failed to fetch test result"
       );
     }
   }
@@ -214,12 +314,95 @@ export const importQuestion = createAsyncThunk(
     }
   }
 );
-export const getQuestionsBank = createAsyncThunk(
+
+// Get question bank base on sectionType
+export const getAllQuestionsById = createAsyncThunk(
   `${SLICE_NAMES.TEST}/${ACTIONS.GET_QUESTIONS_BANK}`,
-  async ({ userId }, { rejectWithValue }) => {
+  async ({ userId, page }, { rejectWithValue }) => {
+    // Add pageSize with default value
+    try {
+      const pageSize = 10;
+      const response = await axios.get(
+        `${API_BASE_URL}/test/questionsBank/${userId}`,
+        {
+          params: { page, pageSize }, // Pass both page and pageSize as query parameters
+        }
+      );
+      return response.data;
+    } catch (error) {
+      return rejectWithValue(
+        error.response?.data?.message || "Failed to retrieve questions bank"
+      );
+    }
+  }
+);
+
+export const getResultsHistory = createAsyncThunk(
+  `${SLICE_NAMES.TEST}/${ACTIONS.GET_HISTORY_TEST}`,
+  async ({ userId, page }, { rejectWithValue }) => {
+    // Add pageSize with default value
+    try {
+      const pageSize = 10;
+      const response = await axios.get(
+        `${API_BASE_URL}/test/testSubmitted/${userId}`,
+        {
+          params: { page, pageSize }, // Pass both page and pageSize as query parameters
+        }
+      );
+      return response.data;
+    } catch (error) {
+      return rejectWithValue(
+        error.response?.data?.message || "Failed to retrieve questions bank"
+      );
+    }
+  }
+);
+
+export const getTestAnalysisAttempt = createAsyncThunk(
+  `${SLICE_NAMES.TEST}/${ACTIONS.GET_TEST_ATTEMPT}`,
+  async (userId, { rejectWithValue }) => {
+    // Add pageSize with default value
     try {
       const response = await axios.get(
-        `${API_BASE_URL}/test/questionsBank/${userId}`
+        `${API_BASE_URL}/test/testAnalysis/${userId}`
+      );
+      return response.data;
+    } catch (error) {
+      return rejectWithValue(
+        error.response?.data?.message || "Failed to retrieve questions bank"
+      );
+    }
+  }
+);
+
+export const getAttemptTests = createAsyncThunk(
+  `${SLICE_NAMES.TEST}/${ACTIONS.GET_ATTEMPT_TOTAL}`,
+  async (userId, { rejectWithValue }) => {
+    try {
+      const response = await axios.get(
+        `${API_BASE_URL}/test/attempts/${userId}`
+      );
+      return response.data;
+    } catch (error) {
+      return rejectWithValue(
+        error.response?.data?.message || "Failed to retrieve questions bank"
+      );
+    }
+  }
+);
+
+// Get question bank base on sectionType
+export const getQuestionsBank = createAsyncThunk(
+  `${SLICE_NAMES.TEST}/${ACTIONS.GET_QUESTIONS_BANK}`,
+  async ({ userId, sectionType, page }, { rejectWithValue }) => {
+    // Add pageSize with default value
+    try {
+      const pageSize = 10;
+      const response = await axios.get(
+        `${API_BASE_URL}/test/${sectionType}/questionsBank/${userId}`,
+        {
+          params: { page, pageSize }, // Pass both page and pageSize as query parameters
+        }
       );
       return response.data;
     } catch (error) {
@@ -259,7 +442,7 @@ export const deleteQuestion = createAsyncThunk(
   `${SLICE_NAMES.TEST}/${ACTIONS.DELETE_QUESTION}`,
   async (id, { rejectWithValue }) => {
     try {
-      await axios.delete(`${API_BASE_URL}/test/questionsBank/${id}`);
+      await axios.delete(`${API_BASE_URL}/test/questionsBank/${id}/delete`);
       return id;
     } catch (error) {
       return rejectWithValue(
@@ -274,7 +457,7 @@ export const updateQuestion = createAsyncThunk(
   async ({ id, updatedQuestion }, { rejectWithValue }) => {
     try {
       const response = await axios.put(
-        `${API_BASE_URL}/test/questionsBank/${id}`,
+        `${API_BASE_URL}/test/questionsBank/${id}/update`,
         updatedQuestion
       );
       return response.data;

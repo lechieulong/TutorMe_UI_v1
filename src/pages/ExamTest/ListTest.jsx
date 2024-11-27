@@ -15,7 +15,6 @@ const ListTest = () => {
       if (user && user.sub) {
         const result = await dispatch(fetchTests(user.sub));
         if (result.payload) {
-          console.log("Fetched tests:", result.payload); // Debugging log
           setTests(result.payload); // Store the fetched data in state
         }
       }

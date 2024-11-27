@@ -7,9 +7,12 @@ import MultipleChoiceAnswers from "./MultipleChoiceAnswers";
 const AnswerView = ({
   partData,
   currentSkillKey,
+  currentSkillId,
   handleAnswerChange,
   userAnswers,
 }) => {
+  console.log("currentSkillKey", currentSkillKey);
+
   let skill;
   switch (currentSkillKey) {
     case "reading":
@@ -51,23 +54,16 @@ const AnswerView = ({
         );
       }
     } else {
-      if (sectionType === 7) {
-        if (!answerText) {
-          updatedAnswers = undefined;
-        } else {
-          updatedAnswers = [{ answerText, answerId }];
-        }
-      } else {
-        updatedAnswers = [{ answerText, answerId }];
-      }
+      updatedAnswers = [{ answerText, answerId }];
     }
 
     const answerData = updatedAnswers
       ? {
           skill,
-          part: partId,
           questionId,
+          sectionType,
           answers: updatedAnswers,
+          skillId: currentSkillId,
         }
       : undefined;
 
@@ -96,6 +92,7 @@ const AnswerView = ({
               handleChangeWrap={handleChangeWrap}
               skill={skill}
               partData={partData}
+              sectionType={sectionType}
             />
           );
         }
@@ -113,9 +110,11 @@ const AnswerView = ({
                     onChange={(e) =>
                       handleChangeWrap(
                         e,
-                        currentSkillKey,
+                        skill,
                         partData.id,
-                        question.id
+                        question.id,
+                        null,
+                        sectionType
                       )
                     }
                   />
@@ -130,9 +129,11 @@ const AnswerView = ({
                     onChange={(e) =>
                       handleChangeWrap(
                         e,
-                        currentSkillKey,
+                        skill,
                         partData.id,
-                        question.id
+                        question.id,
+                        null,
+                        sectionType
                       )
                     }
                   />
@@ -148,9 +149,11 @@ const AnswerView = ({
                       onChange={(e) =>
                         handleChangeWrap(
                           e,
-                          currentSkillKey,
+                          skill,
                           partData.id,
-                          question.id
+                          question.id,
+                          null,
+                          sectionType
                         )
                       }
                     />
@@ -200,7 +203,14 @@ const AnswerView = ({
                 placeholder="Your answer"
                 className="border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
                 onChange={(e) =>
-                  handleChangeWrap(e, skill, partData.id, question.id)
+                  handleChangeWrap(
+                    e,
+                    skill,
+                    partData.id,
+                    question.id,
+                    null,
+                    sectionType
+                  )
                 }
               />
             </>
@@ -537,7 +547,8 @@ const AnswerView = ({
                                       skill, // skill should be defined as before
                                       partData.id,
                                       question.id,
-                                      answer.id // This identifies the answer that is being changed
+                                      answer.id,
+                                      section.sectionType
                                     )
                                   }
                                 >
@@ -584,16 +595,20 @@ const AnswerView = ({
       {currentSkillKey === "writing" && (
         <Writing
           partData={partData}
-          currentSkillKey={currentSkillKey}
           handleAnswerChange={handleAnswerChange}
+          currentSkillId={currentSkillId}
+          skill={skill}
+          userAnswers={userAnswers}
         />
       )}
 
       {currentSkillKey === "speaking" && (
         <Speaking
           partData={partData}
-          currentSkillKey={currentSkillKey}
           handleAnswerChange={handleAnswerChange}
+          currentSkillId={currentSkillId}
+          skill={skill}
+          userAnswers={userAnswers}
         />
       )}
     </form>

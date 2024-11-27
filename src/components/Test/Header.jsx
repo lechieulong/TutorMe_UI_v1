@@ -11,6 +11,7 @@ import NoteCard from "./NoteCard";
 import { Link } from "react-router-dom";
 
 const Header = ({
+  submitting,
   testData,
   currentSkillIndex,
   handleNextSkill,
@@ -27,8 +28,8 @@ const Header = ({
   const closeWarningModal = () => setIsModalOpen(false);
 
   const handleConfirmNextSkill = () => {
-    handleNextSkill();
-    closeWarningModal();
+    handleSubmit(); // Wait for submission to complete
+    closeWarningModal(); // Close the modal after handling next skill
   };
 
   const formatTime = (seconds) => {
@@ -64,14 +65,14 @@ const Header = ({
   }, [currentSkillIndex, testData, handleNextSkill]);
 
   return (
-    <div className="flex justify-between items-center p-4 bg-green-600 shadow-lg rounded-lg">
+    <div className="flex justify-between  items-center p-4 bg-green-600 shadow-lg rounded-lg">
       <Link to={"/"}>
         <p className="text-lg font-semibold text-white flex items-center gap-2">
           IELTS <FontAwesomeIcon icon={faLanguage} />
         </p>
       </Link>
 
-      <div className="text-lg font-semibold text-white flex items-center gap-2">
+      <div className="text-lg font-semibold text-customText flex items-center gap-2">
         <FontAwesomeIcon icon={faClock} className="mr-2" />
         <span className="text-sm">Time left:</span>
         <span className="text-xl font-bold">{formatTime(timeLeft)}</span>
@@ -92,16 +93,27 @@ const Header = ({
             type="button"
             onClick={openWarningModal}
             className="border border-white bg-black hover:bg-green-800 text-white font-medium rounded-lg px-4 py-2"
+            disabled={submitting}
           >
-            Next Skill
+            {submitting ? (
+              <span>Submitting...</span> // Show submitting message
+            ) : (
+              "Next Skill"
+            )}
           </button>
         ) : (
           <button
+            type="button"
             onClick={handleSubmit}
             className="bg-red-600 hover:bg-red-700 text-white font-medium rounded-lg px-4 py-2 flex items-center gap-2"
+            disabled={submitting} // Disable button if submitting is true
           >
             <FontAwesomeIcon icon={faPaperPlane} className="text-sm" />
-            Submit Test
+            {submitting ? (
+              <span>Submitting...</span> // Show submitting message
+            ) : (
+              "Submit Test"
+            )}
           </button>
         )}
       </div>

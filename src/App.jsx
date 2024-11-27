@@ -62,6 +62,9 @@ import DynamicForm from "./pages/Course/components/DynamicForm";
 import AdminApp from "./pages/ADMIN/Index";
 import ClassDetail from "./pages/Class/ClassDetail";
 import CreateClass from "./pages/Class/CreateClass";
+import TestExplain from "./pages/TestExam/TestExplain";
+import TestFormLayout from "./pages/ExamTest/TestFormLayout";
+import Demo from "./Demo";
 const App = () => {
   return (
     <div className=" min-h-screen ">
@@ -77,15 +80,21 @@ const App = () => {
           <Route path="/changepassword" element={<ChangePassword />} />
           <Route path="/reset-password" element={<ResetPassword />} />
           <Route path="/beteacher" element={<BeTeacher />} />
-          <Route path="/updateteacherrequest" element={<UpdateTeacherRequest />} />
+          <Route
+            path="/updateteacherrequest"
+            element={<UpdateTeacherRequest />}
+          />
           <Route path="/upmoney" element={<UpMoney />} />
           {/* <Route path="/Payment" element={<PayOS />} /> */}
           {/* Test  common*/}
           <Route path="/" element={<Home />} />
+          <Route path="/demo" element={<Demo />} />
           <Route path="*" element={<NotFound />} />
           <Route path="/gemini" element={<SpeakingGemini />} />
           {/* Test  exam*/}
+          <Route path="/manageTest/:courseId" element={<TestFormLayout />} />
           <Route path="/testing/:testId" element={<TestLayout />} />
+          <Route path="/testExplain/:testId" element={<TestExplain />} />
           <Route path="/testing/:skillId/skill" element={<TestLayout />} />
           <Route
             path="/test/:testId/settings/:skillId"
@@ -95,6 +104,7 @@ const App = () => {
           <Route path="/listTest" element={<ListTest />} />
           <Route path="/create-skill" element={<CreateTest />} />
           <Route path="/create-test/:sectionCourseId" element={<TestForm />} />
+          <Route path="/create-test/:classId" element={<TestForm />} />
           <Route path="/create-test" element={<TestForm />} />
           <Route path="/questionbank" element={<QuestionBank />} />
           {/* LiveStream  exam*/}
@@ -118,7 +128,10 @@ const App = () => {
             element={<ClassDetail />}
           />
           <Route path="/schedulepaymentmethod" element={<ConfirmBook />} />
-          <Route path="/coachingschedule/bookedschedule" element={<BookedSchedule />} />
+          <Route
+            path="/coachingschedule/bookedschedule"
+            element={<BookedSchedule />}
+          />
 
           {/* Test Mentor */}
           {/* Mentor */}
@@ -133,10 +146,7 @@ const App = () => {
             path="/courseDetail/:courseId/review?"
             element={<CourseDetail />}
           />
-          <Route
-            path="/courseinfo/:courseId/infor"
-            element={<CourseInfo />}
-          />
+          <Route path="/courseinfo/:courseId/infor" element={<CourseInfo />} />
           <Route path="createCourseLesson" element={<CreateCourseLesson />} />
           <Route
             path="createCourseLessonContent"
@@ -158,7 +168,7 @@ const App = () => {
           <Route path="/not-authorized" element={<NotAuthorizedPage />} />
           <Route path="/Payment" element={<PayOS />} />
           <Route path="/Paymentresult" element={<PaymentResult />} />
-          
+
           {/* ADMIN */}
           <Route
             path="/admin/app/*"

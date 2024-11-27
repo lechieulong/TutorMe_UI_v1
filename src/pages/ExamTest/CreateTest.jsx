@@ -1,12 +1,15 @@
 import React, { useState } from "react";
 import { useForm } from "react-hook-form";
 import TestFormDetail from "./TestFormDetail";
-import Header from "../../components/common/Header";
 import PreviewTest from "./PreviewTest";
+import { Link, useNavigate } from "react-router-dom";
+
 import { useDispatch } from "react-redux";
 import { addSkills } from "../../redux/testExam/TestSlice";
 
-const CreateTest = ({ testId, skills }) => {
+const CreateTest = ({ testId, skills, pageType }) => {
+  const navigate = useNavigate();
+
   const { control, resetField, handleSubmit, setValue, getValues } = useForm();
 
   const [activeStep, setActiveStep] = useState(0);
@@ -27,16 +30,18 @@ const CreateTest = ({ testId, skills }) => {
         />
       ),
     },
-    {
-      label: "Preview",
-      content: <PreviewTest data={formData} />,
-    },
+    // {
+    //   label: "Preview",
+    //   content: <PreviewTest data={formData} />,
+    // },
   ];
 
   const handleFinish = () => {
     if (formData) {
       dispatch(addSkills({ skillsData: formData, testId }));
-      alert("Test Created!");
+      if (pageType == "admin") navigate("/admin/app");
+      else if (pageType == "lesson") navigate("");
+      else navigate("/");
     } else {
       alert("Please fill out the form before finishing.");
     }
@@ -46,11 +51,54 @@ const CreateTest = ({ testId, skills }) => {
     setFormData(data);
   };
 
+  const validateFormData = () => {
+    const hasValidData = selectedSkills.every((skill) => {
+      const skillData = formData.skills[skill];
+      console.log(skillData);
+
+      const hasParts =
+        skillData && skillData.parts && skillData.parts.length > 0;
+      if (!hasParts) return false;
+
+      // Ensure each part has at least one section
+      const hasSections = skillData.parts.every(
+        (part) => part.sections && part.sections.length > 0
+      );
+      if (!hasSections) return false;
+
+      // Ensure each section has at least one question
+      // const hasQuestions = skillData.parts.every((part) =>
+      //   part.sections.every(
+      //     (section) => section.questions && section.questions.length > 0
+      //   )
+      // );
+      // if (!hasQuestions) return false;
+
+      // // Ensure each question has at least one answer
+      // const hasAnswers = skillData.parts.every((part) =>
+      //   part.sections.every((section) =>
+      //     section.questions.every(
+      //       (question) => question.answers && question.answers.length > 0
+      //     )
+      //   )
+      // );
+      // if (!hasAnswers) return false;
+
+      return true; // If all conditions are met, return true
+    });
+
+    return hasValidData;
+  };
+
   const handleNext = () => {
-    // Validate the form before proceeding to the next step
+    if (selectedSkills.length === 0) {
+      alert("Please select at least one skill.");
+      return;
+    }
+
     handleSubmit((data) => {
-      setFormData(data);
-      setActiveStep((prev) => Math.min(prev + 1, steps.length - 1));
+      setFormData(data); // Update formData
+      setActiveStep((prev) => Math.min(prev + 1, steps.length - 1)); // Move to next step
     })();
   };
 
@@ -101,17 +149,27 @@ const CreateTest = ({ testId, skills }) => {
           <button
             type="button"
             className={`py-2 px-4 rounded bg-green-500 text-white ${
-              activeStep === steps.length - 1 ? "hidden" : ""
+              activeStep === steps.length - 1 || selectedSkills.length === 0
+                ? "hidden"
+                : ""
             }`}
             onClick={handleNext} // Validate and go to next step
+            disabled={selectedSkills.length === 0} // Disable if no skills selected
           >
             Next
           </button>
+
           <button
             className={`py-2 px-4 rounded bg-green-500 text-white ${
               activeStep !== steps.length - 1 ? "hidden" : ""
             }`}
-            onClick={handleFinish}
+            onClick={handleSubmit((data) => {
+              setFormData(data); // Update formData
+              dispatch(addSkills({ skillsData: data, testId })); // Dispatch action with current data
+              if (pageType == "admin") navigate("/admin/app");
+              else if (pageType == "lesson") navigate("");
+              else navigate("/");
+            })}
           >
             Finish
           </button>

@@ -1,7 +1,38 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 
-const Writing = ({ partData, currentSkillKey, handleAnswerChange }) => {
+const Writing = ({
+  partData,
+  currentSkillId,
+  handleAnswerChange,
+  skill,
+  userAnswers,
+}) => {
   const [text, setText] = useState("");
+
+  // Populate text state from userAnswers when userAnswers or partData changes
+  useEffect(() => {
+    const answerText =
+      userAnswers[partData.sections[0]?.questions[0]?.id]?.answers[0]
+        ?.answerText || "";
+    setText(answerText);
+  }, [userAnswers, partData]);
+
+  // Handle updating answer data
+  useEffect(() => {
+    if (!text.trim()) return; // Avoid sending empty text
+    const answerData = {
+      part: partData.partNumber,
+      questionId: partData.sections[0]?.questions[0]?.id,
+      sectionType: 0,
+      questionName: partData.sections[0]?.questions[0]?.questionName,
+      answers: [
+        { answerText: text, answerId: "00000000-0000-0000-0000-000000000000" },
+      ],
+      skill: skill,
+      skillId: currentSkillId,
+    };
+    handleAnswerChange({ questionId: answerData.questionId, answerData });
+  }, [text]);
 
   const countWords = (text) => {
     return text
@@ -13,16 +44,6 @@ const Writing = ({ partData, currentSkillKey, handleAnswerChange }) => {
   const handleChange = (e) => {
     const value = e.target.value;
     setText(value);
-
-    const answerData = {
-      skill: currentSkillKey,
-      part: partData.partId,
-      questionId: partData.sections[0]?.questions[0]?.id,
-      answerText: value,
-      answerId: "",
-    };
-
-    handleAnswerChange({ index: 0, answerData });
   };
 
   return (
@@ -33,7 +54,7 @@ const Writing = ({ partData, currentSkillKey, handleAnswerChange }) => {
       className="flex flex-col"
     >
       <header className="flex justify-between items-center bg-gray-800 text-white p-4 shadow-md">
-        <h1 className="text-xl font-semibold">Task 1</h1>
+        <h1 className="text-xl font-semibold">Writing Task</h1>
         <div className="text-sm">Word Count: {countWords(text)}</div>
       </header>
 

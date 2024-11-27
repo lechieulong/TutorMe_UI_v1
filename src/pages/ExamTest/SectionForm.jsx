@@ -5,6 +5,7 @@ import { faMultiply } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useDispatch } from "react-redux";
 import { uploadFile } from "../../redux/testExam/TestSlice";
+import Demo from "../../Demo";
 
 const sectionTypesBySkill = {
   Reading: [
@@ -25,11 +26,14 @@ const sectionTypesBySkill = {
   ],
   Listening: [
     { value: 1, label: "Table/Note Completion" },
+
     { value: 2, label: "Sentence Completion" },
     { value: 3, label: "Summary Completion" },
     { value: 4, label: "Labeling a Diagram/Map/Plan with filling" },
+
     { value: 6, label: "Matching Questions" },
     { value: 7, label: "Short Answer Questions" },
+
     { value: 8, label: "Multiple Choice Questions" },
   ],
   Writing: [
@@ -170,13 +174,16 @@ const SectionForm = ({ skill, partIndex, control }) => {
 
             {skill === "Reading" || skill === "Listening" ? (
               sectionType ? (
-                <QuestionForm
-                  skill={skill}
-                  partIndex={partIndex}
-                  sectionIndex={index}
-                  control={control}
-                  sectionType={Number(sectionType)}
-                />
+                <>
+                  <QuestionForm
+                    skill={skill}
+                    partIndex={partIndex}
+                    sectionIndex={index}
+                    control={control}
+                    sectionType={Number(sectionType)}
+                  />
+                  <Demo />
+                </>
               ) : (
                 <p className="text-red-500">
                   Please select a Section Type before adding questions.

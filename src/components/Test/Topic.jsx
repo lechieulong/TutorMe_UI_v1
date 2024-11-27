@@ -75,11 +75,12 @@ const Topic = ({ partData, currentSkillKey }) => {
               style={{ width: "50%", height: "50%" }}
             />
           )}
-
           {partData.sections.map((section, index) => (
-            <div key={index}>
+            <div key={index} className="space-y-5">
               <p>{section.sectionGuide}</p>
-              <p>{section.questions && section.questions[0]?.questionName}</p>
+              <p className="leading-8 text-lg">
+                {section.questions && section.questions[0]?.questionName}
+              </p>
             </div>
           ))}
         </>

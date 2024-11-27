@@ -1,4 +1,4 @@
-import { useEffect, useState, useMemo } from "react";
+import React, { useEffect, useState, useMemo } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import {
   FaBook,
@@ -9,7 +9,8 @@ import {
 import MainLayout from "../../layout/MainLayout";
 import Filter from "../Course/components/Filter";
 import CourseCard from "../Course/components/CourseCard";
-import { fetchCoursesByUserId } from "../../redux/courses/CourseSlice";
+import Notification from "../../components/common/Notification";
+import Confirm from "../../components/common/Confirm";
 import axios from "axios";
 import { STATUS } from "../../constant/SliceName";
 import { getUser } from "../../service/GetUser";
@@ -18,20 +19,29 @@ import { GetCreatedCourses } from "../../redux/courses/CourseSlice";
 
 const MentorCourseList = () => {
   const dispatch = useDispatch();
-  const [user, setUser] = useState(null);
-  const { courses = [], createdCourses = [], getCreatedCoursesStatus, getCreatedCoursesError, status, error } = useSelector((state) => state.courses);
+  const {
+    createdCourses = [],
+    status,
+    error,
+  } = useSelector((state) => state.courses);
 
+  const [user, setUser] = useState(null);
   const [selectedSkill, setSelectedSkill] = useState("All");
   const [currentPage, setCurrentPage] = useState(1);
   const [searchTerm, setSearchTerm] = useState("");
   const [isCreateCourseOpen, setIsCreateCourseOpen] = useState(false);
+  const [notification, setNotification] = useState("");
+  const [isConfirmOpen, setIsConfirmOpen] = useState(false);
+  const [confirmContent, setConfirmContent] = useState({
+    message: "",
+    onConfirm: null,
+  });
   const coursesPerPage = 8;
 
   useEffect(() => {
     const userFromToken = getUser();
     setUser(userFromToken);
     if (userFromToken) {
-      console.log("Dispatching GetCreatedCourses action");
       dispatch(GetCreatedCourses());
     }
   }, [dispatch]);
@@ -42,22 +52,25 @@ const MentorCourseList = () => {
   );
 
   const filteredCourses = useMemo(() => {
-    if (status === STATUS.SUCCESS) {
-      return courses
-        .filter((course) => {
-          if (selectedSkill === "All") return true;
-          return course.categories.includes(selectedSkill);
-        })
-        .filter((course) => {
-          const courseTitle = course.courseName || "";
-          const term = searchTerm || "";
-          return courseTitle.toLowerCase().includes(term.toLowerCase());
-        });
-    }
-    return [];
-  }, [courses, selectedSkill, searchTerm, status]);
+    const courses = Array.isArray(createdCourses) ? createdCourses : [];
+    return courses
+      .filter((course) => {
+        if (selectedSkill === "All") return true;
+        return course.categories.includes(selectedSkill);
+      })
+      .filter((course) => {
+        const courseTitle = course.courseName || "";
+        return courseTitle.toLowerCase().includes(searchTerm.toLowerCase());
+      });
+  }, [createdCourses, selectedSkill, searchTerm]);
 
   const totalPages = Math.ceil(filteredCourses.length / coursesPerPage);
+
+  const paginatedCourses = useMemo(() => {
+    const startIndex = (currentPage - 1) * coursesPerPage;
+    const endIndex = startIndex + coursesPerPage;
+    return filteredCourses.slice(startIndex, endIndex);
+  }, [filteredCourses, currentPage, coursesPerPage]);
 
   const handleNextPage = () => {
     if (currentPage < totalPages) {
@@ -71,14 +84,21 @@ const MentorCourseList = () => {
     }
   };
 
-  const handleDelete = async (courseId) => {
-    try {
-      await axios.delete(`https://localhost:7030/api/Courses/${courseId}`);
-      dispatch(fetchCoursesByUserId(user.sub));
-    } catch (error) {
-      console.error("Error deleting course", error);
-      alert("Failed to delete course.");
-    }
+  const handleDelete = (courseId) => {
+    setConfirmContent({
+      message: "Are you sure you want to delete this?",
+      onConfirm: async () => {
+        try {
+          await axios.delete(`https://localhost:7030/api/Courses/${courseId}`);
+          dispatch(GetCreatedCourses());
+          setNotification("Khóa học đã được xóa thành công.");
+        } catch (error) {
+          setNotification("Xóa khóa học thất bại.");
+        }
+        setIsConfirmOpen(false);
+      },
+    });
+    setIsConfirmOpen(true);
   };
 
   const getIcon = (Skill) => {
@@ -98,17 +118,31 @@ const MentorCourseList = () => {
     }
   };
 
-  if (status === STATUS.PENDING) return <p>Loading...</p>;
   const handleOpenCreateCourse = () => setIsCreateCourseOpen(true);
   const handleCloseCreateCourse = () => setIsCreateCourseOpen(false);
   const handleCreateSuccess = () => {
-    setIsCourseCreated(true);
+    dispatch(GetCreatedCourses());
     handleCloseCreateCourse();
   };
+
+  if (status === STATUS.PENDING) return <p>Loading...</p>;
 
   return (
     <MainLayout>
       <div className="px-4 py-6">
+        {notification && (
+          <Notification
+            message={notification}
+            onClose={() => setNotification("")}
+          />
+        )}
+        <Confirm
+          isOpen={isConfirmOpen}
+          onClose={() => setIsConfirmOpen(false)}
+          onConfirm={() => confirmContent.onConfirm()}
+          message={confirmContent.message}
+          status="Delete Confirmation"
+        />
         <div className="bg-blue-100 p-4 rounded-lg mb-6 text-center">
           <h2 className="text-2xl font-semibold text-blue-700">
             Manage Your Courses as a Mentor!
@@ -135,20 +169,19 @@ const MentorCourseList = () => {
 
           {isCreateCourseOpen && (
             <CreateCourse
-              onClose={handleOpenCreateCourse}
+              onClose={handleCloseCreateCourse}
               onCreateSuccess={handleCreateSuccess}
             />
           )}
         </div>
 
-        {/* Hiển thị lỗi nếu có */}
         {error && (
           <div className="text-red-500 text-center mb-4">Error: {error}</div>
         )}
 
-        {Array.isArray(createdCourses) && createdCourses.length > 0 ? (
+        {paginatedCourses.length > 0 ? (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mt-6">
-            {createdCourses.map((course) => (
+            {paginatedCourses.map((course) => (
               <CourseCard
                 key={course.id}
                 courseName={course.courseName}
@@ -172,29 +205,35 @@ const MentorCourseList = () => {
           </div>
         )}
 
-        <div className="flex justify-center items-center mt-4">
-          <button
-            onClick={handlePrevPage}
-            disabled={currentPage === 1}
-            aria-label="Previous Page"
-            className={`px-3 py-1.5 mx-1 text-sm font-medium ${currentPage === 1 ? "bg-gray-300" : "bg-blue-600"
-              } text-white border border-blue-600 rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-400`}
-          >
-            Previous
-          </button>
-          <span className="text-sm mx-2 text-black">
-            Page {currentPage} of {totalPages}
-          </span>
-          <button
-            onClick={handleNextPage}
-            disabled={currentPage === totalPages}
-            aria-label="Next Page"
-            className={`px-3 py-1.5 mx-1 text-sm font-medium ${currentPage === totalPages ? "bg-gray-300" : "bg-blue-600"
-              } text-white border border-blue-600 rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-400`}
-          >
-            Next
-          </button>
-        </div>
+        {totalPages > 1 && (
+          <div className="flex justify-center items-center mt-4 fixed bottom-4 left-0 right-0">
+            <div className="flex justify-center space-x-2">
+              <button
+                onClick={handlePrevPage}
+                disabled={currentPage === 1}
+                aria-label="Previous Page"
+                className={`px-3 py-1.5 mx-1 text-sm font-medium ${
+                  currentPage === 1 ? "bg-gray-300" : "bg-blue-600"
+                } text-white border border-blue-600 rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-400`}
+              >
+                Previous
+              </button>
+              <span className="text-sm mx-2 text-black">
+                Page {currentPage} of {totalPages}
+              </span>
+              <button
+                onClick={handleNextPage}
+                disabled={currentPage === totalPages}
+                aria-label="Next Page"
+                className={`px-3 py-1.5 mx-1 text-sm font-medium ${
+                  currentPage === totalPages ? "bg-gray-300" : "bg-blue-600"
+                } text-white border border-blue-600 rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-400`}
+              >
+                Next
+              </button>
+            </div>
+          </div>
+        )}
       </div>
     </MainLayout>
   );

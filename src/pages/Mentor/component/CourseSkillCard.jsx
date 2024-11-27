@@ -3,12 +3,24 @@ import axios from "axios";
 import CoursePartCard from "../../Course/components/CoursePartCard";
 import CreateCoursePart from "./CreateCoursePart";
 
-const CourseSkillCard = ({ isCourseLecture, courseId, userRole, isEnrolled }) => {
+const CourseSkillCard = ({
+  courseId,
+  isEnrolled,
+  onSkillCountUpdate,
+  mentorAndList,
+}) => {
   const [skills, setSkills] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [activeTab, setActiveTab] = useState(null);
   const [showCreateForm, setShowCreateForm] = useState(false);
+  const [partCounts, setPartCounts] = useState({});
+  const handlePartCountUpdate = (skillId, count) => {
+    setPartCounts((prev) => ({
+      ...prev,
+      [skillId]: count,
+    }));
+  };
 
   useEffect(() => {
     fetchSkills();
@@ -22,6 +34,9 @@ const CourseSkillCard = ({ isCourseLecture, courseId, userRole, isEnrolled }) =>
         `https://localhost:7030/api/CourseSkills/Course/${courseId}`
       );
       setSkills(response.data);
+      if (onSkillCountUpdate) {
+        onSkillCountUpdate(response.data.length); // Gửi số lượng lên component cha
+      }
       setActiveTab(response.data[0]?.id || null); // Set default active tab
       setError(null);
     } catch (err) {
@@ -43,19 +58,6 @@ const CourseSkillCard = ({ isCourseLecture, courseId, userRole, isEnrolled }) =>
     fetchSkills(); // Reload skills to update CoursePartCard after creating a new part
     closeCreateForm();
   };
-
-  const handleCreateTestClick = async (skillId) => {
-    try {
-      const response = await axios.get(
-        `https://localhost:7030/api/CourseSkills/DescriptionBySkill/${skillId}`
-      );
-      console.log("Create Test clicked for Skill ID:", skillId);
-      console.log("Description:", response.data.description);
-    } catch (err) {
-      console.error("Failed to fetch description:", err);
-    }
-  };
-
   if (loading) return <p>Loading...</p>;
   if (error) return <p>{error}</p>;
 
@@ -85,7 +87,7 @@ const CourseSkillCard = ({ isCourseLecture, courseId, userRole, isEnrolled }) =>
 
       <div className="mt-3">
         <div className="flex gap-2">
-          {isCourseLecture && (
+          {mentorAndList && (
             <>
               <button
                 type="button"
@@ -99,13 +101,6 @@ const CourseSkillCard = ({ isCourseLecture, courseId, userRole, isEnrolled }) =>
                   ? "Close Form"
                   : "Create Course Part"}
               </button>
-              <button
-                type="button"
-                onClick={() => handleCreateTestClick(activeTab)}
-                className="py-2 mb-2 px-3 inline-flex items-center gap-x-2 text-sm font-medium rounded-lg border border-gray-200 bg-white text-gray-800 shadow-sm hover:bg-gray-50 focus:outline-none focus:bg-gray-50"
-              >
-                Create Test
-              </button>
             </>
           )}
         </div>
@@ -116,6 +111,7 @@ const CourseSkillCard = ({ isCourseLecture, courseId, userRole, isEnrolled }) =>
               courseSkillId={activeTab}
               onClose={closeCreateForm}
               onCreated={handlePartCreated}
+              mentorAndList={mentorAndList}
             />
             <button
               onClick={closeCreateForm}
@@ -128,15 +124,14 @@ const CourseSkillCard = ({ isCourseLecture, courseId, userRole, isEnrolled }) =>
 
         {skills.map((skill) => (
           <div
-            key={skill.id} // Đảm bảo mỗi div có key duy nhất
+            key={skill.id}
             className={`${activeTab === skill.id ? "" : "hidden"}`}
             role="tabpanel"
             aria-labelledby={skill.id}
           >
             <CoursePartCard
-              isCourseLecture={isCourseLecture}
+              mentorAndList={mentorAndList}
               skillId={skill.id}
-              userRole={userRole}
               isEnrolled={isEnrolled}
             />
           </div>

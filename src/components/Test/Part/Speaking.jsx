@@ -2,20 +2,19 @@ import "regenerator-runtime/runtime";
 import SpeechRecognition, {
   useSpeechRecognition,
 } from "react-speech-recognition";
-import { GoogleGenerativeAI } from "@google/generative-ai";
 import { useEffect, useMemo, useState } from "react";
+import { getWelcomeMessage } from "./getWelcomeMessage";
 
-const genAI = new GoogleGenerativeAI(import.meta.env.VITE_GEN_AI);
-
-const Speaking = ({ partData, currentSkillKey, handleAnswerChange }) => {
+const Speaking = ({
+  partData,
+  currentSkillId,
+  handleAnswerChange,
+  skill,
+  userAnswers,
+}) => {
   const { transcript, listening, resetTranscript } = useSpeechRecognition();
-
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(-1); // Start with welcome message
-  const [thinking, setThinking] = useState(false);
-  const [aiText, setAiText] = useState("");
-  const [timeLeft, setTimeLeft] = useState(45); // Default time for Part 1 (45 seconds)
-
-  const [showWelcome, setShowWelcome] = useState(true);
+  const [timeLeft, setTimeLeft] = useState(15);
   const [guidelineMessage, setGuidelineMessage] = useState("");
   const [questionRead, setQuestionRead] = useState(false);
 
@@ -35,6 +34,8 @@ const Speaking = ({ partData, currentSkillKey, handleAnswerChange }) => {
 
   const speakText = (text, callback) => {
     if ("speechSynthesis" in window) {
+      window.speechSynthesis.cancel();
+
       const utterance = new SpeechSynthesisUtterance(text);
       utterance.lang = "en-US";
       utterance.voice = examinerVoice();
@@ -46,42 +47,69 @@ const Speaking = ({ partData, currentSkillKey, handleAnswerChange }) => {
     }
   };
 
+  const cleanText = (text) => {
+    return text
+      .replace(/[\*\n\r]+/g, " ")
+      .replace(/\*\s*\*/g, "")
+      .replace(/[-\u200B-\u200D\uFEFF\u202F]/g, "")
+      .replace(/\s+/g, " ")
+      .trim();
+  };
+
   const evaluateAnswer = async (userAnswer) => {
     try {
-      console.log(userAnswer);
-      setThinking(true);
-      const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
-      const prompt = `Give an overall score and scores for grammar, vocabulary, fluency, coherence on the IELTS score scale, and provide feedback based on this corrected answer: "${userAnswer}"`;
-      const result = await model.generateContent(prompt);
-      const aiResponse =
-        result.response.candidates[0].content.parts[0].text.trim();
-      setAiText(aiResponse);
+      const answerData = {
+        part: partData.partNumber,
+        questionId: partData.sections[0]?.questions[currentQuestionIndex]?.id,
+        sectionType: 0,
+        questionName: partData.sections[0]?.questions[0]?.questionName,
+        answers: [
+          {
+            answerText: userAnswer,
+            answerId: "00000000-0000-0000-0000-000000000000",
+          },
+        ],
+        skill: skill,
+        skillId: currentSkillId,
+      };
 
-      setThinking(false);
-      speakText(`Your feedback is as follows: ${aiResponse}`);
+      handleAnswerChange({ questionId: answerData.questionId, answerData });
     } catch (error) {
       console.error("Error evaluating answer:", error);
-      setThinking(false);
     }
   };
 
-  const handleTimer = () => {
+  const handleTimer = async () => {
     SpeechRecognition.stopListening();
-    evaluateAnswer(transcript);
-    resetTranscript();
+    await evaluateAnswer(transcript);
     goToNextQuestion();
+    resetTranscript();
     setAiText("");
     window.speechSynthesis.cancel();
   };
 
   const goToNextQuestion = () => {
-    setCurrentQuestionIndex((prevIndex) => prevIndex + 1);
-    setQuestionRead(false); // Reset question read state
-    setTimeLeft(
-      partData.partNumber === 1 || partData.partNumber === 3 ? 45 : 180
-    ); // Reset timer based on partNumber
-    resetTranscript(); // Clear the transcript for the next question
-    setAiText(""); // Clear feedback
+    if (isLastQuestion) {
+      SpeechRecognition.stopListening();
+      setTimeLeft(0);
+      setAiText("");
+      resetTranscript();
+      window.speechSynthesis.cancel();
+      setCurrentQuestionIndex(-1);
+      setShowWelcome(true);
+    } else {
+      SpeechRecognition.stopListening();
+      if (transcript) {
+        evaluateAnswer(transcript);
+      }
+      setCurrentQuestionIndex((prevIndex) => prevIndex + 1);
+      setQuestionRead(false);
+      setTimeLeft(
+        partData.partNumber === 1 || partData.partNumber === 3 ? 10 : 180
+      );
+      resetTranscript();
+      setAiText("");
+    }
   };
 
   useEffect(() => {
@@ -115,32 +143,34 @@ const Speaking = ({ partData, currentSkillKey, handleAnswerChange }) => {
   }, [transcript, listening]);
 
   useEffect(() => {
-    let welcomeMessage = "";
-
-    if (partData?.partNumber === 1) {
-      // welcomeMessage = "a";
-      welcomeMessage = `Hello, and welcome to the IELTS Speaking test. My name is Hydra, and I will be your examiner today. This test is recorded for assessment purposes.
-        The Speaking test is divided into three parts. I will explain each part as we go along, and I will ask you to speak on a variety of topics. You are encouraged to speak as much as possible and give full answers. There are no right or wrong answers, so feel free to share your thoughts and opinions.
-        In Part 1, I will ask you some general questions about yourself, your life, and familiar topics. This is just to help you feel comfortable.`;
-    } else if (partData?.partNumber === 2) {
-      welcomeMessage = `In Part 2, I will give you a task card with a topic and prompts. You will have 1 minute to prepare, and then I would like you to speak for 1-2 minutes on the topic.`;
-    } else if (partData?.partNumber === 3) {
-      welcomeMessage = `In Part 3, we will have a discussion based on the topic in Part 2. I will ask you more detailed questions, and we will explore your ideas in more depth.`;
-    }
-
+    window.speechSynthesis.cancel();
+    let welcomeMessage = getWelcomeMessage(partData?.partNumber);
     setGuidelineMessage(welcomeMessage);
 
     speakText(welcomeMessage, () => {
-      setGuidelineMessage(); // Hide the welcome message after it's spoken
-      goToNextQuestion(); // Proceed to the first question after the welcome message
+      setGuidelineMessage();
+      goToNextQuestion();
     });
 
     return () => {
       window.speechSynthesis.cancel();
       setCurrentQuestionIndex(-1);
     };
-  }, [partData.partNumber]); // Trigger effect when partData changes
+  }, [partData.partNumber]);
 
+  useEffect(() => {
+    const handleUnload = () => {
+      window.speechSynthesis.cancel();
+      SpeechRecognition.stopListening();
+      resetTranscript();
+      setAiText("");
+    };
+
+    window.addEventListener("beforeunload", handleUnload);
+    return () => {
+      window.removeEventListener("beforeunload", handleUnload);
+    };
+  }, []);
   return (
     <div className="flex flex-col items-center space-y-4 p-4">
       {guidelineMessage && (
@@ -176,36 +206,27 @@ const Speaking = ({ partData, currentSkillKey, handleAnswerChange }) => {
               <button
                 type="button"
                 onClick={() =>
-                  SpeechRecognition.startListening({ continuous: true })
+                  SpeechRecognition.startListening({
+                    continuous: true,
+                    language: "en-US",
+                  })
                 }
                 className="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600"
               >
                 Start Speaking
               </button>
 
-              <button
+              {/* <button
                 type="button"
                 onClick={SpeechRecognition.stopListening}
                 className="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600"
               >
-                Stop
-              </button>
+                Stop speaking
+              </button> */}
             </div>
           </div>
 
-          <div className="w-full text-gray-700">
-            {thinking && (
-              <p className="text-gray-800 text-center">Thinking...</p>
-            )}
-            {!thinking && aiText && (
-              <div>
-                <p>Feedback:</p>
-                <div className="bg-gray-100 p-2 rounded">{aiText}</div>
-              </div>
-            )}
-          </div>
-
-          {!isLastQuestion && (
+          {/* {!isLastQuestion && (
             <button
               type="button"
               onClick={goToNextQuestion}
@@ -213,7 +234,7 @@ const Speaking = ({ partData, currentSkillKey, handleAnswerChange }) => {
             >
               Next Question
             </button>
-          )}
+          )} */}
         </>
       )}
     </div>

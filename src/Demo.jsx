@@ -30,27 +30,20 @@ const Demo = ({
   sectionType,
   setValue,
 }) => {
-  const { fields, append, remove } = useFieldArray({
-    name: `skills.${skill}.parts.${partIndex}.sections.${sectionIndex}`,
-    control,
-  });
-
-  const [answers, setAnswers] = useState([]); // To store user answers with questionId
-  const [answersInput, setAnswersInput] = useState([]); // To store user answers with questionId
-  const [inputFields, setInputFields] = useState([]); // To store detected input fields
-  const [submittedContent, setSubmittedContent] = useState(""); // To store the submitted content
+  const [answers, setAnswers] = useState([]);
+  const [answersInput, setAnswersInput] = useState([]);
+  const [inputFields, setInputFields] = useState([]);
+  const [submittedContent, setSubmittedContent] = useState("");
   const editorRef = useRef(null);
 
-  //   Handle the input change
   const handleAnswerChange = (questionId, value) => {
-    // Update the answers array with the answer and its associated questionId
     const newAnswers = [...answers];
     const existingAnswerIndex = newAnswers.findIndex(
       (answer) => answer.questionId === questionId
     );
 
     if (existingAnswerIndex >= 0) {
-      newAnswers[existingAnswerIndex].answer = value; // Update the existing answer
+      newAnswers[existingAnswerIndex].answer = value;
     } else {
       newAnswers.push({ questionId, answer: value }); // Add a new answer with the questionId
     }
@@ -76,43 +69,11 @@ const Demo = ({
     });
   };
 
-  // Collect all content including answers from the input fields
-  const logContent = () => {
-    // if (editorRef.current) {
-    //   answers.forEach((answer, index) => {
-    //     console.log(
-    //       `Answer from question ${answer.questionId}: ${answer.answer}`
-    //     );
-    //   });
-
-    //   // Log the entire content of the editor
-    //   console.log("Full editor content:", editorRef.current.getContent());
-    // }
-    answersInput.forEach((answer, index) => {
-      console.log(
-        `Answer from question ${answer.questionId}: ${answer.answerText}`
-      );
-    });
-  };
-
-  // Handle form submission
   const handleSubmit = () => {
     if (editorRef.current) {
-      // Collect the content from the editor and answers
       const editorContent = editorRef.current.getContent();
 
-      // Set the submitted content in the state
       setSubmittedContent(editorContent);
-
-      // Here you can send the answers and content to the backend
-      // Example:
-      // fetch('/submit', {
-      //   method: 'POST',
-      //   body: JSON.stringify({ content: contentToSubmit, answers }),
-      //   headers: {
-      //     'Content-Type': 'application/json',
-      //   },
-      // });
     }
   };
 
@@ -173,7 +134,7 @@ const Demo = ({
                     onAction: () => {
                       const questionId = uuidv4(); // Generate unique questionId
                       editor.insertContent(
-                        `<input type="text" placeholder="Enter your answer" class="editor-input" data-question-id="${questionId}" />`
+                        `<input type="text"  class="editor-input" data-question-id="${questionId}" />`
                       );
                     },
                   });
@@ -187,41 +148,32 @@ const Demo = ({
       />
 
       {inputFields.length > 0 && (
-        <div id="input-placeholder">
-          {Array.from({ length: inputFields.length }).map((_, index) => {
-            const questionId =
-              inputFields[index].getAttribute("data-question-id");
-            return (
-              <InputAnswer
-                key={questionId}
-                index={index}
-                onChange={handleAnswerChange}
-                value={
-                  answers.find((answer) => answer.questionId === questionId)
-                    ?.answer || ""
-                }
-                questionId={questionId}
-                control={control}
-              />
-            );
-          })}
+        <div>
+          <p className="py-2 text- font-bold">Answers </p>
+          <div id="input-placeholder" className="flex gap-4">
+            {Array.from({ length: inputFields.length }).map((_, index) => {
+              const questionId =
+                inputFields[index].getAttribute("data-question-id");
+              return (
+                <>
+                  <p className="text-center  mt-2">{index + 1}</p>
+                  <InputAnswer
+                    key={questionId}
+                    index={index}
+                    onChange={handleAnswerChange}
+                    value={
+                      answers.find((answer) => answer.questionId === questionId)
+                        ?.answer || ""
+                    }
+                    questionId={questionId}
+                    control={control}
+                  />
+                </>
+              );
+            })}
+          </div>
         </div>
       )}
-
-      <button
-        onClick={logContent}
-        className="mt-4 p-2 bg-blue-500 text-white rounded"
-      >
-        Log Content
-      </button>
-
-      {/* Submit Button */}
-      <button
-        onClick={handleSubmit}
-        className="mt-4 p-2 bg-green-500 text-white rounded"
-      >
-        Submit
-      </button>
 
       {submittedContent && (
         <div className="mt-6 p-4 border border-gray-300">

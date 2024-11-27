@@ -13,7 +13,7 @@ import ClassicEditor from "@ckeditor/ckeditor5-build-classic";
 import { useDispatch } from "react-redux";
 import { uploadFile } from "../../redux/testExam/TestSlice";
 
-const PartForm = ({ skill, control }) => {
+const PartForm = ({ skill, control, setValue }) => {
   const dispatch = useDispatch();
 
   const { fields, append, remove } = useFieldArray({
@@ -43,7 +43,7 @@ const PartForm = ({ skill, control }) => {
       <h3 className="text-2xl font-semibold ">Parts</h3>
 
       {/* Container with fixed height and overflow for scrolling */}
-      <div className="max-h-[550px] overflow-y-auto border rounded p-4 mb-4">
+      <div className=" border rounded p-4 mb-4">
         {fields.map((part, index) => (
           <div key={part.id} className="mb-4 border p-4 rounded space-y-5">
             <div className="flex justify-between items-center gap-10">
@@ -163,7 +163,12 @@ const PartForm = ({ skill, control }) => {
               />
             )}
 
-            <SectionForm skill={skill} partIndex={index} control={control} />
+            <SectionForm
+              skill={skill}
+              partIndex={index}
+              control={control}
+              setValue={setValue}
+            />
           </div>
         ))}
       </div>

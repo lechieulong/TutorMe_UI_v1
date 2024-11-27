@@ -11,7 +11,6 @@ import TestExplain from "./TestExplain";
 import { GoogleGenerativeAI } from "@google/generative-ai";
 import Modal from "react-modal";
 import { generateSpeakingPrompt } from "../../components/Test/Part/generateSpeakingPrompt";
-import { generateWritingPrompt } from "../../components/Test/Part/generateSpeakingPrompt";
 
 const genAI = new GoogleGenerativeAI(import.meta.env.VITE_GEN_AI);
 

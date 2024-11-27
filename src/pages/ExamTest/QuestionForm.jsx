@@ -54,9 +54,19 @@ const QuestionForm = ({
     setShowQuestionCard(false);
   };
 
-  const isListening = skill === "Listening" && sectionType !== 3;
-  const isReading = skill === "Reading" && sectionType !== 11;
-
+  const isListening =
+    skill === "Listening" &&
+    sectionType != 1 &&
+    sectionType != 2 &&
+    sectionType != 3 &&
+    sectionType != 7;
+  const isReading =
+    skill === "Reading" &&
+    sectionType !== 7 &&
+    sectionType !== 8 &&
+    sectionType !== 9 &&
+    sectionType !== 10 &&
+    sectionType !== 11;
   const showAddQuestion =
     isListening || isReading || skill === "Writing" || skill === "Speaking";
 

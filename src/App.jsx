@@ -92,7 +92,11 @@ const App = () => {
           <Route
             path="/demoTiny"
             element={
-              <CreateTest testId="1" skills={["Listening"]} pageType="lesson" />
+              <CreateTest
+                testId="1"
+                skills={["Listening", "Reading"]}
+                pageType="lesson"
+              />
             }
           />
           <Route path="*" element={<NotFound />} />

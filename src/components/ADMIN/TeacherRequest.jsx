@@ -10,7 +10,7 @@ import { Link } from 'react-router-dom';
 
 const TeacherRequests = () => {
     const dispatch = useDispatch();
-    const { requests, getRequestsStatus, getRequestsError, totalPages } = useSelector((state) => state.ADMIN_teachersReducer);
+    const { requests, getRequestsStatus, getRequestsError, totalPages } = useSelector((state) => state.ADMIN_teachers);
     const [currentPage, setCurrentPage] = useState(1);
     const [searchTerm, setSearchTerm] = useState("");
     const [statusFilter, setStatusFilter] = useState(0); // 0 for Pending, 1 for Accepted, 2 for Rejected
@@ -34,7 +34,6 @@ const TeacherRequests = () => {
         setCurrentPage(1); // Reset to first page on filter change
     };
 
-    // Helper function to format dates
     const formatDate = (dateString) => new Date(dateString).toLocaleDateString();
 
     return (

@@ -27,7 +27,7 @@ const Sidebar = () => {
         <aside className="w-64 bg-white shadow-lg h-screen">
             <div className="flex items-center p-4">
                 <img
-                    src="/src/assets/images/aiillogo.ico"
+                    src="/assets/aiillogo-COWiBZRk.ico"
                     alt="Logo"
                     className="w-10 h-10 text-white flex items-center justify-center rounded-full"
                 />

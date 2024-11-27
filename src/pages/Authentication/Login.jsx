@@ -124,7 +124,7 @@ const SignIn = () => {
       <div className="w-full max-w-md bg-white p-6 rounded-lg shadow-lg">
         <div className="flex items-center justify-center space-x-4 mb-4">
           <img
-            src="./src/assets/images/logo_1.png"
+            src="https://hydra13.blob.core.windows.net/63a5630a-687a-4c38-98e2-f5ce440f3f09/logo_1.png"
             loading="lazy"
             className="w-[100px]"
             alt="tutorme logo"

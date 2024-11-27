@@ -1,34 +1,34 @@
 // src/data/idols.js
 const idols = [
   {
-    image: "../../src/assets/images/idol.jpg",
+    image: "https://hydra13.blob.core.windows.net/451baca1-bffe-4384-9a0e-6c69209218ef/tutor.png",
     title: "Sample Idol",
     description: "This is a brief description of the idol.",
-    profileImage: "../../src/assets/images/ava.png",
+    profileImage: "https://hydra13.blob.core.windows.net/451baca1-bffe-4384-9a0e-6c69209218ef/tutor.png",
   },
   {
-    image: "../../src/assets/images/idol.jpg",
+    image: "https://hydra13.blob.core.windows.net/451baca1-bffe-4384-9a0e-6c69209218ef/tutor.png",
     title: "Sample Idol",
     description: "This is a brief description of the idol.",
-    profileImage: "../../src/assets/images/ava.png",
+    profileImage: "https://hydra13.blob.core.windows.net/451baca1-bffe-4384-9a0e-6c69209218ef/tutor.png",
   },
   {
-    image: "../../src/assets/images/idol.jpg",
+    image: "https://hydra13.blob.core.windows.net/451baca1-bffe-4384-9a0e-6c69209218ef/tutor.png",
     title: "Sample Idol",
     description: "This is a brief description of the idol.",
-    profileImage: "../../src/assets/images/ava.png",
+    profileImage: "https://hydra13.blob.core.windows.net/451baca1-bffe-4384-9a0e-6c69209218ef/tutor.png",
   },
   {
-    image: "../../src/assets/images/idol.jpg",
+    image: "https://hydra13.blob.core.windows.net/451baca1-bffe-4384-9a0e-6c69209218ef/tutor.png",
     title: "Sample Idol",
     description: "This is a brief description of the idol.",
-    profileImage: "../../src/assets/images/ava.png",
+    profileImage: "https://hydra13.blob.core.windows.net/451baca1-bffe-4384-9a0e-6c69209218ef/tutor.png",
   },
   {
-    image: "../../src/assets/images/idol.jpg",
+    image: "https://hydra13.blob.core.windows.net/451baca1-bffe-4384-9a0e-6c69209218ef/tutor.png",
     title: "Sample Idol",
     description: "This is a brief description of the idol.",
-    profileImage: "../../src/assets/images/ava.png",
+    profileImage: "https://hydra13.blob.core.windows.net/451baca1-bffe-4384-9a0e-6c69209218ef/tutor.png",
   },
 ];
 

@@ -115,7 +115,7 @@ const SignUp = () => {
       {/* Left side: form section */}
       <div className="hidden sm:block w-1/2 h-screen overflow-hidden">
         <img
-          src="./src/assets/images/register.png"
+          src="https://hydra13.blob.core.windows.net/63a5630a-687a-4c38-98e2-f5ce440f3f09/register.png"
           className="size-100 object-cover"
           alt="Background Image"
         />
@@ -125,7 +125,7 @@ const SignUp = () => {
       <div className="w-full sm:w-1/2 bg-white p-4 px-12 rounded-lg shadow-lg flex flex-col space-y-4 overflow-y-auto">
         <div className="flex items-center justify-center space-x-4 mb-4">
           <img
-            src="./src/assets/images/logo_1.png"
+            src="https://hydra13.blob.core.windows.net/63a5630a-687a-4c38-98e2-f5ce440f3f09/logo_1.png"
             loading="lazy"
             className="w-[100px]"
             alt="tutorme logo"

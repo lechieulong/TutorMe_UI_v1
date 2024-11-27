@@ -53,14 +53,65 @@ export const GetSchedule7Days = createAsyncThunk(
     }
 );
 
+export const DeleteSchedule = createAsyncThunk(
+    `${SLICE_NAMES.SCHEDULE}/${ACTIONS.DELETE_SCHEDULE}`,
+    async (scheduleId, { rejectWithValue }) => {
+        try {
+            const token = Cookies.get("authToken"); // Ensure token is included
+            const response = await axios.delete(
+                `${apiURLConfig.baseURL}/teacheravailableschedule/${scheduleId}`,
+                {
+                    headers: {
+                        'Authorization': `Bearer ${token}`, // Include token in the request headers
+                    },
+                }
+            );
+            return response.data;
+        } catch (error) {
+            console.error("API Error: ", error);
+            return rejectWithValue(
+                error.response?.data?.message || "Failed to delete schedule."
+            );
+        }
+    }
+);
+
+export const UpdateSchedule = createAsyncThunk(
+    `${SLICE_NAMES.SCHEDULE}/${ACTIONS.UPDATE_SCHEDULE}`,
+    async (formData, { rejectWithValue }) => {
+        try {
+            const token = Cookies.get("authToken"); // Ensure token is included
+            const response = await axios.patch(
+                `${apiURLConfig.baseURL}/teacheravailableschedule`, formData,
+                {
+                    headers: {
+                        'Authorization': `Bearer ${token}`, // Include token in the request headers
+                    },
+                }
+            );
+            return response.data;
+        } catch (error) {
+            console.error("API Error: ", error);
+            return rejectWithValue(
+                error.response?.data?.message || "Failed to update schedule."
+            );
+        }
+    }
+);
+
+
 const initialState = {
     schedule: null,
     schedules: [],
     scheduleStatus: STATUS.IDLE, // Default status
     setStatus: STATUS.IDLE,
+    deleteStatus: STATUS.IDLE,
+    updateStatus: STATUS.IDLE,
     get7daysStatus: STATUS.IDLE,
     error: null, // Error message if any
     scheduleError: null, // Error message if any
+    deleteError: null, // Error message if any
+    updateError: null, // Error message if any
 };
 
 const ScheduleSlice = createSlice({
@@ -69,6 +120,7 @@ const ScheduleSlice = createSlice({
     reducers: {},
     extraReducers: (builder) => {
         builder
+
             // Handle set schedule
             .addCase(SetSchedule.pending, (state) => {
                 state.setStatus = STATUS.PENDING;
@@ -79,7 +131,7 @@ const ScheduleSlice = createSlice({
             })
             .addCase(SetSchedule.rejected, (state, action) => {
                 state.setStatus = STATUS.FAILED;
-                state.error = action.payload || action.error.message; // Set error message
+                state.error = action.payload || action.error.message;
             })
 
             // Handle get 7 days schedule
@@ -92,7 +144,35 @@ const ScheduleSlice = createSlice({
             })
             .addCase(GetSchedule7Days.rejected, (state, action) => {
                 state.scheduleStatus = STATUS.FAILED;
-                state.scheduleError = action.payload || action.error.message; // Set error message
+                state.scheduleError = action.payload || action.error.message;
+            })
+
+            // Handle delete schedule
+            .addCase(DeleteSchedule.pending, (state) => {
+                state.deleteStatus = STATUS.PENDING;
+                state.deleteError = null;
+            })
+            .addCase(DeleteSchedule.fulfilled, (state, action) => {
+                state.deleteStatus = STATUS.SUCCESS;
+                state.schedule = action.payload;
+            })
+            .addCase(DeleteSchedule.rejected, (state, action) => {
+                state.deleteStatus = STATUS.FAILED;
+                state.deleteError = action.payload || action.error.message;
+            })
+
+            // Handle update schedule
+            .addCase(UpdateSchedule.pending, (state) => {
+                state.updateStatus = STATUS.PENDING;
+                state.updateError = null;
+            })
+            .addCase(UpdateSchedule.fulfilled, (state, action) => {
+                state.updateStatus = STATUS.SUCCESS;
+                state.schedule = action.payload;
+            })
+            .addCase(UpdateSchedule.rejected, (state, action) => {
+                state.updateStatus = STATUS.FAILED;
+                state.updateError = action.payload || action.error.message;
             })
     },
 });

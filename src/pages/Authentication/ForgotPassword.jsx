@@ -48,7 +48,7 @@ const ForgotPassword = () => {
             <div className="flex w-full max-w-screen-lg">
                 <div className="w-full lg:w-1/2 bg-yellow-100 hidden lg:flex items-center justify-center bg-cover rounded-l-lg">
                     <img
-                        src="./src/assets/images/logo_1.png"
+                        src="https://hydra13.blob.core.windows.net/63a5630a-687a-4c38-98e2-f5ce440f3f09/logo_1.png"
                         loading="lazy"
                         className="w-[200px] p-6 transition-all duration-300 hover:drop-shadow-lg"
                         alt="tutorme logo"

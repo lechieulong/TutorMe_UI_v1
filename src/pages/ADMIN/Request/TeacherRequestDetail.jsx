@@ -29,7 +29,7 @@ const CommentSection = ({ request }) => {
     const [comment, setComment] = useState('');
     const [commentError, setCommentError] = useState('');
     const dispatch = useDispatch();
-    const { processStatus, processError } = useSelector((state) => state.ADMIN_teachersReducer);
+    const { processStatus, processError } = useSelector((state) => state.ADMIN_teachers);
 
     const handleSubmit = async (isAccepted) => {
         if (!comment.trim()) {
@@ -120,7 +120,7 @@ const MainContent = ({ request }) => (
 const TeacherRequestDetail = () => {
     const dispatch = useDispatch();
     const { requestId } = useParams();
-    const { request, getRequestDetailStatus, getRequestDetailError } = useSelector((state) => state.ADMIN_teachersReducer);
+    const { request, getRequestDetailStatus, getRequestDetailError } = useSelector((state) => state.ADMIN_teachers);
 
     useEffect(() => {
         if (requestId) {

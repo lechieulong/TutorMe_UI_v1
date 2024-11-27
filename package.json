@@ -65,11 +65,13 @@
     "react-speech-recognition": "^3.10.0",
     "react-toastify": "^10.0.5",
     "regenerator-runtime": "^0.14.1",
+    "requirejs": "^2.3.7",
     "rimraf": "^6.0.1",
     "xlsx": "^0.18.5",
     "zego-zim-web": "^2.8.0"
   },
   "devDependencies": {
+    "@rollup/plugin-commonjs": "^28.0.1",
     "@types/react": "^18.3.3",
     "@types/react-dom": "^18.3.0",
     "@vitejs/plugin-react": "^4.3.1",

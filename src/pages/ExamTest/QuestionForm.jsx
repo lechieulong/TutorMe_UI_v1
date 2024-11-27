@@ -263,7 +263,16 @@ const QuestionForm = ({
                 ))}
             </>
           ) : (
-            <p>{question.questionName}</p>
+            <>
+              <p>{question.questionName}</p>
+              <p>{question.questionType}</p>
+              {question.answers.length > 0 &&
+                question.answers.map((a) => (
+                  <div>
+                    <p>AnswerText: {a.answerText}</p>
+                  </div>
+                ))}
+            </>
           )}
         </div>
       ))}

@@ -167,7 +167,6 @@ const App = () => {
           <Route path="/404" element={<Error404 />} />
           <Route path="/not-authorized" element={<NotAuthorizedPage />} />
           <Route path="/Payment" element={<PayOS />} />
-          <Route path="/Payment" element={<PayOS />} />
           <Route path="/Paymentresult" element={<PaymentResult />} />
 
           {/* ADMIN */}

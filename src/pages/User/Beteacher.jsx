@@ -10,6 +10,9 @@ import { uploadFile } from '../../redux/testExam/TestSlice';
 import { GetUserEducation } from '../../redux/users/UserSlice';;
 import { GetTeacherRequestByUserId } from '../../redux/users/UserSlice';
 import { UpdateRole } from '../../redux/users/UserSlice';
+import { GetRandomAdminTest } from '../../redux/users/UserSlice';
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 const EducationSection = () => {
     const navigate = useNavigate();
@@ -150,16 +153,29 @@ const EducationSection = () => {
         e.preventDefault();
         try {
             const response = await dispatch(UpdateRole());
-            console.log("Response: ", response);
             if (UpdateRole.fulfilled.match(response)) {
                 const newToken = response.payload;
-                console.log("New roken: ", newToken);
                 // Set the new token in cookies with an expiration of 7 days
                 Cookies.set('authToken', newToken, { expires: 7 });
                 navigate(`/user/${userInfor.userName}`);
             }
         } catch (error) {
             console.error("Role update failed:", error);
+        }
+    };
+
+    const handleTestSkills = async () => {
+        try {
+            const response = await dispatch(GetRandomAdminTest());
+            if (response?.id) {
+                // Chuyển hướng đến trang chi tiết bài kiểm tra
+                window.location.href = `/testDetail/${response.id}`;
+            } else {
+                toast.error("No test exam available now!");
+            }
+        } catch (error) {
+            console.error("Error fetching test:", error);
+            alert("An error occurred while fetching the test. Please try again.");
         }
     };
 
@@ -320,9 +336,12 @@ const EducationSection = () => {
                                                         User education and teacher request created successfully...
                                                     </p>
                                                     {getUserEducationStatus === "success" ? (
-                                                        <Link to="/testDetail/1" className="px-4 py-2 bg-green-500 text-white rounded hover:bg-green-400">
-                                                            Test your skills
-                                                        </Link>
+                                                        <button
+                                                        onClick={handleTestSkills} // Gọi hàm xử lý khi nhấn nút
+                                                        className="px-4 py-2 bg-green-500 text-white rounded hover:bg-green-400"
+                                                    >
+                                                        Test your skills
+                                                    </button>
                                                     ) : (
                                                         <button type="submit" className="px-4 py-2 bg-green-500 text-white rounded hover:bg-green-400">
                                                             Next
@@ -384,6 +403,7 @@ const EducationSection = () => {
                     </div>
                 </div>
             </div>
+            <ToastContainer autoClose={3000} newestOnTop closeOnClick />
         </MainLayout>
     );
 };

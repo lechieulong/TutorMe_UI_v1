@@ -15,10 +15,11 @@ import { ToastContainer, toast } from "react-toastify";
 import { Link, useNavigate } from "react-router-dom";
 import { GetUserEducationByUsername } from '../../redux/users/UserSlice';
 import BookedSchedule from '../Schedule/Scheduled';
-
+import { GetSchedule7Days } from '../../redux/Schedule/ScheduleSlice';
 import "react-toastify/dist/ReactToastify.css";
 
 const CoachingSchedule = () => {
+
     const dispatch = useDispatch();
     const [activeTab, setActiveTab] = useState(() => localStorage.getItem('activeTab') || 'about');
     const { user } = useSelector((state) => state.user);
@@ -57,12 +58,7 @@ const CoachingSchedule = () => {
         setIsSearchVisible(!isSearchVisible);
     };
 
-    const now = new Date();
-    const formatDateTimeLocal = (date) => {
-        return date.toISOString().slice(0, 16);
-    };
-
-    const nowFormatted = formatDateTimeLocal(now);
+    const now = new Date().toLocaleString();
 
     const [formData, setFormData] = useState({
         startTime: "",
@@ -135,7 +131,11 @@ const CoachingSchedule = () => {
         }
     };
 
-    const { setStatus, error } = useSelector((state) => state.schedule);
+    const { setStatus, deleteStatus, error, updateStatus } = useSelector((state) => state.schedule);
+
+    useEffect(() => {
+        dispatch(GetSchedule7Days(teachername));
+    }, [dispatch, setStatus, deleteStatus, updateStatus]);
 
     return (
         <MainLayout>
@@ -161,7 +161,9 @@ const CoachingSchedule = () => {
                                 </>
                             )}
                             <button className="bg-red-500 text-white px-4 py-2 rounded">Teacher</button>
-                            <Link to="/coachingschedule/bookedschedule" className="bg-yellow-300 text-white px-4 py-2 rounded">Scheduled</Link>
+                            {userFromToken && (
+                                <Link to="/coachingschedule/bookedschedule" className="bg-yellow-300 text-white px-4 py-2 rounded">Scheduled</Link>
+                            )}
                         </div>
                     </header>
 
@@ -249,7 +251,7 @@ const CoachingSchedule = () => {
                                             value={formData.startTime}
                                             onChange={handleChange}
                                             className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-                                            min={nowFormatted}
+                                            min={now}
                                             required
                                         />
                                         {formErrors.startTime && <p className="text-red-500 text-xs">{formErrors.startTime}</p>}

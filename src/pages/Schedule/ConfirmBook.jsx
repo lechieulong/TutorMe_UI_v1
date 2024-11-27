@@ -72,8 +72,9 @@ function PaymentMethod() {
                     <div className="p-6 space-y-6">
                         <div className="flex justify-center mb-4">
                             <label className="flex items-center space-x-2">
-                                <input type="radio" name="payment" className="form-radio text-blue-600" defaultChecked />
-                                <span>Pay with Diamond</span>
+                                {/* <input type="radio" name="payment" className="form-radio text-blue-600" defaultChecked />
+                                <span>Pay with Diamond</span> */}
+                                <p className="font-mono text-center text-red-500 text-xs mt-1">This transaction will be kept 15 minutes for you. Please keep screen on, and process check out.</p>
                             </label>
                         </div>
                         {status === 1 || status === 2 && (

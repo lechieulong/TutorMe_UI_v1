@@ -68,7 +68,13 @@ const ProfileEditSection = () => {
     const validateForm = () => {
         const errors = {};
         if (!formData.name.trim()) errors.name = 'Name is required';
-        if (!formData.phoneNumber.trim()) errors.phoneNumber = 'Phone number is required';
+        // Validate phone number
+        const phoneRegex = /^[0-9]{10}$/; // Chỉ cho phép số có đúng 10 chữ số
+        if (!formData.phoneNumber.trim()) {
+            errors.phoneNumber = 'Phone number is required';
+        } else if (!phoneRegex.test(formData.phoneNumber)) {
+            errors.phoneNumber = 'Phone number must be 10 digits';
+        }
         if (!formData.dob) errors.dob = 'Date of birth is required';
 
         setFormErrors(errors);

@@ -110,7 +110,7 @@ const LoginModal = ({ isOpen, onClose }) => {
                 <div className="flex items-center justify-between mb-4">
                     <div className="flex items-center space-x-4">
                         <img
-                            src="./src/assets/images/logo_1.png"
+                            src="https://hydra13.blob.core.windows.net/63a5630a-687a-4c38-98e2-f5ce440f3f09/logo_1.png"
                             loading="lazy"
                             className="w-[100px]"
                             alt="aiil logo"

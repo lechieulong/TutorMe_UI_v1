@@ -5,6 +5,7 @@ import MainLayout from "../../layout/MainLayout";
 import Header from "../../components/common/Header";
 import TestSubmitted from "./TestSubmitted";
 import ContributionAttempt from "./general/ContributionAttempt";
+import TestHistory from "./general/TestHistory";
 
 const TestFormLayout = () => {
   const [activeTab, setActiveTab] = useState("QuestionBanks");
@@ -17,6 +18,8 @@ const TestFormLayout = () => {
         return <TestSubmitted />;
       case "Settings":
         return <ContributionAttempt />;
+      case "History":
+        return <TestHistory />;
       default:
         return null;
     }
@@ -67,6 +70,19 @@ const TestFormLayout = () => {
                   } dark:hover:text-gray-300`}
                 >
                   Test Analysis
+                </button>
+              </li>
+              <li className="me-2">
+                <button
+                  type="button"
+                  onClick={() => setActiveTab("History")}
+                  className={`inline-flex items-center justify-center p-4 border-b-2 rounded-t-lg ${
+                    activeTab === "Settings"
+                      ? "text-accentGreen-600 border-accentGreen" // Active state
+                      : "hover:text-gray-600 hover:border-gray-300"
+                  } dark:hover:text-gray-300`}
+                >
+                  History
                 </button>
               </li>
             </ul>

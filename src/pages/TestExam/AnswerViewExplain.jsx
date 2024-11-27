@@ -485,13 +485,13 @@ const AnswerViewExplain = ({
         />
       )} */}
 
-      {currentSkillKey === "speaking" && (
+      {/* {currentSkillKey === "speaking" && (
         <Speaking
           partData={partData}
           currentSkillKey={currentSkillKey}
           handleAnswerChange={handleAnswerChange}
         />
-      )}
+      )} */}
     </form>
   );
 };

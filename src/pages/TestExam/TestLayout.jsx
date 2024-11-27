@@ -10,6 +10,7 @@ import { useDispatch } from "react-redux";
 import TestExplain from "./TestExplain";
 import { GoogleGenerativeAI } from "@google/generative-ai";
 import Modal from "react-modal";
+import { generateSpeakingPrompt } from "../../components/Test/Part/generateSpeakingPrompt";
 
 const genAI = new GoogleGenerativeAI(import.meta.env.VITE_GEN_AI);
 
@@ -26,13 +27,12 @@ const TestLayout = ({ skillsData, practiceTestData, fullTestId }) => {
     timeSecondsTaken: 0,
   });
 
-  const startTimeRef = useRef(null); // Ref to store the start time
-  const elapsedTimeRef = useRef(0); // Ref to store elapsed time in seconds
-  const timerRef = useRef(null); // Ref to store the interval ID
+  const startTimeRef = useRef(null);
+  const elapsedTimeRef = useRef(0);
+  const timerRef = useRef(null);
 
   const dispatch = useDispatch();
 
-  // Function to handle scoring
   const handleScoring = async (userAnswers) => {
     try {
       const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
@@ -62,7 +62,7 @@ const TestLayout = ({ skillsData, practiceTestData, fullTestId }) => {
 
             if (aiResponse) {
               console.log("AI Response received successfully.");
-              break; // Exit loop if valid response is received
+              break;
             }
           } catch (error) {
             console.error(`Attempt ${attempt} failed. Error:`, error);
@@ -121,9 +121,8 @@ const TestLayout = ({ skillsData, practiceTestData, fullTestId }) => {
         }
 
         console.log("Invalid score detected. Retrying...");
-        // Retry the request to the AI model
         const aiResponse = await retryFetchAIResponse();
-        return await handleScoring(userAnswers); // Recursively retry
+        return await handleScoring(userAnswers);
       }
 
       return parsedScores;
@@ -138,15 +137,6 @@ const TestLayout = ({ skillsData, practiceTestData, fullTestId }) => {
     }
   };
 
-  // Function to check if the answer is too short or not related
-  const isAnswerTooShort = (answerText) => {
-    const minLength = 20; // Define the minimum length for an acceptable answer
-    const isEmptyAnswer = answerText.trim().length < minLength;
-    const isIrrelevant = answerText.toLowerCase().includes("not related"); // Example check, can be customized
-    return isEmptyAnswer || isIrrelevant;
-  };
-
-  // Function to handle feedback/explanation
   const explain = async (userAnswers) => {
     try {
       const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
@@ -154,7 +144,7 @@ const TestLayout = ({ skillsData, practiceTestData, fullTestId }) => {
       This is a question: ${userAnswers.questionName}
       User Answer: ${userAnswers.answers[0].answerText}
 
-      Evaluate the following response based on IELTS Writing Task 2 criteria:
+      Evaluate the following response based on IELTS Writing Task criteria:
       - Task Achievement (Score: 0-9)
       - Coherence and Cohesion (Score: 0-9)
       - Lexical Resource (Score: 0-9)
@@ -208,8 +198,7 @@ const TestLayout = ({ skillsData, practiceTestData, fullTestId }) => {
     }
   };
 
-  // Refactored evaluateAnswer function
-  const evaluateAnswer = async (userAnswers) => {
+  const evaluateWritingAnswer = async (userAnswers) => {
     try {
       const [scores, feedback] = await Promise.all([
         handleScoring(userAnswers),
@@ -237,6 +226,46 @@ const TestLayout = ({ skillsData, practiceTestData, fullTestId }) => {
       return {
         overallScore: null,
         feedBack: "An error occurred while evaluating the response.",
+      };
+    }
+  };
+
+  const evaluateSpeakingAnswer = async (userAnswers) => {
+    try {
+      const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
+
+      const prompt = generateSpeakingPrompt(
+        userAnswers.questionName,
+        userAnswers.answers[0].answerText
+      );
+
+      const result = await model.generateContent(prompt);
+
+      const aiResponse =
+        result?.response?.candidates?.[0]?.content?.parts?.[0]?.text;
+
+      const overallScoreLine = aiResponse
+        .split("\n")
+        .find((line) => line.toLowerCase().includes("overall score:"));
+
+      if (!overallScoreLine) {
+        throw new Error("Overall Score not found in AI response.");
+      }
+
+      const avgScore =
+        overallScoreLine
+          .split(":")[1] // Extract part after the colon
+          ?.match(/[\d.]+/)?.[0] || "N/A"; // Extract the numeric score (e.g., 3.5, 7.0) // Default to "N/A" if no numeric score is found
+
+      return {
+        overallScore: avgScore,
+        feedBack: aiResponse,
+      };
+    } catch (error) {
+      console.error("Error evaluating speaking answer:", error);
+      return {
+        overallScore: "N/A",
+        feedBack: "Error processing answer.",
       };
     }
   };
@@ -318,13 +347,12 @@ const TestLayout = ({ skillsData, practiceTestData, fullTestId }) => {
       }, 1000);
     }
 
-    // Cleanup on unmount or re-render
     return () => {
       clearInterval(timerRef.current);
       timerRef.current = null; // Ensure cleanup
       startTimeRef.current = null; // Reset start time for next use
     };
-  }, [testData]); // Only depend on testData
+  }, [testData]);
 
   const handleAnswerChange = useCallback(({ questionId, answerData }) => {
     setUserAnswers((prevAnswers) => ({
@@ -369,6 +397,7 @@ const TestLayout = ({ skillsData, practiceTestData, fullTestId }) => {
       console.log("No answers to submit");
       return;
     }
+
     clearInterval(timerRef.current); // Clear the timer
     const keys = Object.keys(testData);
     const lastSkillKey = keys[keys.length - 1];
@@ -443,7 +472,7 @@ const TestLayout = ({ skillsData, practiceTestData, fullTestId }) => {
             for (const questionId of questionIds) {
               const userAnswer = userAnswers[questionId];
 
-              const responseWriting = await evaluateAnswer(userAnswer);
+              const responseWriting = await evaluateWritingAnswer(userAnswer);
 
               updatedAnswers[questionId] = {
                 ...userAnswer,
@@ -475,13 +504,11 @@ const TestLayout = ({ skillsData, practiceTestData, fullTestId }) => {
             handleNextSkill();
 
             setUserAnswers([]); // Clear user answers after submission
-            setUserAnswers([]); // Clear user answers after submission
             if (lastSkillKey === currentSkillKey) {
               setSubmitted(true);
             }
           } catch (error) {
             console.error("Error handling writing test submission:", error);
-            setSubmitting(false);
             setSubmitting(false);
           }
         })();
@@ -490,14 +517,24 @@ const TestLayout = ({ skillsData, practiceTestData, fullTestId }) => {
       case 3:
         setSubmitting(true);
 
-        console.log("userAnswers", userAnswers);
-
         (async () => {
           try {
+            const updatedAnswers = {};
+            const questionIds = Object.keys(userAnswers);
+            for (const questionId of questionIds) {
+              const userAnswer = userAnswers[questionId];
+
+              const responseSpeaking = await evaluateSpeakingAnswer(userAnswer);
+              updatedAnswers[questionId] = {
+                ...userAnswer,
+                explain: responseSpeaking.feedBack,
+                overallScore: responseSpeaking.overallScore,
+              };
+            }
             const totalQuestions = getTotalQuestions(currentSkillData);
             const result = await dispatch(
               submitAnswerTest({
-                userAnswers: userAnswers,
+                userAnswers: updatedAnswers,
                 testId,
                 timeMinutesTaken: timeTakenData.timeMinutesTaken,
                 timeSecondsTaken: timeTakenData.timeSecondsTaken,
@@ -516,15 +553,11 @@ const TestLayout = ({ skillsData, practiceTestData, fullTestId }) => {
 
             setSubmitting(false);
             handleNextSkill();
-
-            setUserAnswers([]); // Clear user answers after submission
-            setUserAnswers([]); // Clear user answers after submission
+            setUserAnswers([]);
             if (lastSkillKey === currentSkillKey) {
               setSubmitted(true);
             }
           } catch (error) {
-            console.error("Error handling writing test submission:", error);
-            setSubmitting(false);
             setSubmitting(false);
           }
         })();

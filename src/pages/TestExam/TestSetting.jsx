@@ -66,8 +66,7 @@ const TestSetting = () => {
     };
     setPracticeTestData(testData);
 
-    setIsTestStarted(true); // Set test started to true
-    // navigate(`/testing/${skillId}/skill`, { state: testData });
+    setIsTestStarted(true);
   };
 
   const handleTimeLimitChange = (event) => {

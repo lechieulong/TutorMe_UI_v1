@@ -11,7 +11,6 @@ import { Link } from "react-router-dom";
 const CourseLessonCard = ({ mentorAndList, coursePartId, isEnrolled }) => {
   const [collapsedLessons, setCollapsedLessons] = useState({});
   const [courseLessons, setCourseLessons] = useState([]);
-  const [lessionCount, setLessionCount] = useState(null);
   const [isCreateTest, setIsCreateTest] = useState(false);
   const [categories, setCategories] = useState([]);
   const [lessonId, setLessonId] = useState(null);

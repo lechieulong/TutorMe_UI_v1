@@ -242,17 +242,19 @@ const SectionForm = ({ skill, partIndex, control, setValue }) => {
                   <h3 className="text-xl font-bold mb-4 ">
                     Explains for section
                   </h3>
-                  {/* <Controller
+                  <Controller
                     name={`skills.${skill}.parts.${partIndex}.sections.${index}.explain`}
                     control={control}
                     rules={{ required: "Section context is required" }} // Add validation
-                    render={({ field }) => (
+                    render={({ field, fieldState }) => (
                       <div className="mb-2">
+                        <label className="block text-gray-700 font-medium mb-2">
+                          Section Explain
+                        </label>
                         <Editor
-                          onInit={(_, editor) => (editorRef.current = editor)}
                           apiKey={import.meta.env.VITE_TINI_APIKEY}
-                          onEditorChange={(v) => onEditorChange(field, v)}
-                          initialValue={"<p>Write explain here</p>"} // Set initial value
+                          onEditorChange={field.onChange} // Directly bind to field.onChange
+                          value={field.value} // Bind the value to field.value
                           init={{
                             height: "300px",
                             menubar:
@@ -285,7 +287,7 @@ const SectionForm = ({ skill, partIndex, control, setValue }) => {
                                 onAction: () => {
                                   const questionId = uuidv4(); // Generate unique questionId
                                   editor.insertContent(
-                                    `<input type="text"  class="editor-input" data-question-id="${questionId}" />`
+                                    `<input type="text" class="editor-input" data-question-id="${questionId}" />`
                                   );
                                 },
                               });
@@ -294,9 +296,14 @@ const SectionForm = ({ skill, partIndex, control, setValue }) => {
                               "body { font-family:Helvetica,Arial,sans-serif; font-size:14px; padding:10px; margin:0; }",
                           }}
                         />
+                        {fieldState.error && (
+                          <p className="text-red-500">
+                            {fieldState.error.message}
+                          </p>
+                        )}
                       </div>
                     )}
-                  /> */}
+                  />
                 </div>
               )}
           </div>

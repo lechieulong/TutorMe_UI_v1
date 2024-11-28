@@ -1,52 +1,41 @@
 import { useEffect, useState } from "react";
-import axios from "axios";
 import { useParams } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
 import MainLayout from "../../layout/MainLayout";
 import MentorSidebar from "../../components/Mentor/MentorSideBar";
 import ClassCard from "../Class/components/ClassCard";
-
+import CreateClass from "../Class/CreateClass";
+import { fetchClasses } from "../../redux/classes/ClassSlice";
 const ClassOfCourseList = () => {
-  const { courseId } = useParams(); // Lấy courseId từ URL
-  const [classes, setClasses] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState("");
+  const { courseId } = useParams();
+  const dispatch = useDispatch();
 
-  const fetchClasses = async () => {
-    try {
-      const response = await axios.get(
-        `https://localhost:7030/api/class/course/${courseId}/classes`
-      );
-      if (Array.isArray(response.data.result)) {
-        setClasses(response.data.result);
-      } else {
-        setClasses([]);
-        setError("Dữ liệu không hợp lệ.");
-      }
-    } catch (error) {
-    } finally {
-      setLoading(false);
-    }
-  };
+  // Lấy state từ Redux store
+  const { classes, status, error, switchStates } = useSelector(
+    (state) => state.classes
+  );
+
+  const [showCreateClassModal, setShowCreateClassModal] = useState(false);
 
   const handleSwitchChange = (classId, newStatus) => {
-    setClasses((prevClasses) =>
-      prevClasses.map((classItem) =>
-        classItem.id === classId
-          ? { ...classItem, isEnabled: newStatus }
-          : classItem
-      )
-    );
+    // Bạn có thể xử lý logic thay đổi switch tại đây nếu cần lưu vào Redux
+    console.log(`Switch changed for class ${classId} to ${newStatus}`);
   };
 
   const handleSelectClass = (classId) => {
     console.log(`Class selected: ${classId}`);
   };
 
-  useEffect(() => {
-    fetchClasses();
-  }, [courseId]);
+  const handleCreateClassSuccess = () => {
+    setShowCreateClassModal(false); // Đóng popup
+    dispatch(fetchClasses(courseId)); // Làm mới danh sách lớp học
+  };
 
-  if (loading) {
+  useEffect(() => {
+    dispatch(fetchClasses(courseId)); // Gọi fetchClasses qua Redux khi component được mount
+  }, [dispatch, courseId]);
+
+  if (status === "pending") {
     return (
       <div className="flex justify-center items-center h-full">
         <p className="text-lg font-semibold">Loading...</p>
@@ -54,7 +43,7 @@ const ClassOfCourseList = () => {
     );
   }
 
-  if (error) {
+  if (status === "failed") {
     return (
       <div className="flex justify-center items-center h-full">
         <p className="text-red-500 text-lg">{error}</p>
@@ -65,14 +54,20 @@ const ClassOfCourseList = () => {
   return (
     <MainLayout>
       <div className="flex flex-col w-screen min-h-screen bg-gray-50">
-        <div className="flex flex-1 mt-16 w-full">
+        <div className="flex flex-1 w-full">
           <MentorSidebar />
           <div className="flex-1 p-6 bg-white rounded-lg shadow-md mx-4">
-            <h2 className="text-2xl font-bold text-gray-700 mb-6">
-              Class List
-            </h2>
+            <div className="flex items-center justify-between mb-6">
+              <h2 className="text-2xl font-bold text-gray-700">Class List</h2>
+              <button
+                type="button"
+                className="py-2 px-3 inline-flex items-center gap-x-2 text-sm font-medium rounded-lg border border-gray-200 bg-white text-gray-800 shadow-sm hover:bg-gray-50 focus:outline-none focus:bg-gray-50"
+                onClick={() => setShowCreateClassModal(true)} // Hiển thị popup
+              >
+                Create Class
+              </button>
+            </div>
 
-            {/* Kiểm tra nếu không có lớp nào */}
             {classes.length === 0 ? (
               <div className="flex justify-center items-center h-full">
                 <p className="text-red-500 text-lg">No classes found.</p>
@@ -83,7 +78,7 @@ const ClassOfCourseList = () => {
                   <ClassCard
                     key={classItem.id}
                     classItem={classItem}
-                    switchState={classItem.isEnabled}
+                    switchState={switchStates[classItem.id]} // Sử dụng trạng thái switch từ Redux
                     onSwitchChange={handleSwitchChange}
                     onSelect={handleSelectClass}
                   />
@@ -93,6 +88,14 @@ const ClassOfCourseList = () => {
           </div>
         </div>
       </div>
+
+      {showCreateClassModal && (
+        <CreateClass
+          courseId={courseId}
+          onClose={() => setShowCreateClassModal(false)} // Đóng popup
+          onCreateSuccess={handleCreateClassSuccess} // Gọi lại danh sách khi tạo thành công
+        />
+      )}
     </MainLayout>
   );
 };

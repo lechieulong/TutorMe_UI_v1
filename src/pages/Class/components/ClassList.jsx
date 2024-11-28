@@ -1,16 +1,38 @@
-// ClassList.js
-
-import React from "react";
-import ClassCard from "./ClassCard"; // Đảm bảo đường dẫn đúng với vị trí ClassCard
+import React, { useEffect, useState } from "react";
+import ClassCard from "./ClassCard";
+import { useNavigate } from "react-router-dom";
+import axios from "axios";
 
 const ClassList = ({
-  classes,
+  courseId,
   currentSlide,
-  setCurrentSlide,
   switchStates,
   handlePrev,
   handleNext,
 }) => {
+  const [classes, setClasses] = useState([]);
+  const [reload, setReload] = useState(false);
+  const navigate = useNavigate();
+
+  const fetchClasses = async () => {
+    try {
+      const response = await axios.get(
+        `https://localhost:7030/api/class/course/${courseId}/classes`
+      );
+      setClasses(response.data.result);
+    } catch (error) {
+      console.error("Failed to fetch classes:", error);
+    }
+  };
+
+  useEffect(() => {
+    fetchClasses();
+  }, [reload]);
+
+  const handleCreateSuccess = () => {
+    setReload(!reload);
+  };
+
   return (
     <div className="flex flex-col bg-white border w-full shadow-sm rounded-xl p-4 md:p-5 relative group mb-4">
       <div className="mt-4 relative">
@@ -19,7 +41,11 @@ const ClassList = ({
           <button
             type="button"
             className="py-2 px-3 inline-flex items-center gap-x-2 text-sm font-medium rounded-lg border border-gray-200 bg-white text-gray-800 shadow-sm hover:bg-gray-50 focus:outline-none focus:bg-gray-50"
-            onClick={() => navigate("/createClass", { state: { courseId } })}
+            onClick={() =>
+              navigate("/createClass", {
+                state: { courseId, onCreateSuccess: handleCreateSuccess },
+              })
+            }
           >
             Create Class
           </button>

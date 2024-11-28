@@ -1,5 +1,6 @@
 import React, { useState } from "react";
-import axios from "axios";
+import { useDispatch } from "react-redux";
+import { createClass } from "../../redux/classes/ClassSlice";
 
 const CreateClass = ({ courseId, onClose, onCreateSuccess }) => {
   const [className, setClassName] = useState("");
@@ -10,7 +11,7 @@ const CreateClass = ({ courseId, onClose, onCreateSuccess }) => {
   const [startTime, setStartTime] = useState("");
   const [endTime, setEndTime] = useState("");
   const [isEnabled, setIsEnabled] = useState(true);
-  const [imageUrl, setImageUrl] = useState("");
+  const dispatch = useDispatch();
   const [inputErrors, setInputErrors] = useState({
     className: false,
     classDescription: false,
@@ -19,7 +20,6 @@ const CreateClass = ({ courseId, onClose, onCreateSuccess }) => {
     endDate: false,
     startTime: false,
     endTime: false,
-    imageUrl: false,
   });
 
   const validateStartDate = () => {
@@ -61,16 +61,8 @@ const CreateClass = ({ courseId, onClose, onCreateSuccess }) => {
 
     if (!validateFields()) return;
 
-    if (!courseId) {
-      console.error("Course ID is required.");
-      return;
-    }
-
     const startDateTime = new Date(`${startDate}T${startTime}`).toISOString();
     const endDateTime = new Date(`${endDate}T${endTime}`).toISOString();
-
-    console.log("Start DateTime:", startDateTime); // Debug
-    console.log("End DateTime:", endDateTime); // Debug
 
     const newClass = {
       className,
@@ -80,21 +72,16 @@ const CreateClass = ({ courseId, onClose, onCreateSuccess }) => {
       startDate: startDateTime,
       endDate: endDateTime,
       isEnabled,
-      imageUrl,
     };
 
     try {
-      const response = await axios.post(
-        "https://localhost:7030/api/class",
-        newClass
-      );
-      console.log("Class created successfully:", response.data);
-      alert("Lớp học đã được tạo thành công!");
+      await dispatch(createClass({ newClass })).unwrap();
 
-      onCreateSuccess();
-      onClose();
+      alert("Lớp học đã được tạo thành công!");
+      onCreateSuccess(); // Gọi callback nếu có
+      onClose(); // Đóng form
     } catch (error) {
-      console.error("Failed to create class:", error);
+      console.error("Failed to create class:", error.message || error);
       alert("Đã xảy ra lỗi khi tạo lớp học. Vui lòng thử lại.");
     }
   };
@@ -233,24 +220,6 @@ const CreateClass = ({ courseId, onClose, onCreateSuccess }) => {
                 }`}
               />
             </div>
-          </div>
-
-          <div className="mb-4">
-            <label className="block text-sm font-semibold mb-2">
-              URL Hình Ảnh
-            </label>
-            <input
-              type="text"
-              value={imageUrl}
-              onChange={(e) => {
-                setImageUrl(e.target.value);
-                setInputErrors((prev) => ({ ...prev, imageUrl: false }));
-              }}
-              required
-              className={`w-full border p-2 rounded focus:outline-none focus:border-blue-500 ${
-                inputErrors.imageUrl ? "border-red-500" : "border-gray-300"
-              }`}
-            />
           </div>
 
           <div className="mb-4">

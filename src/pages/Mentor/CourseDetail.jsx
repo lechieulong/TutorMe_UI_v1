@@ -32,7 +32,8 @@ import {
   FaRegPlayCircle,
 } from "react-icons/fa";
 import { getUser } from "../../service/GetUser";
-
+import { CheckLecturerOfCourse } from "../../redux/courses/CourseSlice";
+import { GetCourseById } from "../../redux/courses/CourseSlice";
 const CourseDetail = () => {
   const { className, courseId } = useParams();
   const location = useLocation();
@@ -72,11 +73,16 @@ const CourseDetail = () => {
   useEffect(() => {
     const fetchCourseDetail = async () => {
       try {
-        const courses = await dispatch(fetchCourses()).unwrap();
-        setCourse(courses.find((course) => course.id === courseId));
-      } catch {}
+        const courseDetail = await dispatch(GetCourseById(courseId)).unwrap(); // Truyền courseId vào action
+        setCourse(courseDetail); // Kết quả trả về là thông tin chi tiết của khóa học
+      } catch (error) {
+        console.error("Failed to fetch course details:", error);
+      }
     };
-    fetchCourseDetail();
+
+    if (courseId) {
+      fetchCourseDetail();
+    }
   }, [dispatch, courseId]);
 
   useEffect(() => {
@@ -181,6 +187,15 @@ const CourseDetail = () => {
       .unwrap()
       .catch(() => {});
   };
+  useEffect(() => {
+    if (userId) {
+      dispatch(CheckUserEnrollment({ userId, courseId })).then((result) => {
+        console.log("Enrollment check completed:", result);
+      });
+    }
+    dispatch(CheckLecturerOfCourse(courseId));
+    dispatch(GetCourseById(courseId));
+  }, [dispatch, userId, courseId]);
 
   const handleOpenRating = () => setIsRatingOpen(true);
   const handleCloseRating = async () => {
@@ -200,6 +215,7 @@ const CourseDetail = () => {
       setNotificationUpdated(true);
     }
   }, [mentorAndList, isMentor, notificationUpdated]);
+  console.log(course);
 
   return (
     <MainLayout>
@@ -218,7 +234,7 @@ const CourseDetail = () => {
           status={confirmStatus}
         />
         <div className="flex w-full">
-          <MentorSidebar />
+          <MentorSidebar mentorAndList={mentorAndList} />
           <div className="flex-1 p-4 overflow-y-auto">
             <header className="mb-4 flex justify-between items-center">
               <h1 className="text-4xl font-bold text-black">{className}</h1>
@@ -248,8 +264,11 @@ const CourseDetail = () => {
                     </Link>
                   </span>
                   <span className="flex items-center">
-                    {course?.enrollmentCount} students
+                    {course?.enrollmentCount !== undefined
+                      ? `${course.enrollmentCount} students`
+                      : "No students"}
                   </span>
+
                   <div className="flex items-center">
                     <span className="ml-2">
                       {course?.averageRating?.toFixed(1)}

@@ -1,5 +1,7 @@
 import React, { useState } from "react";
 import axios from "axios";
+import Confirm from "../../../components/common/Confirm";
+import Notification from "../../../components/common/Notification";
 
 const CreateCourseLesson = ({ coursePartId, onClose, onCreated }) => {
   const [lesson, setLesson] = useState({
@@ -9,28 +11,33 @@ const CreateCourseLesson = ({ coursePartId, onClose, onCreated }) => {
 
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
+  const [confirmOpen, setConfirmOpen] = useState(false);
+  const [notification, setNotification] = useState("");
 
   const handleChange = (e) => {
     const { name, value } = e.target;
     setLesson((prev) => ({ ...prev, [name]: value }));
   };
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = (e) => {
     e.preventDefault();
-    if (loading) return;
-
-    setLoading(true);
     setError(null);
+    setConfirmOpen(true); // Hiển thị xác nhận trước khi tạo
+  };
 
+  const confirmActionHandler = async () => {
+    setLoading(true);
     try {
       await axios.post("https://localhost:7030/api/CourseLessons", lesson);
-      alert("Course Lesson created successfully!");
+      setNotification("Course Lesson created successfully!");
       onCreated();
       onClose();
     } catch (err) {
       setError(err.response?.data?.message || "Failed to create course lesson");
+      setNotification("Failed to create course lesson.");
     } finally {
       setLoading(false);
+      setConfirmOpen(false);
     }
   };
 
@@ -56,7 +63,7 @@ const CreateCourseLesson = ({ coursePartId, onClose, onCreated }) => {
           <button
             type="submit"
             disabled={loading}
-            className="bg-blue-600 text-white font-semibold py-2 px-4 rounded-md hover:bg-blue-700"
+            className="py-2 px-3 text-sm font-medium rounded-lg border border-gray-200 bg-green-500 text-white shadow-sm hover:bg-green-600 focus:outline-none"
           >
             {loading ? "Creating..." : "Create Lesson"}
           </button>
@@ -71,6 +78,21 @@ const CreateCourseLesson = ({ coursePartId, onClose, onCreated }) => {
 
         {error && <p className="text-red-500 mt-4">{error}</p>}
       </form>
+
+      <Confirm
+        isOpen={confirmOpen}
+        onClose={() => setConfirmOpen(false)}
+        onConfirm={confirmActionHandler}
+        status="Confirmation"
+        shoud="yes"
+        message="Are you sure you want to create this lesson?"
+      />
+
+      <Notification
+        message={notification}
+        onClose={() => setNotification("")}
+        shoud={error ? "no" : "yes"}
+      />
     </div>
   );
 };

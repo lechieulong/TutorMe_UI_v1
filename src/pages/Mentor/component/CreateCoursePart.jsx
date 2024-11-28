@@ -1,5 +1,7 @@
 import { useState } from "react";
 import axios from "axios";
+import Confirm from "../../../components/common/Confirm";
+import Notification from "../../../components/common/Notification";
 
 const CreateCoursePart = ({
   courseSkillId,
@@ -7,11 +9,10 @@ const CreateCoursePart = ({
   onCreated,
   mentorAndList,
 }) => {
-  // Kiểm tra giá trị props
   console.log("Props in CreateCoursePart:", { courseSkillId, mentorAndList });
 
   const [coursePart, setCoursePart] = useState({
-    courseSkillId: courseSkillId || "", // Gán giá trị mặc định là courseSkillId
+    courseSkillId: courseSkillId || "",
     title: "",
     contentType: "",
     contentUrl: "",
@@ -20,6 +21,8 @@ const CreateCoursePart = ({
 
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(false);
+  const [confirmOpen, setConfirmOpen] = useState(false);
+  const [notification, setNotification] = useState("");
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -28,29 +31,32 @@ const CreateCoursePart = ({
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setLoading(true);
     setError(null);
+    setConfirmOpen(true); // Mở modal Confirm trước khi tạo
+  };
 
+  const confirmActionHandler = async () => {
+    setLoading(true);
     try {
       await axios.post("https://localhost:7030/api/CourseParts", coursePart);
-      alert("Course Part created successfully!");
-      onClose();
+      setNotification("Course Part created successfully!");
       onCreated();
+      onClose();
     } catch (err) {
       setError(err.response?.data?.message || "Failed to create course part");
+      setNotification("Failed to create course part.");
     } finally {
       setLoading(false);
+      setConfirmOpen(false);
     }
   };
 
-  // Debug state
   console.log("State in CreateCoursePart:", coursePart);
 
   return (
     <div>
       <h2 className="text-xl font-semibold mb-4">Create Course Part</h2>
       <form onSubmit={handleSubmit}>
-        {/* Input ẩn để chứa courseSkillId */}
         <input
           type="hidden"
           name="courseSkillId"
@@ -106,20 +112,35 @@ const CreateCoursePart = ({
           <button
             type="submit"
             disabled={loading}
-            className="bg-blue-600 text-white font-semibold py-2 px-4 rounded-md hover:bg-blue-700"
+            className="py-2 px-3 text-sm font-medium rounded-lg border border-gray-200 bg-green-500 text-white shadow-sm hover:bg-green-600 focus:outline-none"
           >
             {loading ? "Creating..." : "Create Course Part"}
           </button>
           <button
             type="button"
             onClick={onClose}
-            className="bg-gray-300 text-gray-700 font-semibold py-2 px-4 rounded-md hover:bg-gray-400"
+            className="py-2 px-3 text-sm font-medium rounded-lg border border-gray-200 bg-gray-500 text-white shadow-sm hover:bg-gray-600 focus:outline-none"
           >
             Cancel
           </button>
         </div>
         {error && <p className="text-red-500 mt-4">{error}</p>}
       </form>
+
+      <Confirm
+        isOpen={confirmOpen}
+        onClose={() => setConfirmOpen(false)}
+        onConfirm={confirmActionHandler}
+        status="Confirmation"
+        shoud="yes"
+        message="Are you sure you want to create this Course Part?"
+      />
+
+      <Notification
+        message={notification}
+        onClose={() => setNotification("")}
+        shoud={error ? "no" : "yes"}
+      />
     </div>
   );
 };

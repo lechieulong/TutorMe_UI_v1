@@ -45,15 +45,15 @@ const ClassDetail = () => {
     switch (extension) {
       case "xlsx":
       case "xls":
-        return <FontAwesomeIcon icon={faFileExcel} size="2x" />;
+        return <FontAwesomeIcon icon={faFileExcel} size="1x" />;
       case "docx":
       case "doc":
-        return <FontAwesomeIcon icon={faFileWord} size="2x" />;
+        return <FontAwesomeIcon icon={faFileWord} size="1x" />;
       case "pptx":
       case "ppt":
-        return <FontAwesomeIcon icon={faFilePowerpoint} size="2x" />;
+        return <FontAwesomeIcon icon={faFilePowerpoint} size="1x" />;
       case "txt":
-        return <FontAwesomeIcon icon={faStickyNote} size="2x" />;
+        return <FontAwesomeIcon icon={faStickyNote} size="1x" />;
       default:
         return null;
     }

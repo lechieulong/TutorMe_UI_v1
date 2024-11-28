@@ -87,16 +87,12 @@ const CourseLessonCard = ({ mentorAndList, coursePartId, isEnrolled }) => {
         `https://localhost:7030/api/CourseSkills/DescriptionByCourseLesson/${lessonId}`,
         { headers: { Authorization: `Bearer ${token}` } }
       );
-
-      const skill = response.data;
-
-      if (skill.length > 0) {
-        setNotification("Test created successfully.");
-      } else {
-        setNotification("No course skill descriptions found for this lesson.");
-      }
+      console.log("API Response Data:", response.data);
+      setIsCreateTest(true);
+      setCategories([response.data]);
+      setLessonId(lessonId);
     } catch (error) {
-      setNotification("Failed to create test.");
+      console.error("Failed to fetch data from API", error);
     }
   };
 

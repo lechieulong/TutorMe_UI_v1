@@ -54,9 +54,19 @@ const QuestionForm = ({
     setShowQuestionCard(false);
   };
 
-  const isListening = skill === "Listening" && sectionType !== 3;
-  const isReading = skill === "Reading" && sectionType !== 11;
-
+  const isListening =
+    skill === "Listening" &&
+    sectionType != 1 &&
+    sectionType != 2 &&
+    sectionType != 3 &&
+    sectionType != 7;
+  const isReading =
+    skill === "Reading" &&
+    sectionType !== 7 &&
+    sectionType !== 8 &&
+    sectionType !== 9 &&
+    sectionType !== 10 &&
+    sectionType !== 11;
   const showAddQuestion =
     isListening || isReading || skill === "Writing" || skill === "Speaking";
 
@@ -202,7 +212,7 @@ const QuestionForm = ({
                   <div className="mb-4 border p-4 rounded">
                     <p className="mb-2 text-gray-600">Explain</p>
                     <Controller
-                      name={`skills.${skill}.parts.${index}.sections.${sectionIndex}.questions.${index}.explain`}
+                      name={`skills.${skill}.parts.${partIndex}.sections.${sectionIndex}.questions.${index}.explain`}
                       control={control}
                       render={({ field, fieldState }) => (
                         <div className="mb-2">
@@ -287,6 +297,7 @@ const QuestionForm = ({
                   questionName: "",
                   answers: [{ answerText: "", isCorrect: 0 }],
                   summary: "",
+                  answer: "",
                   isFromQuestionBank: false,
                   questionType: sectionType,
                   explain: "",

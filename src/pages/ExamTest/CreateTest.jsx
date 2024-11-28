@@ -39,12 +39,15 @@ const CreateTest = ({ testId, skills, pageType }) => {
 
   const handleFinish = () => {
     if (formData) {
-      dispatch(addSkills({ skillsData: formData, testId }));
-      if (pageType == "admin") navigate("/admin/app");
-      else if (pageType == "lesson") navigate("");
-      else navigate("/");
-    } else {
-      alert("Please fill out the form before finishing.");
+      console.log("formData", formData);
+
+      // dispatch(addSkills({ skillsData: formData, testId }));
+      //   if (pageType == "admin") navigate("/admin/app");
+      //   else if (pageType == "lesson") navigate("");
+      //   else navigate("/");
+      // } else {
+      //   alert("Please fill out the form before finishing.");
+      // }
     }
   };
 
@@ -137,7 +140,7 @@ const CreateTest = ({ testId, skills, pageType }) => {
 
         <div>{steps[activeStep].content}</div>
 
-        <div className="flex justify-between">
+        <div className="flex justify-around">
           <button
             className={`py-2 px-4 rounded bg-gray-200 text-gray-600 ${
               activeStep === 0 ? "opacity-50 cursor-not-allowed" : ""
@@ -165,11 +168,19 @@ const CreateTest = ({ testId, skills, pageType }) => {
               activeStep !== steps.length - 1 ? "hidden" : ""
             }`}
             onClick={handleSubmit((data) => {
+              console.log("Form Data Submitted:", data); // Log form data
               setFormData(data); // Update formData
               dispatch(addSkills({ skillsData: data, testId })); // Dispatch action with current data
-              if (pageType == "admin") navigate("/admin/app");
-              else if (pageType == "lesson") navigate("");
-              else navigate("/");
+              if (pageType == "admin") {
+                console.log("Navigating to /admin/app"); // Log navigation
+                navigate("/admin/app");
+              } else if (pageType == "lesson") {
+                console.log("Navigating to lesson"); // Log navigation
+                navigate("");
+              } else {
+                console.log("Navigating to home"); // Log navigation
+                navigate("/");
+              }
             })}
           >
             Finish

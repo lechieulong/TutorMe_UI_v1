@@ -3,6 +3,7 @@ import AudioPlayer from "./AudioPlayer"; // Adjust the import based on your file
 import Writing from "../../components/Test/Part/Writing";
 import Speaking from "../../components/Test/Part/Speaking";
 import MultipleChoiceAnswers from "./MultipleChoiceAnswers";
+import ParseHtml from "./ParseHtml";
 
 const AnswerView = ({
   partData,
@@ -106,6 +107,9 @@ const AnswerView = ({
                     type="radio"
                     name={`question_${question.id}`}
                     value={1}
+                    checked={
+                      userAnswers[question.id]?.answers?.[0]?.answerText === "1"
+                    }
                     className="h-4 w-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
                     onChange={(e) =>
                       handleChangeWrap(
@@ -125,6 +129,9 @@ const AnswerView = ({
                     type="radio"
                     name={`question_${question.id}`}
                     value={0}
+                    checked={
+                      userAnswers[question.id]?.answers?.[0]?.answerText === "0"
+                    }
                     className="h-4 w-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
                     onChange={(e) =>
                       handleChangeWrap(
@@ -144,7 +151,11 @@ const AnswerView = ({
                     <input
                       type="radio"
                       name={`question_${question.id}`}
-                      value={2}
+                      value={3}
+                      checked={
+                        userAnswers[question.id]?.answers?.[0]?.answerText ===
+                        "3"
+                      }
                       className="h-4 w-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
                       onChange={(e) =>
                         handleChangeWrap(
@@ -440,7 +451,7 @@ const AnswerView = ({
         if (sectionType === 1 || sectionType === 2 || sectionType === 3) {
           return (
             <p>
-              <span className="font-bold">Question {questionCounter + 1} </span>
+              <span className="font-bold">Question {questionCounter} </span>
               {question.questionName}
             </p>
           );
@@ -454,10 +465,7 @@ const AnswerView = ({
         if (sectionType === 6 || sectionType === 7 || sectionType === 8) {
           return (
             <p>
-              <span className="font-bold">
-                {" "}
-                Question {questionCounter + 1}{" "}
-              </span>
+              <span className="font-bold"> Question {questionCounter} </span>
               {question.questionName}
             </p>
           );
@@ -467,6 +475,25 @@ const AnswerView = ({
       default:
         return <p></p>;
     }
+  };
+
+  const handleInputChange = (questionId, value, sectionType) => {
+    let updateAnswer = [
+      { answerText: value, answerId: "00000000-0000-0000-0000-000000000000" },
+    ];
+    const answerData = {
+      questionId: questionId,
+      sectionType: sectionType, // Adjust this if necessary
+      answers: updateAnswer,
+      skill: skill,
+      skillId: currentSkillId,
+    };
+
+    // Pass the updated answers to the handler
+    handleAnswerChange({
+      questionId: answerData.questionId,
+      answerData,
+    });
   };
 
   return (
@@ -480,7 +507,7 @@ const AnswerView = ({
       {(currentSkillKey === "reading" || currentSkillKey === "listening") && (
         <>
           {(() => {
-            let questionCounter = 0;
+            let questionCounter = 1;
             return partData.sections.map((section, sectionIndex) => (
               <div key={sectionIndex} className="mb-6">
                 <p className="font-bold text-lg mb-2">{section.sectionGuide}</p>
@@ -499,7 +526,6 @@ const AnswerView = ({
                   section.sectionType === 5 ||
                   section.sectionType === 6 ? (
                     <>
-                      <span className="invisible">{questionCounter++}</span>
                       <table className="min-w-full border border-gray-300">
                         <thead>
                           <tr className="bg-gray-200">
@@ -568,22 +594,44 @@ const AnswerView = ({
                       </div>
                     </>
                   ) : (
-                    section.questions.map((question, index) => (
-                      <div key={index} className="mb-4">
-                        {renderQuestionName(
-                          skill,
-                          section.sectionType,
-                          question,
-                          questionCounter++
-                        )}
-                        {renderInputBasedOnSectionType(
-                          skill,
-                          section.sectionType,
-                          question,
-                          questionCounter
-                        )}
-                      </div>
-                    ))
+                    <>
+                      {(skill === 0 &&
+                        (section.sectionType === 1 ||
+                          section.sectionType === 2 ||
+                          section.sectionType === 3)) ||
+                      (skill === 1 &&
+                        (section.sectionType === 8 ||
+                          section.sectionType === 4)) ||
+                      skill === 2 ||
+                      skill === 3 ? (
+                        section.questions.map((question, index) => (
+                          <div key={index} className="mb-4">
+                            {renderQuestionName(
+                              skill,
+                              section.sectionType,
+                              question,
+                              questionCounter++
+                            )}
+                            {renderInputBasedOnSectionType(
+                              skill,
+                              section.sectionType,
+                              question,
+                              questionCounter
+                            )}
+                          </div>
+                        ))
+                      ) : (
+                        <div>
+                          <ParseHtml
+                            userAnswers={userAnswers}
+                            questionCounter={questionCounter}
+                            html={section.sectionContext} // HTML content
+                            sectionType={section.sectionType} // sectionType is passed as a prop
+                            onInputChange={handleInputChange} // Function to handle input change
+                          />
+                        </div>
+                      )}
+                    </>
                   )}
                 </div>
               </div>

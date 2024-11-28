@@ -3,6 +3,7 @@ import { useState, useEffect } from "react";
 
 const NavigationPart = ({
   partDatas,
+  currentSkillKey,
   handlePartClick,
   handleQuestionClick,
   userAnswers, // Add userAnswers prop
@@ -60,9 +61,52 @@ const NavigationPart = ({
                 } flex h-full justify-center text-center items-center gap-4`}
               >
                 {questions.map((question, questionIndex) => {
-                  const isAnswered =
-                    userAnswers.hasOwnProperty(question.id) &&
-                    userAnswers[question.id] !== undefined; // Check if answered and not undefined
+                  let isAnswered;
+
+                  let questionType = question.questionType;
+                  if (currentSkillKey == "reading") {
+                    if (
+                      questionType == 7 ||
+                      questionType == 8 ||
+                      questionType == 9 ||
+                      questionType == 10 ||
+                      questionType == 11
+                    ) {
+                      isAnswered =
+                        userAnswers.hasOwnProperty(question.id) &&
+                        userAnswers[question.id] !== undefined &&
+                        userAnswers[question.id].answers[0].answerText != "";
+                    } else {
+                      isAnswered =
+                        userAnswers.hasOwnProperty(question.id) &&
+                        userAnswers[question.id] !== undefined; // Check if answered and not undefined
+                    }
+                  } else if (currentSkillKey == "listening") {
+                    if (
+                      questionType == 1 ||
+                      questionType == 2 ||
+                      questionType == 3 ||
+                      questionType == 7
+                    ) {
+                      isAnswered =
+                        userAnswers.hasOwnProperty(question.id) &&
+                        userAnswers[question.id] !== undefined &&
+                        userAnswers[question.id].answers[0].answerText != "";
+                    } else {
+                      isAnswered =
+                        userAnswers.hasOwnProperty(question.id) &&
+                        userAnswers[question.id] !== undefined; // Check if answered and not undefined
+                    }
+                  } else if (currentSkillKey == "writing") {
+                    isAnswered =
+                      userAnswers.hasOwnProperty(question.id) &&
+                      userAnswers[question.id] !== undefined &&
+                      userAnswers[question.id].answers[0].answerText != "";
+                  } else {
+                    isAnswered =
+                      userAnswers.hasOwnProperty(question.id) &&
+                      userAnswers[question.id] !== undefined; // Check if answered and not undefined
+                  }
 
                   return (
                     <li

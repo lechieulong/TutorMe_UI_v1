@@ -49,7 +49,6 @@ const CourseInfo = () => {
     initializeUser();
     dispatch(fetchClasses(courseId));
   }, [initializeUser, dispatch, courseId]);
-  console.log(course);
 
   useEffect(() => {
     if (userId) {

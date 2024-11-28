@@ -1,6 +1,5 @@
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import "regenerator-runtime/runtime";
-import { GoogleOAuthProvider } from "@react-oauth/google";
 import { AdminRoute } from "./service/checkAuth";
 import CreateCourseLessonContent from "./pages/Mentor/component/CreateCourseLessonContent";
 import Home from "./pages/Home";
@@ -40,7 +39,6 @@ import TestLayout from "./pages/TestExam/TestLayout";
 import CourseTimeline from "./pages/Course/components/CourseTimeline";
 import CreateCourse from "./pages/Course/components/CreateCourse";
 import SpeakingGemini from "./service/SpeakingGemini";
-import ClassOfCourseList from "./pages/Course/ClassOfCourseList";
 import MyLearning from "./pages/Class/MyLearning";
 // import PayOS from "./pages/User/PayOS";
 import TestForm from "./pages/ExamTest/TestForm";
@@ -140,19 +138,12 @@ const App = () => {
           <Route path="/courseList" element={<CourseList />} />
           <Route path="/courseinfo" element={<CourseInfo />} />
           <Route path="/createCourse" element={<CreateCourse />} />
-          <Route
-            path="/courseDetail/:courseId/review?"
-            element={<CourseDetail />}
-          />
+          <Route path="/courseDetail/:courseId/" element={<CourseDetail />} />
           <Route path="/courseinfo/:courseId/infor" element={<CourseInfo />} />
           <Route path="createCourseLesson" element={<CreateCourseLesson />} />
           <Route
             path="createCourseLessonContent"
             element={<CreateCourseLessonContent />}
-          />
-          <Route
-            path="/courseDetail/:courseId/classes"
-            element={<ClassOfCourse />}
           />
           <Route path="/course-timeline" element={<CourseTimeline />} />
           {/* <Route path="/courses/:courseId" element={<CourseDetail />} /> */}

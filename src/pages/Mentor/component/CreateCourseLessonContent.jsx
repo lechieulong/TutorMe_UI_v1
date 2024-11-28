@@ -1,9 +1,13 @@
 import React, { useState, useEffect } from "react";
-import axios from "axios";
+import { useDispatch, useSelector } from "react-redux";
 import Cookies from "js-cookie";
 import JoditEditor from "jodit-react";
 import { getUser } from "../../../service/GetUser";
 import useAuthToken from "../../../hooks/useAuthToken";
+import {
+  uploadCourseFile,
+  createCourseLessonContentSlice,
+} from "../../../redux/courses/CourseLessonContentSlice";
 
 const CreateCourseLessonContent = ({
   courseLessonId,
@@ -11,17 +15,26 @@ const CreateCourseLessonContent = ({
   onContentCreated,
 }) => {
   const authToken = useAuthToken();
+  const dispatch = useDispatch();
+  const { uploadedFileUrl, status, error } = useSelector(
+    (state) => state.courseLessonContent
+  );
+
   const [user, setUser] = useState(null);
   const [contentData, setContentData] = useState({
     courseLessonId: courseLessonId,
     userId: "",
     contentType: "",
     contentText: "",
-    contentUrl: "", // Đây sẽ là API endpoint
+    contentUrl: "",
     order: 0,
     file: null,
   });
+
   const token = Cookies.get("authToken");
+  const [isFileUploading, setIsFileUploading] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [success, setSuccess] = useState(false);
 
   useEffect(() => {
     if (authToken) {
@@ -36,10 +49,6 @@ const CreateCourseLessonContent = ({
       fetchUser();
     }
   }, [authToken]);
-
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState(null);
-  const [success, setSuccess] = useState(false);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -56,88 +65,82 @@ const CreateCourseLessonContent = ({
 
   const handleContentUrlChange = (e) => {
     const value = e.target.value;
-    setContentData((prev) => ({ ...prev, contentUrl: value })); // Gán giá trị mới cho contentUrl
+    setContentData((prev) => ({ ...prev, contentUrl: value }));
   };
 
   const handleFileChange = async (e) => {
     const file = e.target.files[0];
 
     if (file && contentData.userId) {
+      setIsFileUploading(true);
       try {
-        const formData = new FormData();
-        formData.append("file", file);
+        const response = await dispatch(
+          uploadCourseFile({
+            type: "courseLesson",
+            id: courseLessonId,
+            file: file,
+            token: token,
+          })
+        ).unwrap(); // Lấy giá trị trả về từ Thunk
 
-        console.log("Uploading file with data:", {
-          file: file.name,
-          courseLessonId,
-        });
-
-        const response = await axios.post(
-          `https://localhost:7030/api/upload-course-file?type=courseLesson&id=${courseLessonId}`,
-          formData,
-          {
-            headers: {
-              Authorization: `Bearer ${token}`,
-              "Content-Type": "multipart/form-data",
-            },
-          }
-        );
-
-        const fileUrl = response.data.FileUrl;
         setContentData((prev) => ({
           ...prev,
           file: file,
-          contentUrl: fileUrl, // Cập nhật contentUrl từ kết quả upload
+          contentUrl: response.fileUrl, // Sử dụng URL trả về từ Thunk
         }));
       } catch (error) {
-        console.error("Error uploading file:", error.response || error.message);
+        console.error("Error uploading file:", error);
+      } finally {
+        setIsFileUploading(false);
       }
     }
+  };
+
+  const handleJoditChange = (newContent) => {
+    setContentData((prev) => ({
+      ...prev,
+      contentText: newContent,
+    }));
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
-    setError(null);
     setSuccess(false);
 
     try {
-      console.log("Data sent to API:", {
-        courseLessonId: contentData.courseLessonId,
-        contentType: contentData.contentType,
-        contentText: contentData.contentText,
-        contentUrl: contentData.contentUrl, // Log giá trị contentUrl
-        order: contentData.order,
-        userId: contentData.userId,
-      });
+      let contentUrl = contentData.contentUrl;
+
+      if (
+        contentData.contentType === "file" &&
+        contentData.file &&
+        uploadedFileUrl
+      ) {
+        contentUrl = uploadedFileUrl; // Lấy URL file đã tải lên từ Slice
+      }
 
       const lessonContentData = {
         courseLessonId: contentData.courseLessonId,
         contentType: contentData.contentType,
         contentText: contentData.contentText,
-        contentUrl: contentData.contentUrl,
+        contentUrl: contentUrl,
         order: contentData.order,
         userId: contentData.userId,
       };
 
-      // Gửi request API với contentUrl là một phần payload
-      await axios.post(
-        "https://localhost:7030/api/CourseLessonContent",
-        lessonContentData,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
+      await dispatch(
+        createCourseLessonContentSlice({
+          courseLessonId,
+          contentData: lessonContentData,
+          token,
+        })
+      ).unwrap();
 
       setSuccess(true);
-
       if (onContentCreated) onContentCreated();
       onClose();
-    } catch (err) {
-      console.error("Error response:", err.response);
-      setError("Failed to create course lesson content.");
+    } catch (error) {
+      console.error("Error creating course lesson content:", error);
     } finally {
       setLoading(false);
     }
@@ -178,7 +181,6 @@ const CreateCourseLessonContent = ({
             <JoditEditor
               value={contentData.contentText}
               onBlur={handleJoditChange}
-              // onChange={handleJoditChange}
               config={{
                 placeholder: "Enter content text",
               }}
@@ -264,10 +266,16 @@ const CreateCourseLessonContent = ({
           </button>
           <button
             type="submit"
-            disabled={loading}
-            className="bg-blue-600 text-white font-semibold py-2 px-4 rounded-md hover:bg-blue-700"
+            disabled={loading || isFileUploading}
+            className={`${
+              isFileUploading ? "bg-gray-400" : "bg-blue-600 hover:bg-blue-700"
+            } text-white font-semibold py-2 px-4 rounded-md`}
           >
-            {loading ? "Creating..." : "Create Content"}
+            {loading
+              ? "Creating..."
+              : isFileUploading
+              ? "Uploading File..."
+              : "Create Content"}
           </button>
         </div>
 

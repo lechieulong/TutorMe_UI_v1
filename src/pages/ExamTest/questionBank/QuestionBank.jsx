@@ -102,24 +102,41 @@ const QuestionBank = () => {
     }
   };
 
+  // const handleDownloadTemplate = async () => {
+  //   setLoading(true);
+  //   try {
+  //     const resultAction = await dispatch(downloadTemplate());
+  //     if (resultAction.payload && resultAction.payload.fileUrl) {
+  //       const fileUrl = resultAction.payload.fileUrl;
+  //       const link = document.createElement("a");
+  //       link.href = fileUrl;
+  //       link.download = "QuestionTemplate.xlsx";
+  //       document.body.appendChild(link);
+  //       link.click();
+  //       document.body.removeChild(link);
+  //     } else {
+  //       console.error(
+  //         "Download failed:",
+  //         resultAction.error?.message || "No payload"
+  //       );
+  //     }
+  //   } catch (error) {
+  //     console.error("Error downloading template:", error);
+  //   } finally {
+  //     setLoading(false);
+  //   }
+  // };
   const handleDownloadTemplate = async () => {
     setLoading(true);
     try {
-      const resultAction = await dispatch(downloadTemplate());
-      if (resultAction.payload && resultAction.payload.fileUrl) {
-        const fileUrl = resultAction.payload.fileUrl;
-        const link = document.createElement("a");
-        link.href = fileUrl;
-        link.download = "QuestionTemplate.xlsx";
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link);
-      } else {
-        console.error(
-          "Download failed:",
-          resultAction.error?.message || "No payload"
-        );
-      }
+      const fileUrl =
+        "https://thientvhde160268.blob.core.windows.net/questionbank/Resources.xlsx";
+      const link = document.createElement("a");
+      link.href = fileUrl;
+      link.download = "Resources.xlsx";
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
     } catch (error) {
       console.error("Error downloading template:", error);
     } finally {

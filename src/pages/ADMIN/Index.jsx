@@ -10,6 +10,7 @@ import ImportUser from "./ImportUser";
 import TeacherRequest from "../../components/ADMIN/TeacherRequest";
 import TeacherRequestDetail from "./Request/TeacherRequestDetail";
 import TestLayoutAdmin from "../ExamTest/general/TestLayoutAdmin";
+import TestSource from "../ExamTest/general/TestSource";
 
 const AdminApp = () => {
   return (
@@ -26,6 +27,7 @@ const AdminApp = () => {
               <Route path="/" element={<MainContent />} />
               <Route path="/dashboard" element={<Dashboard />} />
               <Route path="/users" element={<Users />} />
+              <Route path="/testsource" element={<TestSource />} />
               <Route path="/test" element={<TestLayoutAdmin />} />
               <Route path="/transactions" element={<Transaction />} />
               <Route path="/docs/importuser" element={<ImportUser />} />

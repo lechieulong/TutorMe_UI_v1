@@ -38,85 +38,111 @@ const Sidebar = () => {
     setIsDocsOpen((prevState) => !prevState); // Toggle the Documentation dropdown
   };
 
-    return (
-        <aside className="w-64 bg-white shadow-lg h-screen">
-            <div className="flex items-center p-4">
-                <img
-                    src="/assets/aiillogo-COWiBZRk.ico"
-                    alt="Logo"
-                    className="w-10 h-10 text-white flex items-center justify-center rounded-full"
-                />
-                <span className="ml-3 text-xl font-semibold">AIILs</span>
-            </div>
-            <nav className="max-h-screen overflow-y-auto transition-width duration-300">
-                <ul>
-                    <li>
-                        <NavLink
-                            to="dashboard"
-                            className={({ isActive }) =>
-                                `flex items-center p-3 text-gray-700 hover:bg-gray-200 transition duration-200 ease-in-out ${isActive ? 'bg-lightGreen' : ''}`
-                            }
-                        >
-                            <FaThLarge />
-                            <span className="hidden md:block ml-3">Dashboard</span>
-                        </NavLink>
-                    </li>
-                    <li>
-                        <NavLink
-                            to="users"
-                            className={({ isActive }) =>
-                                `flex items-center p-3 text-gray-700 hover:bg-gray-200 transition duration-200 ease-in-out ${isActive ? 'bg-lightGreen' : ''}`
-                            }
-                        >
-                            <FaUserFriends />
-                            <span className="ml-3">Users</span>
-                        </NavLink>
-                    </li>
-                    <li>
-                        <NavLink
-                            to="transactions"
-                            className={({ isActive }) =>
-                                `flex items-center p-3 text-gray-700 hover:bg-gray-200 transition duration-200 ease-in-out ${isActive ? 'bg-lightGreen' : ''}`
-                            }
-                        >
-                            <FaDollarSign />
-                            <span className="ml-3">Transactions</span>
-                        </NavLink>
-                    </li>
-                    <li>
-                        <NavLink
-                            to="analytics"
-                            className={({ isActive }) =>
-                                `flex items-center p-3 text-gray-700 hover:bg-gray-200 transition duration-200 ease-in-out ${isActive ? 'bg-lightGreen' : ''}`
-                            }
-                        >
-                            <FaChartLine />
-                            <span className="ml-3">Analytics</span>
-                        </NavLink>
-                    </li>
-                    <li>
-                        <NavLink
-                            to="calendar"
-                            className={({ isActive }) =>
-                                `flex items-center p-3 text-gray-700 hover:bg-gray-200 transition duration-200 ease-in-out ${isActive ? 'bg-lightGreen' : ''}`
-                            }
-                        >
-                            <FaCalendarAlt />
-                            <span className="ml-3">Calendar</span>
-                        </NavLink>
-                    </li>
-                    <li>
-                        <NavLink
-                            to="test"
-                            className={({ isActive }) =>
-                                `flex items-center p-3 text-gray-700 hover:bg-gray-200 transition duration-200 ease-in-out ${isActive ? 'bg-lightGreen' : ''}`
-                            }
-                        >
-                            <FaPenNib />
-                            <span className="ml-3">Test</span>
-                        </NavLink>
-                    </li>
-                    {/* <li className="flex items-center justify-between p-3 text-gray-700 hover:bg-gray-200 cursor-pointer transition duration-200 ease-in-out" onClick={togglePagesDropdown}>
+  return (
+    <aside className="w-64 bg-white shadow-lg h-screen">
+      <div className="flex items-center p-4">
+        <img
+          src="/assets/aiillogo-COWiBZRk.ico"
+          alt="Logo"
+          className="w-10 h-10 text-white flex items-center justify-center rounded-full"
+        />
+        <span className="ml-3 text-xl font-semibold">AIILs</span>
+      </div>
+      <nav className="max-h-screen overflow-y-auto transition-width duration-300">
+        <ul>
+          <li>
+            <NavLink
+              to="dashboard"
+              className={({ isActive }) =>
+                `flex items-center p-3 text-gray-700 hover:bg-gray-200 transition duration-200 ease-in-out ${
+                  isActive ? "bg-lightGreen" : ""
+                }`
+              }
+            >
+              <FaThLarge />
+              <span className="hidden md:block ml-3">Dashboard</span>
+            </NavLink>
+          </li>
+          <li>
+            <NavLink
+              to="users"
+              className={({ isActive }) =>
+                `flex items-center p-3 text-gray-700 hover:bg-gray-200 transition duration-200 ease-in-out ${
+                  isActive ? "bg-lightGreen" : ""
+                }`
+              }
+            >
+              <FaUserFriends />
+              <span className="ml-3">Users</span>
+            </NavLink>
+          </li>
+          <li>
+            <NavLink
+              to="transactions"
+              className={({ isActive }) =>
+                `flex items-center p-3 text-gray-700 hover:bg-gray-200 transition duration-200 ease-in-out ${
+                  isActive ? "bg-lightGreen" : ""
+                }`
+              }
+            >
+              <FaDollarSign />
+              <span className="ml-3">Transactions</span>
+            </NavLink>
+          </li>
+          <li>
+            <NavLink
+              to="analytics"
+              className={({ isActive }) =>
+                `flex items-center p-3 text-gray-700 hover:bg-gray-200 transition duration-200 ease-in-out ${
+                  isActive ? "bg-lightGreen" : ""
+                }`
+              }
+            >
+              <FaChartLine />
+              <span className="ml-3">Analytics</span>
+            </NavLink>
+          </li>
+          <li>
+            <NavLink
+              to="calendar"
+              className={({ isActive }) =>
+                `flex items-center p-3 text-gray-700 hover:bg-gray-200 transition duration-200 ease-in-out ${
+                  isActive ? "bg-lightGreen" : ""
+                }`
+              }
+            >
+              <FaCalendarAlt />
+              <span className="ml-3">Calendar</span>
+            </NavLink>
+          </li>
+          <li>
+            <NavLink
+              to="test"
+              className={({ isActive }) =>
+                `flex items-center p-3 text-gray-700 hover:bg-gray-200 transition duration-200 ease-in-out ${
+                  isActive ? "bg-lightGreen" : ""
+                }`
+              }
+            >
+              <FaPenNib />
+              <span className="ml-3">Test</span>
+            </NavLink>
+          </li>
+
+          <li>
+            <NavLink
+              to="testsource"
+              className={({ isActive }) =>
+                `flex items-center p-3 text-gray-700 hover:bg-gray-200 transition duration-200 ease-in-out ${
+                  isActive ? "bg-lightGreen" : ""
+                }`
+              }
+            >
+              <FaPenNib />
+              <span className="ml-3">Test Source</span>
+            </NavLink>
+          </li>
+          {/* <li className="flex items-center justify-between p-3 text-gray-700 hover:bg-gray-200 cursor-pointer transition duration-200 ease-in-out" onClick={togglePagesDropdown}>
                         <div className="flex items-center">
                             <FaFileAlt />
                             <span className="ml-3">Pages</span>

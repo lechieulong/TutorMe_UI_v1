@@ -107,7 +107,7 @@ const CreateTest = ({ testId, skills, pageType }) => {
   };
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)} className="w-screen">
+    <form onSubmit={handleSubmit(onSubmit)}>
       <div className="mt-16 ">
         <div className="">
           <ul className="relative flex flex-row justify-between gap-x-2">
@@ -172,8 +172,7 @@ const CreateTest = ({ testId, skills, pageType }) => {
               setFormData(data); // Update formData
               dispatch(addSkills({ skillsData: data, testId })); // Dispatch action with current data
               if (pageType == "admin") {
-                console.log("Navigating to /admin/app"); // Log navigation
-                navigate("/admin/app");
+                navigate("/admin/app/testsource");
               } else if (pageType == "lesson") {
                 console.log("Navigating to lesson"); // Log navigation
                 navigate("");

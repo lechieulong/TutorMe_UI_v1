@@ -1,11 +1,12 @@
 import React, { useState, useEffect } from "react";
 import img from "../../../assets/images/pull-shark.png";
-import { Bar } from "react-chartjs-2";
+import { Bar, Radar } from "react-chartjs-2";
 import {
   Chart as ChartJS,
   BarElement,
   CategoryScale,
   LinearScale,
+  RadialLinearScale,
   Tooltip,
   Legend,
 } from "chart.js";
@@ -15,10 +16,20 @@ import {
 } from "../../../redux/testExam/TestSlice";
 import { useDispatch, useSelector } from "react-redux";
 
-ChartJS.register(BarElement, CategoryScale, LinearScale, Tooltip, Legend);
+ChartJS.register(
+  BarElement,
+  RadialLinearScale,
+  CategoryScale,
+  LinearScale,
+  RadialLinearScale,
+  Tooltip,
+  Legend
+);
 
 const ContributionAttempt = () => {
   const [contributeTaketest, setContributeTaketest] = useState([]);
+  const [radarChart, setRadarChart] = useState([]);
+
   const [yearsOfTakeTest, setYearsOfTakeTest] = useState([]);
   const [selectedYear, setSelectedYear] = useState(2024);
   const [loading, setLoading] = useState(true);
@@ -67,16 +78,34 @@ const ContributionAttempt = () => {
         const yearsResponseData = await dispatch(getAttemptTests(user.id));
         const yearsResponse = yearsResponseData.payload;
         // Check and handle response data
-        if (Array.isArray(contributeResponse)) {
-          setContributeTaketest(contributeResponse);
-        } else {
-          console.error(
-            "Unexpected response for contributeTaketest",
-            contributeResponse
-          );
-          setContributeTaketest([]);
-        }
-
+        setRadarChart([
+          {
+            skillType: 0,
+            count: 9,
+            averageScore: 9.0,
+          },
+          {
+            skillType: 1,
+            count: 3,
+            averageScore: 6.0,
+          },
+          {
+            skillType: 2,
+            count: 3,
+            averageScore: 6.5,
+          },
+          {
+            skillType: 3,
+            count: 3,
+            averageScore: 6.5,
+          },
+          {
+            skillType: 3,
+            count: 5,
+            averageScore: 3.5,
+          },
+        ]);
+        setContributeTaketest(contributeResponse.dateAnalysis);
         if (Array.isArray(yearsResponse)) {
           setYearsOfTakeTest(yearsResponse);
           if (yearsResponse.length > 0) {
@@ -97,6 +126,8 @@ const ContributionAttempt = () => {
     };
 
     fetchData();
+
+    // Fake data for radar chart (skill scores)
   }, [dispatch, user.id]);
 
   // Update contribution and monthly data whenever selected year or contributions change
@@ -145,8 +176,8 @@ const ContributionAttempt = () => {
     }
   };
 
-  // Chart data and options
-  const chartData = {
+  // Bar Chart Data
+  const barChartData = {
     labels: months,
     datasets: [
       {
@@ -159,6 +190,34 @@ const ContributionAttempt = () => {
     ],
   };
 
+  // Radar Chart Data
+  const radarChartData = {
+    labels: radarChart.map((item) => {
+      switch (item.skillType) {
+        case 0:
+          return "Reading";
+        case 1:
+          return "Listening";
+        case 2:
+          return "Writing";
+        case 3:
+          return "Speaking";
+        default:
+          return "Unknown"; // If there's an unknown skillType
+      }
+    }), // Convert skillType to readable label
+    datasets: [
+      {
+        label: "Score",
+        data: radarChart.map((item) => item.averageScore), // Assuming radarChart contains 'score' data
+        backgroundColor: "rgba(75, 192, 192, 0.2)",
+        borderColor: "rgba(75, 192, 192, 1)",
+        borderWidth: 1,
+      },
+    ],
+  };
+
+  // Chart Options
   const chartOptions = {
     responsive: true,
     plugins: {
@@ -178,14 +237,20 @@ const ContributionAttempt = () => {
 
   return (
     <div className="p-3 w-full">
-      <div>
-        <h3 className="font-semibold">Achievements</h3>
-        <div className="w-40">
-          <img
-            src={img}
-            alt="Shark Image"
-            className="w-full h-full object-contain"
-          />
+      <div className="flex justify-between mb-10">
+        <div className="flex flex-col  w-4/12  items-center justify-around">
+          <h3 className="font-semibold">Achievements</h3>
+          <div className="w-40">
+            <img
+              src={img}
+              alt="Shark Image"
+              className="w-full h-full object-contain"
+            />
+          </div>
+        </div>
+        {/* Radar Chart */}
+        <div className="bg-white w-6/12 flex items-center border border-gray-300 justify-center h-[350px] shadow-lg p-5">
+          <Radar data={radarChartData} options={chartOptions} />
         </div>
       </div>
 
@@ -255,12 +320,9 @@ const ContributionAttempt = () => {
         </div>
       </div>
 
-      {/* Bar Chart Visualization */}
-      <div className="mt-8">
-        <h3 className="font-semibold text-center mb-4">
-          Monthly Attempts in {selectedYear}
-        </h3>
-        <Bar data={chartData} options={chartOptions} />
+      {/* Bar Chart */}
+      <div className="bg-white  shadow-lg p-5">
+        <Bar data={barChartData} options={chartOptions} />
       </div>
     </div>
   );

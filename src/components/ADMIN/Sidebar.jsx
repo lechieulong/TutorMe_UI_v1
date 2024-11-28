@@ -42,7 +42,7 @@ const Sidebar = () => {
     <aside className="w-64 bg-white shadow-lg h-screen">
       <div className="flex items-center p-4">
         <img
-          src="/src/assets/images/aiillogo.ico"
+          src="/assets/aiillogo-COWiBZRk.ico"
           alt="Logo"
           className="w-10 h-10 text-white flex items-center justify-center rounded-full"
         />
@@ -126,6 +126,20 @@ const Sidebar = () => {
             >
               <FaPenNib />
               <span className="ml-3">Test</span>
+            </NavLink>
+          </li>
+
+          <li>
+            <NavLink
+              to="testsource"
+              className={({ isActive }) =>
+                `flex items-center p-3 text-gray-700 hover:bg-gray-200 transition duration-200 ease-in-out ${
+                  isActive ? "bg-lightGreen" : ""
+                }`
+              }
+            >
+              <FaPenNib />
+              <span className="ml-3">Test Source</span>
             </NavLink>
           </li>
           {/* <li className="flex items-center justify-between p-3 text-gray-700 hover:bg-gray-200 cursor-pointer transition duration-200 ease-in-out" onClick={togglePagesDropdown}>

@@ -440,7 +440,7 @@ const AnswerViewExplain = ({
                                   className="border border-gray-300 rounded px-2 py-1"
                                 >
                                   <option value="">
-                                    {question.userAnswer[0].answerText}
+                                    {question.userAnswers[0].answerText}
                                   </option>
                                 </select>
                               </div>
@@ -477,21 +477,21 @@ const AnswerViewExplain = ({
         </>
       )}
 
-      {currentSkillKey === "writing" && (
+      {/* {currentSkillKey === "writing" && (
         <Writing
           partData={partData}
           currentSkillKey={currentSkillKey}
           handleAnswerChange={handleAnswerChange}
         />
-      )}
+      )} */}
 
-      {currentSkillKey === "speaking" && (
+      {/* {currentSkillKey === "speaking" && (
         <Speaking
           partData={partData}
           currentSkillKey={currentSkillKey}
           handleAnswerChange={handleAnswerChange}
         />
-      )}
+      )} */}
     </form>
   );
 };

@@ -49,7 +49,7 @@ export const Admin_GetTeacherRequestDetail = createAsyncThunk(
             return data.result; // Return the result from the response
         } catch (error) {
             return rejectWithValue(
-                error.response?.data?.message || "Failed to get user education."
+                error.response?.data?.message || "Failed to get teacher request detail."
             );
         }
     }
@@ -72,7 +72,7 @@ export const Admin_ProcessTeacherRequest = createAsyncThunk(
             return data.result; // Return the result from the response
         } catch (error) {
             return rejectWithValue(
-                error.response?.data?.message || "Failed to get user education."
+                error.response?.data?.message || "Failed to process teacher request."
             );
         }
     }

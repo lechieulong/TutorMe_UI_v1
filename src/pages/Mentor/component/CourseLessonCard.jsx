@@ -6,10 +6,15 @@ import CourseLessonContent from "./CourseLessonContent";
 import Confirm from "../../../components/common/Confirm";
 import Notification from "../../../components/common/Notification";
 import { FaAngleDown, FaAngleUp } from "react-icons/fa";
+import TestForm from "../../ExamTest/TestForm";
 import { Link } from "react-router-dom";
 const CourseLessonCard = ({ mentorAndList, coursePartId, isEnrolled }) => {
   const [collapsedLessons, setCollapsedLessons] = useState({});
   const [courseLessons, setCourseLessons] = useState([]);
+  const [lessionCount, setLessionCount] = useState(null);
+  const [isCreateTest, setIsCreateTest] = useState(false);
+  const [categories, setCategories] = useState([]);
+  const [lessonId, setLessonId] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [dynamicForms, setDynamicForms] = useState([]);
@@ -117,6 +122,9 @@ const CourseLessonCard = ({ mentorAndList, coursePartId, isEnrolled }) => {
       await confirmAction();
       console.log("Action completed successfully."); // Debug log
       setNotification("Action completed successfully.");
+      setIsCreateTest(true);
+      setCategories([response.data]);
+      setLessonId(lessonId);
     } catch (error) {
       console.error("Error executing confirm action:", error); // Debug log
       setNotification("Action failed.");
@@ -153,111 +161,124 @@ const CourseLessonCard = ({ mentorAndList, coursePartId, isEnrolled }) => {
   }
 
   return (
-    <div className="h-vh100 px-4 mb-4 relative">
-      <div className="cursor-pointer">
-        <h3 className="text-sm font-semibold text-gray-400">
-          {courseLessons.length} Lessons
-        </h3>
-      </div>
+    <>
+      {!isCreateTest ? (
+        <>
+          {" "}
+          <div className="h-vh100 px-4 mb-4 relative">
+            <div className="cursor-pointer">
+              <h3 className="text-sm font-semibold text-gray-400">
+                {courseLessons.length} Lessons
+              </h3>
+            </div>
 
-      <div className="mt-4 overflow-hidden transition-all duration-1000 ease-in-out">
-        <div>
-          {courseLessons.length === 0 ? (
-            <p>No lessons found for this course part.</p>
-          ) : (
-            courseLessons.map((courseLesson) => (
-              <div
-                key={courseLesson.id}
-                className="border rounded-md p-2 mb-2 shadow-sm flex flex-col items-start relative"
-              >
-                <div
-                  className="cursor-pointer flex items-center gap-2"
-                  onClick={() => toggleCollapse(courseLesson.id)}
-                >
-                  {collapsedLessons[courseLesson.id] ? (
-                    <FaAngleDown className="text-gray-600" />
-                  ) : (
-                    <FaAngleUp className="text-gray-600" />
-                  )}
-                  <h4 className="text-md font-semibold">
-                    {courseLesson.title}
-                  </h4>
-                </div>
-
-                {mentorAndList && (
-                  <div className="absolute top-2 right-2 flex gap-2">
-                    <Link
-                      to={`/testDetail/${courseLesson.id}`}
-                      className="py-2 px-3 text-sm font-medium rounded-lg border border-gray-200 bg-white text-gray-800 shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-gray-200"
-                    >
-                      Do Test
-                    </Link>
-
-                    <button
-                      type="button"
-                      onClick={() => handleCreateTest(courseLesson.id)}
-                      className="py-2 px-3 text-sm font-medium rounded-lg border border-gray-200 bg-white text-gray-800 shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-gray-200"
-                    >
-                      Create Test
-                    </button>
-                    <button
-                      type="button"
-                      onClick={() => addDynamicForm(courseLesson.id)}
-                      className="py-2 px-3 text-sm font-medium rounded-lg border border-gray-200 bg-white text-gray-800 shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-gray-200"
-                    >
-                      Create Lesson Content
-                    </button>
-                    <button
-                      type="button"
-                      onClick={() => confirmDeleteLesson(courseLesson.id)}
-                      className="py-2 px-3 text-sm font-medium rounded-lg border border-gray-200 bg-red-500 text-white shadow-sm hover:bg-red-600 focus:outline-none focus:ring-2 focus:ring-red-500"
-                    >
-                      Delete Lesson
-                    </button>
-                  </div>
-                )}
-
-                {dynamicForms
-                  .filter((form) => form.lessonId === courseLesson.id)
-                  .map((form) => (
-                    <div key={form.id} className="mt-2 w-full">
-                      <CreateCourseLessonContent
-                        key={form.id}
-                        courseLessonId={courseLesson.id}
-                        onClose={() => removeDynamicForm(form.id)}
-                        onContentCreated={refreshCourseLessons}
-                      />
-                    </div>
-                  ))}
-
-                {!collapsedLessons[courseLesson.id] && (
-                  <div className="mt-2 w-full">
-                    <CourseLessonContent
-                      courseLessontId={courseLesson.id}
+            <div className="mt-4 overflow-hidden transition-all duration-1000 ease-in-out">
+              <div>
+                {courseLessons.length === 0 ? (
+                  <p>No lessons found for this course part.</p>
+                ) : (
+                  courseLessons.map((courseLesson) => (
+                    <div
                       key={courseLesson.id}
-                    />
-                  </div>
+                      className="border rounded-md p-2 mb-2 shadow-sm flex flex-col items-start relative"
+                    >
+                      <div
+                        className="cursor-pointer flex items-center gap-2"
+                        onClick={() => toggleCollapse(courseLesson.id)}
+                      >
+                        {collapsedLessons[courseLesson.id] ? (
+                          <FaAngleDown className="text-gray-600" />
+                        ) : (
+                          <FaAngleUp className="text-gray-600" />
+                        )}
+                        <h4 className="text-md font-semibold">
+                          {courseLesson.title}
+                        </h4>
+                      </div>
+
+                      {mentorAndList && (
+                        <div className="absolute top-2 right-2 flex gap-2">
+                          <Link
+                            to={`/testDetail/${courseLesson.id}`}
+                            className="py-2 px-3 text-sm font-medium rounded-lg border border-gray-200 bg-white text-gray-800 shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-gray-200"
+                          >
+                            Do Test
+                          </Link>
+
+                          <button
+                            type="button"
+                            onClick={() => handleCreateTest(courseLesson.id)}
+                            className="py-2 px-3 text-sm font-medium rounded-lg border border-gray-200 bg-white text-gray-800 shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-gray-200"
+                          >
+                            Create Test
+                          </button>
+                          <button
+                            type="button"
+                            onClick={() => addDynamicForm(courseLesson.id)}
+                            className="py-2 px-3 text-sm font-medium rounded-lg border border-gray-200 bg-white text-gray-800 shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-gray-200"
+                          >
+                            Create Lesson Content
+                          </button>
+                          <button
+                            type="button"
+                            onClick={() => confirmDeleteLesson(courseLesson.id)}
+                            className="py-2 px-3 text-sm font-medium rounded-lg border border-gray-200 bg-red-500 text-white shadow-sm hover:bg-red-600 focus:outline-none focus:ring-2 focus:ring-red-500"
+                          >
+                            Delete Lesson
+                          </button>
+                        </div>
+                      )}
+
+                      {dynamicForms
+                        .filter((form) => form.lessonId === courseLesson.id)
+                        .map((form) => (
+                          <div key={form.id} className="mt-2 w-full">
+                            <CreateCourseLessonContent
+                              key={form.id}
+                              courseLessonId={courseLesson.id}
+                              onClose={() => removeDynamicForm(form.id)}
+                              onContentCreated={refreshCourseLessons}
+                            />
+                          </div>
+                        ))}
+
+                      {!collapsedLessons[courseLesson.id] && (
+                        <div className="mt-2 w-full">
+                          <CourseLessonContent
+                            courseLessontId={courseLesson.id}
+                            key={courseLesson.id}
+                          />
+                        </div>
+                      )}
+                    </div>
+                  ))
                 )}
               </div>
-            ))
-          )}
-        </div>
-      </div>
+            </div>
 
-      <Confirm
-        isOpen={confirmOpen}
-        onClose={() => setConfirmOpen(false)}
-        onConfirm={confirmActionHandler}
-        status="Confirmation"
-        shoud="no"
-        message="Are you sure you want to perform this action?"
-      />
+            <Confirm
+              isOpen={confirmOpen}
+              onClose={() => setConfirmOpen(false)}
+              onConfirm={confirmActionHandler}
+              status="Confirmation"
+              shoud="no"
+              message="Are you sure you want to perform this action?"
+            />
 
-      <Notification
-        message={notification}
-        onClose={() => setNotification("")}
-      />
-    </div>
+            <Notification
+              message={notification}
+              onClose={() => setNotification("")}
+            />
+          </div>
+        </>
+      ) : (
+        <TestForm
+          lessonId={lessonId}
+          categories={categories}
+          pageType={"lesson"}
+        />
+      )}
+    </>
   );
 };
 

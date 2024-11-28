@@ -2,10 +2,14 @@ import React, { useState } from "react";
 import { useForm } from "react-hook-form";
 import TestFormDetail from "./TestFormDetail";
 import PreviewTest from "./PreviewTest";
+import { Link, useNavigate } from "react-router-dom";
+
 import { useDispatch } from "react-redux";
 import { addSkills } from "../../redux/testExam/TestSlice";
 
-const CreateTest = ({ testId, skills }) => {
+const CreateTest = ({ testId, skills, pageType }) => {
+  const navigate = useNavigate();
+
   const { control, resetField, handleSubmit, setValue, getValues } = useForm();
 
   const [activeStep, setActiveStep] = useState(0);
@@ -23,6 +27,7 @@ const CreateTest = ({ testId, skills }) => {
           setSelectedSkills={setSelectedSkills}
           selectedSkills={selectedSkills}
           skillsCourse={skills}
+          setValue={setValue}
         />
       ),
     },
@@ -34,10 +39,15 @@ const CreateTest = ({ testId, skills }) => {
 
   const handleFinish = () => {
     if (formData) {
-      dispatch(addSkills({ skillsData: formData, testId }));
-      alert("Test Created!");
-    } else {
-      alert("Please fill out the form before finishing.");
+      console.log("formData", formData);
+
+      // dispatch(addSkills({ skillsData: formData, testId }));
+      //   if (pageType == "admin") navigate("/admin/app");
+      //   else if (pageType == "lesson") navigate("");
+      //   else navigate("/");
+      // } else {
+      //   alert("Please fill out the form before finishing.");
+      // }
     }
   };
 
@@ -89,18 +99,10 @@ const CreateTest = ({ testId, skills }) => {
       alert("Please select at least one skill.");
       return;
     }
-    console.log(formData);
-
-    // if (!validateFormData()) {
-    //   alert(
-    //     "Each skill must have at least one part, each part must have at least one section, each section must have at least one question, and each question must have at least one answer."
-    //   );
-    //   return;
-    // }
 
     handleSubmit((data) => {
-      setFormData(data);
-      setActiveStep((prev) => Math.min(prev + 1, steps.length - 1));
+      setFormData(data); // Update formData
+      setActiveStep((prev) => Math.min(prev + 1, steps.length - 1)); // Move to next step
     })();
   };
 
@@ -138,7 +140,7 @@ const CreateTest = ({ testId, skills }) => {
 
         <div>{steps[activeStep].content}</div>
 
-        <div className="flex justify-between">
+        <div className="flex justify-around">
           <button
             className={`py-2 px-4 rounded bg-gray-200 text-gray-600 ${
               activeStep === 0 ? "opacity-50 cursor-not-allowed" : ""
@@ -165,7 +167,20 @@ const CreateTest = ({ testId, skills }) => {
             className={`py-2 px-4 rounded bg-green-500 text-white ${
               activeStep !== steps.length - 1 ? "hidden" : ""
             }`}
-            onClick={handleFinish}
+            onClick={handleSubmit((data) => {
+              console.log("Form Data Submitted:", data); // Log form data
+              setFormData(data); // Update formData
+              dispatch(addSkills({ skillsData: data, testId })); // Dispatch action with current data
+              if (pageType == "admin") {
+                navigate("/admin/app/testsource");
+              } else if (pageType == "lesson") {
+                console.log("Navigating to lesson"); // Log navigation
+                navigate("");
+              } else {
+                console.log("Navigating to home"); // Log navigation
+                navigate("/");
+              }
+            })}
           >
             Finish
           </button>

@@ -12,7 +12,8 @@ import {
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { addQuestion } from "../../redux/testExam/TestSlice";
 import { useDispatch } from "react-redux";
-
+import { CKEditor } from "@ckeditor/ckeditor5-react";
+import ClassicEditor from "@ckeditor/ckeditor5-build-classic";
 const QuestionForm = ({
   skill,
   partIndex,
@@ -53,9 +54,19 @@ const QuestionForm = ({
     setShowQuestionCard(false);
   };
 
-  const isListening = skill === "Listening" && sectionType !== 3;
-  const isReading = skill === "Reading" && sectionType !== 11;
-
+  const isListening =
+    skill === "Listening" &&
+    sectionType != 1 &&
+    sectionType != 2 &&
+    sectionType != 3 &&
+    sectionType != 7;
+  const isReading =
+    skill === "Reading" &&
+    sectionType !== 7 &&
+    sectionType !== 8 &&
+    sectionType !== 9 &&
+    sectionType !== 10 &&
+    sectionType !== 11;
   const showAddQuestion =
     isListening || isReading || skill === "Writing" || skill === "Speaking";
 
@@ -133,18 +144,6 @@ const QuestionForm = ({
         </div>
       )}
 
-      {skill === "Listening" && sectionType === 1 && (
-        <div className="mb-4 border p-4 rounded">
-          <label className="block mb-2 font-bold">Enter Table Content:</label>
-          <TableInput
-            control={control}
-            skill={skill}
-            partIndex={partIndex}
-            sectionIndex={sectionIndex}
-          />
-        </div>
-      )}
-
       {fields.map((question, index) => (
         <div key={question.id} className="mb-4 border p-4 rounded">
           <div className="flex p-2 justify-between gap-2 items-center">
@@ -208,9 +207,70 @@ const QuestionForm = ({
                   sectionType={sectionType}
                 />
               )}
+              {skill === "Listening" ||
+                (skill === "Reading" && (
+                  <div className="mb-4 border p-4 rounded">
+                    <p className="mb-2 text-gray-600">Explain</p>
+                    <Controller
+                      name={`skills.${skill}.parts.${partIndex}.sections.${sectionIndex}.questions.${index}.explain`}
+                      control={control}
+                      render={({ field, fieldState }) => (
+                        <div className="mb-2">
+                          <CKEditor
+                            editor={ClassicEditor}
+                            data={field.value || ""} // Set value to CKEditor
+                            config={{
+                              toolbar: [
+                                "heading",
+                                "|",
+                                "bold",
+                                "italic",
+                                "link",
+                                "|",
+                                "insertTable", // Add table button to the toolbar
+                                "blockQuote",
+                                "|",
+                                "undo",
+                                "redo",
+                              ],
+                              table: {
+                                contentToolbar: [
+                                  "tableColumn",
+                                  "tableRow",
+                                  "mergeTableCells",
+                                  "tableProperties",
+                                  "tableCellProperties",
+                                ],
+                              },
+                              height: 300, // Optional: Customize height of editor
+                            }}
+                            onChange={(event, editor) => {
+                              const data = editor.getData();
+                              field.onChange(data); // Update value for validation
+                            }}
+                          />
+                          {fieldState.error && (
+                            <p className="text-red-500">
+                              {fieldState.error.message}
+                            </p>
+                          )}
+                        </div>
+                      )}
+                    />
+                  </div>
+                ))}
             </>
           ) : (
-            <p>{question.questionName}</p>
+            <>
+              <p>{question.questionName}</p>
+              <p>{question.questionType}</p>
+              {question.answers.length > 0 &&
+                question.answers.map((a) => (
+                  <div>
+                    <p>AnswerText: {a.answerText}</p>
+                  </div>
+                ))}
+            </>
           )}
         </div>
       ))}
@@ -237,8 +297,10 @@ const QuestionForm = ({
                   questionName: "",
                   answers: [{ answerText: "", isCorrect: 0 }],
                   summary: "",
+                  answer: "",
                   isFromQuestionBank: false,
                   questionType: sectionType,
+                  explain: "",
                 })
               }
               className="bg-green-500 text-white p-2 rounded"

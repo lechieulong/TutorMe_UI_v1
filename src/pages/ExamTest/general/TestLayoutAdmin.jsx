@@ -15,7 +15,7 @@ const TestLayoutAdmin = () => {
       case "Speaking":
         return <p>Hello</p>;
       case "CreateTest":
-        return <TestForm />;
+        return <TestForm pageType={"admin"} />;
       default:
         return null;
     }

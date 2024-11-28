@@ -34,6 +34,7 @@ export const ACTIONS = {
   REQUEST_FORGOT: "forgot-password",
   RESET_PASSWORD: "reset-password",
   UPDATE_ROLE: "update-role",
+  IS_LOCKED: "is-locked",
 
   FETCH_TESTS: "getTests",
   SUBMIT_TEST: "submitTest",
@@ -70,6 +71,7 @@ export const ACTIONS = {
   GET_TOP10_TEACHERS: "getTop10Teachers",
   SEARCH_TEACHER: "searchteacher",
   BE_TEACHER: "beteacher",
+  GET_RADOM_ADMIN_TEST: "getramdonadmintest",
   UPDATE_TEACHER_REQUEST: "updateTeacherRequest",
   UPDATE_PROFILE: "updateprofile",
 
@@ -81,6 +83,8 @@ export const ACTIONS = {
   SET_SCHEDULE: "setschedule",
   SET_SCHEDULE_SESSION: "setscheduleSession",
   GET_SCHEDULE_7DAYS: "getschedule7days",
+  DELETE_SCHEDULE: "deleteschedule",
+  UPDATE_SCHEDULE: "updateschedule",
 
   //Specialization
   GET_SPECIALIZATION: "getspecialization",

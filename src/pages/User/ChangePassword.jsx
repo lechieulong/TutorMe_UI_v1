@@ -214,7 +214,7 @@ const ProfileSection = () => {
                 </p>
               </div>
               <img
-                src="src/assets/images/security.png"
+                src="https://hydra13.blob.core.windows.net/63a5630a-687a-4c38-98e2-f5ce440f3f09/security.png"
                 alt="Security Illustration"
                 className="w-full h-auto rounded-lg shadow-md"
               />

@@ -98,7 +98,7 @@ const CreateCourse = ({ onClose, onCreateSuccess }) => {
         message={confirmMessage}
         status="Create new course"
       />
-      <div className="bg-white p-6 rounded-lg shadow-lg w-1/3 relative h-4/5">
+      <div className="bg-white p-6 rounded-lg shadow-lg w-1/3  relative">
         <h2 className="text-xl font-semibold mb-4">Create New Course</h2>
         <form onSubmit={handleSubmit}>
           <div className="mb-4">

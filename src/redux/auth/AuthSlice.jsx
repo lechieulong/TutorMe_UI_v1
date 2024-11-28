@@ -155,16 +155,36 @@ export const resetPasswordAPI = createAsyncThunk(
   }
 );
 
+// Action to check locked
+export const checkLocked = createAsyncThunk(
+  `${SLICE_NAMES.AUTH}/${ACTIONS.IS_LOCKED}`,
+  async (email, { rejectWithValue }) => {
+    try {
+      const response = await axios.post(
+        `${apiURLConfig.baseURL}/auth/check-lock`, email
+      );
+      return response.data;
+    } catch (error) {
+      return rejectWithValue(
+        error.response?.data?.message || "Failed to check locked. Please request again."
+      );
+    }
+  }
+);
+
 const initialState = {
   user: null,
+  checkLocked: null,
   status: STATUS.IDLE,
   loginStatus: STATUS.IDLE,
   registerStatus: STATUS.IDLE,
   changePasswordStatus: STATUS.IDLE,
   forgotPasswordStatus: STATUS.IDLE,
   resetPassworStatus: STATUS.IDLE,
+  checkLockedStatus: STATUS.IDLE,
   error: null,
   token: null,
+  checkLockedError: null,
   // IschangePassword
 };
 
@@ -274,6 +294,20 @@ const AuthSlice = createSlice({
       .addCase(resetPasswordAPI.rejected, (state, action) => {
         state.resetPassworStatus = STATUS.FAILED;
         state.error = action.payload || action.error.message;
+      })
+
+      // Xử lý check locked
+      .addCase(checkLocked.pending, (state) => {
+        state.checkLockedStatus = STATUS.PENDING;
+        state.checkLockedError = null;
+      })
+      .addCase(checkLocked.fulfilled, (state, action) => {
+        state.checkLockedStatus = STATUS.SUCCESS;
+        state.checkLocked = action.payload;
+      })
+      .addCase(checkLocked.rejected, (state, action) => {
+        state.checkLockedStatus = STATUS.FAILED;
+        state.checkLockedError = action.payload || action.error.message;
       })
   },
 });

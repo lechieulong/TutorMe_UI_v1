@@ -1,10 +1,14 @@
-import React from "react";
+import React, { useRef } from "react";
 import { useFieldArray, Controller, useWatch } from "react-hook-form";
 import QuestionForm from "./QuestionForm";
 import { faMultiply } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useDispatch } from "react-redux";
 import { uploadFile } from "../../redux/testExam/TestSlice";
+
+import { Editor } from "@tinymce/tinymce-react";
+import { v4 as uuidv4 } from "uuid";
+import Demo from "../../Demo";
 
 const sectionTypesBySkill = {
   Reading: [
@@ -45,11 +49,13 @@ const sectionTypesBySkill = {
     { value: 3, label: "Part 3" },
   ],
 };
-const SectionForm = ({ skill, partIndex, control }) => {
+const SectionForm = ({ skill, partIndex, control, setValue }) => {
   const { fields, append, remove } = useFieldArray({
     name: `skills.${skill}.parts.${partIndex}.sections`,
     control,
   });
+  const editorRef = useRef(null);
+
   const sectionTypes = sectionTypesBySkill[skill] || [];
   const sectionTypeValues = useWatch({
     name: `skills.${skill}.parts.${partIndex}.sections`,
@@ -173,13 +179,39 @@ const SectionForm = ({ skill, partIndex, control }) => {
 
             {skill === "Reading" || skill === "Listening" ? (
               sectionType ? (
-                <QuestionForm
-                  skill={skill}
-                  partIndex={partIndex}
-                  sectionIndex={index}
-                  control={control}
-                  sectionType={Number(sectionType)}
-                />
+                <>
+                  {(skill === "Reading" &&
+                    (sectionType == 7 ||
+                      sectionType == 8 ||
+                      sectionType == 11 ||
+                      sectionType == 9 ||
+                      sectionType == 10)) ||
+                  (skill === "Listening" &&
+                    (sectionType == 1 ||
+                      sectionType == 2 ||
+                      sectionType == 3 ||
+                      sectionType == 7)) ? (
+                    <>
+                      <h3 className="text-2xl font-semibold">Questions</h3>
+                      <Demo
+                        skill={skill}
+                        partIndex={partIndex}
+                        sectionIndex={index}
+                        control={control}
+                        sectionType={Number(sectionType)}
+                        setValue={setValue}
+                      />
+                    </>
+                  ) : (
+                    <QuestionForm
+                      skill={skill}
+                      partIndex={partIndex}
+                      sectionIndex={index}
+                      control={control}
+                      sectionType={Number(sectionType)}
+                    />
+                  )}
+                </>
               ) : (
                 <p className="text-red-500">
                   Please select a Section Type before adding questions.
@@ -194,6 +226,86 @@ const SectionForm = ({ skill, partIndex, control }) => {
                 sectionType={0}
               />
             )}
+            {sectionType &&
+              ((skill === "Reading" &&
+                (sectionType == 7 ||
+                  sectionType == 8 ||
+                  sectionType == 11 ||
+                  sectionType == 9 ||
+                  sectionType == 10)) ||
+                (skill === "Listening" &&
+                  (sectionType == 1 ||
+                    sectionType == 2 ||
+                    sectionType == 3 ||
+                    sectionType == 7))) && (
+                <div className="">
+                  <h3 className="text-xl font-bold mb-4 ">
+                    Explains for section
+                  </h3>
+                  <Controller
+                    name={`skills.${skill}.parts.${partIndex}.sections.${index}.explain`}
+                    control={control}
+                    rules={{ required: "Section context is required" }} // Add validation
+                    render={({ field, fieldState }) => (
+                      <div className="mb-2">
+                        <label className="block text-gray-700 font-medium mb-2">
+                          Section Explain
+                        </label>
+                        <Editor
+                          apiKey={import.meta.env.VITE_TINI_APIKEY}
+                          onEditorChange={field.onChange} // Directly bind to field.onChange
+                          value={field.value} // Bind the value to field.value
+                          init={{
+                            height: "300px",
+                            menubar:
+                              "file edit view insert format tools table help",
+                            plugins: [
+                              "advlist",
+                              "autolink",
+                              "lists",
+                              "link",
+                              "image",
+                              "charmap",
+                              "preview",
+                              "anchor",
+                              "searchreplace",
+                              "visualblocks",
+                              "code",
+                              "fullscreen",
+                              "insertdatetime",
+                              "media",
+                              "table",
+                              "help",
+                              "wordcount",
+                            ],
+                            toolbar:
+                              "undo redo | blocks | bold italic underline | backcolor forecolor | alignleft aligncenter " +
+                              "alignright alignjustify | bullist numlist outdent indent | removeformat | help | fullscreen | insertinput",
+                            setup: (editor) => {
+                              editor.ui.registry.addButton("insertinput", {
+                                text: "Insert Input",
+                                onAction: () => {
+                                  const questionId = uuidv4(); // Generate unique questionId
+                                  editor.insertContent(
+                                    `<input type="text" class="editor-input" data-question-id="${questionId}" />`
+                                  );
+                                },
+                              });
+                            },
+                            content_style:
+                              "body { font-family:Helvetica,Arial,sans-serif; font-size:14px; padding:10px; margin:0; }",
+                          }}
+                        />
+                        {fieldState.error && (
+                          <p className="text-red-500">
+                            {fieldState.error.message}
+                          </p>
+                        )}
+                      </div>
+                    )}
+                  />
+                </div>
+              )}
           </div>
         );
       })}
@@ -203,7 +315,9 @@ const SectionForm = ({ skill, partIndex, control }) => {
           append({
             sectionGuide: "",
             sectionType: 0,
+            sectionContext: "",
             image: "",
+            explain: "",
             questions: [],
           })
         }

@@ -119,6 +119,28 @@ export const BeTeacher = createAsyncThunk(
     }
 );
 
+export const GetRandomAdminTest = createAsyncThunk(
+    `${SLICE_NAMES.USER}/${ACTIONS.GET_RADOM_ADMIN_TEST}`,
+    async (_, { rejectWithValue }) => {
+        try {
+            const token = Cookies.get("authToken");
+            const response = await axios.get(
+                `${apiURLConfig.baseURL}/teacherrequest/random-admin-test`,
+                {
+                    headers: {
+                        Authorization: `Bearer ${token}`, // Include token in the request headers
+                    },
+                }
+            );
+            return response.data.result; // Return API response data
+        } catch (error) {
+            return rejectWithValue(
+                error.response?.data?.message || "Failed to fetch random admin test."
+            );
+        }
+    }
+);
+
 //Action to reagister teacher
 export const UpdaterTeacherRequest = createAsyncThunk(
     `${SLICE_NAMES.USER}/${ACTIONS.UPDATE_TEACHER_REQUEST}`,
@@ -246,6 +268,7 @@ const initialState = {
     userInfor: null,
     updateResponse: null,
     roleToUpdate: null,
+    randomTest: null,
     status: STATUS.IDLE, // Trạng thái mặc định
     getuserstatus: STATUS.IDLE,
     getUserEducationStatus: STATUS.IDLE,
@@ -253,6 +276,7 @@ const initialState = {
     updateTeacherRequestStatus: STATUS.IDLE,
     updateStatus: STATUS.IDLE,
     roleUpdateStatus: STATUS.IDLE,
+    getRadomTestStatus: STATUS.IDLE,
     error: null, // Thông báo lỗi nếu có
     updateError: null, // Thông báo lỗi nếu có
     getUserEducationError: null, // Thông báo lỗi nếu có
@@ -263,6 +287,7 @@ const initialState = {
     beTeacherStatus: STATUS.IDLE,
     beTeacherError: null,
     roleUpdateError: null,
+    getRadomTestError: null,
 };
 
 const UserSlice = createSlice({
@@ -352,6 +377,20 @@ const UserSlice = createSlice({
             .addCase(BeTeacher.rejected, (state, action) => {
                 state.beTeacherStatus = STATUS.FAILED;
                 state.beTeacherError = action.payload || action.error.message;
+            })
+
+            // Handle get radom admin test
+            .addCase(GetRandomAdminTest.pending, (state) => {
+                state.getRadomTestStatus = STATUS.PENDING;
+                state.getRadomTestError = null;
+            })
+            .addCase(GetRandomAdminTest.fulfilled, (state, action) => {
+                state.getRadomTestStatus = STATUS.SUCCESS;
+                state.randomTest = action.payload;
+            })
+            .addCase(GetRandomAdminTest.rejected, (state, action) => {
+                state.getRadomTestStatus = STATUS.FAILED;
+                state.getRadomTestError = action.payload || action.error.message;
             })
 
             // Handle update teacher request

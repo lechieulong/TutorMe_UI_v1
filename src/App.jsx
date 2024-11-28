@@ -62,6 +62,7 @@ import ClassDetail from "./pages/Class/ClassDetail";
 import CreateClass from "./pages/Class/CreateClass";
 import TestExplain from "./pages/TestExam/TestExplain";
 import TestFormLayout from "./pages/ExamTest/TestFormLayout";
+import Demo from "./Demo";
 const App = () => {
   return (
     <div className=" min-h-screen ">
@@ -85,6 +86,17 @@ const App = () => {
           {/* <Route path="/Payment" element={<PayOS />} /> */}
           {/* Test  common*/}
           <Route path="/" element={<Home />} />
+          <Route path="/demo" element={<Demo />} />
+          <Route
+            path="/demoTiny"
+            element={
+              <CreateTest
+                testId="1"
+                skills={["Listening", "Reading"]}
+                pageType="lesson"
+              />
+            }
+          />
           <Route path="*" element={<NotFound />} />
           <Route path="/gemini" element={<SpeakingGemini />} />
           {/* Test  exam*/}
@@ -155,7 +167,6 @@ const App = () => {
           {/* Error page */}
           <Route path="/404" element={<Error404 />} />
           <Route path="/not-authorized" element={<NotAuthorizedPage />} />
-          <Route path="/Payment" element={<PayOS />} />
           <Route path="/Payment" element={<PayOS />} />
           <Route path="/Paymentresult" element={<PaymentResult />} />
 

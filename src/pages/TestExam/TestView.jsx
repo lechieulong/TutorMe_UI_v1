@@ -119,6 +119,7 @@ const TestView = React.memo(
         <div className="flex flex-col">
           {partDatas.length > 0 && (
             <NavigationPart
+              currentSkillKey={currentSkillKey}
               partDatas={partDatas} // Pass all part data
               handlePartClick={handlePartClick} // Handle part click to update selected part
               handleQuestionClick={handleQuestionClick}

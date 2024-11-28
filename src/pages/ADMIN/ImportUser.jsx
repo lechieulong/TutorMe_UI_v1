@@ -7,26 +7,31 @@ const ImportUser = () => {
 
     useEffect(() => {
         const fetchData = async () => {
-            const response = await fetch('/src/assets/files/ImportUser.xlsx');
-            const blob = await response.blob();
-            const ab = await blob.arrayBuffer();
-            const wb = XLSX.read(ab, { type: 'array' });
-            const ws = wb.Sheets[wb.SheetNames[0]];
-            const jsonData = XLSX.utils.sheet_to_json(ws);
-            setData(jsonData);
+            try {
+                const fileURL = '/files/ImportUser.xlsx';
+                const response = await fetch(fileURL);
+                const blob = await response.blob();
+                const ab = await blob.arrayBuffer();
+                const wb = XLSX.read(ab, { type: 'array' });
+                const ws = wb.Sheets[wb.SheetNames[0]];
+                const jsonData = XLSX.utils.sheet_to_json(ws);
+                setData(jsonData);
+            } catch (error) {
+                console.error("Error fetching file:", error.message);
+            }
         };
-
+    
         fetchData();
     }, []);
 
-    // Function to download the Excel file
+    //Download file từ <a/> - thêm download vào thẻ
     const downloadFile = () => {
         const link = document.createElement('a');
-        link.href = '/src/assets/files/ImportUser.xlsx'; // Adjust the path if necessary
-        link.setAttribute('download', 'ImportUser.xlsx'); // Specify the file name
+        link.href = '/files/ImportUser.xlsx';
+        link.setAttribute('download', 'ImportUser.xlsx');
         document.body.appendChild(link);
         link.click();
-        document.body.removeChild(link); // Remove the link after downloading
+        document.body.removeChild(link);
     };
 
     return (

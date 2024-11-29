@@ -4,6 +4,7 @@ import Writing from "../../components/Test/Part/Writing";
 import Speaking from "../../components/Test/Part/Speaking";
 import MultipleChoiceAnswers from "./MultipleChoiceAnswers";
 import ParseHtml from "./ParseHtml";
+import SingleChoiceAnswers from "./SingleChoiceAnswers";
 
 const AnswerView = ({
   partData,
@@ -228,6 +229,19 @@ const AnswerView = ({
           );
         }
       case 1:
+        if (sectionType === 5) {
+          return (
+            <SingleChoiceAnswers
+              question={question}
+              userAnswers={userAnswers}
+              renderLetter={renderLetter}
+              handleChangeWrap={handleChangeWrap}
+              skill={skill}
+              partData={partData}
+              sectionType={sectionType}
+            />
+          );
+        }
         if (sectionType === 6)
           return (
             <div className="flex flex-col gap-2">

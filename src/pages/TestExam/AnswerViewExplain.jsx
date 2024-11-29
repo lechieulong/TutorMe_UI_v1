@@ -4,14 +4,11 @@ import Writing from "../../components/Test/Part/Writing";
 import Speaking from "../../components/Test/Part/Speaking";
 import MutipleChoiceExplain from "./MutipleChoiceExplain";
 import { GoogleGenerativeAI } from "@google/generative-ai";
+import ParseHtmlExplain from "./ParseHtmlExplain";
 
 const genAI = new GoogleGenerativeAI(import.meta.env.VITE_GEN_AI);
 
-const AnswerViewExplain = ({
-  partData,
-  currentSkillKey,
-  handleAnswerChange,
-}) => {
+const AnswerViewExplain = ({ partData, currentSkillKey }) => {
   console.log("partData", partData);
 
   let skill;
@@ -120,10 +117,7 @@ const AnswerViewExplain = ({
                   </label>
                 )}
 
-                <p>
-                  Explaination:{" "}
-                  {question.userAnswers[0]?.answerText || "No answer selected"}
-                </p>
+                <div dangerouslySetInnerHTML={{ __html: question.explain }} />
               </div>
             </>
           );
@@ -453,22 +447,44 @@ const AnswerViewExplain = ({
                       </div>
                     </>
                   ) : (
-                    section.questions.map((question, index) => (
-                      <div key={index} className="mb-4">
-                        {renderQuestionName(
-                          skill,
-                          section.sectionType,
-                          question,
-                          questionCounter++
-                        )}
-                        {renderInputBasedOnSectionType(
-                          skill,
-                          section.sectionType,
-                          question,
-                          questionCounter
-                        )}
-                      </div>
-                    ))
+                    <>
+                      {(skill === 0 &&
+                        (section.sectionType === 1 ||
+                          section.sectionType === 2 ||
+                          section.sectionType === 3)) ||
+                      (skill === 1 &&
+                        (section.sectionType === 8 ||
+                          section.sectionType === 4)) ||
+                      skill === 2 ||
+                      skill === 3 ? (
+                        section.questions.map((question, index) => (
+                          <div key={index} className="mb-4">
+                            {renderQuestionName(
+                              skill,
+                              section.sectionType,
+                              question,
+                              questionCounter++
+                            )}
+                            {renderInputBasedOnSectionType(
+                              skill,
+                              section.sectionType,
+                              question,
+                              questionCounter
+                            )}
+                          </div>
+                        ))
+                      ) : (
+                        <div>
+                          <ParseHtmlExplain
+                            questionCounter={questionCounter}
+                            html={section.sectionContext} //
+                            sectionType={section.sectionType}
+                            sectionExplain={section.explain}
+                            questions={section.questions}
+                          />
+                        </div>
+                      )}
+                    </>
                   )}
                 </div>
               </div>

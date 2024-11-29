@@ -6,6 +6,7 @@ const ParseHtml = ({
   sectionType,
   questionCounter,
   userAnswers,
+  sectionExplain,
 }) => {
   useEffect(() => {
     const inputs = document.querySelectorAll("input[data-question-id]");

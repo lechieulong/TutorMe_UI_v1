@@ -16,12 +16,14 @@ const AnswerForm = ({
     control,
   });
 
-  const isListening = skill === "Listening" && sectionType === 8;
+  const isListening =
+    skill === "Listening" && (sectionType === 8 || sectionType === 5);
   const isReading = skill === "Reading" && sectionType === 1;
 
   const showButtonAnswerTest = isListening || isReading;
 
-  const isCorrectListening = skill === "Listening" && sectionType === 8;
+  const isCorrectListening =
+    (skill === "Listening" && sectionType === 8) || sectionType === 5;
   const isCorrectReading =
     (skill === "Reading" && sectionType === 1) ||
     sectionType === 2 ||
@@ -118,7 +120,6 @@ const AnswerForm = ({
                   )}
                 />
               ) : (
-                // Regular Correct Answer Checkbox
                 <Controller
                   name={`skills.${skill}.parts.${partIndex}.sections.${sectionIndex}.questions.${questionIndex}.answers.${index}.isCorrect`}
                   control={control}
@@ -126,10 +127,10 @@ const AnswerForm = ({
                     <div className="flex items-center w-3/12">
                       <input
                         type="checkbox"
-                        checked={field.value === 1} // checked if value is 1 (true)
+                        checked={field.value === 1}
                         onChange={(e) =>
                           field.onChange(e.target.checked ? 1 : 0)
-                        } // 1 if checked, 0 if not
+                        }
                         className="mr-2"
                       />
                       <label>Correct Answer</label>
@@ -138,7 +139,8 @@ const AnswerForm = ({
                 />
               )}
               {((skill === "Reading" && sectionType != 2 && sectionType != 3) ||
-                (skill === "Listening" && sectionType === 8)) && (
+                (skill === "Listening" && sectionType === 8) ||
+                sectionType === 5) && (
                 <button
                   type="button"
                   onClick={() => remove(index)}

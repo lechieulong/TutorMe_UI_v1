@@ -17,11 +17,13 @@ import { useDispatch } from "react-redux";
 import { useParams } from "react-router-dom";
 import CreateTest from "../ExamTest/CreateTest";
 import TestLayout from "./TestLayout";
+import { getUser } from "../../service/GetUser";
 
 const SkillPart = () => {
   const [test, setTest] = useState(null);
   const [skills, setSkills] = useState([]);
   const [createSkill, setCreateSkill] = useState(false);
+  const [user, setUser] = useState(null);
   const [takeFullTest, setTakeFullTest] = useState(false);
 
   const navigate = useNavigate();
@@ -43,6 +45,8 @@ const SkillPart = () => {
       }
     };
 
+    const userFromToken = getUser();
+    setUser(userFromToken);
     const fetchSkills = async () => {
       const result = await dispatch(getSkills(testId));
       if (result.payload) {
@@ -117,12 +121,18 @@ const SkillPart = () => {
                     {createSkill ? (
                       <CreateTest testId={testId} />
                     ) : (
-                      <button
-                        className="p-2 bg-red-100"
-                        onClick={() => setCreateSkill(true)}
-                      >
-                        Create Skill
-                      </button>
+                      <>
+                        {user?.role?.includes(Roles.ADMIN) ? (
+                          <button
+                            className="p-2 bg-red-100"
+                            onClick={() => setCreateSkill(true)}
+                          >
+                            Create Skill
+                          </button>
+                        ) : (
+                          <p>No skills is available now </p>
+                        )}
+                      </>
                     )}
                   </>
                 ) : (

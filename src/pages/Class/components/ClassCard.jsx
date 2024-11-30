@@ -24,6 +24,7 @@ const ClassCard = ({
   onSelect,
   isActive,
   userRole,
+  handleDeleteClassSuccess, // Passed down function to trigger reload in ClassList
 }) => {
   const location = useLocation();
   const navigate = useNavigate();
@@ -97,6 +98,28 @@ const ClassCard = ({
     }
   };
 
+  const handleDeleteClass = async () => {
+    const confirmationMessage =
+      "Bạn có chắc muốn xóa lớp học này? Hành động này không thể hoàn tác.";
+    if (window.confirm(confirmationMessage)) {
+      try {
+        const response = await axios.delete(
+          `https://localhost:7030/api/class/${classItem.id}`
+        );
+        if (response.status === 200) {
+          alert("Lớp học đã được xóa thành công.");
+          handleDeleteClassSuccess(); // Trigger reload in ClassList component
+          navigate("/somewhere"); // Redirect to another page after deleting
+        } else {
+          alert("Không thể xóa lớp học này.");
+        }
+      } catch (error) {
+        console.error("Xóa lớp học thất bại", error);
+        alert("Đã xảy ra lỗi khi xóa lớp học.");
+      }
+    }
+  };
+
   const cardClassName = location.pathname.includes("/classOfCourse")
     ? "flex-shrink-0 w-full sm:w-1/1 md:w-1/2 lg:w-1/2 p-2 cursor-pointer"
     : "flex-shrink-0 w-full sm:w-1/2 md:w-1/3 lg:w-1/4 p-2 cursor-pointer";
@@ -124,12 +147,18 @@ const ClassCard = ({
         </div>
 
         {mentorAndList && (
-          <div className="pl-4 pr-4 flex items-center justify-end">
+          <div className="pl-4 pr-4 flex items-center justify-between">
             <GreenSwitch
               checked={isSwitchOn}
               onChange={handleSwitchChange}
               inputProps={{ "aria-label": "Green switch" }}
             />
+            <button
+              onClick={handleDeleteClass}
+              className="text-red-500 text-sm font-semibold hover:text-red-700"
+            >
+              Xóa
+            </button>
           </div>
         )}
       </div>

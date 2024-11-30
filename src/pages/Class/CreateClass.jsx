@@ -82,7 +82,8 @@ const CreateClass = ({ courseId, onClose, onCreateSuccess }) => {
       onClose(); // Đóng form
     } catch (error) {
       console.error("Failed to create class:", error.message || error);
-      alert("Đã xảy ra lỗi khi tạo lớp học. Vui lòng thử lại.");
+      onCreateSuccess(); // Gọi callback nếu có
+      onClose(); // Đóng form
     }
   };
 

@@ -1,14 +1,14 @@
 import React, { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import Cookies from "js-cookie";
-import JoditEditor from "jodit-react";
+import ClassicEditor from "@ckeditor/ckeditor5-build-classic";
 import { getUser } from "../../../service/GetUser";
 import useAuthToken from "../../../hooks/useAuthToken";
 import {
   uploadCourseFile,
   createCourseLessonContentSlice,
 } from "../../../redux/courses/CourseLessonContentSlice";
-
+import { CKEditor } from "@ckeditor/ckeditor5-react";
 const CreateCourseLessonContent = ({
   courseLessonId,
   onClose,
@@ -65,7 +65,12 @@ const CreateCourseLessonContent = ({
 
   const handleContentUrlChange = (e) => {
     const value = e.target.value;
-    setContentData((prev) => ({ ...prev, contentUrl: value }));
+
+    const videoId = value.includes("v=")
+      ? value.split("v=")[1].split("&")[0]
+      : value;
+
+    setContentData((prev) => ({ ...prev, contentUrl: videoId }));
   };
 
   const handleFileChange = async (e) => {
@@ -96,11 +101,9 @@ const CreateCourseLessonContent = ({
     }
   };
 
-  const handleJoditChange = (newContent) => {
-    setContentData((prev) => ({
-      ...prev,
-      contentText: newContent,
-    }));
+  const handleEditorChange = (event, editor) => {
+    const data = editor.getData();
+    setContentData({ ...contentData, contentText: data }); // Update local state
   };
 
   const handleSubmit = async (e) => {
@@ -178,12 +181,26 @@ const CreateCourseLessonContent = ({
             <label className="block text-gray-700 font-medium">
               Content Text
             </label>
-            <JoditEditor
-              value={contentData.contentText}
-              onBlur={handleJoditChange}
+            <CKEditor
+              editor={ClassicEditor}
+              data={contentData.contentText} // Bind value to the CKEditor
               config={{
-                placeholder: "Enter content text",
+                toolbar: [
+                  "heading",
+                  "|",
+                  "bold",
+                  "italic",
+                  "link",
+                  "|",
+                  "insertTable", // Add table button to the toolbar
+                  "blockQuote",
+                  "|",
+                  "undo",
+                  "redo",
+                ],
+                height: 300, // Optional: Customize height of editor
               }}
+              onChange={handleEditorChange} // Handle content change
             />
           </div>
         ) : contentData.contentType === "file" ? (

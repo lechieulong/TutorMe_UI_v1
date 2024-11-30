@@ -33,6 +33,10 @@ const ClassList = ({
     setReload(!reload);
   };
 
+  const handleDeleteClassSuccess = () => {
+    setReload(!reload); // Trigger reload after deletion
+  };
+
   return (
     <div className="flex flex-col bg-white border w-full shadow-sm rounded-xl p-4 md:p-5 relative group mb-4">
       <div className="mt-4 relative">
@@ -61,6 +65,7 @@ const ClassList = ({
                 key={classItem.id}
                 classItem={classItem}
                 switchState={switchStates[classItem.id] || false}
+                handleDeleteClassSuccess={handleDeleteClassSuccess} // Pass the function to ClassCard
               />
             ))}
           </div>

@@ -22,7 +22,7 @@ const MentorSidebar = ({ mentorAndList, setSelectedComponent }) => {
     <div>
       <div
         id="hs-offcanvas-example"
-        className="block shadow-lg top-0 left-0 transition-all duration-300 transform w-64 bg-white border-e border-gray-200 pb-10 overflow-y-auto [&::-webkit-scrollbar]:w-2 [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-track]:bg-gray-100 [&::-webkit-scrollbar-thumb]:bg-gray-300"
+        className="block shadow-lg sticky top-0 left-0 transition-all duration-300 transform w-64 bg-white border-e border-gray-200 pb-10 overflow-y-auto [&::-webkit-scrollbar]:w-2 [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-track]:bg-gray-100 [&::-webkit-scrollbar-thumb]:bg-gray-300"
         role="dialog"
         tabIndex="-1"
         aria-label="Sidebar"

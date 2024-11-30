@@ -68,6 +68,19 @@ const SkillPart = () => {
     // navigate(`/testing/${testId}`);
   };
 
+  const isButtonDisabled = () => {
+    const startTime = new Date(test.startTime); // Convert startTime to a Date object
+    const currentTime = new Date(); // Get the current date and time
+
+    // Ensure both dates are valid
+    if (isNaN(startTime) || isNaN(currentTime)) {
+      console.error("Invalid Date(s)");
+      return false;
+    }
+
+    return test.testType === 2 && startTime < currentTime;
+  };
+
   return (
     <>
       {takeFullTest ? (
@@ -153,28 +166,35 @@ const SkillPart = () => {
                           <h3 className="text-lg font-bold text-gray-800 dark:text-white">
                             {skillTypeMap[skill.type]?.name}
                           </h3>
-                          <button
-                            onClick={() => handleTakeTest(skill.id)}
-                            className="mt-2 py-2 px-3 inline-flex justify-center items-center gap-x-2 text-sm font-medium rounded-lg border border-transparent bg-green-600 text-white hover:bg-green-700 focus:outline-none focus:bg-green-700 disabled:opacity-50 disabled:pointer-events-none"
-                          >
-                            <FontAwesomeIcon icon={faPlay} className="mr-2" />
-                            Start
-                          </button>
+                          {test.testType == 1 && (
+                            <button
+                              onClick={() => handleTakeTest(skill.id)}
+                              className="mt-2 py-2 px-3 inline-flex justify-center items-center gap-x-2 text-sm font-medium rounded-lg border border-transparent bg-green-600 text-white hover:bg-green-700 focus:outline-none focus:bg-green-700 disabled:opacity-50 disabled:pointer-events-none"
+                            >
+                              <FontAwesomeIcon icon={faPlay} className="mr-2" />
+                              Start
+                            </button>
+                          )}
                         </div>
                       ))}
                     </div>
-
                     <div className="border text-gray-700 shadow-md border-gray-300 p-6 flex justify-between mt-2 rounded-xl items-center">
-                      <button
-                        className="text-2xl p-4 font-semibold border-green-500"
-                        onClick={handleTakeFullTest}
-                      >
-                        <FontAwesomeIcon
-                          icon={faThunderstorm}
-                          className="mr-2"
-                        />
-                        Take Full Test
-                      </button>
+                      {test.testType !== 1 ? (
+                        <button
+                          className={`text-2xl p-4 font-semibold border-green-500 bg-green-500 text-white rounded-lg 
+                 disabled:opacity-50 disabled:cursor-not-allowed`}
+                          onClick={handleTakeFullTest}
+                        >
+                          Take Full Test
+                        </button>
+                      ) : (
+                        <button
+                          className={`text-2xl p-4 font-semibold border-green-500 bg-green-500 text-white rounded-lg `}
+                          onClick={handleTakeFullTest}
+                        >
+                          Take Full Test
+                        </button>
+                      )}
                     </div>
                   </div>
                 )}

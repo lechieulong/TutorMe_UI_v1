@@ -10,6 +10,7 @@ import { createTest } from "../../redux/testExam/TestSlice";
 import { useDispatch } from "react-redux";
 import { toast } from "react-toastify";
 import CreateTest from "./CreateTest";
+import TestInfoCard from "./general/TestInfoCard";
 
 const TestForm = ({ classId, lessonId, categories, pageType }) => {
   const {
@@ -46,28 +47,10 @@ const TestForm = ({ classId, lessonId, categories, pageType }) => {
     <div className="w-full">
       {isSubmitted && testInfo ? (
         !showTestFormDetail ? (
-          <div className="p-6 max-w-lg mx-auto bg-white shadow-lg rounded-xl">
-            <h2 className="text-2xl font-semibold mb-4">Test Information</h2>
-            <p>
-              <strong>Test Name:</strong> {testInfo.testName || "N/A"}
-            </p>
-            <p>
-              <strong>Class:</strong> {testInfo.class || "N/A"}
-            </p>
-            <p>
-              <strong>Start Time:</strong> {testInfo.startTime || "N/A"}
-            </p>
-            <p>
-              <strong>End Time:</strong> {testInfo.endTime || "N/A"}
-            </p>
-            <button
-              type="button"
-              onClick={() => setShowTestFormDetail(true)}
-              className="mt-4 bg-blue-500 text-white py-2 px-4 rounded-lg"
-            >
-              Create Skill
-            </button>
-          </div>
+          <TestInfoCard
+            testInfo={testInfo}
+            setShowTestFormDetail={setShowTestFormDetail}
+          />
         ) : (
           <CreateTest
             skills={categories}

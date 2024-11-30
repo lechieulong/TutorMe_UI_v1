@@ -1,9 +1,23 @@
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import { useParams } from "react-router-dom";
 import { FaInfo } from "react-icons/fa";
+import { useState, useEffect, useCallback } from "react";
+import { getUser } from "../../service/GetUser";
 
-const MentorSidebar = ({ setSelectedComponent }) => {
+const MentorSidebar = ({ mentorAndList, setSelectedComponent }) => {
   const { courseId } = useParams();
+  const { pathname } = useLocation(); // Lấy đường dẫn hiện tại
+  const [userId, setUserId] = useState(null);
+
+  const initializeUser = useCallback(() => {
+    const userFromToken = getUser();
+    setUserId(userFromToken?.sub);
+  }, []);
+
+  useEffect(() => {
+    initializeUser();
+  }, [initializeUser]);
+
   return (
     <div>
       <div
@@ -20,9 +34,16 @@ const MentorSidebar = ({ setSelectedComponent }) => {
           <ul className="space-y-1.5">
             <li>
               <Link
-                to={`/courseinfo/${courseId}/infor`}
+                to={`/courseDetail/${courseId}`}
                 onClick={() => setSelectedComponent("Information")}
                 className="flex items-center gap-x-3.5 py-2 px-2.5 bg-gray-100 text-sm text-gray-700 rounded-lg hover:bg-gray-100"
+                state={{ userId, mentorAndList }}
+                style={{
+                  backgroundColor:
+                    pathname === `/courseDetail/${courseId}`
+                      ? "lightblue"
+                      : "transparent",
+                }} // Đổi background
               >
                 <FaInfo />
                 Information
@@ -30,8 +51,15 @@ const MentorSidebar = ({ setSelectedComponent }) => {
             </li>
             <li>
               <Link
-                className="flex items-center gap-x-3.5 py-2 px-2.5 text-sm text-gray-700 rounded-lg hover:bg-gray-100"
                 to={`/courseDetail/${courseId}/classOfCourse`}
+                className="flex items-center gap-x-3.5 py-2 px-2.5 text-sm text-gray-700 rounded-lg hover:bg-gray-100"
+                state={{ userId, mentorAndList }}
+                style={{
+                  backgroundColor:
+                    pathname === `/courseDetail/${courseId}/classOfCourse`
+                      ? "lightblue"
+                      : "transparent",
+                }} // Đổi background
               >
                 <svg
                   className="size-4"
@@ -53,8 +81,12 @@ const MentorSidebar = ({ setSelectedComponent }) => {
             </li>
             <li>
               <a
-                className="flex items-center gap-x-3.5 py-2 px-2.5 text-sm text-gray-700 rounded-lg hover:bg-gray-100 focus:outline-none focus:bg-gray-100"
                 href="#"
+                className="flex items-center gap-x-3.5 py-2 px-2.5 text-sm text-gray-700 rounded-lg hover:bg-gray-100 focus:outline-none focus:bg-gray-100"
+                style={{
+                  backgroundColor:
+                    pathname === "#" ? "lightblue" : "transparent",
+                }} // Đổi background
               >
                 <svg
                   className="size-4"
@@ -76,11 +108,17 @@ const MentorSidebar = ({ setSelectedComponent }) => {
                 Livestream
               </a>
             </li>
-
             <li>
               <Link
-                className="flex items-center gap-x-3.5 py-2 px-2.5 text-sm text-gray-700 rounded-lg hover:bg-gray-100"
                 to={`/manageTest/${courseId}`}
+                className="flex items-center gap-x-3.5 py-2 px-2.5 text-sm text-gray-700 rounded-lg hover:bg-gray-100"
+                state={{ userId, mentorAndList }}
+                style={{
+                  backgroundColor:
+                    pathname === `/manageTest/${courseId}`
+                      ? "lightblue"
+                      : "transparent",
+                }} // Đổi background
               >
                 <svg
                   className="size-4"
@@ -100,11 +138,14 @@ const MentorSidebar = ({ setSelectedComponent }) => {
                 Test
               </Link>
             </li>
-
             <li>
               <a
-                className="flex items-center gap-x-3.5 py-2 px-2.5 text-sm text-gray-700 rounded-lg hover:bg-gray-100 focus:outline-none focus:bg-gray-100"
                 href="#"
+                className="flex items-center gap-x-3.5 py-2 px-2.5 text-sm text-gray-700 rounded-lg hover:bg-gray-100 focus:outline-none focus:bg-gray-100"
+                style={{
+                  backgroundColor:
+                    pathname === "#" ? "lightblue" : "transparent",
+                }}
               >
                 <svg
                   className="size-4"
@@ -119,7 +160,7 @@ const MentorSidebar = ({ setSelectedComponent }) => {
                   strokeLinejoin="round"
                 >
                   <path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z" />
-                  <path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z" />
+                  <path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 1 1 3-3h7z" />
                 </svg>
                 Report
               </a>

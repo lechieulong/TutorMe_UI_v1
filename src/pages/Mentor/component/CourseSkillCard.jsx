@@ -2,6 +2,8 @@ import React, { useEffect, useState } from "react";
 import axios from "axios";
 import CoursePartCard from "../../Course/components/CoursePartCard";
 import CreateCoursePart from "./CreateCoursePart";
+import Confirm from "../../../components/common/Confirm";
+import Notification from "../../../components/common/Notification";
 
 const CourseSkillCard = ({
   courseId,
@@ -15,6 +17,10 @@ const CourseSkillCard = ({
   const [activeTab, setActiveTab] = useState(null);
   const [showCreateForm, setShowCreateForm] = useState(false);
   const [partCounts, setPartCounts] = useState({});
+  const [confirmOpen, setConfirmOpen] = useState(false);
+  const [notification, setNotification] = useState("");
+  const [confirmAction, setConfirmAction] = useState(() => {});
+
   const handlePartCountUpdate = (skillId, count) => {
     setPartCounts((prev) => ({
       ...prev,
@@ -35,9 +41,9 @@ const CourseSkillCard = ({
       );
       setSkills(response.data);
       if (onSkillCountUpdate) {
-        onSkillCountUpdate(response.data.length); // Gửi số lượng lên component cha
+        onSkillCountUpdate(response.data.length);
       }
-      setActiveTab(response.data[0]?.id || null); // Set default active tab
+      setActiveTab(response.data[0]?.id || null);
       setError(null);
     } catch (err) {
       setError("Failed to fetch skills.");
@@ -47,7 +53,7 @@ const CourseSkillCard = ({
   };
 
   const handleCreatePartClick = () => {
-    setShowCreateForm(!showCreateForm); // Toggle form visibility
+    setShowCreateForm(!showCreateForm);
   };
 
   const closeCreateForm = () => {
@@ -55,9 +61,27 @@ const CourseSkillCard = ({
   };
 
   const handlePartCreated = () => {
-    fetchSkills(); // Reload skills to update CoursePartCard after creating a new part
+    fetchSkills();
     closeCreateForm();
   };
+
+  const handleConfirmAction = (action) => {
+    setConfirmAction(() => action);
+    setConfirmOpen(true);
+  };
+
+  const confirmDeleteSkill = async () => {
+    try {
+      await confirmAction();
+      setNotification("Skill deleted successfully.");
+    } catch (error) {
+      console.error("Error deleting skill:", error);
+      setNotification("Failed to delete skill.");
+    } finally {
+      setConfirmOpen(false);
+    }
+  };
+
   if (loading) return <p>Loading...</p>;
   if (error) return <p>{error}</p>;
 
@@ -93,7 +117,7 @@ const CourseSkillCard = ({
                 type="button"
                 onClick={handleCreatePartClick}
                 disabled={loading}
-                className="py-2 mb-2 px-3 inline-flex items-center gap-x-2 text-sm font-medium rounded-lg border border-gray-200 bg-white text-gray-800 shadow-sm hover:bg-gray-50 focus:outline-none focus:bg-gray-50"
+                className="py-2 px-3 text-sm font-medium rounded-lg border border-gray-200 bg-green-500 text-white shadow-sm hover:bg-green-600 focus:outline-none"
               >
                 {loading
                   ? "Loading..."
@@ -113,12 +137,6 @@ const CourseSkillCard = ({
               onCreated={handlePartCreated}
               mentorAndList={mentorAndList}
             />
-            <button
-              onClick={closeCreateForm}
-              className="mt-2 px-4 py-2 bg-gray-300 text-gray-700 rounded-lg hover:bg-gray-400"
-            >
-              Cancel
-            </button>
           </div>
         )}
 
@@ -137,6 +155,20 @@ const CourseSkillCard = ({
           </div>
         ))}
       </div>
+
+      <Confirm
+        isOpen={confirmOpen}
+        onClose={() => setConfirmOpen(false)}
+        onConfirm={confirmDeleteSkill}
+        status="Delete Skill"
+        shoud="no"
+        message="Are you sure you want to delete this skill? This action cannot be undone."
+      />
+
+      <Notification
+        message={notification}
+        onClose={() => setNotification("")}
+      />
     </div>
   );
 };

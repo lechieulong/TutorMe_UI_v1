@@ -18,58 +18,26 @@ import { getUser } from "../../service/GetUser";
 const CourseList = () => {
   const [user, setUser] = useState(null);
   const dispatch = useDispatch();
-  const { courses = [], status, error } = useSelector((state) => state.courses);
+  const {
+    courses = [],
+    status,
+    error,
+    totalPages,
+  } = useSelector((state) => state.courses);
 
   const [selectedSkill, setSelectedSkill] = useState("All");
   const [currentPage, setCurrentPage] = useState(1);
   const [searchTerm, setSearchTerm] = useState("");
   const coursesPerPage = 8;
 
-  useEffect(() => {
-    dispatch(fetchCourses());
-  }, [dispatch]);
+  // Định nghĩa danh mục
+  const categories = ["All", "Listening", "Reading", "Writing", "Speaking"];
 
   useEffect(() => {
-    const userFromToken = getUser();
-    setUser(userFromToken);
-  }, []);
-  const categories = useMemo(
-    () => ["All", "Listening", "Reading", "Writing", "Speaking"],
-    []
-  );
-
-  // useEffect(() => {
-  //   if (user?.sub) {
-  //     dispatch(fetchCoursesByUserId(user.sub));
-  //   }
-  // }, [dispatch, user]);
-
-  const filteredCourses = useMemo(() => {
-    if (status === STATUS.SUCCESS) {
-      return courses
-        .filter((course) => {
-          // Kiểm tra xem selectedSkill có phải là "All" không
-          if (selectedSkill === "All") return true;
-
-          // Kiểm tra xem Skill của khóa học có nằm trong danh sách categories không
-          return course.categories.includes(selectedSkill);
-        })
-        .filter((course) => {
-          const courseTitle = course.courseName || ""; // Sử dụng courseName thay vì title
-          const term = searchTerm || "";
-          return courseTitle.toLowerCase().includes(term.toLowerCase());
-        });
-    }
-    return [];
-  }, [courses, selectedSkill, searchTerm, status]);
-
-  const indexOfLastCourse = currentPage * coursesPerPage;
-  const indexOfFirstCourse = indexOfLastCourse - coursesPerPage;
-  const currentCourses = filteredCourses.slice(
-    indexOfFirstCourse,
-    indexOfLastCourse
-  );
-  const totalPages = Math.ceil(filteredCourses.length / coursesPerPage);
+    dispatch(
+      fetchCourses({ pageNumber: currentPage, pageSize: coursesPerPage })
+    );
+  }, [dispatch, currentPage]);
 
   const handleNextPage = () => {
     if (currentPage < totalPages) {
@@ -83,30 +51,22 @@ const CourseList = () => {
     }
   };
 
-  // const getIcon = (Skill) => {
-  //   switch (Skill) {
-  //     case "Reading":
-  //       return <FaBook className="text-blue-500 text-2xl" />;
-  //     case "Listening":
-  //       return (
-  //         <FaAssistiveListeningSystems className="text-blue-500 text-2xl" />
-  //       );
-  //     case "Writing":
-  //       return <FaPenAlt className="text-blue-500 text-2xl" />;
-  //     case "Speaking":
-  //       return <FaSurprise className="text-blue-500 text-2xl" />;
-  //     default:
-  //       return <FaBook className="text-blue-500 text-2xl" />;
-  //   }
-  // };
+  const filteredCourses = useMemo(() => {
+    if (status === STATUS.SUCCESS) {
+      return courses.filter((course) => {
+        if (selectedSkill === "All") return true;
+        return course.categories.includes(selectedSkill);
+      });
+    }
+    return [];
+  }, [courses, selectedSkill, status]);
 
   if (status === STATUS.PENDING) return <p>Loading...</p>;
   if (status === STATUS.FAILED) return <p>Error: {error}</p>;
 
   return (
     <MainLayout>
-      <div className="px-4 py-6 bg-slate-100">
-        {/* Banner Section */}
+      <div className="px-4 py-6">
         <div className="bg-blue-100 p-4 rounded-lg mb-6 text-center">
           <h2 className="text-2xl font-semibold text-blue-700">
             Enhance Your IELTS Skills with Our Comprehensive Courses!
@@ -119,7 +79,7 @@ const CourseList = () => {
 
         <div className="flex items-center justify-between mb-4">
           <Filter
-            categories={categories}
+            categories={categories} // Sử dụng categories ở đây
             selectedSkill={selectedSkill}
             onSkillSelect={(Skill) => {
               setSelectedSkill(Skill);
@@ -133,14 +93,14 @@ const CourseList = () => {
             className={`py-2 px-3 inline-flex items-center gap-x-2 text-sm font-medium rounded-lg border border-gray-200 bg-white text-gray-800 shadow-sm hover:bg-gray-50 focus:outline-none focus:bg-gray-50 ${
               user?.role === "USER" ? "hidden opacity-50" : ""
             }`}
-            hidden={user?.role === "USER"} // Vô hiệu hóa nút nếu Role là "USER"
+            hidden={user?.role === "USER"}
           >
             My Course
           </Link>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-6 gap-4">
-          {currentCourses.map((course) => (
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-10">
+          {filteredCourses.map((course) => (
             <CourseCard
               key={course.id}
               imageUrl={course.imageUrl}
@@ -151,13 +111,11 @@ const CourseList = () => {
               price={course.price}
               courseId={course.id}
               isEnabled={course.isEnabled}
-              // onDelete={handleDelete} // Pass the handleDelete function
             />
           ))}
         </div>
 
-        {/* Pagination controls */}
-        <div className="flex justify-center items-center mt-2">
+        <div className="flex justify-center items-center mt-10">
           <button
             onClick={handlePrevPage}
             disabled={currentPage === 1}

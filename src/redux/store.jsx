@@ -16,10 +16,14 @@ import enrollmentReducer from "./Enrollment/EnrollmentSlice";
 import ratingReducer from "./common/RatingSlice";
 import User_BalanceReducer from "./users/BalanceSlice";
 import courseSkillReducer from "./courses/CourseSkillSlice";
+import courseLessonContentReducer from "./courses/CourseLessonContentSlice";
+import coursePartReducer from "./courses/CoursePartSlice";
 import testExamReducer from "./ADMIN/TestExamSlice";
 
 export const store = configureStore({
   reducer: {
+    coursePart: coursePartReducer,
+    courseLessonContent: courseLessonContentReducer,
     courseSkill: courseSkillReducer,
     rating: ratingReducer,
     enrollment: enrollmentReducer,

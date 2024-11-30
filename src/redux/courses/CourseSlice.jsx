@@ -4,15 +4,29 @@ import apiURLConfig from "../common/apiURLConfig";
 import { SLICE_NAMES, ACTIONS, STATUS } from "../../constant/SliceName";
 import Cookies from "js-cookie";
 
-// Thunk để lấy tất cả khóa học
-export const fetchCourses = createAsyncThunk("courses/getCourses", async () => {
-  try {
-    const response = await axios.get("https://localhost:7030/api/Courses");
-    return response.data;
-  } catch (error) {
-    throw Error(error.message);
+// Thunk để lấy tất cả khóa học với phân trang
+export const fetchCourses = createAsyncThunk(
+  "courses/getCourses",
+  async ({ pageNumber = 1, pageSize = 8 }, { rejectWithValue }) => {
+    try {
+      const response = await axios.get("https://localhost:7030/api/Courses", {
+        params: {
+          pageNumber,
+          pageSize,
+        },
+      });
+
+      return {
+        data: response.data.data || [],
+        totalPages: response.data.totalPages || 0,
+        pageNumber: response.data.pageNumber || 1,
+        pageSize: response.data.pageSize || 8,
+      };
+    } catch (error) {
+      return rejectWithValue(error.response?.data || "Failed to fetch courses");
+    }
   }
-});
+);
 
 // Thunk để lấy khóa học theo UserId
 export const fetchCoursesByUserId = createAsyncThunk(
@@ -146,7 +160,7 @@ export const fetchCourseLessons = createAsyncThunk(
     } catch (error) {
       return rejectWithValue(
         error.response?.data?.message ||
-        `Failed to fetch lessons for CoursePart ${coursePartId}`
+          `Failed to fetch lessons for CoursePart ${coursePartId}`
       );
     }
   }
@@ -161,12 +175,15 @@ const initialState = {
   courseParts: [],
   courseLessonsByPart: {},
   count: 0,
-  status: "idle",
+  status: STATUS.IDLE,
   getCreatedCoursesStatus: STATUS.IDLE,
   checkLecturerStatus: STATUS.IDLE,
   error: null,
   getCreatedCoursesError: null,
   checkLecturerError: null,
+  totalPages: 0,
+  pageNumber: 1,
+  pageSize: 8,
 };
 
 const courseSlice = createSlice({
@@ -176,16 +193,19 @@ const courseSlice = createSlice({
   extraReducers: (builder) => {
     builder
       .addCase(fetchCourses.pending, (state) => {
-        state.status = "pending";
+        state.status = STATUS.PENDING;
+        state.error = null;
       })
       .addCase(fetchCourses.fulfilled, (state, action) => {
-        state.status = "success";
-        state.courses = action.payload;
-        state.count = action.payload.length;
+        state.status = STATUS.SUCCESS;
+        state.courses = action.payload.data;
+        state.totalPages = action.payload.totalPages;
+        state.pageNumber = action.payload.pageNumber;
+        state.pageSize = action.payload.pageSize;
       })
       .addCase(fetchCourses.rejected, (state, action) => {
-        state.status = "failed";
-        state.error = action.error.message;
+        state.status = STATUS.FAILED;
+        state.error = action.payload || "Failed to fetch courses";
       })
       .addCase(fetchCoursesByUserId.pending, (state) => {
         state.status = "pending";
@@ -274,7 +294,7 @@ const courseSlice = createSlice({
       .addCase(CheckLecturerOfCourse.rejected, (state, action) => {
         state.checkLecturerStatus = STATUS.FAILED;
         state.checkLecturerError = action.payload || action.error.message;
-      })
+      });
   },
 });
 

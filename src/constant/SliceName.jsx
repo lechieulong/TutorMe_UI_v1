@@ -14,6 +14,7 @@ export const SLICE_NAMES = {
   SCHEDULESESSION: "scheduleSession",
   COMMON: "common",
   SPECIALIZATION: "specialization",
+  ADMIN_TESTEXAM: "ADMIN_testexam",
 };
 
 export const ACTIONS = {
@@ -91,6 +92,7 @@ export const ACTIONS = {
 
   //ADMIN
   GET_ALL_USERS: "getallusers",
+  GET_ALL_TESTS: "getalltests",
   GET_ALL_REQUESTS: "getallrequests",
   PROCESS_TEACHER_REQUEST: "processteacherrequest",
   GET_REQUEST_DETAILS: "getrequestdetails",

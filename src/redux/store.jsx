@@ -16,6 +16,7 @@ import enrollmentReducer from "./Enrollment/EnrollmentSlice";
 import ratingReducer from "./common/RatingSlice";
 import User_BalanceReducer from "./users/BalanceSlice";
 import courseSkillReducer from "./courses/CourseSkillSlice";
+import testExamReducer from "./ADMIN/TestExamSlice";
 
 export const store = configureStore({
   reducer: {
@@ -36,6 +37,7 @@ export const store = configureStore({
     specialization: specializationReducer,
     ADMIN_userslice: ADMIN_usersReducer,
     ADMIN_teachers: ADMIN_teachersReducer,
+    ADMIN_tests: testExamReducer,
   },
 });
 

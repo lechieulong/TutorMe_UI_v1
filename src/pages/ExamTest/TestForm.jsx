@@ -104,6 +104,32 @@ const TestForm = ({ classId, lessonId, categories, pageType }) => {
             )}
           </div>
 
+          {/* Test Type */}
+          <div className="relative mt-4">
+            <label className="block text-sm font-semibold text-gray-700">
+              Test Type
+            </label>
+            <div className="flex items-center mt-2">
+              <select
+                {...register("testType", { required: "Test Type is required" })}
+                className={`w-full px-4 py-3 border ${
+                  errors.testType ? "border-red-500" : "border-gray-300"
+                } rounded-lg shadow-sm focus:ring-2 focus:ring-blue-500 sm:text-base`}
+                disabled={isSubmitted}
+              >
+                <option value={0}>Select Test Type</option>
+                <option value={1}>Practice</option>
+                <option value={2}>Testing</option>
+                <option value={3}>Register</option>
+              </select>
+            </div>
+            {errors.testType && (
+              <span className="text-red-500 text-sm">
+                {errors.testType.message}
+              </span>
+            )}
+          </div>
+
           {/* Start Time */}
           <div className="relative">
             <label className="block text-sm font-semibold text-gray-700">

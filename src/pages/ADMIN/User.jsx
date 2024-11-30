@@ -21,7 +21,7 @@ const Users = () => {
     const [searchTerm, setSearchTerm] = useState("");
     const [currentUser, setCurrentUser] = useState(null);
     const [currentPage, setCurrentPage] = useState(1);
-    const pageSize = 5; // Số lượng người dùng trên mỗi trang
+    const pageSize = 5;
 
     useEffect(() => {
         dispatch(Admin_GetUsers({ page: currentPage, pageSize }));

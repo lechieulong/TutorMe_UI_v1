@@ -15,14 +15,8 @@ import "react-toastify/dist/ReactToastify.css";
 
 const CoachingSchedule = () => {
     const dispatch = useDispatch();
-    const [activeTab, setActiveTab] = useState(() => localStorage.getItem('activeTab') || 'about');
-    const { user } = useSelector((state) => state.user);
-    const { teachername } = useParams();
 
     const [userFromToken, setUser] = useState(null);
-    const [isModalOpen, setIsModalOpen] = useState(false);
-    const [isSearchVisible, setIsSearchVisible] = useState(false);
-    const navigate = useNavigate();
 
     // Initialize schedules data
     const schedules = [

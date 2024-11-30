@@ -6,6 +6,7 @@ import MentorSidebar from "../../components/Mentor/MentorSideBar";
 import ClassCard from "../Class/components/ClassCard";
 import CreateClass from "../Class/CreateClass";
 import { fetchClasses } from "../../redux/classes/ClassSlice";
+
 const ClassOfCourseList = () => {
   const { courseId } = useParams();
   const dispatch = useDispatch();
@@ -18,7 +19,6 @@ const ClassOfCourseList = () => {
   const [showCreateClassModal, setShowCreateClassModal] = useState(false);
 
   const handleSwitchChange = (classId, newStatus) => {
-    // Bạn có thể xử lý logic thay đổi switch tại đây nếu cần lưu vào Redux
     console.log(`Switch changed for class ${classId} to ${newStatus}`);
   };
 
@@ -43,14 +43,6 @@ const ClassOfCourseList = () => {
     );
   }
 
-  if (status === "failed") {
-    return (
-      <div className="flex justify-center items-center h-full">
-        <p className="text-red-500 text-lg">{error}</p>
-      </div>
-    );
-  }
-
   return (
     <MainLayout>
       <div className="flex flex-col w-screen min-h-screen bg-gray-50">
@@ -70,7 +62,9 @@ const ClassOfCourseList = () => {
 
             {classes.length === 0 ? (
               <div className="flex justify-center items-center h-full">
-                <p className="text-red-500 text-lg">No classes found.</p>
+                <p className="text-red-500 text-lg">
+                  No classes available for this course.
+                </p>
               </div>
             ) : (
               <div className="grid grid-cols-1 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-4">

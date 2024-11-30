@@ -57,6 +57,56 @@ const CourseCard = ({
     }
   };
 
+  const getSkillNames = (skillData) => {
+    console.log("Skill Data: ", skillData); // Kiểm tra giá trị của skillData
+
+    if (typeof skillData === "string") {
+      // Nếu Skill là chuỗi, tách nó ra thành mảng và chuyển thành số
+      const skills = skillData.split(",").map((s) => parseInt(s.trim(), 10));
+
+      return skills
+        .map((skill) => {
+          switch (skill) {
+            case 0:
+              return "Reading";
+            case 1:
+              return "Listening";
+            case 2:
+              return "Writing";
+            case 3:
+              return "Speaking";
+            default:
+              return null;
+          }
+        })
+        .filter((name) => name !== null)
+        .join(", ");
+    } else if (Array.isArray(skillData)) {
+      // Nếu Skill là mảng, chỉ cần chuyển các giá trị thành số
+      const skills = skillData.map((s) => parseInt(s, 10));
+
+      return skills
+        .map((skill) => {
+          switch (skill) {
+            case 0:
+              return "Reading";
+            case 1:
+              return "Listening";
+            case 2:
+              return "Writing";
+            case 3:
+              return "Speaking";
+            default:
+              return null;
+          }
+        })
+        .filter((name) => name !== null)
+        .join(", ");
+    } else {
+      return "Unknown"; // Trường hợp không hợp lệ
+    }
+  };
+
   let destinationPath;
   if (location.pathname === "/mentorCourseList") {
     destinationPath = `/courseDetail/${courseId}`;
@@ -65,6 +115,7 @@ const CourseCard = ({
   } else if (isMyLearning) {
     destinationPath = `/classDetail/${courseId}/${classId}`;
   }
+  console.log(price);
 
   return (
     <div className="relative bg-white shadow-md rounded-lg flex flex-col hover:bg-gray-100 transition-all">
@@ -74,7 +125,8 @@ const CourseCard = ({
           onClose={() => setNotification("")}
         />
       )}
-      <div className="absolute top-1 right-1 flex items-center space-x-2">
+
+      <div className="absolute top-2 right-2 z-10 flex items-center space-x-2">
         {isMentorCourseList && (
           <>
             <button
@@ -101,6 +153,7 @@ const CourseCard = ({
           </>
         )}
       </div>
+
       <Link
         to={destinationPath}
         state={{ Skill, fromMentorCourseList: isMentorCourseList }}
@@ -115,24 +168,19 @@ const CourseCard = ({
         )}
         <div className="p-4">
           <h3 className="text-lg text-black mb-1">{courseName}</h3>
-          <p
-            className="text-gray-600 mb-2 text-left overflow-hidden text-ellipsis"
-            style={{
-              display: "-webkit-box",
-              WebkitLineClamp: 3,
-              WebkitBoxOrient: "vertical",
-            }}
-          >
+          <p className="text-gray-600 mb-2 text-left overflow-hidden text-ellipsis line-clamp-3 min-h-[4.5rem]">
             {content}
           </p>
+
           <span className="text-sm font-medium text-blue-600 mb-2">
-            {Skill}
+            Skill: {getSkillNames(Skill)}
           </span>
+
           <div className="text-sm text-gray-600 mb-2">
             <span className="font-bold">Teacher: </span>
             {teacher}
           </div>
-          <div className="text-lg font-thin text-red-500">
+          <div className="text-lg font-thin text-black-500">
             {price ? formatCurrency(price) : "Free"}
           </div>
         </div>

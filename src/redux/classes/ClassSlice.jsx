@@ -11,7 +11,7 @@ export const fetchClasses = createAsyncThunk(
       const response = await axios.get(
         `${apiURLConfig.baseURL}/class/course/${courseId}/classes`
       );
-      return response.data.result;
+      return response.data.result || []; // Trả về mảng trống nếu không có lớp học
     } catch (error) {
       return rejectWithValue(
         error.response?.data?.message || "Failed to get classes from course."

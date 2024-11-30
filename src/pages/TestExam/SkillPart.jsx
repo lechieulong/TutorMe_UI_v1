@@ -18,6 +18,7 @@ import { useParams } from "react-router-dom";
 import CreateTest from "../ExamTest/CreateTest";
 import TestLayout from "./TestLayout";
 import { getUser } from "../../service/GetUser";
+import { Roles } from "../../utils/config";
 
 const SkillPart = () => {
   const [test, setTest] = useState(null);
@@ -122,7 +123,7 @@ const SkillPart = () => {
                       <CreateTest testId={testId} />
                     ) : (
                       <>
-                        {user?.role?.includes(Roles.ADMIN) ? (
+                        {user?.role?.includes(Roles.ADMIN || Roles.TEACHER) ? (
                           <button
                             className="p-2 bg-red-100"
                             onClick={() => setCreateSkill(true)}

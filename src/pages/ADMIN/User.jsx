@@ -21,7 +21,7 @@ const Users = () => {
     const [searchTerm, setSearchTerm] = useState("");
     const [currentUser, setCurrentUser] = useState(null);
     const [currentPage, setCurrentPage] = useState(1);
-    const pageSize = 5;
+    const pageSize = 20;
 
     useEffect(() => {
         dispatch(Admin_GetUsers({ page: currentPage, pageSize }));
@@ -142,62 +142,63 @@ const Users = () => {
                 </div>
             </div>
 
-            <table className="w-full text-left table-auto border-collapse">
-                <thead>
-                    <tr className="bg-gray-200 text-gray-600 uppercase text-sm leading-normal">
-                        <th className="py-3 px-6">Name</th>
-                        <th className="py-3 px-6">Email</th>
-                        <th className="py-3 px-6">DOB</th>
-                        <th className="py-3 px-6">Phone number</th>
-                        <th className="py-3 px-6">Lockout End</th>
-                        <th className="py-3 px-6"></th>
-                    </tr>
-                </thead>
-                <tbody className="text-gray-700 text-sm">
-                    {getuserstatus === 'pending' ? (
-                        <tr>
-                            <td colSpan="6" className="text-yellow-300 text-center py-4">Loading...</td>
+            <div className="h-[400px] overflow-auto">
+                <table className="w-full text-left table-auto border-collapse">
+                    <thead>
+                        <tr className="bg-gray-200 text-gray-600 uppercase text-sm leading-normal">
+                            <th className="py-3 px-6">Name</th>
+                            <th className="py-3 px-6">Email</th>
+                            <th className="py-3 px-6">DOB</th>
+                            <th className="py-3 px-6">Phone number</th>
+                            <th className="py-3 px-6">Lockout End</th>
+                            <th className="py-3 px-6"></th>
                         </tr>
-                    ) : getuserstatus === 'failed' ? (
-                        <tr>
-                            <td colSpan="6" className="text-center py-4 text-red-500">An error occurred while fetching users. Please try again later.</td>
-                        </tr>
-                    ) : (
-                        users
-                            .filter((user) =>
-                                user.email.toLowerCase().includes(searchTerm.toLowerCase())
-                            )
-                            .map((user, index) => (
-                                <tr key={index} className={`border-t hover:bg-gray-50 ${index % 2 === 0 ? 'bg-white' : 'bg-gray-100'}`}>
-                                    <td className="py-3 px-6 flex items-center">
-                                        <img
-                                            src={user.imageURL || 'https://placehold.co/32x32'}
-                                            alt={`Profile of ${user.name}`}
-                                            className="w-8 h-8 rounded-full mr-2"
-                                        />
-                                        <span className="font-medium">{user.name}</span>
-                                    </td>
-                                    <td className="py-3 px-6">{user.email}</td>
-                                    <td className="py-3 px-6">{user.dob ? formatDOB(new Date(user.dob).toLocaleDateString()) : 'N/A'}</td>
-                                    <td className="py-3 px-6">{user.phoneNumber || 'N/A'}</td>
-                                    <td className="py-3 px-6">{user.lockoutEnd ? new Date(user.lockoutEnd).toLocaleString() : 'N/A'}</td>
-                                    <td className="py-3 px-6 text-center">
-                                        {user.lockoutEnd && new Date(user.lockoutEnd) > new Date() ? (
-                                            <button onClick={() => handleUnlockClick(user)}>
-                                                <FaLock className="text-red-500 cursor-pointer" />
-                                            </button>
-                                        ) : (
-                                            <button onClick={() => handleLockClick(user)}>
-                                                <FaLockOpen className="text-green-500 cursor-pointer" />
-                                            </button>
-                                        )}
-                                    </td>
-                                </tr>
-                            ))
-                    )}
-                </tbody>
-            </table>
-
+                    </thead>
+                    <tbody className="text-gray-700 text-sm">
+                        {getuserstatus === 'pending' ? (
+                            <tr>
+                                <td colSpan="6" className="text-yellow-300 text-center py-4">Loading...</td>
+                            </tr>
+                        ) : getuserstatus === 'failed' ? (
+                            <tr>
+                                <td colSpan="6" className="text-center py-4 text-red-500">An error occurred while fetching users. Please try again later.</td>
+                            </tr>
+                        ) : (
+                            users
+                                .filter((user) =>
+                                    user.email.toLowerCase().includes(searchTerm.toLowerCase())
+                                )
+                                .map((user, index) => (
+                                    <tr key={index} className={`border-t hover:bg-gray-50 ${index % 2 === 0 ? 'bg-white' : 'bg-gray-100'}`}>
+                                        <td className="py-3 px-6 flex items-center">
+                                            <img
+                                                src={user.imageURL || 'https://placehold.co/32x32'}
+                                                alt={`Profile of ${user.name}`}
+                                                className="w-8 h-8 rounded-full mr-2"
+                                            />
+                                            <span className="font-medium">{user.name}</span>
+                                        </td>
+                                        <td className="py-3 px-6">{user.email}</td>
+                                        <td className="py-3 px-6">{user.dob ? formatDOB(new Date(user.dob).toLocaleDateString()) : 'N/A'}</td>
+                                        <td className="py-3 px-6">{user.phoneNumber || 'N/A'}</td>
+                                        <td className="py-3 px-6">{user.lockoutEnd ? new Date(user.lockoutEnd).toLocaleString() : 'N/A'}</td>
+                                        <td className="py-3 px-6 text-center">
+                                            {user.lockoutEnd && new Date(user.lockoutEnd) > new Date() ? (
+                                                <button onClick={() => handleUnlockClick(user)}>
+                                                    <FaLock className="text-red-500 cursor-pointer" />
+                                                </button>
+                                            ) : (
+                                                <button onClick={() => handleLockClick(user)}>
+                                                    <FaLockOpen className="text-green-500 cursor-pointer" />
+                                                </button>
+                                            )}
+                                        </td>
+                                    </tr>
+                                ))
+                        )}
+                    </tbody>
+                </table>
+            </div>
             {/* //Phan trang */}
             <Pagination
                 currentPage={currentPage}

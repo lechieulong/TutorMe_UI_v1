@@ -93,8 +93,8 @@ const ResetPassword = () => {
                     <div className="text-center mt-2">
                         <button
                             type="submit"
-                            className=" bg-blue-500 text-white p-2 rounded"
-                            disabled={resetPassworStatus === 'pending'}
+                            className=" bg-blue-500 text-white p-2 rounded disabled:bg-gray-400 disabled:cursor-not-allowed"
+                            disabled={resetPassworStatus === 'pending' || resetPassworStatus === 'success'}
                         >
                             {resetPassworStatus === 'pending' ? 'Resetting...' : 'Reset Password'}
                         </button>

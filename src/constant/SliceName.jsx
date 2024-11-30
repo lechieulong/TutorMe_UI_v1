@@ -93,6 +93,8 @@ export const ACTIONS = {
   //ADMIN
   GET_ALL_USERS: "getallusers",
   GET_ALL_TESTS: "getalltests",
+  DELETE_TEST: "deletetest",
+  UPDATE_TEST: "updatetest",
   GET_ALL_REQUESTS: "getallrequests",
   PROCESS_TEACHER_REQUEST: "processteacherrequest",
   GET_REQUEST_DETAILS: "getrequestdetails",

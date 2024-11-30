@@ -58,7 +58,7 @@ const CoachingSchedule = () => {
         setIsSearchVisible(!isSearchVisible);
     };
 
-    const now = new Date().toLocaleString();
+    const now = new Date().toISOString().slice(0, 16);
 
     const [formData, setFormData] = useState({
         startTime: "",

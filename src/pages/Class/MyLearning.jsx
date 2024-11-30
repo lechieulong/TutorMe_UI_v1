@@ -74,72 +74,71 @@ const MyLearning = () => {
 
   return (
     <MainLayout>
-      <nav className="bg-gray-600 text-white flex flex-col">
-        <div className="px-24 pt-10 pb-2">
-          <h1 className="text-3xl font-bold">My Learning Platform</h1>
-        </div>
-        <ul className="flex space-x-10 px-24 pt-10 border-t border-gray-700">
-          <li>
-            <Link
-              to="/a"
-              className={`flex items-center space-x-2 py-2 px-4 rounded-lg hover:text-gray-100 transition-colors duration-200 ease-in-out 
+      <nav className="bg-white flex flex-col">
+        <div className="px-24 border-t border-gray-700">
+          <ul className="flex space-x-10 border-b border-gray-500">
+            <li>
+              <Link
+                to="/a"
+                className={`flex items-center space-x-2 py-2 px-4 rounded-t-lg hover:text-black transition-colors duration-200 ease-in-out 
                                 ${
                                   activeLink === "allcourse"
-                                    ? "text-gray-100 border-b-2 border-gray-400"
+                                    ? "text-black border-b-2 border-gray-400"
                                     : ""
                                 }`}
-              onClick={() => setActiveLink("allcourse")}
-            >
-              <FaAudible className="text-lg" />
-              <span>All Course</span>
-            </Link>
-          </li>
-          <li>
-            <Link
-              to="/mylearning"
-              className={`flex items-center space-x-2 py-2 px-4 rounded-lg hover:text-gray-100 transition-colors duration-200 ease-in-out 
+                onClick={() => setActiveLink("allcourse")}
+              >
+                <FaAudible className="text-lg" />
+                <span>All Course</span>
+              </Link>
+            </li>
+            <li>
+              <Link
+                to="/mylearning"
+                className={`flex items-center space-x-2 py-2 px-4 rounded-t-lg hover:text-black transition-colors duration-200 ease-in-out 
                                 ${
-                                  activeLink === "b"
-                                    ? "text-gray-100 border-b-2 border-gray-400"
+                                  activeLink === "mylearning"
+                                    ? "text-black border-b-2 border-gray-400"
                                     : ""
                                 }`}
-              onClick={() => setActiveLink("mylearning")}
-            >
-              <FaGraduationCap className="text-lg" />
-              <span>My Learning</span>
-            </Link>
-          </li>
-          <li>
-            <Link
-              to="/mylearning"
-              className={`flex items-center space-x-2 py-2 px-4 rounded-lg hover:text-gray-100 transition-colors duration-200 ease-in-out 
+                onClick={() => setActiveLink("mylearning")}
+              >
+                <FaGraduationCap className="text-lg" />
+                <span>My Learning</span>
+              </Link>
+            </li>
+            <li>
+              <Link
+                to="/mylearning"
+                className={`flex items-center space-x-2 py-2 px-4 rounded-t-lg hover:text-black transition-colors duration-200 ease-in-out 
                                 ${
-                                  activeLink === "c"
-                                    ? "text-gray-100 border-b-2 border-gray-400"
+                                  activeLink === "coaching"
+                                    ? "text-black border-b-2 border-gray-400"
                                     : ""
                                 }`}
-              onClick={() => setActiveLink("mylearning")}
-            >
-              <FaPeopleArrows className="text-lg" />
-              <span>Coaching 1:1</span>
-            </Link>
-          </li>
-          <li>
-            <Link
-              to="/mylearning"
-              className={`flex items-center space-x-2 py-2 px-4 rounded-lg hover:text-gray-100 transition-colors duration-200 ease-in-out 
+                onClick={() => setActiveLink("coaching")}
+              >
+                <FaPeopleArrows className="text-lg" />
+                <span>Coaching 1:1</span>
+              </Link>
+            </li>
+            <li>
+              <Link
+                to="/mylearning"
+                className={`flex items-center space-x-2 py-2 px-4 rounded-t-lg hover:text-black transition-colors duration-200 ease-in-out 
                                 ${
                                   activeLink === "setting"
-                                    ? "text-gray-100 border-b-2 border-gray-400"
+                                    ? "text-black border-b-2 border-gray-400"
                                     : ""
                                 }`}
-              onClick={() => setActiveLink("setting")}
-            >
-              <FaThList className="text-lg" />
-              <span>Setting</span>
-            </Link>
-          </li>
-        </ul>
+                onClick={() => setActiveLink("setting")}
+              >
+                <FaThList className="text-lg" />
+                <span>Setting</span>
+              </Link>
+            </li>
+          </ul>
+        </div>
       </nav>
       <div className="flex-1 p-12">
         {loading && (
@@ -153,12 +152,6 @@ const MyLearning = () => {
           </p>
         )}
         <div className="relative flex items-center">
-          <button
-            className="absolute left-0 z-10 bg-gray-700 text-white p-2 rounded-full focus:outline-none"
-            onClick={() => scroll("left")}
-          >
-            <HiChevronLeft size={24} />
-          </button>
           <div
             ref={scrollContainerRef}
             className="flex overflow-hidden space-x-4 px-12 py-2 scroll-smooth"
@@ -181,12 +174,6 @@ const MyLearning = () => {
               />
             ))}
           </div>
-          <button
-            className="absolute right-0 z-10 bg-gray-700 text-white p-2 rounded-full focus:outline-none"
-            onClick={() => scroll("right")}
-          >
-            <HiChevronRight size={24} />
-          </button>
         </div>
       </div>
     </MainLayout>

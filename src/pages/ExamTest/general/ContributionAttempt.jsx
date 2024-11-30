@@ -101,11 +101,17 @@ const ContributionAttempt = () => {
           },
           {
             skillType: 3,
-            count: 5,
-            averageScore: 3.5,
+            count: 3,
+            averageScore: 6.5,
+          },
+          {
+            skillType: 3,
+            count: 3,
+            averageScore: 6.5,
           },
         ]);
         setContributeTaketest(contributeResponse.dateAnalysis);
+        setRadarChart(contributeResponse.skillAnalysis);
         if (Array.isArray(yearsResponse)) {
           setYearsOfTakeTest(yearsResponse);
           if (yearsResponse.length > 0) {

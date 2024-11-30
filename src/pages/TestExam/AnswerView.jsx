@@ -282,6 +282,7 @@ const AnswerView = ({
               handleChangeWrap={handleChangeWrap}
               skill={skill}
               partData={partData}
+              sectionType={sectionType}
             />
           );
         if (sectionType === 2 || sectionType === 3 || sectionType === 7) {

@@ -1,16 +1,20 @@
-import React, { useEffect, useState } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
-import { Admin_GetUsers, Admin_LockUser, Admin_UnlockUser } from '../../redux/ADMIN/UserSlice';
-import { FaLock, FaLockOpen, FaFilter } from 'react-icons/fa';
-import LockoutModal from '../../components/ADMIN/LockoutModal';
-import UnlockModal from '../../components/ADMIN/UnlockModal';
-import ImportedNotify from '../../components/ADMIN/ImportedNotify';
+import React, { useEffect, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import {
+  Admin_GetUsers,
+  Admin_LockUser,
+  Admin_UnlockUser,
+} from "../../redux/ADMIN/UserSlice";
+import { FaLock, FaLockOpen, FaFilter } from "react-icons/fa";
+import LockoutModal from "../../components/ADMIN/LockoutModal";
+import UnlockModal from "../../components/ADMIN/UnlockModal";
+import ImportedNotify from "../../components/ADMIN/ImportedNotify";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { FaAngleLeft, FaAngleRight } from "react-icons/fa";
-import Pagination from '../../components/ADMIN/Pagination';
-import { formatDOB } from '../../utils/Validator';
-import { Admin_ImportUser } from '../../redux/ADMIN/UserSlice';
+import Pagination from "../../components/ADMIN/Pagination";
+import { formatDOB } from "../../utils/Validator";
+import { Admin_ImportUser } from "../../redux/ADMIN/UserSlice";
 
 const Users = () => {
     const dispatch = useDispatch();
@@ -23,99 +27,101 @@ const Users = () => {
     const [currentPage, setCurrentPage] = useState(1);
     const pageSize = 20;
 
-    useEffect(() => {
+  useEffect(() => {
+    dispatch(Admin_GetUsers({ page: currentPage, pageSize }));
+  }, [dispatch, currentPage]);
+
+  const handleLockClick = (user) => {
+    setCurrentUser(user);
+    setModalOpen(true);
+  };
+  const handleUnlockClick = (user) => {
+    setCurrentUser(user);
+    setUnlockModalOpen(true);
+  };
+
+  const handleLock = (duration) => {
+    if (currentUser) {
+      dispatch(
+        Admin_LockUser({
+          userId: currentUser.id,
+          durationInMinutes: duration,
+        })
+      )
+        .unwrap()
+        .then(() => {
+          toast.success(`User locked for ${duration} minutes`);
+          // Gọi lại danh sách người dùng
+          dispatch(Admin_GetUsers({ page: currentPage, pageSize }));
+        })
+        .catch((error) => {
+          toast.error("Failed to lock user");
+          console.error("Failed to lock user:", error);
+        });
+    }
+  };
+
+  // New function to handle unlocking a user
+  const handleUnlockUser = (currentUser) => {
+    dispatch(Admin_UnlockUser(currentUser.id))
+      .unwrap()
+      .then(() => {
+        toast.success("User unlocked successfully");
         dispatch(Admin_GetUsers({ page: currentPage, pageSize }));
-    }, [dispatch, currentPage]);
+      })
+      .catch((error) => {
+        toast.error("Failed to unlock user");
+        console.error("Failed to unlock user:", error);
+      });
+  };
 
-    const handleLockClick = (user) => {
-        setCurrentUser(user);
-        setModalOpen(true);
-    };
-    const handleUnlockClick = (user) => {
-        setCurrentUser(user);
-        setUnlockModalOpen(true);
-    };
-
-    const handleLock = (duration) => {
-        if (currentUser) {
-            dispatch(Admin_LockUser({
-                userId: currentUser.id,
-                durationInMinutes: duration,
-            }))
-                .unwrap()
-                .then(() => {
-                    toast.success(`User locked for ${duration} minutes`);
-                    // Gọi lại danh sách người dùng
-                    dispatch(Admin_GetUsers({ page: currentPage, pageSize }));
-                })
-                .catch((error) => {
-                    toast.error("Failed to lock user");
-                    console.error("Failed to lock user:", error);
-                });
-        }
-    };
-
-    // New function to handle unlocking a user
-    const handleUnlockUser = (currentUser) => {
-        dispatch(Admin_UnlockUser(currentUser.id))
-            .unwrap()
-            .then(() => {
-                toast.success("User unlocked successfully");
-                dispatch(Admin_GetUsers({ page: currentPage, pageSize }));
-            })
-            .catch((error) => {
-                toast.error("Failed to unlock user");
-                console.error("Failed to unlock user:", error);
-            });
-    };
-
-    const handleFileChange = async (e) => {
-        const file = e.target.files[0];
-        if (file) {
-            const formData = new FormData();
-            formData.append("file", file);
-            dispatch(Admin_ImportUser(formData))
-                .unwrap()
-                .then(() => {
-                    setNotifyOpen(true);
-                    dispatch(Admin_GetUsers({ page: currentPage, pageSize })); // Refresh the users list
-                })
-                .catch((error) => {
-                    toast.error(error || "Failed to import users");
-                });
-        }
-    };
-    // const totalPages = totalUsers > pageSize ? Math.ceil(totalUsers / pageSize) : 1;
-    return (
-        <section className="bg-white p-6 rounded-lg shadow-md">
-            <LockoutModal
-                isOpen={isModalOpen}
-                onClose={() => setModalOpen(false)}
-                onLock={handleLock}
-            />
-            <UnlockModal
-                isOpen={isUnlockModalOpen} // Pass the modal state
-                onClose={() => setUnlockModalOpen(false)} // Handle close
-                onUnlock={handleUnlockUser} // Pass the unlock function
-                user={currentUser} // Pass the current user to unlock
-            />
-            <ImportedNotify
-                isOpen={isNotifyOpen}
-                onClose={() => setNotifyOpen(false)}
-                users={importedResponse?.importedUsers || []} // Passed imported users
-                errors={importedResponse?.errors || []} // Passed import errors
-            />
-            <div className="flex justify-between items-center mb-6">
-                <h2 className="text-2xl font-bold text-gray-800">Current Users</h2>
-                <div className="flex space-x-2">
-                    <input
-                        type="text"
-                        placeholder="Search by email"
-                        value={searchTerm}
-                        onChange={(e) => setSearchTerm(e.target.value)}
-                        className="border border-gray-300 rounded-lg p-2 text-sm focus:outline-none focus:ring focus:ring-opacity-50 focus:ring-[#d4e9e2]"
-                    />
-                    {/* <button className="bg-purple-700 text-white px-4 py-2 rounded-lg shadow hover:bg-purple-600 transition">
+  const handleFileChange = async (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      const formData = new FormData();
+      formData.append("file", file);
+      dispatch(Admin_ImportUser(formData))
+        .unwrap()
+        .then(() => {
+          setNotifyOpen(true);
+          dispatch(Admin_GetUsers({ page: currentPage, pageSize })); // Refresh the users list
+        })
+        .catch((error) => {
+          toast.error(error || "Failed to import users");
+        });
+    }
+  };
+  // const totalPages = totalUsers > pageSize ? Math.ceil(totalUsers / pageSize) : 1;
+  return (
+    <section className="bg-white p-6 rounded-lg shadow-md">
+      <LockoutModal
+        isOpen={isModalOpen}
+        onClose={() => setModalOpen(false)}
+        onLock={handleLock}
+      />
+      <UnlockModal
+        isOpen={isUnlockModalOpen} // Pass the modal state
+        onClose={() => setUnlockModalOpen(false)} // Handle close
+        onUnlock={handleUnlockUser} // Pass the unlock function
+        user={currentUser} // Pass the current user to unlock
+      />
+      <ImportedNotify
+        isOpen={isNotifyOpen}
+        onClose={() => setNotifyOpen(false)}
+        users={importedResponse?.importedUsers || []} // Passed imported users
+        errors={importedResponse?.errors || []} // Passed import errors
+      />
+      <div className="flex justify-between items-center mb-6">
+        <h2 className="text-2xl font-bold text-gray-800">Current Users</h2>
+        <div className="flex space-x-2">
+          <input
+            type="text"
+            placeholder="Search by email"
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            className="border border-gray-300 rounded-lg p-2 text-sm focus:outline-none focus:ring focus:ring-opacity-50 focus:ring-[#d4e9e2]"
+          />
+          {/* <button className="bg-purple-700 text-white px-4 py-2 rounded-lg shadow hover:bg-purple-600 transition">
                         Add New
                     </button> */}
                     <button className="border border-gray-300 rounded-lg p-2 flex items-center mr-2">
@@ -206,9 +212,9 @@ const Users = () => {
                 onPageChange={setCurrentPage} // Set the current page directly
             />
 
-            <ToastContainer autoClose={3000} newestOnTop closeOnClick />
-        </section>
-    );
+      <ToastContainer autoClose={3000} newestOnTop closeOnClick />
+    </section>
+  );
 };
 
 export default Users;

@@ -14,7 +14,6 @@ import {
   fetchSkills,
   fetchSkillDescription,
 } from "../../redux/courses/CourseSkillSlice";
-import { fetchCourses } from "../../redux/courses/CourseSlice";
 import CreateClass from "../Class/CreateClass";
 import Rating from "../../components/common/Rating";
 import Notification from "../../components/common/Notification";
@@ -34,11 +33,14 @@ import {
 import { getUser } from "../../service/GetUser";
 import { CheckLecturerOfCourse } from "../../redux/courses/CourseSlice";
 import { GetCourseById } from "../../redux/courses/CourseSlice";
+import { CheckBanlance, GiveMeMyMoney } from "../../components/common/PayOS";
+import Comment from "../../components/common/Comment";
 const CourseDetail = () => {
   const { className, courseId } = useParams();
   const location = useLocation();
   const [skillCount, setSkillCount] = useState(0);
   const [userId, setUserId] = useState(null);
+  const [userName, setUsername] = useState(null);
   const [userRole, setUserRole] = useState(null);
   const [currentSlide, setCurrentSlide] = useState(0);
   const [selectedClassId, setSelectedClassId] = useState(null);
@@ -68,6 +70,7 @@ const CourseDetail = () => {
     const userFromToken = getUser();
     setUserId(userFromToken?.sub);
     setUserRole(userFromToken?.role);
+    setUsername(userFromToken?.name);
   }, []);
 
   useEffect(() => {
@@ -152,24 +155,60 @@ const CourseDetail = () => {
     );
   };
 
-  const handleEnroll = () => {
+  const handleEnroll = async () => {
     if (!selectedClassId) {
       setNotification("Bạn chưa chọn lớp.");
       return;
     }
 
+    // Lấy giá tiền của khóa học
+    const price = course?.price;
+
+    // Kiểm tra số dư người dùng trước khi tiếp tục
+    const hasSufficientBalance = await CheckBanlance(price);
+    if (!hasSufficientBalance) {
+      const userChoice = window.confirm(
+        "Số dư không đủ. Bạn có muốn nạp tiền không?"
+      );
+      if (userChoice) {
+        window.location.href = "/Payment";
+      } else {
+        setNotification("Đăng ký thất bại! Bạn không có đủ tiền.");
+      }
+      return;
+    }
+
+    // Nếu có đủ tiền, yêu cầu xác nhận trước khi đăng ký
     setConfirmMessage("Are you sure you want to enroll this course?");
     setConfirmStatus("Enroll");
-    setConfirmAction(() => () => {
-      dispatch(enrollUser({ courseId, userId, classId: selectedClassId }))
-        .unwrap()
-        .then(() => {
-          setNotification("Đăng ký thành công!");
-          dispatch(CheckUserEnrollment({ userId, courseId }));
-        })
-        .catch(() => setNotification("Đăng ký thất bại!"));
+    setConfirmAction(() => async () => {
+      try {
+        // Thực hiện thanh toán
+        await GiveMeMyMoney(
+          userId,
+          price * -1,
+          `Enroll in course ${course?.name}`
+        );
+        await GiveMeMyMoney(
+          course?.userId,
+          price,
+          `Your course has been enrolled by ${userName}`
+        );
+
+        // Sau khi thanh toán thành công, gửi yêu cầu đăng ký khóa học
+        await dispatch(
+          enrollUser({ courseId, userId, classId: selectedClassId })
+        ).unwrap();
+
+        // Cập nhật trạng thái và thông báo thành công
+        setNotification("Đăng ký thành công!");
+        dispatch(CheckUserEnrollment({ userId, courseId }));
+      } catch (error) {
+        setNotification("Đăng ký thất bại! Vui lòng thử lại.");
+      }
       setIsConfirmOpen(false);
     });
+
     setIsConfirmOpen(true);
   };
 
@@ -215,7 +254,6 @@ const CourseDetail = () => {
       setNotificationUpdated(true);
     }
   }, [mentorAndList, isMentor, notificationUpdated]);
-  console.log(course);
 
   return (
     <MainLayout>
@@ -376,6 +414,7 @@ const CourseDetail = () => {
                 onCreateTestClick={handleCreateTestClick}
                 onSkillCountUpdate={setSkillCount}
               />
+              <Comment courseId={courseId} />
             </div>
           </div>
         </div>

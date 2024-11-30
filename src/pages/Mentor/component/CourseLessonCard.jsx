@@ -8,6 +8,7 @@ import Notification from "../../../components/common/Notification";
 import { FaAngleDown, FaAngleUp } from "react-icons/fa";
 import TestForm from "../../ExamTest/TestForm";
 import { Link } from "react-router-dom";
+
 const CourseLessonCard = ({ mentorAndList, coursePartId, isEnrolled }) => {
   const [collapsedLessons, setCollapsedLessons] = useState({});
   const [courseLessons, setCourseLessons] = useState([]);
@@ -29,6 +30,7 @@ const CourseLessonCard = ({ mentorAndList, coursePartId, isEnrolled }) => {
       [lessonId]: !prev[lessonId],
     }));
   };
+  console.log(testExams);
 
   const fetchCourseLessons = async () => {
     try {
@@ -43,6 +45,11 @@ const CourseLessonCard = ({ mentorAndList, coursePartId, isEnrolled }) => {
         {}
       );
       setCollapsedLessons(initialCollapsedState);
+
+      // Sau khi load các bài học, gọi fetchTestExams cho mỗi lesson
+      response.data.courseLessons.forEach((lesson) => {
+        fetchTestExams(lesson.id);
+      });
 
       setNotification("Course lessons loaded successfully.");
       setLoading(false);
@@ -75,7 +82,6 @@ const CourseLessonCard = ({ mentorAndList, coursePartId, isEnrolled }) => {
   };
 
   const refreshCourseLessons = () => {
-    fetchTestExams();
     setLoading(true);
     fetchCourseLessons();
     setNotification("Course lessons refreshed successfully.");
@@ -87,7 +93,6 @@ const CourseLessonCard = ({ mentorAndList, coursePartId, isEnrolled }) => {
         `https://localhost:7030/api/CourseSkills/DescriptionByCourseLesson/${lessonId}`,
         { headers: { Authorization: `Bearer ${token}` } }
       );
-      console.log("API Response Data:", response.data);
       setIsCreateTest(true);
       setCategories([response.data]);
       setLessonId(lessonId);
@@ -96,15 +101,16 @@ const CourseLessonCard = ({ mentorAndList, coursePartId, isEnrolled }) => {
     }
   };
 
-  const fetchTestExams = async () => {
+  const fetchTestExams = async (lessonId) => {
     try {
       const response = await axios.get(
-        `https://localhost:7030/api/CourseLessons/GetTestExamByLessonId/${courseLessonId}`
+        `https://localhost:7030/api/CourseLessons/GetTestExamByLessonId/${lessonId}`
       );
+      console.log("API Response Data:", response.data);
       if (Array.isArray(response.data) && response.data.length > 0) {
-        setTestExams(response.data); // Lưu danh sách bài kiểm tra vào state
+        setTestExams(response.data);
       } else {
-        console.error("No TestExams found for the class.");
+        console.error("No TestExams found for the lesson.");
       }
     } catch (err) {
       console.error("Error fetching test exams:", err);
@@ -113,15 +119,12 @@ const CourseLessonCard = ({ mentorAndList, coursePartId, isEnrolled }) => {
 
   const confirmActionHandler = async () => {
     try {
-      console.log("Executing confirm action..."); // Debug log
+      console.log("Executing confirm action...");
       await confirmAction();
-      console.log("Action completed successfully."); // Debug log
+      console.log("Action completed successfully.");
       setNotification("Action completed successfully.");
-      setIsCreateTest(true);
-      setCategories([response.data]);
-      setLessonId(lessonId);
     } catch (error) {
-      console.error("Error executing confirm action:", error); // Debug log
+      console.error("Error executing confirm action:", error);
       setNotification("Action failed.");
     } finally {
       setConfirmOpen(false);
@@ -129,18 +132,18 @@ const CourseLessonCard = ({ mentorAndList, coursePartId, isEnrolled }) => {
   };
 
   const confirmDeleteLesson = (lessonId) => {
-    console.log("Setting confirm action for lesson ID:", lessonId); // Debug log
+    console.log("Setting confirm action for lesson ID:", lessonId);
     setConfirmAction(() => async () => {
       try {
         await axios.delete(
           `https://localhost:7030/api/CourseLessons/${lessonId}`,
           { headers: { Authorization: `Bearer ${token}` } }
         );
-        console.log("Lesson deleted successfully."); // Debug log
+        console.log("Lesson deleted successfully.");
         setNotification("Lesson deleted successfully.");
         refreshCourseLessons();
       } catch (error) {
-        console.error("Error deleting lesson:", error); // Debug log
+        console.error("Error deleting lesson:", error);
         setNotification("Failed to delete the lesson.");
       }
     });
@@ -159,7 +162,6 @@ const CourseLessonCard = ({ mentorAndList, coursePartId, isEnrolled }) => {
     <>
       {!isCreateTest ? (
         <>
-          {" "}
           <div className="h-vh100 px-4 mb-4 relative">
             <div className="cursor-pointer">
               <h3 className="text-sm font-semibold text-gray-400">
@@ -191,38 +193,37 @@ const CourseLessonCard = ({ mentorAndList, coursePartId, isEnrolled }) => {
                         </h4>
                       </div>
 
-                      {mentorAndList && (
-                        <div className="absolute top-2 right-2 flex gap-2">
-                          <Link
-                            to={`/testDetail/${courseLesson.id}`}
-                            className="py-2 px-3 text-sm font-medium rounded-lg border border-gray-200 bg-white text-gray-800 shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-gray-200"
-                          >
-                            Do Test
-                          </Link>
+                      <div className="absolute top-2 right-2 flex gap-2">
+                        {mentorAndList && (
+                          <>
+                            <button
+                              type="button"
+                              onClick={() => handleCreateTest(courseLesson.id)}
+                              className="py-2 px-3 text-sm font-medium rounded-lg border border-gray-200 bg-white text-gray-800 shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-gray-200"
+                            >
+                              Create Test
+                            </button>
 
-                          <button
-                            type="button"
-                            onClick={() => handleCreateTest(courseLesson.id)}
-                            className="py-2 px-3 text-sm font-medium rounded-lg border border-gray-200 bg-white text-gray-800 shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-gray-200"
-                          >
-                            Create Test
-                          </button>
-                          <button
-                            type="button"
-                            onClick={() => addDynamicForm(courseLesson.id)}
-                            className="py-2 px-3 text-sm font-medium rounded-lg border border-gray-200 bg-white text-gray-800 shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-gray-200"
-                          >
-                            Create Lesson Content
-                          </button>
-                          <button
-                            type="button"
-                            onClick={() => confirmDeleteLesson(courseLesson.id)}
-                            className="py-2 px-3 text-sm font-medium rounded-lg border border-gray-200 bg-red-500 text-white shadow-sm hover:bg-red-600 focus:outline-none focus:ring-2 focus:ring-red-500"
-                          >
-                            Delete Lesson
-                          </button>
-                        </div>
-                      )}
+                            <button
+                              type="button"
+                              onClick={() => addDynamicForm(courseLesson.id)}
+                              className="py-2 px-3 text-sm font-medium rounded-lg border border-gray-200 bg-white text-gray-800 shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-gray-200"
+                            >
+                              Create Lesson Content
+                            </button>
+
+                            <button
+                              type="button"
+                              onClick={() =>
+                                confirmDeleteLesson(courseLesson.id)
+                              }
+                              className="py-2 px-3 text-sm font-medium rounded-lg border border-gray-200 bg-red-500 text-white shadow-sm hover:bg-red-600 focus:outline-none focus:ring-2 focus:ring-red-500"
+                            >
+                              Delete Lesson
+                            </button>
+                          </>
+                        )}
+                      </div>
 
                       {dynamicForms
                         .filter((form) => form.lessonId === courseLesson.id)
@@ -245,34 +246,39 @@ const CourseLessonCard = ({ mentorAndList, coursePartId, isEnrolled }) => {
                           />
                         </div>
                       )}
+                      <div className="flex space-x-4">
+                        {testExams
+                          .filter((exam) => exam.lessonId === courseLesson.id)
+                          .map((exam) => (
+                            <div key={exam.id}>
+                              <Link
+                                to={`/testDetail/${exam.id}`} // Link dẫn đến chi tiết bài kiểm tra
+                                className="py-2 px-3 text-sm font-medium rounded-lg border border-gray-200 bg-white text-gray-800 shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-gray-200"
+                              >
+                                Do Test for Lesson: {courseLesson.title} (Test:{" "}
+                                {exam.name})
+                              </Link>
+                            </div>
+                          ))}
+                      </div>
                     </div>
                   ))
                 )}
               </div>
             </div>
-
-            <Confirm
-              isOpen={confirmOpen}
-              onClose={() => setConfirmOpen(false)}
-              onConfirm={confirmActionHandler}
-              status="Confirmation"
-              shoud="no"
-              message="Are you sure you want to perform this action?"
-            />
-
-            <Notification
-              message={notification}
-              onClose={() => setNotification("")}
-            />
           </div>
         </>
       ) : (
-        <TestForm
-          lessonId={lessonId}
-          categories={categories}
-          pageType={"lesson"}
-        />
+        <TestForm categories={categories} lessonId={lessonId} />
       )}
+
+      <Notification message={notification} />
+      <Confirm
+        open={confirmOpen}
+        onClose={() => setConfirmOpen(false)}
+        onConfirm={confirmActionHandler}
+        message="Are you sure you want to delete this lesson?"
+      />
     </>
   );
 };

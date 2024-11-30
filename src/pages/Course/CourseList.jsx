@@ -111,35 +111,40 @@ const CourseList = () => {
               price={course.price}
               courseId={course.id}
               isEnabled={course.isEnabled}
+              content={course.content}
             />
           ))}
         </div>
 
-        <div className="flex justify-center items-center mt-10">
-          <button
-            onClick={handlePrevPage}
-            disabled={currentPage === 1}
-            aria-label="Previous Page"
-            className={`px-3 py-1.5 mx-1 text-sm font-medium ${
-              currentPage === 1 ? "bg-gray-300" : "bg-blue-600"
-            } text-white border border-blue-600 rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-400`}
-          >
-            Previous
-          </button>
-          <span className="text-sm mx-2 text-black">
-            Page {currentPage} of {totalPages}
-          </span>
-          <button
-            onClick={handleNextPage}
-            disabled={currentPage === totalPages}
-            aria-label="Next Page"
-            className={`px-3 py-1.5 mx-1 text-sm font-medium ${
-              currentPage === totalPages ? "bg-gray-300" : "bg-blue-600"
-            } text-white border border-blue-600 rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-400`}
-          >
-            Next
-          </button>
-        </div>
+        {totalPages > 1 && (
+          <div className="flex justify-center items-center mt-4 fixed bottom-4 left-0 right-0">
+            <div className="flex justify-center space-x-2">
+              <button
+                onClick={handlePrevPage}
+                disabled={currentPage === 1}
+                aria-label="Previous Page"
+                className={`px-3 py-1.5 mx-1 text-sm font-medium ${
+                  currentPage === 1 ? "bg-gray-300" : "bg-blue-600"
+                } text-white border border-blue-600 rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-400`}
+              >
+                Previous
+              </button>
+              <span className="text-sm mx-2 text-black">
+                Page {currentPage} of {totalPages}
+              </span>
+              <button
+                onClick={handleNextPage}
+                disabled={currentPage === totalPages}
+                aria-label="Next Page"
+                className={`px-3 py-1.5 mx-1 text-sm font-medium ${
+                  currentPage === totalPages ? "bg-gray-300" : "bg-blue-600"
+                } text-white border border-blue-600 rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-400`}
+              >
+                Next
+              </button>
+            </div>
+          </div>
+        )}
       </div>
       <Calendar />
     </MainLayout>

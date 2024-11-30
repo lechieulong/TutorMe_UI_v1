@@ -8,7 +8,7 @@ import CreateClass from "../Class/CreateClass";
 import { fetchClasses } from "../../redux/classes/ClassSlice";
 
 const ClassOfCourseList = () => {
-  const { courseId } = useParams();
+  const { courseId, mentorAndList } = useParams();
   const dispatch = useDispatch();
 
   // Lấy state từ Redux store
@@ -51,13 +51,15 @@ const ClassOfCourseList = () => {
           <div className="flex-1 p-6 bg-white rounded-lg shadow-md mx-4">
             <div className="flex items-center justify-between mb-6">
               <h2 className="text-2xl font-bold text-gray-700">Class List</h2>
-              <button
-                type="button"
-                className="py-2 px-3 inline-flex items-center gap-x-2 text-sm font-medium rounded-lg border border-gray-200 bg-white text-gray-800 shadow-sm hover:bg-gray-50 focus:outline-none focus:bg-gray-50"
-                onClick={() => setShowCreateClassModal(true)} // Hiển thị popup
-              >
-                Create Class
-              </button>
+              {mentorAndList && (
+                <button
+                  type="button"
+                  className="py-2 px-3 inline-flex items-center gap-x-2 text-sm font-medium rounded-lg border border-gray-200 bg-white text-gray-800 shadow-sm hover:bg-gray-50 focus:outline-none focus:bg-gray-50"
+                  onClick={() => setShowCreateClassModal(true)} // Hiển thị popup
+                >
+                  Create Class
+                </button>
+              )}
             </div>
 
             {classes.length === 0 ? (

@@ -33,7 +33,7 @@ const Comment = ({ courseId }) => {
         );
         setRatings(response.data);
       } catch (error) {
-        setError("Failed to fetch ratings.");
+        setError("");
       } finally {
         setLoading(false);
       }

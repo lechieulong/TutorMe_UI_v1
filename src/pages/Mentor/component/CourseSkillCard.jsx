@@ -4,7 +4,8 @@ import CoursePartCard from "../../Course/components/CoursePartCard";
 import CreateCoursePart from "./CreateCoursePart";
 import Confirm from "../../../components/common/Confirm";
 import Notification from "../../../components/common/Notification";
-
+import TestForm from "../../ExamTest/TestForm";
+import Cookies from "js-cookie";
 const CourseSkillCard = ({
   courseId,
   isEnrolled,
@@ -20,12 +21,33 @@ const CourseSkillCard = ({
   const [confirmOpen, setConfirmOpen] = useState(false);
   const [notification, setNotification] = useState("");
   const [confirmAction, setConfirmAction] = useState(() => {});
+  const [isCreateTest, setIsCreateTest] = useState(false);
+  const [categories, setCategories] = useState([]);
+  const [skillId, setSkillId] = useState(null);
+  const token = Cookies.get("authToken");
 
-  const handlePartCountUpdate = (skillId, count) => {
-    setPartCounts((prev) => ({
-      ...prev,
-      [skillId]: count,
-    }));
+  // const handlePartCountUpdate = (skillId, count) => {
+  //   setPartCounts((prev) => ({
+  //     ...prev,
+  //     [skillId]: count,
+  //   }));
+  // };
+
+  const handleCreateTest = async (skillId) => {
+    console.log(skillId);
+    try {
+      const response = await axios.get(
+        `https://localhost:7030/api/CourseSkills/DescriptionBySkill/${skillId}`,
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+      console.log(response.data.description);
+
+      setIsCreateTest(true);
+      setCategories([response.data]);
+      setSkillId(skillId);
+    } catch (error) {
+      console.error("Failed to fetch data from API", error);
+    }
   };
 
   useEffect(() => {
@@ -84,77 +106,98 @@ const CourseSkillCard = ({
 
   if (loading) return <p>Loading...</p>;
   if (error) return <p>{error}</p>;
+  skills.forEach((skill) => {
+    console.log(skill.id);
+  });
 
   return (
     <div>
-      <nav
-        className="relative z-0 flex border rounded-xl overflow-hidden"
-        aria-label="Tabs"
-        role="tablist"
-        aria-orientation="horizontal"
-      >
-        {skills.map((skill) => (
-          <button
-            key={skill.id}
-            type="button"
-            className={`hs-tab-active:border-b-blue-600 hs-tab-active:text-gray-900 relative min-w-0 flex-1 bg-white border-s border-b-2 py-4 px-4 text-gray-500 hover:text-gray-700 text-sm font-medium text-center overflow-hidden hover:bg-gray-50 focus:z-10 focus:outline-none ${
-              activeTab === skill.id ? "text-blue-600 border-b-blue-600" : ""
-            }`}
-            onClick={() => setActiveTab(skill.id)}
-            aria-selected={activeTab === skill.id}
-            role="tab"
+      {!isCreateTest ? (
+        <div>
+          <nav
+            className="relative z-0 flex border rounded-xl overflow-hidden"
+            aria-label="Tabs"
+            role="tablist"
+            aria-orientation="horizontal"
           >
-            {skill.description}
-          </button>
-        ))}
-      </nav>
-
-      <div className="mt-3">
-        <div className="flex gap-2">
-          {mentorAndList && (
-            <>
+            {skills.map((skill) => (
               <button
+                key={skill.id}
                 type="button"
-                onClick={handleCreatePartClick}
-                disabled={loading}
-                className="py-2 px-3 text-sm font-medium rounded-lg border border-gray-200 bg-green-500 text-white shadow-sm hover:bg-green-600 focus:outline-none"
+                className={`hs-tab-active:border-b-blue-600 hs-tab-active:text-gray-900 relative min-w-0 flex-1 bg-white border-s border-b-2 py-4 px-4 text-gray-500 hover:text-gray-700 text-sm font-medium text-center overflow-hidden hover:bg-gray-50 focus:z-10 focus:outline-none ${
+                  activeTab === skill.id
+                    ? "text-blue-600 border-b-blue-600"
+                    : ""
+                }`}
+                onClick={() => setActiveTab(skill.id)}
+                aria-selected={activeTab === skill.id}
+                role="tab"
               >
-                {loading
-                  ? "Loading..."
-                  : showCreateForm
-                  ? "Close Form"
-                  : "Create Course Part"}
+                {skill.description}
               </button>
-            </>
-          )}
+            ))}
+          </nav>
+
+          <div className="mt-3">
+            {/* Create Course Part Button */}
+            <div className="flex gap-2">
+              {mentorAndList && (
+                <button
+                  type="button"
+                  onClick={handleCreatePartClick}
+                  disabled={loading}
+                  className="py-2 px-3 text-sm font-medium rounded-lg border border-gray-200 bg-green-500 text-white shadow-sm hover:bg-green-600 focus:outline-none"
+                >
+                  {loading
+                    ? "Loading..."
+                    : showCreateForm
+                    ? "Close Form"
+                    : "Create Course Part"}
+                </button>
+              )}
+            </div>
+
+            {/* Show Create Form if it's active */}
+            {showCreateForm && activeTab && (
+              <div className="mt-4 p-4 bg-gray-100 rounded-lg shadow-md">
+                <CreateCoursePart
+                  courseSkillId={activeTab}
+                  onClose={closeCreateForm}
+                  onCreated={handlePartCreated}
+                  mentorAndList={mentorAndList}
+                />
+              </div>
+            )}
+
+            {skills.map((skill) => (
+              <div
+                key={skill.id}
+                className={`${activeTab === skill.id ? "" : "hidden"}`}
+                role="tabpanel"
+                aria-labelledby={skill.id}
+              >
+                <CoursePartCard
+                  mentorAndList={mentorAndList}
+                  skillId={skill.id}
+                  isEnrolled={isEnrolled}
+                />
+
+                {mentorAndList && (
+                  <button
+                    type="button"
+                    onClick={() => handleCreateTest(skill.id)}
+                    className="py-2 px-3 text-sm font-medium rounded-lg border border-gray-200 bg-white text-gray-800 shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-gray-200 mt-4"
+                  >
+                    Create Test for {skill.description}
+                  </button>
+                )}
+              </div>
+            ))}
+          </div>
         </div>
-
-        {showCreateForm && activeTab && (
-          <div className="mt-4 p-4 bg-gray-100 rounded-lg shadow-md">
-            <CreateCoursePart
-              courseSkillId={activeTab}
-              onClose={closeCreateForm}
-              onCreated={handlePartCreated}
-              mentorAndList={mentorAndList}
-            />
-          </div>
-        )}
-
-        {skills.map((skill) => (
-          <div
-            key={skill.id}
-            className={`${activeTab === skill.id ? "" : "hidden"}`}
-            role="tabpanel"
-            aria-labelledby={skill.id}
-          >
-            <CoursePartCard
-              mentorAndList={mentorAndList}
-              skillId={skill.id}
-              isEnrolled={isEnrolled}
-            />
-          </div>
-        ))}
-      </div>
+      ) : (
+        <TestForm categories={categories} lessonId={skillId} />
+      )}
 
       <Confirm
         isOpen={confirmOpen}

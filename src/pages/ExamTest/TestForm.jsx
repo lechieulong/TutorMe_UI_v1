@@ -12,7 +12,13 @@ import { toast } from "react-toastify";
 import CreateTest from "./CreateTest";
 import TestInfoCard from "./general/TestInfoCard";
 
-const TestForm = ({ classId, lessonId, categories, pageType }) => {
+const TestForm = ({
+  classId,
+  lessonId,
+  skillIdCourse,
+  categories,
+  pageType,
+}) => {
   const {
     register,
     handleSubmit,
@@ -28,7 +34,7 @@ const TestForm = ({ classId, lessonId, categories, pageType }) => {
   const onSubmit = async (data) => {
     setIsSubmitted(true);
     try {
-      const payload = { ...data, classId, lessonId };
+      const payload = { ...data, classId, lessonId, skillIdCourse };
       const result = await dispatch(createTest(payload)).unwrap();
 
       setTestInfo(result);

@@ -3,7 +3,6 @@ import { Editor } from "@tinymce/tinymce-react";
 import { useFieldArray, Controller } from "react-hook-form";
 import { v4 as uuidv4 } from "uuid";
 
-// Separate InputAnswer component to handle input field
 const InputAnswer = ({ index, onChange, value, questionId }) => {
   const handleInputChange = (event) => {
     onChange(questionId, event.target.value); // Notify parent component about the change, including the questionId
@@ -31,10 +30,36 @@ const Demo = ({
   setValue,
 }) => {
   const [answers, setAnswers] = useState([]);
-  const [answersInput, setAnswersInput] = useState([]);
   const [inputFields, setInputFields] = useState([]);
-  const [submittedContent, setSubmittedContent] = useState("");
+  const { fields, append, remove } = useFieldArray({
+    control,
+    name: `skills.${skill}.parts.${partIndex}.sections.${sectionIndex}.questions`, // Use dynamic path to store answers
+  });
   const editorRef = useRef(null);
+
+  // Function to generate a unique questionId
+  const generateUniqueQuestionId = () => uuidv4();
+
+  // Function to replace existing questionId with a new unique one
+  const replaceDuplicateIds = (content) => {
+    const parser = new DOMParser();
+    const doc = parser.parseFromString(content, "text/html");
+    const inputs = doc.querySelectorAll("input");
+
+    inputs.forEach((input) => {
+      let questionId = input.getAttribute("data-question-id");
+      if (
+        !questionId ||
+        document.querySelector(`[data-question-id="${questionId}"]`)
+      ) {
+        // If there's no questionId or it's already taken, assign a new one
+        questionId = generateUniqueQuestionId();
+        input.setAttribute("data-question-id", questionId);
+      }
+    });
+
+    return doc.body.innerHTML; // Return the modified content
+  };
 
   const handleAnswerChange = (questionId, value) => {
     const newAnswers = [...answers];
@@ -76,7 +101,10 @@ const Demo = ({
 
   const handleSubmit = () => {
     if (editorRef.current) {
-      const editorContent = editorRef.current.getContent();
+      let editorContent = editorRef.current.getContent();
+
+      // Replace any duplicate IDs before submitting the content
+      editorContent = replaceDuplicateIds(editorContent);
 
       setSubmittedContent(editorContent);
     }
@@ -91,12 +119,29 @@ const Demo = ({
   };
 
   const onEditorChange = (field, content) => {
-    detectInputFields(content);
-    field.onChange(content);
+    const updatedContent = replaceDuplicateIds(content); // Ensure no duplicate IDs
+    detectInputFields(updatedContent); // Detect input fields in the updated content
+    field.onChange(updatedContent); // Notify parent about the content change
   };
 
   return (
     <div>
+      <p className="italic">
+        Example: what is ABC{" "}
+        <input placeholder="1" className="border border-1 border-gray-400" />{" "}
+        hahahha what is ABC <br />
+        <input
+          placeholder="2"
+          className="border border-1 border-gray-400"
+        />{" "}
+        hahahha
+        <br />
+        <span className="text-red-500">
+          {" "}
+          Notice that: you can click button "Insert input" to add answer for
+          each question{" "}
+        </span>
+      </p>
       <Controller
         name={`skills.${skill}.parts.${partIndex}.sections.${sectionIndex}.sectionContext`}
         control={control}
@@ -104,10 +149,13 @@ const Demo = ({
         render={({ field }) => (
           <div className="mb-2">
             <Editor
-              onInit={(_, editor) => (editorRef.current = editor)}
+              onInit={(_, editor) => {
+                editorRef.current = editor;
+                editor.setContent(field.value || "<p>Start typing here...</p>");
+              }}
               apiKey={import.meta.env.VITE_TINI_APIKEY}
               onEditorChange={(v) => onEditorChange(field, v)}
-              initialValue={"<p>Start typing here...</p>"} // Set initial value
+              initialValue={"<p>Start typing here ...</p>"} // Set initial value
               init={{
                 height: "300px",
                 menubar: "file edit view insert format tools table help",
@@ -137,9 +185,9 @@ const Demo = ({
                   editor.ui.registry.addButton("insertinput", {
                     text: "Insert Input",
                     onAction: () => {
-                      const questionId = uuidv4(); // Generate unique questionId
+                      const questionId = generateUniqueQuestionId(); // Generate unique questionId
                       editor.insertContent(
-                        `<input type="text"  class="editor-input" data-question-id="${questionId}" />`
+                        `<input type="text" class="editor-input" data-question-id="${questionId}" />`
                       );
                     },
                   });
@@ -151,36 +199,44 @@ const Demo = ({
           </div>
         )}
       />
-
       {inputFields.length > 0 && (
         <div>
-          <p className="py-2 text- font-bold">Answers </p>
-          <div id="input-placeholder" className="flex gap-4">
+          <p className="py-2 font-bold w-24">Answers </p>
+          <div
+            id="input-placeholder"
+            className="flex flex-wrap gap-4 max-w-full overflow-x-auto"
+          >
             {Array.from({ length: inputFields.length }).map((_, index) => {
               const questionId =
                 inputFields[index].getAttribute("data-question-id");
+
+              // Find the corresponding answer for the current questionId
+              const answer = answers.find(
+                (answer) => answer.questionId === questionId
+              );
+              const value = answer ? answer.answer : ""; // Use the answer if available, otherwise set to an empty string
+              console.log(value);
+
               return (
-                <>
-                  <p className="text-center  mt-2">{index + 1}</p>
+                <div key={questionId} className="w-full sm:w-auto">
+                  {" "}
+                  {/* Adjusts the width based on screen size */}
+                  <p className="text-center mt-2">{index + 1}</p>
                   <InputAnswer
-                    key={questionId}
                     index={index}
                     onChange={handleAnswerChange}
-                    value={
-                      answers.find((answer) => answer.questionId === questionId)
-                        ?.answer || ""
-                    }
+                    value={value} // Set the value of the input field
                     questionId={questionId}
                     control={control}
                   />
-                </>
+                </div>
               );
             })}
           </div>
         </div>
       )}
 
-      {submittedContent && (
+      {/* {submittedContent && (
         <div className="mt-6 p-4 border border-gray-300">
           <h2>Submitted Content:</h2>
           <ParseHtml
@@ -188,34 +244,9 @@ const Demo = ({
             onInputChange={handleInputChange}
           />
         </div>
-      )}
+      )} */}
     </div>
   );
 };
 
 export default Demo;
-
-const ParseHtml = ({ html, onInputChange }) => {
-  useEffect(() => {
-    const inputs = document.querySelectorAll("input[data-question-id]");
-
-    inputs.forEach((input) => {
-      input.addEventListener("change", () => {
-        const questionId = input.getAttribute("data-question-id");
-        const value = input.value;
-
-        if (questionId) {
-          onInputChange(questionId, value);
-        }
-      });
-    });
-
-    return () => {
-      inputs.forEach((input) => {
-        input.removeEventListener("change", () => {});
-      });
-    };
-  }, [html, onInputChange]);
-
-  return <div dangerouslySetInnerHTML={{ __html: html }} />;
-};

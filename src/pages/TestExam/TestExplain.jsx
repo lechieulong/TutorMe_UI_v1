@@ -271,11 +271,6 @@ const TestExplain = ({ skillResultIds, testId, skillId }) => {
           )}
         </div>
       </div>
-
-      <div className="mt-20 p-10">
-        <h3>Related Test</h3>
-        <div className="h-[200px]"></div>
-      </div>
     </MainLayout>
   );
 };

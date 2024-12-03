@@ -6,8 +6,16 @@ import { useNavigate } from "react-router-dom";
 import TestFormDetail from "./TestFormDetail";
 import PreviewTest from "./PreviewTest";
 import Modal from "react-modal"; // Import react-modal
+import { toast } from "react-toastify";
 
-const CreateTest = ({ testId, skills, pageType }) => {
+const CreateTest = ({
+  testId,
+  skills,
+  pageType,
+  courseId,
+  classId,
+  setIsCreateTest,
+}) => {
   const navigate = useNavigate();
   const { control, resetField, handleSubmit, setValue, getValues } = useForm();
   const [activeStep, setActiveStep] = useState(0);
@@ -148,14 +156,13 @@ const CreateTest = ({ testId, skills, pageType }) => {
     }
 
     dispatch(addSkills({ skillsData: data, testId }));
+    toast.success("Skill created successfully!");
 
-    // if (pageType === "admin") {
-    //   navigate("/admin/app/testsource");
-    // } else if (pageType === "lesson") {
-    //   navigate("/lesson");
-    // } else {
-    //   navigate("/");
-    // }
+    if (pageType === "admin") {
+      navigate("/admin/app/testsource");
+    } else {
+      setIsCreateTest(false);
+    }
   });
 
   // Close the modal

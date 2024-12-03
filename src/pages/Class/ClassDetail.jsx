@@ -147,6 +147,8 @@ const ClassDetail = () => {
               classId={classId}
               categories={categories}
               pageType={"class"}
+              courseId={courseId}
+              setIsCreateTest={setIsCreateTest}
             />
           ) : (
             <div className="flex-1 p-4">

@@ -247,7 +247,6 @@ const SectionForm = ({ skill, partIndex, control, setValue }) => {
                   <Controller
                     name={`skills.${skill}.parts.${partIndex}.sections.${index}.explain`}
                     control={control}
-                    rules={{ required: "Section context is required" }} // Add validation
                     render={({ field, fieldState }) => (
                       <div className="mb-2">
                         <label className="block text-gray-700 font-medium mb-2">

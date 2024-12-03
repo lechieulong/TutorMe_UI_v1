@@ -5,12 +5,12 @@ import Speaking from "../../components/Test/Part/Speaking";
 import MutipleChoiceExplain from "./MutipleChoiceExplain";
 import { GoogleGenerativeAI } from "@google/generative-ai";
 import ParseHtmlExplain from "./ParseHtmlExplain";
+import WritingExplain from "../ExamTest/general/WritingExplain";
+import SpeakingExplain from "../ExamTest/general/SpeakingExplain";
 
 const genAI = new GoogleGenerativeAI(import.meta.env.VITE_GEN_AI);
 
 const AnswerViewExplain = ({ partData, currentSkillKey }) => {
-  console.log("partData", partData);
-
   let skill;
   switch (currentSkillKey) {
     case "reading":
@@ -493,21 +493,18 @@ const AnswerViewExplain = ({ partData, currentSkillKey }) => {
         </>
       )}
 
-      {/* {currentSkillKey === "writing" && (
-        <Writing
-          partData={partData}
-          currentSkillKey={currentSkillKey}
-          handleAnswerChange={handleAnswerChange}
-        />
-      )} */}
+      {currentSkillKey === "writing" && (
+        <>
+          <WritingExplain
+            partData={partData}
+            currentSkillKey={currentSkillKey}
+          />
+        </>
+      )}
 
-      {/* {currentSkillKey === "speaking" && (
-        <Speaking
-          partData={partData}
-          currentSkillKey={currentSkillKey}
-          handleAnswerChange={handleAnswerChange}
-        />
-      )} */}
+      {currentSkillKey === "speaking" && (
+        <SpeakingExplain partData={partData} />
+      )}
     </form>
   );
 };

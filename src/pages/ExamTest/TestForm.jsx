@@ -18,6 +18,7 @@ const TestForm = ({
   skillIdCourse,
   categories,
   pageType,
+  courseId,
 }) => {
   const {
     register,
@@ -34,7 +35,8 @@ const TestForm = ({
   const onSubmit = async (data) => {
     setIsSubmitted(true);
     try {
-      const payload = { ...data, classId, lessonId, skillIdCourse };
+      const payload = { ...data, classId, lessonId, skillIdCourse, courseId };
+
       const result = await dispatch(createTest(payload)).unwrap();
 
       setTestInfo(result);

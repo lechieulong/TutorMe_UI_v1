@@ -13,7 +13,7 @@ const AnswerView = ({
   handleAnswerChange,
   userAnswers,
 }) => {
-  console.log("currentSkillKey", currentSkillKey);
+  console.log("hahah");
 
   let skill;
   switch (currentSkillKey) {
@@ -66,6 +66,7 @@ const AnswerView = ({
           sectionType,
           answers: updatedAnswers,
           skillId: currentSkillId,
+          partId: partData.id,
         }
       : undefined;
 
@@ -502,6 +503,7 @@ const AnswerView = ({
       answers: updateAnswer,
       skill: skill,
       skillId: currentSkillId,
+      partId: partData.id,
     };
 
     // Pass the updated answers to the handler

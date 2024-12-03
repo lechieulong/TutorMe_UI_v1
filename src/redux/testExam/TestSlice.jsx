@@ -146,12 +146,16 @@ export const getTesting = createAsyncThunk(
 
 export const getExplainTest = createAsyncThunk(
   `${SLICE_NAMES.TEST}/${ACTIONS.GET_EXPLAIN_TEST}`,
-  async ({ testId, userId, skillId }, { rejectWithValue }) => {
+  async (
+    { testId, userId, skillId, totalPartsSubmit },
+    { rejectWithValue }
+  ) => {
     try {
       const response = await axios.post(`${API_BASE_URL}/test/testExplain`, {
         userId,
         testId,
         skillId,
+        totalPartsSubmit,
       });
       return response.data;
     } catch (error) {
@@ -197,6 +201,28 @@ export const uploadFile = createAsyncThunk(
     }
   }
 );
+
+export const getScriptAudio = createAsyncThunk(
+  `${SLICE_NAMES.TEST}/${ACTIONS.TRANSCRIBE}`,
+  async (fileUrl, { rejectWithValue }) => {
+    try {
+      const token = Cookies.get("authToken");
+
+      const response = await axios.post(`${API_BASE_URL}/transcribe`, fileUrl, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+      });
+      return response.data;
+    } catch (error) {
+      return rejectWithValue(
+        error.response?.data?.message || "Failed to upload file"
+      );
+    }
+  }
+);
+
 export const getResultTest = createAsyncThunk(
   `${SLICE_NAMES.TEST}/${ACTIONS.GET_RESULT_TEST}`,
   async (skillResultIds, { rejectWithValue }) => {

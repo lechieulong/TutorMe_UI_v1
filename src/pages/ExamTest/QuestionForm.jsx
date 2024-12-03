@@ -206,7 +206,7 @@ const QuestionForm = ({
                   sectionType={sectionType}
                 />
               )}
-              {((skill == "Reading" && sectionType == 1) ||
+              {/* {((skill == "Reading" && sectionType == 1) ||
                 sectionType == 2 ||
                 sectionType == 3 ||
                 sectionType == 4 ||
@@ -278,7 +278,7 @@ const QuestionForm = ({
                     )}
                   />
                 </div>
-              )}
+              )} */}
             </>
           ) : (
             <>

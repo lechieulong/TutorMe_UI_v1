@@ -227,7 +227,7 @@ const SectionForm = ({ skill, partIndex, control, setValue }) => {
                 sectionType={0}
               />
             )}
-            {sectionType &&
+            {/* {sectionType &&
               ((skill === "Reading" &&
                 (sectionType == 7 ||
                   sectionType == 8 ||
@@ -306,7 +306,7 @@ const SectionForm = ({ skill, partIndex, control, setValue }) => {
                     )}
                   />
                 </div>
-              )}
+              )} */}
           </div>
         );
       })}

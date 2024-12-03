@@ -21,6 +21,7 @@ const TestLayout = ({ skillsData, practiceTestData, fullTestId }) => {
   const [loading, setLoading] = useState(true);
   const [submitted, setSubmitted] = useState(false);
   const [submitting, setSubmitting] = useState(false);
+  const [totalPartsSubmit, setTotalPartsSubmit] = useState([]);
   const [skillResultIds, setSkillResultIds] = useState([]);
   const [timeTakenData, setTimeTakenData] = useState({
     timeMinutesTaken: 0,
@@ -32,203 +33,6 @@ const TestLayout = ({ skillsData, practiceTestData, fullTestId }) => {
   const timerRef = useRef(null);
 
   const dispatch = useDispatch();
-
-  const handleScoring = async (userAnswers) => {
-    try {
-      const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
-      const prompt = `
-      This is a question: ${userAnswers.questionName}
-      User Answer: ${userAnswers.answers[0].answerText}
-
-      Evaluate the following response based on IELTS Writing Task 2 criteria:
-      - Task Achievement (Score: 0-9)
-      - Coherence and Cohesion (Score: 0-9)
-      - Lexical Resource (Score: 0-9)
-      - Grammatical Range and Accuracy (Score: 0-9)
-    `;
-
-      // Retry mechanism
-      const retryFetchAIResponse = async (retries = 3, delay = 2000) => {
-        let aiResponse = null;
-        let attempt = 0;
-
-        while (attempt < retries) {
-          attempt++;
-          try {
-            console.log(`Attempt ${attempt} to fetch AI response...`);
-            const result = await model.generateContent(prompt);
-            aiResponse =
-              result?.response?.candidates?.[0]?.content?.parts?.[0]?.text;
-
-            if (aiResponse) {
-              console.log("AI Response received successfully.");
-              break;
-            }
-          } catch (error) {
-            console.error(`Attempt ${attempt} failed. Error:`, error);
-          }
-
-          // Wait for a specified delay before the next attempt
-          await new Promise((resolve) => setTimeout(resolve, delay));
-        }
-
-        if (!aiResponse) {
-          throw new Error(
-            "Failed to fetch AI response after multiple attempts."
-          );
-        }
-
-        return aiResponse;
-      };
-
-      const aiResponse = await retryFetchAIResponse();
-
-      // Parse AI Response to get scores
-      const parsedScores = aiResponse.split("\n").reduce((acc, line) => {
-        const trimmedLine = line.trim();
-        const scoreMatch = trimmedLine.match(/\(Score: (\d)/); // Matches a single digit score (0-9)
-        if (scoreMatch) {
-          const score = parseInt(scoreMatch[1], 10);
-          if (trimmedLine.includes("Task Achievement")) {
-            acc.task = score;
-          } else if (trimmedLine.includes("Coherence and Cohesion")) {
-            acc.coherence = score;
-          } else if (trimmedLine.includes("Lexical Resource")) {
-            acc.lexical = score;
-          } else if (trimmedLine.includes("Grammatical Range")) {
-            acc.grammar = score;
-          }
-        }
-        return acc;
-      }, {});
-
-      // Validate that all scores are present
-      const isValidScore = (score) => score !== null && !isNaN(score);
-
-      // Retry if any score is missing or invalid
-      let retries = 0;
-      while (
-        !isValidScore(parsedScores.task) ||
-        !isValidScore(parsedScores.coherence) ||
-        !isValidScore(parsedScores.lexical) ||
-        !isValidScore(parsedScores.grammar)
-      ) {
-        retries++;
-        if (retries > 3) {
-          throw new Error(
-            "Failed to get valid scores after multiple attempts."
-          );
-        }
-
-        console.log("Invalid score detected. Retrying...");
-        const aiResponse = await retryFetchAIResponse();
-        return await handleScoring(userAnswers);
-      }
-
-      return parsedScores;
-    } catch (error) {
-      console.error("Error evaluating scoring:", error);
-      return {
-        task: null,
-        coherence: null,
-        lexical: null,
-        grammar: null,
-      };
-    }
-  };
-
-  const explain = async (userAnswers) => {
-    try {
-      const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
-      const prompt = `
-      This is a question: ${userAnswers.questionName}
-      User Answer: ${userAnswers.answers[0].answerText}
-
-      Evaluate the following response based on IELTS Writing Task criteria:
-      - Task Achievement (Score: 0-9)
-      - Coherence and Cohesion (Score: 0-9)
-      - Lexical Resource (Score: 0-9)
-      - Grammatical Range and Accuracy (Score: 0-9)
-      - Highlight any grammar or syntax issues in the text, and suggest corrections.
-    `;
-
-      // Retry mechanism
-      const retryFetchAIResponse = async (retries = 3, delay = 2000) => {
-        let aiResponse = null;
-        for (let attempt = 1; attempt <= retries; attempt++) {
-          try {
-            console.log(`Attempt ${attempt} to fetch AI response...`);
-            const result = await model.generateContent(prompt);
-            aiResponse = aiResponse =
-              result?.response?.candidates?.[0]?.content?.parts?.[0]?.text;
-
-            if (aiResponse) {
-              console.log("AI Response received successfully.");
-              break; // Exit loop if valid response is received
-            }
-          } catch (error) {
-            console.error(`Attempt ${attempt} failed. Error:`, error);
-          }
-          // Wait for a specified delay before the next attempt
-          await new Promise((resolve) => setTimeout(resolve, delay));
-        }
-        if (!aiResponse) {
-          throw new Error(
-            "Failed to fetch AI response after multiple attempts."
-          );
-        }
-        return aiResponse;
-      };
-
-      const aiResponse = await retryFetchAIResponse();
-
-      // Extract feedback from AI Response
-      const feedback = aiResponse.split("\n").reduce((acc, line) => {
-        const trimmedLine = line.trim();
-        if (trimmedLine && !trimmedLine.includes(":")) {
-          acc += trimmedLine + " ";
-        }
-        return acc;
-      }, "");
-
-      return feedback.trim();
-    } catch (error) {
-      console.error("Error explaining writing:", error);
-      return "An error occurred while explaining the response.";
-    }
-  };
-
-  const evaluateWritingAnswer = async (userAnswers) => {
-    try {
-      const [scores, feedback] = await Promise.all([
-        handleScoring(userAnswers),
-        explain(userAnswers),
-      ]);
-
-      // Calculate overall score
-      const totalScores = Object.values(scores).filter(
-        (score) => score !== null && !isNaN(score)
-      );
-
-      const avgScore =
-        totalScores.length > 0
-          ? (
-              totalScores.reduce((sum, score) => sum + score, 0) /
-              totalScores.length
-            ).toFixed(1)
-          : null;
-      return {
-        overallScore: avgScore,
-        feedBack: feedback,
-      };
-    } catch (error) {
-      console.error("Error evaluating writing:", error);
-      return {
-        overallScore: null,
-        feedBack: "An error occurred while evaluating the response.",
-      };
-    }
-  };
 
   const evaluateSpeakingAnswer = async (userAnswers) => {
     try {
@@ -385,7 +189,6 @@ const TestLayout = ({ skillsData, practiceTestData, fullTestId }) => {
     let totalQuestions = 0;
     currentSkillData.parts.forEach((part) => {
       part.sections.forEach((section) => {
-        // Count all the questions in the section
         totalQuestions += section.questions.length;
       });
     });
@@ -403,17 +206,51 @@ const TestLayout = ({ skillsData, practiceTestData, fullTestId }) => {
     const lastSkillKey = keys[keys.length - 1];
     const firstAnswer = Object.values(userAnswers)[0];
     const { skill } = firstAnswer;
-
+    const parts = currentSkillData.parts.map((p) => p.partNumber);
+    setTotalPartsSubmit(parts);
     switch (skill) {
       case 0:
         setSubmitting(true);
+        const totalQuestionReading = getTotalQuestions(currentSkillData);
+
         dispatch(
           submitAnswerTest({
             userAnswers,
             testId,
             timeMinutesTaken: timeTakenData.timeMinutesTaken,
             timeSecondsTaken: timeTakenData.timeSecondsTaken,
-            totalQuestions: 0,
+            totalQuestions: totalQuestionReading,
+          })
+        ).then((result) => {
+          if (result.meta.requestStatus === "fulfilled") {
+            setSkillResultIds((prev) => [...prev, result.payload.id]);
+          } else {
+            console.error(
+              "Error submitting reading test:",
+              result.error.message
+            );
+          }
+
+          setSubmitting(false);
+          handleNextSkill();
+          setUserAnswers([]);
+          if (lastSkillKey === currentSkillKey) {
+            setSubmitted(true);
+          }
+        });
+
+        break;
+      case 1:
+        setSubmitting(true);
+        const totalQuestions = getTotalQuestions(currentSkillData);
+
+        dispatch(
+          submitAnswerTest({
+            userAnswers,
+            testId,
+            timeMinutesTaken: timeTakenData.timeMinutesTaken,
+            timeSecondsTaken: timeTakenData.timeSecondsTaken,
+            totalQuestions,
           })
         ).then((result) => {
           if (result.meta.requestStatus === "fulfilled") {
@@ -425,41 +262,13 @@ const TestLayout = ({ skillsData, practiceTestData, fullTestId }) => {
             );
           }
           setSubmitting(false);
+          handleNextSkill();
+          setUserAnswers([]);
+          if (lastSkillKey === currentSkillKey) {
+            setSubmitted(true);
+          }
+        });
 
-          setUserAnswers([]);
-          if (lastSkillKey === currentSkillKey) {
-            setSubmitted(true);
-          }
-        });
-        setSubmitting(false);
-        handleNextSkill();
-        break;
-      case 1:
-        setSubmitting(true);
-        dispatch(
-          submitAnswerTest({
-            userAnswers,
-            testId,
-            timeMinutesTaken: timeTakenData.timeMinutesTaken,
-            timeSecondsTaken: timeTakenData.timeSecondsTaken,
-            totalQuestions: 0,
-          })
-        ).then((result) => {
-          if (result.meta.requestStatus === "fulfilled") {
-            setSkillResultIds((prev) => [...prev, result.payload.id]);
-          } else {
-            console.error(
-              "Error submitting reading test:",
-              result.error.message
-            );
-          }
-          setUserAnswers([]);
-          if (lastSkillKey === currentSkillKey) {
-            setSubmitted(true);
-          }
-        });
-        setSubmitting(false);
-        handleNextSkill();
         break;
       case 2:
         setSubmitting(true);
@@ -571,6 +380,7 @@ const TestLayout = ({ skillsData, practiceTestData, fullTestId }) => {
     <>
       {submitted ? (
         <TestExplain
+          totalPartsSubmit={totalPartsSubmit}
           skillResultIds={skillResultIds}
           testId={testId}
           skillId={practiceTestData?.skillId}
@@ -604,7 +414,7 @@ const TestLayout = ({ skillsData, practiceTestData, fullTestId }) => {
             className="bg-warmNeutral rounded-lg shadow-lg p-6 max-w-md mx-auto text-black"
             overlayClassName="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center"
           >
-            <h3>Submitting........</h3>
+            <h3>We are calculate score ... pls wait a little bit </h3>
           </Modal>
         </>
       )}

@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useRef } from "react";
 
 const ParseHtml = ({
   html,
@@ -8,10 +8,13 @@ const ParseHtml = ({
   userAnswers,
   sectionExplain,
 }) => {
+  const inputRefs = useRef([]);
+
   useEffect(() => {
     const inputs = document.querySelectorAll("input[data-question-id]");
+    inputRefs.current = inputs;
 
-    inputs.forEach((input) => {
+    inputs.forEach((input, index) => {
       input.addEventListener("change", () => {
         const questionId = input.getAttribute("data-question-id");
         const value = input.value;
@@ -29,7 +32,7 @@ const ParseHtml = ({
     };
   }, [html, onInputChange, sectionType]);
 
-  let currentCounter = questionCounter++;
+  let currentCounter = questionCounter;
 
   const updatedHtml = html.replace(/<input/g, (match, offset, string) => {
     const questionIdMatch = string
@@ -42,10 +45,8 @@ const ParseHtml = ({
         ? userAnswers[questionId].answers[0].answerText
         : "";
 
-    // Increment the placeholder
     const placeholder = ` ${currentCounter++}`;
 
-    // Return the updated input tag
     return `<input value="${value}" placeholder="${placeholder}" `;
   });
 

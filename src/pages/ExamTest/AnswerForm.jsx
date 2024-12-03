@@ -25,9 +25,8 @@ const AnswerForm = ({
   const isCorrectListening =
     (skill === "Listening" && sectionType === 8) || sectionType === 5;
   const isCorrectReading =
-    (skill === "Reading" && sectionType === 1) ||
-    sectionType === 2 ||
-    sectionType === 3;
+    skill === "Reading" &&
+    (sectionType === 1 || sectionType === 2 || sectionType === 3);
 
   const showIsCorrectAnswer = isCorrectListening || isCorrectReading;
 

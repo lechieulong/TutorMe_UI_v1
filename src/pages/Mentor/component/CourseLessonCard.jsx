@@ -271,6 +271,7 @@ const CourseLessonCard = ({ mentorAndList, coursePartId, isEnrolled }) => {
           lessonId={lessonId}
           courseId={courseId}
           pageType="lesson"
+          testType={1}
           setIsCreateTest={setIsCreateTest}
         />
       )}

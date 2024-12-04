@@ -34,6 +34,23 @@ const TestLayout = ({ skillsData, practiceTestData, fullTestId }) => {
 
   const dispatch = useDispatch();
 
+  useEffect(() => {
+    const handleBeforeUnload = (event) => {
+      // Ngăn reload ngay lập tức
+      event.preventDefault();
+      event.returnValue = ""; // Kích hoạt cảnh báo mặc định của trình duyệt
+
+      return ""; // Duy trì hành vi mặc định
+    };
+
+    window.addEventListener("beforeunload", handleBeforeUnload);
+
+    return () => {
+      // Loại bỏ listener khi component bị unmount
+      window.removeEventListener("beforeunload", handleBeforeUnload);
+    };
+  }, []);
+
   const evaluateSpeakingAnswer = async (userAnswers) => {
     try {
       const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });

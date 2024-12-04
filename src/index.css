@@ -57,13 +57,12 @@ h1 {
   font-size: 3.2em;
   line-height: 1.1;
 }
-
-/* table {
+table {
   width: 100%;
   border-collapse: collapse;
-} */
+}
 
-/* table th,
+table th,
 table td {
   border: 1px solid #ccc;
   padding: 8px;
@@ -72,7 +71,7 @@ table td {
 
 table th {
   background-color: #f9f9f9;
-} */
+}
 
 button {
   border: 1px solid transparent;

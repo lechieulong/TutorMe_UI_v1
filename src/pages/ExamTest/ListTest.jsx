@@ -16,18 +16,16 @@ const ListTest = () => {
 
   // Fetch the tests based on the current page
   useEffect(() => {
+    console.log("hahah");
     const fetchData = async () => {
-      const user = getUser();
-      if (user && user.sub) {
-        const result = await dispatch(fetchTests(user.sub));
-        if (result.payload) {
-          setTests(result.payload); // Store the fetched data in state
-        }
+      const result = await dispatch(fetchTests()); // Assuming fetchTests returns a promise
+      if (result.payload) {
+        setTests(result.payload); // Store the fetched data in state
       }
     };
 
     fetchData();
-  }, [dispatch]);
+  }, []);
 
   // Calculate the tests to display on the current page
   const indexOfLastTest = currentPage * testsPerPage;

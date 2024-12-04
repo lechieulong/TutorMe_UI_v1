@@ -156,14 +156,19 @@ const CreateTest = ({
     }
 
     dispatch(addSkills({ skillsData: data, testId }));
-    toast.success("Skill created successfully!");
 
     if (pageType === "admin") {
       navigate("/admin/app/testsource");
-    } else if (pageType === "class" || pageType === "lesson") {
+    } else if (
+      pageType === "class" ||
+      pageType === "lesson" ||
+      pageType === "finalTest"
+    ) {
       setIsCreateTest(false);
+      toast.success("Skill created successfully!");
     } else {
       navigate("/listTest");
+      toast.success("Skill created successfully!");
     }
   });
 

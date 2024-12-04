@@ -292,20 +292,6 @@ const TestLayout = ({ skillsData, practiceTestData, fullTestId }) => {
 
         (async () => {
           try {
-            // const updatedAnswers = {};
-            // const questionIds = Object.keys(userAnswers);
-
-            // for (const questionId of questionIds) {
-            //   const userAnswer = userAnswers[questionId];
-
-            //   const responseWriting = await evaluateWritingAnswer(userAnswer);
-
-            //   updatedAnswers[questionId] = {
-            //     ...userAnswer,
-            //     explain: responseWriting.feedBack,
-            //     overallScore: responseWriting.overallScore,
-            //   };
-            // }
             const totalQuestions = getTotalQuestions(currentSkillData);
             const result = await dispatch(
               submitAnswerTest({

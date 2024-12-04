@@ -453,12 +453,17 @@ const AnswerViewExplain = ({ partData, currentSkillKey }) => {
                                   className="border border-gray-300 rounded px-2 py-1"
                                 >
                                   <option value="">
-                                    {question.userAnswers[0]?.answerText}
+                                    {/* Find and display the answerText where answer.id matches userAnswer */}
+                                    {question.answers.find(
+                                      (a) =>
+                                        a.id ===
+                                        question.userAnswers[0]?.answerText
+                                    )?.answerText || ""}
                                   </option>
                                 </select>
                               </div>
                             ))}
-                            <p className="text-green-600">
+                            <p className="font-bold">
                               Correct Answers: {question.questionName}
                             </p>
                           </div>

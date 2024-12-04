@@ -422,12 +422,12 @@ export const getAttemptTests = createAsyncThunk(
 // Get question bank base on sectionType
 export const getQuestionsBank = createAsyncThunk(
   `${SLICE_NAMES.TEST}/${ACTIONS.GET_QUESTIONS_BANK}`,
-  async ({ userId, sectionType, page }, { rejectWithValue }) => {
+  async ({ userId, skill, sectionType, page }, { rejectWithValue }) => {
     // Add pageSize with default value
     try {
       const pageSize = 10;
       const response = await axios.get(
-        `${API_BASE_URL}/test/${sectionType}/questionsBank/${userId}`,
+        `${API_BASE_URL}/test/${sectionType}/questionsBank/${userId}/skill/${skill}`,
         {
           params: { page, pageSize }, // Pass both page and pageSize as query parameters
         }

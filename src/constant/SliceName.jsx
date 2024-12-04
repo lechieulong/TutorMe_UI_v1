@@ -83,6 +83,8 @@ export const ACTIONS = {
   //Schedule
   SET_SCHEDULE: "setschedule",
   SET_SCHEDULE_SESSION: "setscheduleSession",
+  GET_IS_BOOKED_SCHEDULE_SESSION: "getisbookedscheduleSessions",
+  GET_SCHEDULE_SESSION: "getscheduleSessions",
   GET_SCHEDULE_7DAYS: "getschedule7days",
   DELETE_SCHEDULE: "deleteschedule",
   UPDATE_SCHEDULE: "updateschedule",

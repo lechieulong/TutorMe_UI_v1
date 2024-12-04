@@ -1,6 +1,16 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
+import { useSelector, useDispatch } from "react-redux";
 
 const TestHistory = () => {
+  const [history, setHistory] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
+  const dispatch = useDispatch();
+  const { user } = useSelector((state) => state.user);
+
+  
   const testHistoryData = [
     {
       id: 1,
@@ -38,7 +48,7 @@ const TestHistory = () => {
   ];
 
   return (
-    <div className="  p-6">
+    <div className="">
       <div className="max-w-4xl mx-auto bg-white shadow-lg rounded-lg">
         <div className="card card-bordered bg-base-100 shadow-xl">
           <header className="card-header bg-accentGreen text-white py-4 px-6 rounded-t-lg">

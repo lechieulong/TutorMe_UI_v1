@@ -108,6 +108,13 @@ const QuestionForm = ({
     skill === "Listening" && (sectionType === 2 || sectionType === 7);
   const showMessageExample = readingMessage || listeningMessage;
 
+  const listeningQB = skill == "Listening" && sectionType == 8;
+  const readingQB =
+    skill == "Reading" &&
+    (sectionType == 1 || sectionType == 2 || sectionType == 3);
+  const showSelectQuestionBank =
+    listeningQB || readingQB || skill === "Writing" || skill == "Speaking";
+
   return (
     <div>
       <h5 className="font-extrabold">
@@ -184,7 +191,7 @@ const QuestionForm = ({
                             ? "Heading"
                             : "Question Name"
                         }
-                        rows={4} // Optionally set a default height
+                        rows={2} // Optionally set a default height
                       />
                       {fieldState.error && (
                         <p className="text-red-500">
@@ -299,18 +306,21 @@ const QuestionForm = ({
           <div className="flex gap-2">
             {!(skill === "Writing" && fields.length > 0) && (
               <>
-                <button
-                  type="button"
-                  onClick={() =>
-                    setShowQuestionCard({ visible: true, sectionType })
-                  }
-                  className="bg-blue-500 text-white p-2 rounded"
-                >
-                  Select Questions
-                  <span className="ml-3">
-                    <FontAwesomeIcon icon={faToggleOn} />
-                  </span>
-                </button>
+                {showSelectQuestionBank && (
+                  <button
+                    type="button"
+                    onClick={() =>
+                      setShowQuestionCard({ visible: true, sectionType })
+                    }
+                    className="bg-blue-500 text-white p-2 rounded"
+                  >
+                    Select Questions
+                    <span className="ml-3">
+                      <FontAwesomeIcon icon={faToggleOn} />
+                    </span>
+                  </button>
+                )}
+
                 <button
                   type="button"
                   onClick={() =>

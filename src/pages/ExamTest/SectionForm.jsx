@@ -33,7 +33,6 @@ const sectionTypesBySkill = {
     { value: 2, label: "Sentence Completion" },
     { value: 3, label: "Summary Completion" },
     { value: 4, label: "Labeling a Diagram/Map/Plan with filling" },
-    { value: 5, label: "Single Choice" },
     { value: 6, label: "Matching Questions" },
     { value: 7, label: "Short Answer Questions" },
 
@@ -79,6 +78,7 @@ const SectionForm = ({ skill, partIndex, control, setValue }) => {
       }
     }
   };
+
   return (
     <div>
       <h4 className="font-medium">Sections</h4>
@@ -181,7 +181,8 @@ const SectionForm = ({ skill, partIndex, control, setValue }) => {
               sectionType ? (
                 <>
                   {(skill === "Reading" &&
-                    (sectionType == 7 ||
+                    (sectionType == 6 ||
+                      sectionType == 7 ||
                       sectionType == 8 ||
                       sectionType == 11 ||
                       sectionType == 9 ||

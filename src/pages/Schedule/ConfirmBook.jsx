@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import MainLayout from "../../layout/MainLayout";
 import { useLocation, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
@@ -28,16 +28,20 @@ function PaymentMethod() {
   }).format(price);
 
   const handleBack = () => {
-    // Navigate back to the previous page
     navigate(-1);
   };
 
   const { user } = useSelector((state) => state.user);
 
+  // State để theo dõi trạng thái loading
+  const [isLoading, setIsLoading] = useState(false);
+
   const handleCheckOut = async (e) => {
     if (status !== 0) {
-      toast.error("This time is not available now. Plese choose other time!");
+      toast.error("This time is not available now. Please choose another time!");
     } else if (await CheckBanlance(price)) {
+      setIsLoading(true);  // Bắt đầu trạng thái loading
+
       await GiveMeMyMoney(
         user.id,
         price * -1,
@@ -48,8 +52,7 @@ function PaymentMethod() {
         price,
         `Your schedule has been booked by ${user.name}`
       );
-      //Xu ly so du, add schedule book session
-      // After successful payment, create the schedule session
+
       try {
         const learnerId = user.id;
         const sessionData = {
@@ -57,24 +60,22 @@ function PaymentMethod() {
           learnerId,
         };
 
-        // Dispatch SetScheduleSession to save the schedule session
         const response = await dispatch(SetScheduleSession(sessionData));
         if (response.payload) {
           toast.success("Session booked successfully!");
-          // Optionally, navigate to a confirmation or session details page
-          navigate("/coachingschedule/bookedschedule"); // Replace with your confirmation route
+          navigate("/coachingschedule/bookedschedule");
         }
       } catch (error) {
         toast.error("Failed to book the session. Please try again.");
+      } finally {
+        setIsLoading(false);  // Kết thúc trạng thái loading
       }
     } else {
-      const userChoice = window.confirm(
-        "Số dư không đủ. Bạn có muốn nạp tiền không?"
-      );
+      const userChoice = window.confirm("Your balance is insufficient. Do you want to top-up?");
       if (userChoice) {
         window.location.href = "/Payment";
       } else {
-        toast.error("Fail to book schedule.");
+        toast.error("Failed to book schedule.");
       }
     }
   };
@@ -85,27 +86,21 @@ function PaymentMethod() {
       <div className="flex flex-col items-center justify-center min-h-screen bg-gray-100">
         <div className="w-full max-w-2xl bg-white shadow-md rounded-md">
           <div className="bg-gray-800 text-white py-4 rounded-t-md">
-            <h2 className="text-lg font-semibold text-center">
-              CHECK INFORMATION
-            </h2>
+            <h2 className="text-lg font-semibold text-center">CHECK INFORMATION</h2>
           </div>
           <div className="p-6 space-y-6">
             <div className="flex justify-center mb-4">
               <label className="flex items-center space-x-2">
-                {/* <input type="radio" name="payment" className="form-radio text-blue-600" defaultChecked />
-                                <span>Pay with Diamond</span> */}
                 <p className="font-mono text-center text-red-500 text-xs mt-1">
-                  This transaction will be kept 15 minutes for you. Please keep
-                  screen on, and process check out.
+                  This transaction will be kept 15 minutes for you. Please keep the screen on and process checkout.
                 </p>
               </label>
             </div>
-            {status === 1 ||
-              (status === 2 && (
-                <p className="font-mono text-red-500 text-xs mt-1">
-                  This schedule is not available now.
-                </p>
-              ))}
+            {status === 1 || (status === 2 && (
+              <p className="font-mono text-red-500 text-xs mt-1">
+                This schedule is not available now.
+              </p>
+            ))}
             <div className="border border-gray-300 p-4 rounded-md space-y-4">
               <div className="flex justify-between">
                 <span className="font-semibold text-gray-700">
@@ -147,6 +142,13 @@ function PaymentMethod() {
           </div>
         </div>
       </div>
+
+      {/* Overlay và vòng tròn chấm xoay */}
+      {isLoading && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="w-16 h-16 border-4 border-t-transparent border-blue-500 rounded-full animate-spin"></div>
+        </div>
+      )}
     </MainLayout>
   );
 }

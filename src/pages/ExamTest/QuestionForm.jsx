@@ -35,8 +35,9 @@ const QuestionForm = ({
 
   const handleAddSelectedQuestions = (questionsFromBank) => {
     const questionsToAdd = questionsFromBank.map((question) => ({
-      questionName: "", // Default value for questionName
-      answers: [], // Default empty array for answers
+      questionName: question.questionName, // Default value for questionName
+      answers: question.answers, // Default empty array for answers
+      explain: "",
       isFromQuestionBank: true, // Mark as from question bank
       questionType: question.questionType, // Retain questionType if needed
       questionId: question.id, // Assuming `id` is the questionId you want to save
@@ -289,13 +290,15 @@ const QuestionForm = ({
             </>
           ) : (
             <>
-              <p>{question.questionName}</p>
-              <p>{question.questionType}</p>
+              <p>
+                <span className="font-bold">Question Name: </span>
+                {question.questionName}
+              </p>
               {question.answers.length > 0 &&
                 question.answers.map((a) => (
-                  <div>
-                    <p>AnswerText: {a.answerText}</p>
-                  </div>
+                  <p key={a.id}>
+                    <span className="font-bold">Answers:</span> {a.answerText}
+                  </p>
                 ))}
             </>
           )}

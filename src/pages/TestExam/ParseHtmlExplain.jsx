@@ -25,13 +25,16 @@ const ParseHtmlExplain = ({
 
       // Return the updated input element with default value and placeholder
       return `
+      <div>
       <div class="input-wrapper">
         ${match.replace(
           ">",
           ` value="${userAnswer}" placeholder="${placeholder}">`
         )}
-        <span class="correct-answer text-green-500">Correct: ${correctAnswer}</span>
       </div>
+        <p  class="correct-answer font-bold"> CorrectAnswers:  ${correctAnswer} </p>
+      </div>
+
     `;
     }
   );

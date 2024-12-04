@@ -51,6 +51,8 @@ export const ACTIONS = {
   CREATE_TEST: "createTest",
   UPDATE_TEST: "updateTest",
   DELETE_TEST: "deleteTest",
+  UPLOAD: "uploadFile",
+  TRANSCRIBE: "transcribe",
 
   IMPORT_QUESTION: "importQuestion",
   DOWNLOAD_TEMPLATE: "downloadTemplate",

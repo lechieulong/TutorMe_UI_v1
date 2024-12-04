@@ -1,15 +1,32 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import AudioPlayer from "./AudioPlayer"; // Adjust the import based on your file structure
 import Writing from "../../components/Test/Part/Writing";
 import Speaking from "../../components/Test/Part/Speaking";
 import MutipleChoiceExplain from "./MutipleChoiceExplain";
 import { GoogleGenerativeAI } from "@google/generative-ai";
 import ParseHtmlExplain from "./ParseHtmlExplain";
+import WritingExplain from "../ExamTest/general/WritingExplain";
+import SpeakingExplain from "../ExamTest/general/SpeakingExplain";
+import { useDispatch } from "react-redux";
+import { getScriptAudio } from "../../redux/testExam/TestSlice";
 
 const genAI = new GoogleGenerativeAI(import.meta.env.VITE_GEN_AI);
 
 const AnswerViewExplain = ({ partData, currentSkillKey }) => {
-  console.log("partData", partData);
+  const [script, setScript] = useState();
+
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    const fetchScript = async () => {
+      const result = await dispatch(getScriptAudio(partData.audio));
+      if (result.payload) {
+        setScript(result.payload.transcription); // Update state with transcription
+      }
+    };
+
+    fetchScript();
+  }, []); // Ensure `partData.audio` is updated or partData is correct
 
   let skill;
   switch (currentSkillKey) {
@@ -69,7 +86,7 @@ const AnswerViewExplain = ({ partData, currentSkillKey }) => {
                     type="radio"
                     name={`question_${question.id}`}
                     value={1} // The value for "True"
-                    checked={question.userAnswers[0].answerText == 1} // Check if isCorrect is 1
+                    checked={question.userAnswers[0]?.answerText == 1} // Check if isCorrect is 1
                     disabled
                     className="h-4 w-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
                   />
@@ -364,6 +381,8 @@ const AnswerViewExplain = ({ partData, currentSkillKey }) => {
       {currentSkillKey === "listening" && (
         <div className="my-4">
           <AudioPlayer src={partData.audio} />
+          <h3 className="text-2xl font-bold">Script audio</h3>
+          <p>{script}</p>
         </div>
       )}
 
@@ -434,12 +453,17 @@ const AnswerViewExplain = ({ partData, currentSkillKey }) => {
                                   className="border border-gray-300 rounded px-2 py-1"
                                 >
                                   <option value="">
-                                    {question.userAnswers[0].answerText}
+                                    {/* Find and display the answerText where answer.id matches userAnswer */}
+                                    {question.answers.find(
+                                      (a) =>
+                                        a.id ===
+                                        question.userAnswers[0]?.answerText
+                                    )?.answerText || ""}
                                   </option>
                                 </select>
                               </div>
                             ))}
-                            <p className="text-green-600">
+                            <p className="font-bold">
                               Correct Answers: {question.questionName}
                             </p>
                           </div>
@@ -493,21 +517,18 @@ const AnswerViewExplain = ({ partData, currentSkillKey }) => {
         </>
       )}
 
-      {/* {currentSkillKey === "writing" && (
-        <Writing
-          partData={partData}
-          currentSkillKey={currentSkillKey}
-          handleAnswerChange={handleAnswerChange}
-        />
-      )} */}
+      {currentSkillKey === "writing" && (
+        <>
+          <WritingExplain
+            partData={partData}
+            currentSkillKey={currentSkillKey}
+          />
+        </>
+      )}
 
-      {/* {currentSkillKey === "speaking" && (
-        <Speaking
-          partData={partData}
-          currentSkillKey={currentSkillKey}
-          handleAnswerChange={handleAnswerChange}
-        />
-      )} */}
+      {currentSkillKey === "speaking" && (
+        <SpeakingExplain partData={partData} />
+      )}
     </form>
   );
 };

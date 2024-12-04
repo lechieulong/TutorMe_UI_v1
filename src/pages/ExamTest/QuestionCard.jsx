@@ -9,6 +9,7 @@ const QuestionCard = ({
   onSelectQuestions,
   disabledQuestions = [],
   sectionType,
+  skill,
 }) => {
   const questionsSelected = useSelector(selectQuestions);
   const [questions, setQuestions] = useState([]);
@@ -26,7 +27,7 @@ const QuestionCard = ({
     setIsLoading(true);
     try {
       const fetchedQuestions = await dispatch(
-        getQuestionsBank({ userId: user.id, sectionType, page })
+        getQuestionsBank({ userId: user.id, skill, sectionType, page })
       ).unwrap();
 
       if (fetchedQuestions.length > 0) {

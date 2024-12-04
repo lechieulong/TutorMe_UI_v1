@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useRef } from "react";
 
 const ParseHtml = ({
   html,
@@ -8,48 +8,57 @@ const ParseHtml = ({
   userAnswers,
   sectionExplain,
 }) => {
+  const containerRef = useRef();
+
+  // Function to handle input changes
+  const test = (event) => {
+    const input = event.target;
+    const questionId = input.getAttribute("data-question-id");
+    const value = input.value;
+
+    if (questionId) {
+      onInputChange(questionId, value, sectionType);
+    }
+  };
+
+  // Update the HTML with the correct values and placeholders
+  const updatedHtml = html.replace(/<input[^>]*>/g, (match) => {
+    // Giữ lại các thuộc tính cần thiết
+    const valueMatch = match.match(/value="([^"]*)"/);
+    const placeholderMatch = match.match(/placeholder="([^"]*)"/);
+    const dataQuestionIdMatch = match.match(/data-question-id="([^"]*)"/);
+
+    const value = valueMatch ? `value="${valueMatch[1]}"` : "";
+    const placeholder = placeholderMatch
+      ? `placeholder="${placeholderMatch[1]}"`
+      : "";
+    const dataQuestionId = dataQuestionIdMatch
+      ? `data-question-id="${dataQuestionIdMatch[1]}"`
+      : "";
+
+    // Tạo lại thẻ input với chỉ các thuộc tính cần thiết
+    return `<input ${value} ${placeholder} ${dataQuestionId} />`;
+  });
+
+  // After the component mounts, attach event listeners to the dynamically generated inputs
   useEffect(() => {
-    const inputs = document.querySelectorAll("input[data-question-id]");
+    const container = containerRef.current;
 
+    const inputs = container.querySelectorAll("input");
     inputs.forEach((input) => {
-      input.addEventListener("change", () => {
-        const questionId = input.getAttribute("data-question-id");
-        const value = input.value;
-
-        if (questionId) {
-          onInputChange(questionId, value, sectionType);
-        }
-      });
+      input.addEventListener("change", test);
     });
 
     return () => {
       inputs.forEach((input) => {
-        input.removeEventListener("change", () => {});
+        input.removeEventListener("change", test);
       });
     };
-  }, [html, onInputChange, sectionType]);
+  }, [html, userAnswers, sectionType]);
 
-  let currentCounter = questionCounter++;
-
-  const updatedHtml = html.replace(/<input/g, (match, offset, string) => {
-    const questionIdMatch = string
-      .slice(offset)
-      .match(/data-question-id="([^"]+)"/);
-    const questionId = questionIdMatch ? questionIdMatch[1] : null;
-
-    const value =
-      questionId && userAnswers[questionId]
-        ? userAnswers[questionId].answers[0].answerText
-        : "";
-
-    // Increment the placeholder
-    const placeholder = ` ${currentCounter++}`;
-
-    // Return the updated input tag
-    return `<input value="${value}" placeholder="${placeholder}" `;
-  });
-
-  return <div dangerouslySetInnerHTML={{ __html: updatedHtml }} />;
+  return (
+    <div ref={containerRef} dangerouslySetInnerHTML={{ __html: updatedHtml }} />
+  );
 };
 
 export default ParseHtml;

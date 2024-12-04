@@ -1,20 +1,28 @@
 import React, { useState } from "react";
 import { useForm } from "react-hook-form";
-import TestFormDetail from "./TestFormDetail";
-import PreviewTest from "./PreviewTest";
-import { Link, useNavigate } from "react-router-dom";
-
 import { useDispatch } from "react-redux";
 import { addSkills } from "../../redux/testExam/TestSlice";
+import { useNavigate } from "react-router-dom";
+import TestFormDetail from "./TestFormDetail";
+import PreviewTest from "./PreviewTest";
+import Modal from "react-modal"; // Import react-modal
+import { toast } from "react-toastify";
 
-const CreateTest = ({ testId, skills, pageType }) => {
+const CreateTest = ({
+  testId,
+  skills,
+  pageType,
+  courseId,
+  classId,
+  setIsCreateTest,
+}) => {
   const navigate = useNavigate();
-
   const { control, resetField, handleSubmit, setValue, getValues } = useForm();
-
   const [activeStep, setActiveStep] = useState(0);
   const [formData, setFormData] = useState(null);
   const [selectedSkills, setSelectedSkills] = useState([]);
+  const [modalIsOpen, setModalIsOpen] = useState(false); // To manage modal state
+  const [validationErrors, setValidationErrors] = useState([]); // Store validation errors
   const dispatch = useDispatch();
 
   const steps = [
@@ -31,67 +39,90 @@ const CreateTest = ({ testId, skills, pageType }) => {
         />
       ),
     },
-    // {
-    //   label: "Preview",
-    //   content: <PreviewTest data={formData} />,
-    // },
   ];
+  const validateFormData = (data) => {
+    const errors = [];
 
-  const handleFinish = () => {
-    if (formData) {
-      console.log("formData", formData);
+    console.log("Data", data);
 
-      // dispatch(addSkills({ skillsData: formData, testId }));
-      //   if (pageType == "admin") navigate("/admin/app");
-      //   else if (pageType == "lesson") navigate("");
-      //   else navigate("/");
-      // } else {
-      //   alert("Please fill out the form before finishing.");
-      // }
+    if (!data || !data.skills) {
+      errors.push("The data structure is missing or skills are undefined.");
+      return { isValid: false, errors };
     }
-  };
 
-  const onSubmit = (data) => {
-    setFormData(data);
-  };
+    Object.entries(data.skills).forEach(([skillName, skillData]) => {
+      // Skip if skillData is undefined
+      if (!skillData) return;
 
-  const validateFormData = () => {
-    const hasValidData = selectedSkills.every((skill) => {
-      const skillData = formData.skills[skill];
-      console.log(skillData);
+      if (!skillData.parts || skillData.parts.length === 0) {
+        errors.push(`Skill '${skillName}' must have at least one part.`);
+        return;
+      }
 
-      const hasParts =
-        skillData && skillData.parts && skillData.parts.length > 0;
-      if (!hasParts) return false;
+      skillData.parts.forEach((part, partIndex) => {
+        // Skip if part is undefined
+        if (!part) return;
 
-      // Ensure each part has at least one section
-      const hasSections = skillData.parts.every(
-        (part) => part.sections && part.sections.length > 0
-      );
-      if (!hasSections) return false;
+        if (!part.sections || part.sections.length === 0) {
+          errors.push(
+            `Skill '${skillName}', Part ${
+              partIndex + 1
+            } must have at least one section.`
+          );
+          return;
+        }
 
-      // Ensure each section has at least one question
-      // const hasQuestions = skillData.parts.every((part) =>
-      //   part.sections.every(
-      //     (section) => section.questions && section.questions.length > 0
-      //   )
-      // );
-      // if (!hasQuestions) return false;
+        part.sections.forEach((section, sectionIndex) => {
+          // Skip if section is undefined
+          if (!section) return;
 
-      // // Ensure each question has at least one answer
-      // const hasAnswers = skillData.parts.every((part) =>
-      //   part.sections.every((section) =>
-      //     section.questions.every(
-      //       (question) => question.answers && question.answers.length > 0
-      //     )
-      //   )
-      // );
-      // if (!hasAnswers) return false;
+          // Check for specific validations based on skill type and sectionType
+          if (
+            (skillData.type === 1 && // Listening
+              [1, 2, 3, 4, 7].includes(section.sectionType)) ||
+            (skillData.type === 0 && // Reading
+              [7, 8, 9, 10, 11].includes(section.sectionType))
+          ) {
+            // Validate sectionContext for specific section types
+            if (
+              !section.sectionContext ||
+              section.sectionContext.trim() === ""
+            ) {
+              errors.push(
+                `Skill '${skillName}', Part ${partIndex + 1}, Section ${
+                  sectionIndex + 1
+                } requires a sectionContext for sectionType ${
+                  section.sectionType
+                }.`
+              );
+            }
 
-      return true; // If all conditions are met, return true
+            // Validate questions for required answers
+            if (
+              section.questions.length === 0 ||
+              section.questions.some((q) => !q.answer || q.answer.trim() === "")
+            ) {
+              errors.push(
+                `Skill '${skillName}', Part ${partIndex + 1}, Section ${
+                  sectionIndex + 1
+                } must have questions with answers.`
+              );
+            }
+          } else {
+            // For other section types, validate at least one question
+            if (!section.questions || section.questions.length === 0) {
+              errors.push(
+                `Skill '${skillName}', Part ${partIndex + 1}, Section ${
+                  sectionIndex + 1
+                } must have at least one question.`
+              );
+            }
+          }
+        });
+      });
     });
 
-    return hasValidData;
+    return { isValid: errors.length === 0, errors };
   };
 
   const handleNext = () => {
@@ -101,15 +132,55 @@ const CreateTest = ({ testId, skills, pageType }) => {
     }
 
     handleSubmit((data) => {
-      setFormData(data); // Update formData
-      setActiveStep((prev) => Math.min(prev + 1, steps.length - 1)); // Move to next step
+      setFormData(data);
+
+      const { isValid, errors } = validateFormData(data);
+      if (!isValid) {
+        setValidationErrors(errors); // Set validation errors for modal
+        setModalIsOpen(true); // Open modal
+        return;
+      }
+
+      setActiveStep((prev) => Math.min(prev + 1, steps.length - 1));
     })();
   };
 
+  const handleFinish = handleSubmit((data) => {
+    setFormData(data);
+
+    const { isValid, errors } = validateFormData(data);
+    if (!isValid) {
+      setValidationErrors(errors); // Set validation errors for modal
+      setModalIsOpen(true); // Open modal
+      return;
+    }
+
+    dispatch(addSkills({ skillsData: data, testId }));
+
+    if (pageType === "admin") {
+      navigate("/admin/app/testsource");
+    } else if (
+      pageType === "class" ||
+      pageType === "lesson" ||
+      pageType === "finalTest"
+    ) {
+      setIsCreateTest(false);
+      toast.success("Skill created successfully!");
+    } else {
+      navigate("/listTest");
+      toast.success("Skill created successfully!");
+    }
+  });
+
+  // Close the modal
+  const closeModal = () => {
+    setModalIsOpen(false);
+  };
+
   return (
-    <form onSubmit={handleSubmit(onSubmit)}>
-      <div className="mt-16 ">
-        <div className="">
+    <>
+      <form onSubmit={handleFinish}>
+        <div className="mt-16">
           <ul className="relative flex flex-row justify-between gap-x-2">
             {steps.map((step, index) => (
               <div
@@ -136,57 +207,70 @@ const CreateTest = ({ testId, skills, pageType }) => {
               </div>
             ))}
           </ul>
+
+          <div>{steps[activeStep].content}</div>
+
+          <div className="flex justify-around mt-4">
+            <button
+              type="button"
+              className={`py-2 px-4 rounded bg-gray-200 text-gray-600 ${
+                activeStep === 0 ? "opacity-50 cursor-not-allowed" : ""
+              }`}
+              onClick={() => setActiveStep((prev) => Math.max(prev - 1, 0))}
+              disabled={activeStep === 0}
+            >
+              Previous
+            </button>
+
+            {activeStep < steps.length - 1 && (
+              <button
+                type="button"
+                className="py-2 px-4 rounded bg-green-500 text-white"
+                onClick={handleNext}
+                disabled={selectedSkills.length === 0}
+              >
+                Next
+              </button>
+            )}
+
+            {activeStep === steps.length - 1 && (
+              <button
+                type="submit"
+                className="py-2 px-4 rounded bg-green-500 text-white"
+              >
+                Finish
+              </button>
+            )}
+          </div>
+        </div>
+      </form>
+
+      {/* Modal for validation errors */}
+      <Modal
+        isOpen={modalIsOpen}
+        onRequestClose={closeModal}
+        contentLabel="Validation Errors"
+        ariaHideApp={false}
+        className="bg-white p-4 rounded shadow-lg w-1/2 mx-auto"
+        overlayClassName="fixed inset-0 bg-gray-500 bg-opacity-50 flex justify-center items-center"
+      >
+        <div className="flex justify-between items-center">
+          <h2 className="text-xl font-semibold ">Validation Errors</h2>
+          <button
+            onClick={closeModal}
+            className="mt-4 py-2 px-4 bg-red-500 text-white rounded"
+          >
+            Close
+          </button>
         </div>
 
-        <div>{steps[activeStep].content}</div>
-
-        <div className="flex justify-around">
-          <button
-            className={`py-2 px-4 rounded bg-gray-200 text-gray-600 ${
-              activeStep === 0 ? "opacity-50 cursor-not-allowed" : ""
-            }`}
-            onClick={() => setActiveStep((prev) => Math.max(prev - 1, 0))}
-            disabled={activeStep === 0}
-          >
-            Previous
-          </button>
-          <button
-            type="button"
-            className={`py-2 px-4 rounded bg-green-500 text-white ${
-              activeStep === steps.length - 1 || selectedSkills.length === 0
-                ? "hidden"
-                : ""
-            }`}
-            onClick={handleNext} // Validate and go to next step
-            disabled={selectedSkills.length === 0} // Disable if no skills selected
-          >
-            Next
-          </button>
-
-          <button
-            className={`py-2 px-4 rounded bg-green-500 text-white ${
-              activeStep !== steps.length - 1 ? "hidden" : ""
-            }`}
-            onClick={handleSubmit((data) => {
-              console.log("Form Data Submitted:", data); // Log form data
-              setFormData(data); // Update formData
-              dispatch(addSkills({ skillsData: data, testId })); // Dispatch action with current data
-              if (pageType == "admin") {
-                navigate("/admin/app/testsource");
-              } else if (pageType == "lesson") {
-                console.log("Navigating to lesson"); // Log navigation
-                navigate("");
-              } else {
-                console.log("Navigating to home"); // Log navigation
-                navigate("/");
-              }
-            })}
-          >
-            Finish
-          </button>
-        </div>
-      </div>
-    </form>
+        <ul className="mt-2 text-red-500">
+          {validationErrors.map((error, index) => (
+            <li key={index}>{error}</li>
+          ))}
+        </ul>
+      </Modal>
+    </>
   );
 };
 

@@ -13,7 +13,7 @@ const AnswerView = ({
   handleAnswerChange,
   userAnswers,
 }) => {
-  console.log("currentSkillKey", currentSkillKey);
+  console.log("hahah");
 
   let skill;
   switch (currentSkillKey) {
@@ -66,6 +66,7 @@ const AnswerView = ({
           sectionType,
           answers: updatedAnswers,
           skillId: currentSkillId,
+          partId: partData.id,
         }
       : undefined;
 
@@ -502,6 +503,7 @@ const AnswerView = ({
       answers: updateAnswer,
       skill: skill,
       skillId: currentSkillId,
+      partId: partData.id,
     };
 
     // Pass the updated answers to the handler
@@ -537,9 +539,9 @@ const AnswerView = ({
                 )}
 
                 <div className="bg-gray-50 p-4 rounded-md shadow-sm">
-                  {(skill === 0 && section.sectionType === 4) ||
-                  section.sectionType === 5 ||
-                  section.sectionType === 6 ? (
+                  {(skill === 0 &&
+                    (section.sectionType === 4 || section.sectionType === 5)) ||
+                  (skill === 1 && section.sectionType == 6) ? (
                     <>
                       <table className="min-w-full border border-gray-300">
                         <thead>

@@ -35,8 +35,9 @@ const QuestionForm = ({
 
   const handleAddSelectedQuestions = (questionsFromBank) => {
     const questionsToAdd = questionsFromBank.map((question) => ({
-      questionName: "", // Default value for questionName
-      answers: [], // Default empty array for answers
+      questionName: question.questionName, // Default value for questionName
+      answers: question.answers, // Default empty array for answers
+      explain: "",
       isFromQuestionBank: true, // Mark as from question bank
       questionType: question.questionType, // Retain questionType if needed
       questionId: question.id, // Assuming `id` is the questionId you want to save
@@ -107,6 +108,13 @@ const QuestionForm = ({
   const listeningMessage =
     skill === "Listening" && (sectionType === 2 || sectionType === 7);
   const showMessageExample = readingMessage || listeningMessage;
+
+  const listeningQB = skill == "Listening" && sectionType == 8;
+  const readingQB =
+    skill == "Reading" &&
+    (sectionType == 1 || sectionType == 2 || sectionType == 3);
+  const showSelectQuestionBank =
+    listeningQB || readingQB || skill === "Writing" || skill == "Speaking";
 
   return (
     <div>
@@ -184,7 +192,7 @@ const QuestionForm = ({
                             ? "Heading"
                             : "Question Name"
                         }
-                        rows={4} // Optionally set a default height
+                        rows={2} // Optionally set a default height
                       />
                       {fieldState.error && (
                         <p className="text-red-500">
@@ -206,7 +214,7 @@ const QuestionForm = ({
                   sectionType={sectionType}
                 />
               )}
-              {((skill == "Reading" && sectionType == 1) ||
+              {/* {((skill == "Reading" && sectionType == 1) ||
                 sectionType == 2 ||
                 sectionType == 3 ||
                 sectionType == 4 ||
@@ -219,7 +227,6 @@ const QuestionForm = ({
                   <Controller
                     name={`skills.${skill}.parts.${partIndex}.sections.${sectionIndex}.questions.${index}.explain`}
                     control={control}
-                    rules={{ required: "Section context is required" }} // Add validation
                     render={({ field, fieldState }) => (
                       <div className="mb-2">
                         <label className="block text-gray-700 font-medium mb-2">
@@ -279,17 +286,19 @@ const QuestionForm = ({
                     )}
                   />
                 </div>
-              )}
+              )} */}
             </>
           ) : (
             <>
-              <p>{question.questionName}</p>
-              <p>{question.questionType}</p>
+              <p>
+                <span className="font-bold">Question Name: </span>
+                {question.questionName}
+              </p>
               {question.answers.length > 0 &&
                 question.answers.map((a) => (
-                  <div>
-                    <p>AnswerText: {a.answerText}</p>
-                  </div>
+                  <p key={a.id}>
+                    <span className="font-bold">Answers:</span> {a.answerText}
+                  </p>
                 ))}
             </>
           )}
@@ -300,18 +309,21 @@ const QuestionForm = ({
           <div className="flex gap-2">
             {!(skill === "Writing" && fields.length > 0) && (
               <>
-                <button
-                  type="button"
-                  onClick={() =>
-                    setShowQuestionCard({ visible: true, sectionType })
-                  }
-                  className="bg-blue-500 text-white p-2 rounded"
-                >
-                  Select Questions
-                  <span className="ml-3">
-                    <FontAwesomeIcon icon={faToggleOn} />
-                  </span>
-                </button>
+                {showSelectQuestionBank && (
+                  <button
+                    type="button"
+                    onClick={() =>
+                      setShowQuestionCard({ visible: true, sectionType })
+                    }
+                    className="bg-blue-500 text-white p-2 rounded"
+                  >
+                    Select Questions
+                    <span className="ml-3">
+                      <FontAwesomeIcon icon={faToggleOn} />
+                    </span>
+                  </button>
+                )}
+
                 <button
                   type="button"
                   onClick={() =>

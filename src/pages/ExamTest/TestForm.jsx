@@ -12,7 +12,16 @@ import { toast } from "react-toastify";
 import CreateTest from "./CreateTest";
 import TestInfoCard from "./general/TestInfoCard";
 
-const TestForm = ({ classId, lessonId, categories, pageType }) => {
+const TestForm = ({
+  classId,
+  lessonId,
+  skillIdCourse,
+  categories,
+  pageType,
+  courseId,
+  setIsCreateTest,
+  testType,
+}) => {
   const {
     register,
     handleSubmit,
@@ -28,11 +37,17 @@ const TestForm = ({ classId, lessonId, categories, pageType }) => {
   const onSubmit = async (data) => {
     setIsSubmitted(true);
     try {
-      const payload = { ...data, classId, lessonId };
-      const result = await dispatch(createTest(payload)).unwrap();
+      const payload = {
+        ...data,
+        classId,
+        lessonId,
+        skillIdCourse,
+        courseId,
+        testType,
+      };
 
+      const result = await dispatch(createTest(payload)).unwrap();
       setTestInfo(result);
-      toast.success("Test created successfully!");
     } catch (error) {
       console.error("Submission failed:", error);
       toast.error("Failed to create test. Please try again.");
@@ -53,9 +68,12 @@ const TestForm = ({ classId, lessonId, categories, pageType }) => {
           />
         ) : (
           <CreateTest
+            courseId={courseId}
             skills={categories}
             testId={testInfo?.id}
             pageType={pageType}
+            classId={classId}
+            setIsCreateTest={setIsCreateTest}
           />
         )
       ) : (
@@ -88,7 +106,7 @@ const TestForm = ({ classId, lessonId, categories, pageType }) => {
           </div>
 
           {/* Test Type */}
-          <div className="relative mt-4">
+          {/* <div className="relative mt-4">
             <label className="block text-sm font-semibold text-gray-700">
               Test Type
             </label>
@@ -111,7 +129,7 @@ const TestForm = ({ classId, lessonId, categories, pageType }) => {
                 {errors.testType.message}
               </span>
             )}
-          </div>
+          </div> */}
 
           {/* Start Time */}
           <div className="relative">

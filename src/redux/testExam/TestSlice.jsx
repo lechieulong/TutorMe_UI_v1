@@ -8,12 +8,14 @@ const API_BASE_URL = "https://localhost:7030/api";
 
 export const fetchTests = createAsyncThunk(
   `${SLICE_NAMES.TEST}/${ACTIONS.FETCH_TESTS}`,
-  async (userId, { rejectWithValue }) => {
+  async (_, { rejectWithValue }) => {
+    // No need for the destructuring of the first argument
     try {
-      const response = await axios.get(`${API_BASE_URL}/test/${userId}`);
-
+      const response = await axios.get(`${API_BASE_URL}/test/admintests`);
+      console.log("vcl"); // Verify the response is received here
       return response.data;
     } catch (error) {
+      console.error("Error fetching tests:", error); // Log errors if any
       return rejectWithValue(
         error.response?.data?.message || "Failed to fetch tests"
       );
@@ -146,12 +148,16 @@ export const getTesting = createAsyncThunk(
 
 export const getExplainTest = createAsyncThunk(
   `${SLICE_NAMES.TEST}/${ACTIONS.GET_EXPLAIN_TEST}`,
-  async ({ testId, userId, skillId }, { rejectWithValue }) => {
+  async (
+    { testId, userId, skillId, totalPartsSubmit },
+    { rejectWithValue }
+  ) => {
     try {
       const response = await axios.post(`${API_BASE_URL}/test/testExplain`, {
         userId,
         testId,
         skillId,
+        totalPartsSubmit,
       });
       return response.data;
     } catch (error) {
@@ -197,6 +203,28 @@ export const uploadFile = createAsyncThunk(
     }
   }
 );
+
+export const getScriptAudio = createAsyncThunk(
+  `${SLICE_NAMES.TEST}/${ACTIONS.TRANSCRIBE}`,
+  async (fileUrl, { rejectWithValue }) => {
+    try {
+      const token = Cookies.get("authToken");
+
+      const response = await axios.post(`${API_BASE_URL}/transcribe`, fileUrl, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+      });
+      return response.data;
+    } catch (error) {
+      return rejectWithValue(
+        error.response?.data?.message || "Failed to upload file"
+      );
+    }
+  }
+);
+
 export const getResultTest = createAsyncThunk(
   `${SLICE_NAMES.TEST}/${ACTIONS.GET_RESULT_TEST}`,
   async (skillResultIds, { rejectWithValue }) => {
@@ -394,12 +422,12 @@ export const getAttemptTests = createAsyncThunk(
 // Get question bank base on sectionType
 export const getQuestionsBank = createAsyncThunk(
   `${SLICE_NAMES.TEST}/${ACTIONS.GET_QUESTIONS_BANK}`,
-  async ({ userId, sectionType, page }, { rejectWithValue }) => {
+  async ({ userId, skill, sectionType, page }, { rejectWithValue }) => {
     // Add pageSize with default value
     try {
       const pageSize = 10;
       const response = await axios.get(
-        `${API_BASE_URL}/test/${sectionType}/questionsBank/${userId}`,
+        `${API_BASE_URL}/test/${sectionType}/questionsBank/${userId}/skill/${skill}`,
         {
           params: { page, pageSize }, // Pass both page and pageSize as query parameters
         }

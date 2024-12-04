@@ -111,7 +111,10 @@ const PartForm = ({ skill, control, setValue }) => {
               <Controller
                 name={`skills.${skill}.parts.${index}.audio`}
                 control={control}
-                render={({ field }) => (
+                rules={{
+                  required: "Audio file is required", // Validation rule
+                }}
+                render={({ field, fieldState }) => (
                   <div className="mb-2">
                     <label className="block text-gray-700 font-medium mb-2">
                       <span className="mr-3">
@@ -128,6 +131,13 @@ const PartForm = ({ skill, control, setValue }) => {
                     {field.value && (
                       <p className="text-gray-700">
                         Audio file: {field.value.name}
+                      </p>
+                    )}
+
+                    {/* Display error message if the field is invalid */}
+                    {fieldState?.invalid && (
+                      <p className="text-red-500 text-sm mt-1">
+                        {fieldState?.error?.message}
                       </p>
                     )}
                   </div>

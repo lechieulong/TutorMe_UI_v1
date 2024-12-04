@@ -22,7 +22,7 @@ import {
   faMicrophone,
 } from "@fortawesome/free-solid-svg-icons";
 
-const TestExplain = ({ skillResultIds, testId, skillId }) => {
+const TestExplain = ({ totalPartsSubmit, skillResultIds, testId, skillId }) => {
   const [currentSkillIndex, setCurrentSkillIndex] = useState(0); // Track the current skill index
   const [testData, setTestData] = useState({}); // Initialize as an empty object
   const [loading, setLoading] = useState(true);
@@ -106,6 +106,7 @@ const TestExplain = ({ skillResultIds, testId, skillId }) => {
           testId,
           userId: user.id,
           skillId: skillId || null, // Ensure null is passed if skillId is undefined
+          totalPartsSubmit,
         })
       );
 
@@ -270,11 +271,6 @@ const TestExplain = ({ skillResultIds, testId, skillId }) => {
             </div>
           )}
         </div>
-      </div>
-
-      <div className="mt-20 p-10">
-        <h3>Related Test</h3>
-        <div className="h-[200px]"></div>
       </div>
     </MainLayout>
   );

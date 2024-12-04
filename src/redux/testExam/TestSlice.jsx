@@ -8,12 +8,14 @@ const API_BASE_URL = "https://localhost:7030/api";
 
 export const fetchTests = createAsyncThunk(
   `${SLICE_NAMES.TEST}/${ACTIONS.FETCH_TESTS}`,
-  async (userId, { rejectWithValue }) => {
+  async (_, { rejectWithValue }) => {
+    // No need for the destructuring of the first argument
     try {
-      const response = await axios.get(`${API_BASE_URL}/test/${userId}`);
-
+      const response = await axios.get(`${API_BASE_URL}/test/admintests`);
+      console.log("vcl"); // Verify the response is received here
       return response.data;
     } catch (error) {
+      console.error("Error fetching tests:", error); // Log errors if any
       return rejectWithValue(
         error.response?.data?.message || "Failed to fetch tests"
       );

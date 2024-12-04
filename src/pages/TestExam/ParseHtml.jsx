@@ -22,20 +22,22 @@ const ParseHtml = ({
   };
 
   // Update the HTML with the correct values and placeholders
-  const updatedHtml = html.replace(/<input/g, (match, offset, string) => {
-    const questionIdMatch = string
-      .slice(offset)
-      .match(/data-question-id="([^"]+)"/);
-    const questionId = questionIdMatch ? questionIdMatch[1] : null;
+  const updatedHtml = html.replace(/<input[^>]*>/g, (match) => {
+    // Giữ lại các thuộc tính cần thiết
+    const valueMatch = match.match(/value="([^"]*)"/);
+    const placeholderMatch = match.match(/placeholder="([^"]*)"/);
+    const dataQuestionIdMatch = match.match(/data-question-id="([^"]*)"/);
 
-    const value =
-      questionId && userAnswers[questionId]
-        ? userAnswers[questionId].answers[0].answerText
-        : "";
+    const value = valueMatch ? `value="${valueMatch[1]}"` : "";
+    const placeholder = placeholderMatch
+      ? `placeholder="${placeholderMatch[1]}"`
+      : "";
+    const dataQuestionId = dataQuestionIdMatch
+      ? `data-question-id="${dataQuestionIdMatch[1]}"`
+      : "";
 
-    const placeholder = ` ${questionCounter++}`;
-
-    return `<input value="${value}" placeholder="${placeholder}" data-question-id="${questionId}" />`;
+    // Tạo lại thẻ input với chỉ các thuộc tính cần thiết
+    return `<input ${value} ${placeholder} ${dataQuestionId} />`;
   });
 
   // After the component mounts, attach event listeners to the dynamically generated inputs

@@ -149,6 +149,7 @@ const ClassDetail = () => {
               pageType={"class"}
               courseId={courseId}
               setIsCreateTest={setIsCreateTest}
+              testType={2}
             />
           ) : (
             <div className="flex-1 p-4">

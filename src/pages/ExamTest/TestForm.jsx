@@ -20,6 +20,7 @@ const TestForm = ({
   pageType,
   courseId,
   setIsCreateTest,
+  testType,
 }) => {
   const {
     register,
@@ -36,7 +37,14 @@ const TestForm = ({
   const onSubmit = async (data) => {
     setIsSubmitted(true);
     try {
-      const payload = { ...data, classId, lessonId, skillIdCourse, courseId };
+      const payload = {
+        ...data,
+        classId,
+        lessonId,
+        skillIdCourse,
+        courseId,
+        testType,
+      };
 
       const result = await dispatch(createTest(payload)).unwrap();
       setTestInfo(result);
@@ -98,7 +106,7 @@ const TestForm = ({
           </div>
 
           {/* Test Type */}
-          <div className="relative mt-4">
+          {/* <div className="relative mt-4">
             <label className="block text-sm font-semibold text-gray-700">
               Test Type
             </label>
@@ -121,7 +129,7 @@ const TestForm = ({
                 {errors.testType.message}
               </span>
             )}
-          </div>
+          </div> */}
 
           {/* Start Time */}
           <div className="relative">

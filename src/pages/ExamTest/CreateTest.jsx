@@ -160,8 +160,10 @@ const CreateTest = ({
 
     if (pageType === "admin") {
       navigate("/admin/app/testsource");
-    } else {
+    } else if (pageType === "class" || pageType === "lesson") {
       setIsCreateTest(false);
+    } else {
+      navigate("/listTest");
     }
   });
 

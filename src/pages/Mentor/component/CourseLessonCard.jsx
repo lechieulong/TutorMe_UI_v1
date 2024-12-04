@@ -270,6 +270,8 @@ const CourseLessonCard = ({ mentorAndList, coursePartId, isEnrolled }) => {
           categories={categories}
           lessonId={lessonId}
           courseId={courseId}
+          pageType="lesson"
+          setIsCreateTest={setIsCreateTest}
         />
       )}
 

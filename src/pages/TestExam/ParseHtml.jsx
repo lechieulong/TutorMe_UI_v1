@@ -8,32 +8,20 @@ const ParseHtml = ({
   userAnswers,
   sectionExplain,
 }) => {
-  const inputRefs = useRef([]);
+  const containerRef = useRef();
 
-  useEffect(() => {
-    const inputs = document.querySelectorAll("input[data-question-id]");
-    inputRefs.current = inputs;
+  // Function to handle input changes
+  const test = (event) => {
+    const input = event.target;
+    const questionId = input.getAttribute("data-question-id");
+    const value = input.value;
 
-    inputs.forEach((input, index) => {
-      input.addEventListener("change", () => {
-        const questionId = input.getAttribute("data-question-id");
-        const value = input.value;
+    if (questionId) {
+      onInputChange(questionId, value, sectionType);
+    }
+  };
 
-        if (questionId) {
-          onInputChange(questionId, value, sectionType);
-        }
-      });
-    });
-
-    return () => {
-      inputs.forEach((input) => {
-        input.removeEventListener("change", () => {});
-      });
-    };
-  }, [html, onInputChange, sectionType]);
-
-  let currentCounter = questionCounter;
-
+  // Update the HTML with the correct values and placeholders
   const updatedHtml = html.replace(/<input/g, (match, offset, string) => {
     const questionIdMatch = string
       .slice(offset)
@@ -45,12 +33,30 @@ const ParseHtml = ({
         ? userAnswers[questionId].answers[0].answerText
         : "";
 
-    const placeholder = ` ${currentCounter++}`;
+    const placeholder = ` ${questionCounter++}`;
 
-    return `<input value="${value}" placeholder="${placeholder}" `;
+    return `<input value="${value}" placeholder="${placeholder}" data-question-id="${questionId}" />`;
   });
 
-  return <div dangerouslySetInnerHTML={{ __html: updatedHtml }} />;
+  // After the component mounts, attach event listeners to the dynamically generated inputs
+  useEffect(() => {
+    const container = containerRef.current;
+
+    const inputs = container.querySelectorAll("input");
+    inputs.forEach((input) => {
+      input.addEventListener("change", test);
+    });
+
+    return () => {
+      inputs.forEach((input) => {
+        input.removeEventListener("change", test);
+      });
+    };
+  }, [html, userAnswers, sectionType]);
+
+  return (
+    <div ref={containerRef} dangerouslySetInnerHTML={{ __html: updatedHtml }} />
+  );
 };
 
 export default ParseHtml;

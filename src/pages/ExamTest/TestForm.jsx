@@ -19,6 +19,7 @@ const TestForm = ({
   categories,
   pageType,
   courseId,
+  setIsCreateTest,
 }) => {
   const {
     register,
@@ -38,9 +39,7 @@ const TestForm = ({
       const payload = { ...data, classId, lessonId, skillIdCourse, courseId };
 
       const result = await dispatch(createTest(payload)).unwrap();
-
       setTestInfo(result);
-      toast.success("Test created successfully!");
     } catch (error) {
       console.error("Submission failed:", error);
       toast.error("Failed to create test. Please try again.");
@@ -61,9 +60,12 @@ const TestForm = ({
           />
         ) : (
           <CreateTest
+            courseId={courseId}
             skills={categories}
             testId={testInfo?.id}
             pageType={pageType}
+            classId={classId}
+            setIsCreateTest={setIsCreateTest}
           />
         )
       ) : (

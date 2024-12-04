@@ -540,8 +540,7 @@ const AnswerView = ({
 
                 <div className="bg-gray-50 p-4 rounded-md shadow-sm">
                   {(skill === 0 && section.sectionType === 4) ||
-                  section.sectionType === 5 ||
-                  section.sectionType === 6 ? (
+                  section.sectionType === 5 ? (
                     <>
                       <table className="min-w-full border border-gray-300">
                         <thead>

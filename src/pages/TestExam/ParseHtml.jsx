@@ -17,7 +17,7 @@ const ParseHtml = ({
     const value = input.value;
 
     if (questionId) {
-      onInputChange(questionId, value, sectionType);
+      onInputChange(questionId, value, sectionType, html);
     }
   };
 

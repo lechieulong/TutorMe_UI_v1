@@ -44,7 +44,6 @@ const ParseHtmlExplain = ({
       <div dangerouslySetInnerHTML={{ __html: updatedHtml }} />
       <div>
         <p className="font-bold text-2xl mt-4 mb-4">Explained Answer:</p>
-        <div dangerouslySetInnerHTML={{ __html: sectionExplain }} />
       </div>
     </>
   );

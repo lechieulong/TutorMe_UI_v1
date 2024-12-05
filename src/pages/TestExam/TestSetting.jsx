@@ -63,9 +63,9 @@ const TestSetting = () => {
       skillId,
       isPractice: true,
       testId,
+      testType: 1,
     };
     setPracticeTestData(testData);
-
     setIsTestStarted(true);
   };
 
@@ -124,9 +124,7 @@ const TestSetting = () => {
                             }
                             className="form-checkbox text-green-600"
                           />
-                          <span className="ml-2">
-                            Part {part.partNumber} (13 questions)
-                          </span>
+                          <span className="ml-2">Part {part.partNumber}</span>
                         </label>
                       </div>
                     ))}
@@ -169,11 +167,11 @@ const TestSetting = () => {
                     Simulation test mode is the best option to experience the
                     real IELTS on the computer.
                   </p>
-                  <h4 className="text-lg font-medium mb-2">Test information</h4>
+                  {/* <h4 className="text-lg font-medium mb-2">Test information</h4>
                   <p className="text-gray-500 mb-4">
                     Full parts (60 minutes - {parts.length} parts -{" "}
                     {parts.length * 13} questions)
-                  </p>
+                  </p> */}
                 </div>
               </div>
             </div>

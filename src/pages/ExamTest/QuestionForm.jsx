@@ -290,14 +290,26 @@ const QuestionForm = ({
             </>
           ) : (
             <>
-              <p>
-                <span className="font-bold">Question Name: </span>
-                {question.questionName}
-              </p>
+              {((skill == "Reading" && sectionType == 1) ||
+                (skill == "Listening" &&
+                  (sectionType == 8 || sectionType == 5))) && (
+                <p>
+                  <span className="font-bold">Question Name: </span>
+                  {question.questionName}
+                </p>
+              )}
+
               {question.answers.length > 0 &&
                 question.answers.map((a) => (
                   <p key={a.id}>
-                    <span className="font-bold">Answers:</span> {a.answerText}
+                    {(skill == "Reading" && sectionType == 1) ||
+                    (skill == "Listening" &&
+                      (sectionType == 8 || sectionType == 5)) ? (
+                      <span className="font-bold">Answers:</span>
+                    ) : (
+                      <span className="font-bold">Question:</span>
+                    )}
+                    {a.answerText}
                   </p>
                 ))}
             </>
@@ -355,6 +367,7 @@ const QuestionForm = ({
                 onClose={() => setShowQuestionCard(false)}
                 sectionType={showQuestionCard.sectionType}
                 disabledQuestions={fields}
+                skill={0}
               />
             </div>
           )}

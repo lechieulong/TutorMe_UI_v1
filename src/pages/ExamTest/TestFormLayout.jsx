@@ -9,8 +9,14 @@ import { getUser } from "../../service/GetUser";
 import { Roles } from "../../utils/config";
 
 const TestFormLayout = () => {
-  const [activeTab, setActiveTab] = useState("QuestionBanks");
   const user = getUser();
+
+  const initActiveTab =
+    user?.role?.includes(Roles.ADMIN) || user?.role?.includes(Roles.TEACHER)
+      ? "QuestionBanks"
+      : "Settings";
+
+  const [activeTab, setActiveTab] = useState(initActiveTab);
 
   const renderComponent = () => {
     switch (activeTab) {

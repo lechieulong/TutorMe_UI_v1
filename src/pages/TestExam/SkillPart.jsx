@@ -60,12 +60,19 @@ const SkillPart = () => {
   }, [dispatch, testId]);
 
   const handleTakeTest = (id) => {
-    navigate(`/test/${testId}/settings/${id}`);
+    if (user) {
+      navigate(`/test/${testId}/settings/${id}`);
+    } else {
+      navigate(`/login`);
+    }
   };
 
   const handleTakeFullTest = () => {
-    setTakeFullTest(true);
-    // navigate(`/testing/${testId}`);
+    if (user) {
+      setTakeFullTest(true);
+    } else {
+      navigate(`/login`);
+    }
   };
 
   const isButtonDisabled = () => {
@@ -166,7 +173,7 @@ const SkillPart = () => {
                           <h3 className="text-lg font-bold text-gray-800 dark:text-white">
                             {skillTypeMap[skill.type]?.name}
                           </h3>
-                          {test.testType == 1 && (
+                          {(test.testType == 1 || test.testType == 3) && (
                             <button
                               onClick={() => handleTakeTest(skill.id)}
                               className="mt-2 py-2 px-3 inline-flex justify-center items-center gap-x-2 text-sm font-medium rounded-lg border border-transparent bg-green-600 text-white hover:bg-green-700 focus:outline-none focus:bg-green-700 disabled:opacity-50 disabled:pointer-events-none"
@@ -178,24 +185,26 @@ const SkillPart = () => {
                         </div>
                       ))}
                     </div>
-                    <div className="border text-gray-700 shadow-md border-gray-300 p-6 flex justify-between mt-2 rounded-xl items-center">
-                      {test.testType !== 1 ? (
-                        <button
-                          className={`text-2xl p-4 font-semibold border-green-500 bg-green-500 text-white rounded-lg 
+                    {test.testType != 1 && (
+                      <div className="border text-gray-700 shadow-md border-gray-300 p-6 flex justify-between mt-2 rounded-xl items-center">
+                        {test.testType !== 1 ? (
+                          <button
+                            className={`text-2xl p-4 font-semibold border-green-500 bg-green-500 text-white rounded-lg 
                  disabled:opacity-50 disabled:cursor-not-allowed`}
-                          onClick={handleTakeFullTest}
-                        >
-                          Take Full Test
-                        </button>
-                      ) : (
-                        <button
-                          className={`text-2xl p-4 font-semibold border-green-500 bg-green-500 text-white rounded-lg `}
-                          onClick={handleTakeFullTest}
-                        >
-                          Take Full Test
-                        </button>
-                      )}
-                    </div>
+                            onClick={handleTakeFullTest}
+                          >
+                            Take Full Test
+                          </button>
+                        ) : (
+                          <button
+                            className={`text-2xl p-4 font-semibold border-green-500 bg-green-500 text-white rounded-lg `}
+                            onClick={handleTakeFullTest}
+                          >
+                            Take Full Test
+                          </button>
+                        )}
+                      </div>
+                    )}
                   </div>
                 )}
               </div>

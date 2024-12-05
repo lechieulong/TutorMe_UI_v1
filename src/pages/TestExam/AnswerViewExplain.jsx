@@ -9,6 +9,8 @@ import WritingExplain from "../ExamTest/general/WritingExplain";
 import SpeakingExplain from "../ExamTest/general/SpeakingExplain";
 import { useDispatch } from "react-redux";
 import { getScriptAudio } from "../../redux/testExam/TestSlice";
+import SingleChoiceAnswers from "./SingleChoiceAnswers";
+import SingleChoiceExplain from "./SingleChoiceExplain";
 
 const genAI = new GoogleGenerativeAI(import.meta.env.VITE_GEN_AI);
 
@@ -186,6 +188,14 @@ const AnswerViewExplain = ({ partData, currentSkillKey }) => {
           );
         }
       case 1:
+        if (sectionType === 5) {
+          return (
+            <SingleChoiceExplain
+              question={question}
+              renderLetter={renderLetter}
+            />
+          );
+        }
         if (sectionType === 6)
           return (
             <div className="flex flex-col gap-2">
@@ -410,9 +420,10 @@ const AnswerViewExplain = ({ partData, currentSkillKey }) => {
                 )}
 
                 <div className="bg-gray-50 p-4 rounded-md shadow-sm">
-                  {(skill === 0 && section.sectionType === 4) ||
-                  section.sectionType === 5 ||
-                  section.sectionType === 6 ? (
+                  {skill === 0 &&
+                  (section.sectionType === 4 ||
+                    section.sectionType === 5 ||
+                    section.sectionType === 6) ? (
                     <>
                       <span className="invisible">{questionCounter++}</span>
                       <table className="min-w-full border border-gray-300">
@@ -475,6 +486,9 @@ const AnswerViewExplain = ({ partData, currentSkillKey }) => {
                           </div>
                         ))}
                       </div>
+
+                      <h3>Explains</h3>
+                      <p>{}</p>
                     </>
                   ) : (
                     <>
@@ -484,7 +498,8 @@ const AnswerViewExplain = ({ partData, currentSkillKey }) => {
                           section.sectionType === 3)) ||
                       (skill === 1 &&
                         (section.sectionType === 8 ||
-                          section.sectionType === 4)) ||
+                          section.sectionType === 4 ||
+                          section.sectionType === 5)) ||
                       skill === 2 ||
                       skill === 3 ? (
                         section.questions.map((question, index) => (

@@ -120,23 +120,47 @@ const AnswerForm = ({
                   )}
                 />
               ) : (
-                <Controller
-                  name={`skills.${skill}.parts.${partIndex}.sections.${sectionIndex}.questions.${questionIndex}.answers.${index}.isCorrect`}
-                  control={control}
-                  render={({ field }) => (
-                    <div className="flex items-center w-3/12">
-                      <input
-                        type="checkbox"
-                        checked={field.value === 1}
-                        onChange={(e) =>
-                          field.onChange(e.target.checked ? 1 : 0)
-                        }
-                        className="mr-2"
-                      />
-                      <label>Correct Answer</label>
-                    </div>
+                <>
+                  {sectionType == 5 && (
+                    <Controller
+                      name={`skills.${skill}.parts.${partIndex}.sections.${sectionIndex}.questions.${questionIndex}.answers.${index}.isCorrect`}
+                      control={control}
+                      render={({ field }) => (
+                        <div className="flex items-center w-4/12">
+                          {/* Single choice option with radio buttons */}
+                          <input
+                            type="radio"
+                            name={`question-${questionIndex}`} // Ensure all options for this question share the same name
+                            checked={field.value === 1} // Check if this answer is marked as correct
+                            onChange={() => field.onChange(1)} // Set this answer as correct
+                            className="mr-2"
+                          />
+                          <label>Correct Answer</label>
+                        </div>
+                      )}
+                    />
                   )}
-                />
+
+                  {sectionType == 1 && (
+                    <Controller
+                      name={`skills.${skill}.parts.${partIndex}.sections.${sectionIndex}.questions.${questionIndex}.answers.${index}.isCorrect`}
+                      control={control}
+                      render={({ field }) => (
+                        <div className="flex items-center w-3/12">
+                          <input
+                            type="checkbox"
+                            checked={field.value === 1}
+                            onChange={(e) =>
+                              field.onChange(e.target.checked ? 1 : 0)
+                            }
+                            className="mr-2"
+                          />
+                          <label>Correct Answer</label>
+                        </div>
+                      )}
+                    />
+                  )}
+                </>
               )}
               {((skill === "Reading" && sectionType != 2 && sectionType != 3) ||
                 (skill === "Listening" && sectionType === 8) ||

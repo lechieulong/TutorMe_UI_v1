@@ -520,7 +520,7 @@ const AnswerView = ({
   };
 
   return (
-    <form className="p-4 bg-white rounded shadow-md">
+    <form className="p-4 bg-white rounded shadow-md text-md">
       {currentSkillKey === "listening" && (
         <div className="my-4">
           <AudioPlayer src={partData.audio} />
@@ -624,7 +624,8 @@ const AnswerView = ({
                           section.sectionType === 3)) ||
                       (skill === 1 &&
                         (section.sectionType === 8 ||
-                          section.sectionType === 4)) ||
+                          section.sectionType === 4 ||
+                          section.sectionType === 5)) ||
                       skill === 2 ||
                       skill === 3 ? (
                         section.questions.map((question, index) => (

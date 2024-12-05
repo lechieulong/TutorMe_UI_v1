@@ -393,6 +393,7 @@ const TestLayout = ({ skillsData, practiceTestData, fullTestId }) => {
           <form onSubmit={handleSubmit}>
             <div className="flex flex-col">
               <Header
+                practiceTestData={practiceTestData}
                 submitting={submitting}
                 testData={testData}
                 currentSkillIndex={currentSkillIndex}

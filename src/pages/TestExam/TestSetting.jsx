@@ -159,6 +159,7 @@ const TestSetting = () => {
                 </div>
 
                 {/* Simulation test mode */}
+                {/* Simulation test mode */}
                 <div className="bg-gray-50 p-4 rounded-lg flex-1 md:ml-4">
                   <h3 className="text-xl font-semibold mb-2">
                     Simulation test mode
@@ -167,11 +168,60 @@ const TestSetting = () => {
                     Simulation test mode is the best option to experience the
                     real IELTS on the computer.
                   </p>
-                  {/* <h4 className="text-lg font-medium mb-2">Test information</h4>
-                  <p className="text-gray-500 mb-4">
-                    Full parts (60 minutes - {parts.length} parts -{" "}
-                    {parts.length * 13} questions)
-                  </p> */}
+
+                  {/* Custom voice (only English voices) */}
+                  <h4 className="text-lg font-medium mb-2">
+                    1. Choose a custom voice:
+                  </h4>
+                  <select
+                    onChange={(e) =>
+                      console.log("Selected Voice:", e.target.value)
+                    } // Replace with your handler
+                    className="form-select w-full p-2 border border-gray-300 rounded-md mb-4 h-60"
+                  >
+                    {window.speechSynthesis
+                      .getVoices()
+                      .filter((voice) => voice.lang.startsWith("en")) // Filter for English voices
+                      .map((voice) => (
+                        <option key={voice.name} value={voice.name}>
+                          {voice.name} ({voice.lang})
+                        </option>
+                      ))}
+                  </select>
+
+                  {/* Time for Part 1 & 3 */}
+                  <h4 className="text-lg font-medium mb-2">
+                    2. Choose time for Part 1 & 3:
+                  </h4>
+                  <select
+                    onChange={(e) =>
+                      console.log("Selected Time (Part 1 & 3):", e.target.value)
+                    } // Replace with your handler
+                    className="form-select w-full p-2 border border-gray-300 rounded-md mb-4"
+                  >
+                    {[15, 20, 25, 30, 60, 90].map((time) => (
+                      <option key={time} value={time}>
+                        {time} seconds
+                      </option>
+                    ))}
+                  </select>
+
+                  {/* Time for Part 2 */}
+                  <h4 className="text-lg font-medium mb-2">
+                    3. Choose time for Part 2:
+                  </h4>
+                  <select
+                    onChange={(e) =>
+                      console.log("Selected Time (Part 2):", e.target.value)
+                    } // Replace with your handler
+                    className="form-select w-full p-2 border border-gray-300 rounded-md"
+                  >
+                    {[180, 240, 300, 500].map((time) => (
+                      <option key={time} value={time}>
+                        {time} seconds
+                      </option>
+                    ))}
+                  </select>
                 </div>
               </div>
             </div>

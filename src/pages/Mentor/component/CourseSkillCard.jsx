@@ -199,6 +199,7 @@ const CourseSkillCard = ({
         <TestForm
           categories={categories}
           skillIdCourse={skillId}
+          courseId={courseId}
           testType={2}
           setIsCreateTest={setIsCreateTest}
           pageType="finalTest"

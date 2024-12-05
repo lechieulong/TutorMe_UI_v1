@@ -4,7 +4,7 @@ import { useParams } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faBolt } from "@fortawesome/free-solid-svg-icons";
 import { useDispatch } from "react-redux";
-import { getParts } from "../../redux/testExam/TestSlice";
+import { getParts, getSkillById } from "../../redux/testExam/TestSlice";
 import TestLayout from "./TestLayout";
 
 const TestSetting = () => {
@@ -15,7 +15,32 @@ const TestSetting = () => {
   const [practiceTestData, setPracticeTestData] = useState({});
   const [timeLimit, setTimeLimit] = useState(60);
   const [selectedParts, setSelectedParts] = useState([]); // Array to keep track of selected parts
-  const [isTestStarted, setIsTestStarted] = useState(false); // State to control test start
+  const [isTestStarted, setIsTestStarted] = useState(false);
+
+  const [selectedVoice, setSelectedVoice] = useState("");
+  const [part1And3Time, setPart1And3Time] = useState(15); // Default is 15 seconds
+  const [part2Time, setPart2Time] = useState(180); // Default is 180 seconds
+  const [skillType, setSkillType] = useState(0);
+  const voices = window.speechSynthesis
+    .getVoices()
+    .filter((voice) => voice.lang.startsWith("en"));
+
+  // Hàm xử lý thay đổi voice
+  const handleVoiceChange = (e) => {
+    setSelectedVoice(e.target.value);
+    console.log("Selected Voice:", e.target.value);
+  };
+
+  // Hàm xử lý thay đổi thời gian cho Part 1 & 3
+  const handlePart1And3TimeChange = (e) => {
+    setPart1And3Time(Number(e.target.value));
+    console.log("Selected Time (Part 1 & 3):", e.target.value);
+  };
+
+  const handlePart2TimeChange = (e) => {
+    setPart2Time(Number(e.target.value));
+    console.log("Selected Time (Part 2):", e.target.value);
+  };
 
   // Fetch skill parts info
   const fetchSkillPartsInfo = async () => {
@@ -28,8 +53,16 @@ const TestSetting = () => {
     }
   };
 
+  const getSkillByIdNE = async () => {
+    const result = await dispatch(getSkillById(skillId));
+    if (result.payload) {
+      setSkillType(result.payload.type);
+    }
+  };
+
   useEffect(() => {
     fetchSkillPartsInfo();
+    getSkillByIdNE(skillId);
   }, [dispatch, skillId]);
 
   const handlePartSelection = (part) => {
@@ -82,7 +115,12 @@ const TestSetting = () => {
   return (
     <>
       {isTestStarted ? (
-        <TestLayout practiceTestData={practiceTestData} />
+        <TestLayout
+          practiceTestData={practiceTestData}
+          selectedVoice={selectedVoice}
+          part1And3Time={part1And3Time}
+          part2Time={part2Time}
+        />
       ) : (
         <MainLayout>
           <div className="flex mt-20 justify-center items-center  ">
@@ -159,7 +197,6 @@ const TestSetting = () => {
                 </div>
 
                 {/* Simulation test mode */}
-                {/* Simulation test mode */}
                 <div className="bg-gray-50 p-4 rounded-lg flex-1 md:ml-4">
                   <h3 className="text-xl font-semibold mb-2">
                     Simulation test mode
@@ -169,59 +206,58 @@ const TestSetting = () => {
                     real IELTS on the computer.
                   </p>
 
-                  {/* Custom voice (only English voices) */}
-                  <h4 className="text-lg font-medium mb-2">
-                    1. Choose a custom voice:
-                  </h4>
-                  <select
-                    onChange={(e) =>
-                      console.log("Selected Voice:", e.target.value)
-                    } // Replace with your handler
-                    className="form-select w-full p-2 border border-gray-300 rounded-md mb-4 h-60"
-                  >
-                    {window.speechSynthesis
-                      .getVoices()
-                      .filter((voice) => voice.lang.startsWith("en")) // Filter for English voices
-                      .map((voice) => (
-                        <option key={voice.name} value={voice.name}>
-                          {voice.name} ({voice.lang})
-                        </option>
-                      ))}
-                  </select>
+                  {skillType == 3 && (
+                    <div className="test-setting-container">
+                      <h4 className="text-lg font-medium mb-2">
+                        1. Choose a custom voice:
+                      </h4>
+                      <div className="relative max-h-80 overflow-y-auto">
+                        <select
+                          onChange={handleVoiceChange}
+                          value={selectedVoice}
+                          className="form-select w-full p-2 border border-gray-300 rounded-md mb-4"
+                        >
+                          {voices.map((voice) => (
+                            <option key={voice.name} value={voice.name}>
+                              {voice.name} ({voice.lang})
+                            </option>
+                          ))}
+                        </select>
+                      </div>
 
-                  {/* Time for Part 1 & 3 */}
-                  <h4 className="text-lg font-medium mb-2">
-                    2. Choose time for Part 1 & 3:
-                  </h4>
-                  <select
-                    onChange={(e) =>
-                      console.log("Selected Time (Part 1 & 3):", e.target.value)
-                    } // Replace with your handler
-                    className="form-select w-full p-2 border border-gray-300 rounded-md mb-4"
-                  >
-                    {[15, 20, 25, 30, 60, 90].map((time) => (
-                      <option key={time} value={time}>
-                        {time} seconds
-                      </option>
-                    ))}
-                  </select>
+                      {/* Time for Part 1 & 3 */}
+                      <h4 className="text-lg font-medium mb-2">
+                        2. Choose time for Part 1 & 3:
+                      </h4>
+                      <select
+                        onChange={handlePart1And3TimeChange}
+                        value={part1And3Time}
+                        className="form-select w-full p-2 border border-gray-300 rounded-md mb-4"
+                      >
+                        {[15, 20, 25, 30, 60, 90].map((time) => (
+                          <option key={time} value={time}>
+                            {time} seconds
+                          </option>
+                        ))}
+                      </select>
 
-                  {/* Time for Part 2 */}
-                  <h4 className="text-lg font-medium mb-2">
-                    3. Choose time for Part 2:
-                  </h4>
-                  <select
-                    onChange={(e) =>
-                      console.log("Selected Time (Part 2):", e.target.value)
-                    } // Replace with your handler
-                    className="form-select w-full p-2 border border-gray-300 rounded-md"
-                  >
-                    {[180, 240, 300, 500].map((time) => (
-                      <option key={time} value={time}>
-                        {time} seconds
-                      </option>
-                    ))}
-                  </select>
+                      {/* Time for Part 2 */}
+                      <h4 className="text-lg font-medium mb-2">
+                        3. Choose time for Part 2:
+                      </h4>
+                      <select
+                        onChange={handlePart2TimeChange}
+                        value={part2Time}
+                        className="form-select w-full p-2 border border-gray-300 rounded-md"
+                      >
+                        {[180, 240, 300, 500].map((time) => (
+                          <option key={time} value={time}>
+                            {time} seconds
+                          </option>
+                        ))}
+                      </select>
+                    </div>
+                  )}
                 </div>
               </div>
             </div>

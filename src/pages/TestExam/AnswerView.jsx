@@ -14,6 +14,9 @@ const AnswerView = ({
   currentSkillId,
   handleAnswerChange,
   userAnswers,
+  selectedVoice,
+  part1And3Time,
+  part2Time,
 }) => {
   let skill;
   switch (currentSkillKey) {
@@ -681,6 +684,9 @@ const AnswerView = ({
           currentSkillId={currentSkillId}
           skill={skill}
           userAnswers={userAnswers}
+          part1And3Time={part1And3Time}
+          selectedVoice={selectedVoice}
+          part2Time={part2Time}
         />
       )}
     </form>

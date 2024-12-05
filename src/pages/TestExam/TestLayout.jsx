@@ -14,7 +14,14 @@ import { generateSpeakingPrompt } from "../../components/Test/Part/generateSpeak
 
 const genAI = new GoogleGenerativeAI(import.meta.env.VITE_GEN_AI);
 
-const TestLayout = ({ skillsData, practiceTestData, fullTestId }) => {
+const TestLayout = ({
+  skillsData,
+  practiceTestData,
+  fullTestId,
+  part2Time,
+  part1And3Time,
+  selectedVoice,
+}) => {
   const [currentSkillIndex, setCurrentSkillIndex] = useState(0);
   const [testData, setTestData] = useState({});
   const [userAnswers, setUserAnswers] = useState([]);
@@ -406,6 +413,9 @@ const TestLayout = ({ skillsData, practiceTestData, fullTestId }) => {
                 currentSkillId={currentSkillId}
                 handleAnswerChange={handleAnswerChange}
                 userAnswers={userAnswers}
+                part2Time={part2Time}
+                part1And3Time={part1And3Time}
+                selectedVoice={selectedVoice}
               />
             </div>
           </form>

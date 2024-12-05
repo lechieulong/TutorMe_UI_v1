@@ -104,6 +104,22 @@ export const getParts = createAsyncThunk(
   }
 );
 
+export const getSkillById = createAsyncThunk(
+  `${SLICE_NAMES.TEST}/${ACTIONS.GET_SKILL_BY_ID}`,
+  async (skillId, { rejectWithValue }) => {
+    try {
+      const response = await axios.get(
+        `${API_BASE_URL}/test/${skillId}/skillType`
+      );
+      return response.data;
+    } catch (error) {
+      return rejectWithValue(
+        error.response?.data?.message || "Failed to fetch tests"
+      );
+    }
+  }
+);
+
 export const getSkills = createAsyncThunk(
   `${SLICE_NAMES.TEST}/${ACTIONS.GET_SKILLS}`,
   async (id, { rejectWithValue }) => {

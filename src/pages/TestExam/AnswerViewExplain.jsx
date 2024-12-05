@@ -25,7 +25,9 @@ const AnswerViewExplain = ({ partData, currentSkillKey }) => {
       }
     };
 
-    fetchScript();
+    if (currentSkillKey == "listening") {
+      fetchScript();
+    }
   }, []); // Ensure `partData.audio` is updated or partData is correct
 
   let skill;
@@ -382,7 +384,11 @@ const AnswerViewExplain = ({ partData, currentSkillKey }) => {
         <div className="my-4">
           <AudioPlayer src={partData.audio} />
           <h3 className="text-2xl font-bold">Script audio</h3>
-          <p>{script}</p>
+          {script == null || script == undefined ? (
+            <p>Wait a little bit we are converting script of audio </p>
+          ) : (
+            <p>{script}</p>
+          )}
         </div>
       )}
 

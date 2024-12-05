@@ -196,7 +196,7 @@ const QuestionBank = () => {
         className="h-[450px] overflow-auto"
         ref={scrollRef} // Attach scroll ref
       >
-        <table className="min-w-full border border-gray-200">
+        <table className="w-full border border-gray-200">
           <thead>
             <tr>
               <th className="border px-4 py-2">Question</th>
@@ -212,11 +212,12 @@ const QuestionBank = () => {
                   <td className="border px-4 py-2">{question.questionName}</td>
                   <td className="border px-4 py-2">{question.questionType}</td>
                   <td className="border px-4 py-2">
-                    {"["}
-                    {question.answers.map((a) => (
-                      <p>{a.answerText} , </p>
+                    {question.answers.map((a, i) => (
+                      <p>
+                        {i + 1}
+                        {a.answerText} ,{" "}
+                      </p>
                     ))}
-                    {"]"}
                   </td>
                   <td className="border px-4 py-2 flex space-x-2">
                     <button onClick={() => updateQuestion(question)}>

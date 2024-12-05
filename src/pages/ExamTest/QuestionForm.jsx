@@ -2,7 +2,6 @@ import React, { useState } from "react";
 import { useFieldArray, Controller } from "react-hook-form";
 import AnswerForm from "./AnswerForm";
 import QuestionCard from "./QuestionCard";
-import TableInput from "./TableInput";
 import {
   faMultiply,
   faQuestionCircle,
@@ -12,8 +11,6 @@ import {
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { addQuestion } from "../../redux/testExam/TestSlice";
 import { useDispatch } from "react-redux";
-import { CKEditor } from "@ckeditor/ckeditor5-react";
-import ClassicEditor from "@ckeditor/ckeditor5-build-classic";
 
 import { Editor } from "@tinymce/tinymce-react";
 

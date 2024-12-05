@@ -1,10 +1,12 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import AudioPlayer from "./AudioPlayer"; // Adjust the import based on your file structure
 import Writing from "../../components/Test/Part/Writing";
 import Speaking from "../../components/Test/Part/Speaking";
 import MultipleChoiceAnswers from "./MultipleChoiceAnswers";
 import ParseHtml from "./ParseHtml";
 import SingleChoiceAnswers from "./SingleChoiceAnswers";
+import { getScriptAudio } from "../../redux/testExam/TestSlice";
+import { useDispatch } from "react-redux";
 
 const AnswerView = ({
   partData,
@@ -13,8 +15,6 @@ const AnswerView = ({
   handleAnswerChange,
   userAnswers,
 }) => {
-  console.log("hahah");
-
   let skill;
   switch (currentSkillKey) {
     case "reading":
@@ -493,13 +493,19 @@ const AnswerView = ({
     }
   };
 
-  const handleInputChange = (questionId, value, sectionType) => {
+  const handleInputChange = (
+    questionId,
+    value,
+    sectionType,
+    sectionContext
+  ) => {
     let updateAnswer = [
       { answerText: value, answerId: "00000000-0000-0000-0000-000000000000" },
     ];
     const answerData = {
       questionId: questionId,
       sectionType: sectionType, // Adjust this if necessary
+      sectionContext: sectionContext,
       answers: updateAnswer,
       skill: skill,
       skillId: currentSkillId,

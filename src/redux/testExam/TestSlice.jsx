@@ -90,6 +90,77 @@ export const getHistorytest = createAsyncThunk(
   }
 );
 
+export const getTestsByCourse = createAsyncThunk(
+  `${SLICE_NAMES.TEST}/${ACTIONS.GET_TEST_BY_COURSE}`,
+  async ({ courseId, page, pageSize }, { rejectWithValue }) => {
+    try {
+      const response = await axios.get(
+        `${API_BASE_URL}/test/test-by-course/${courseId}`,
+        {
+          params: {
+            page,
+            pageSize
+          }
+        }
+      );
+
+      return response.data;
+    } catch (error) {
+      return rejectWithValue(
+        error.response?.data?.message || "Failed to fetch tests"
+      );
+    }
+  }
+);
+
+export const getTestHistory = createAsyncThunk(
+  `${SLICE_NAMES.TEST}/${ACTIONS.GET_TEST_HISTORY}`,
+  async (courseId, { rejectWithValue }) => {
+    try {
+      const token = Cookies.get("authToken");
+      const response = await axios.get(
+        `${API_BASE_URL}/test/test-history/${courseId}`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "multipart/form-data",
+          },
+        }
+      );
+
+      return response.data;
+    } catch (error) {
+      return rejectWithValue(
+        error.response?.data?.message || "Failed to fetch test histories"
+      );
+    }
+  }
+);
+
+export const GetResultOfATest = createAsyncThunk(
+  `${SLICE_NAMES.TEST}/${ACTIONS.GET_RESULT_OFA_TEST}`,
+  async (testId, { rejectWithValue }) => {
+    try {
+      const token = Cookies.get("authToken");
+      const response = await axios.get(
+        `${API_BASE_URL}/test/test-results/${testId}`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "multipart/form-data",
+          },
+        }
+      );
+
+      return response.data;
+    } catch (error) {
+      return rejectWithValue(
+        error.response?.data?.message || "Failed to fetch test results"
+      );
+    }
+  }
+);
+
 export const getParts = createAsyncThunk(
   `${SLICE_NAMES.TEST}/${ACTIONS.GET_PARTS}`,
   async (skillId, { rejectWithValue }) => {
@@ -303,7 +374,7 @@ export const getTestBySectionCourseId = createAsyncThunk(
     } catch (error) {
       return rejectWithValue(
         error.response?.data?.message ||
-          "Failed to get test by section course id "
+        "Failed to get test by section course id "
       );
     }
   }
@@ -539,6 +610,8 @@ export const addSkills = createAsyncThunk(
 
 const initialState = {
   tests: [],
+  testHistories: [],
+  testResults: [],
   status: STATUS.IDLE,
   error: null,
   questions: [],
@@ -577,6 +650,45 @@ const TestSlice = createSlice({
         state.tests = action.payload;
       })
       .addCase(fetchTests.rejected, (state, action) => {
+        state.status = STATUS.FAILED;
+        state.error = action.payload || action.error.message;
+      })
+
+      // Fetch tests of a course
+      .addCase(getTestsByCourse.pending, (state) => {
+        state.status = STATUS.PENDING;
+      })
+      .addCase(getTestsByCourse.fulfilled, (state, action) => {
+        state.status = STATUS.SUCCESS;
+        state.tests = action.payload;
+      })
+      .addCase(getTestsByCourse.rejected, (state, action) => {
+        state.status = STATUS.FAILED;
+        state.error = action.payload || action.error.message;
+      })
+
+      // Fetch test result of a learner
+      .addCase(getTestHistory.pending, (state) => {
+        state.status = STATUS.PENDING;
+      })
+      .addCase(getTestHistory.fulfilled, (state, action) => {
+        state.status = STATUS.SUCCESS;
+        state.testHistories = action.payload;
+      })
+      .addCase(getTestHistory.rejected, (state, action) => {
+        state.status = STATUS.FAILED;
+        state.error = action.payload || action.error.message;
+      })
+
+      // Fetch test result of a test
+      .addCase(GetResultOfATest.pending, (state) => {
+        state.status = STATUS.PENDING;
+      })
+      .addCase(GetResultOfATest.fulfilled, (state, action) => {
+        state.status = STATUS.SUCCESS;
+        state.testResults = action.payload;
+      })
+      .addCase(GetResultOfATest.rejected, (state, action) => {
         state.status = STATUS.FAILED;
         state.error = action.payload || action.error.message;
       })

@@ -3,6 +3,7 @@ import QuestionBank from "./questionBank/QuestionBank";
 import MentorSidebar from "../../components/Mentor/MentorSideBar";
 import Header from "../../components/common/Header";
 import TestSubmitted from "./TestSubmitted";
+import ResultList from "./ResultList";
 import ContributionAttempt from "./general/ContributionAttempt";
 import TestHistory from "./general/TestHistory";
 import { getUser } from "../../service/GetUser";
@@ -43,47 +44,44 @@ const TestFormLayout = () => {
             <ul className="flex p-2 flex-wrap -mb-px text-sm font-medium text-center text-gray-500 dark:text-gray-400">
               {(user?.role?.includes(Roles.ADMIN) ||
                 user?.role?.includes(Roles.TEACHER)) && (
-                <li className="me-2">
-                  <button
-                    type="button"
-                    onClick={() => setActiveTab("QuestionBanks")}
-                    className={`inline-flex items-center justify-center p-4 border-b-2 rounded-t-lg ${
-                      activeTab === "QuestionBanks"
-                        ? "text-accentGreen-600 border-accentGreen" // Active state
-                        : "hover:text-gray-600 hover:border-gray-300"
-                    } dark:hover:text-gray-300`}
-                  >
-                    Question Bank
-                  </button>
-                </li>
-              )}
+                  <li className="me-2">
+                    <button
+                      type="button"
+                      onClick={() => setActiveTab("QuestionBanks")}
+                      className={`inline-flex items-center justify-center p-4 border-b-2 rounded-t-lg ${activeTab === "QuestionBanks"
+                          ? "text-accentGreen-600 border-accentGreen" // Active state
+                          : "hover:text-gray-600 hover:border-gray-300"
+                        } dark:hover:text-gray-300`}
+                    >
+                      Question Bank
+                    </button>
+                  </li>
+                )}
 
               {(user?.role?.includes(Roles.ADMIN) ||
                 user?.role?.includes(Roles.TEACHER)) && (
-                <li className="me-2">
-                  <button
-                    type="button"
-                    onClick={() => setActiveTab("Dashboard")}
-                    className={`inline-flex items-center justify-center p-4 border-b-2 rounded-t-lg ${
-                      activeTab === "Dashboard"
-                        ? "text-accentGreen-600 border-accentGreen" // Active state
-                        : "hover:text-gray-600 hover:border-gray-300"
-                    } dark:hover:text-gray-300`}
-                  >
-                    Test Submitted
-                  </button>
-                </li>
-              )}
+                  <li className="me-2">
+                    <button
+                      type="button"
+                      onClick={() => setActiveTab("Dashboard")}
+                      className={`inline-flex items-center justify-center p-4 border-b-2 rounded-t-lg ${activeTab === "Dashboard"
+                          ? "text-accentGreen-600 border-accentGreen" // Active state
+                          : "hover:text-gray-600 hover:border-gray-300"
+                        } dark:hover:text-gray-300`}
+                    >
+                      Test Submitted
+                    </button>
+                  </li>
+                )}
 
               <li className="me-2">
                 <button
                   type="button"
                   onClick={() => setActiveTab("Settings")}
-                  className={`inline-flex items-center justify-center p-4 border-b-2 rounded-t-lg ${
-                    activeTab === "Settings"
+                  className={`inline-flex items-center justify-center p-4 border-b-2 rounded-t-lg ${activeTab === "Settings"
                       ? "text-accentGreen-600 border-accentGreen" // Active state
                       : "hover:text-gray-600 hover:border-gray-300"
-                  } dark:hover:text-gray-300`}
+                    } dark:hover:text-gray-300`}
                 >
                   Test Analysis
                 </button>
@@ -92,11 +90,10 @@ const TestFormLayout = () => {
                 <button
                   type="button"
                   onClick={() => setActiveTab("History")}
-                  className={`inline-flex items-center justify-center p-4 border-b-2 rounded-t-lg ${
-                    activeTab === "History"
+                  className={`inline-flex items-center justify-center p-4 border-b-2 rounded-t-lg ${activeTab === "History"
                       ? "text-accentGreen-600 border-accentGreen" // Active state
                       : "hover:text-gray-600 hover:border-gray-300"
-                  } dark:hover:text-gray-300`}
+                    } dark:hover:text-gray-300`}
                 >
                   History
                 </button>

@@ -9,7 +9,7 @@ import {
   faVolumeDown,
 } from "@fortawesome/free-solid-svg-icons";
 
-const AudioPlayer = ({ src }) => {
+const AudioPlayer = ({ src, submitting, practiceTestData }) => {
   const audioRef = useRef(null);
   const [isPlaying, setIsPlaying] = useState(false);
   const [currentTime, setCurrentTime] = useState(0);
@@ -17,6 +17,22 @@ const AudioPlayer = ({ src }) => {
   const [volume, setVolume] = useState(1);
   const [isSeeking, setIsSeeking] = useState(false); // Track if user is dragging
   const [wasPlayingBeforeSeek, setWasPlayingBeforeSeek] = useState(false); // Track if audio was playing before seeking
+
+  useEffect(() => {
+    const audio = audioRef.current;
+
+    if (!submitting && audio) {
+      // Start playing when "test listening"
+      audio
+        .play()
+        .then(() => setIsPlaying(true))
+        .catch(console.error);
+    } else if (submitting && audio) {
+      // Pause when "submit"
+      audio.pause();
+      setIsPlaying(false);
+    }
+  }, [submitting]);
 
   const togglePlay = async () => {
     const audio = audioRef.current;
@@ -121,7 +137,11 @@ const AudioPlayer = ({ src }) => {
   }, []);
 
   return (
-    <div className="flex  gap-16 items-center ">
+    <div
+      className={`flex  gap-16 items-center ${
+        practiceTestData ? "" : "invisible "
+      }`}
+    >
       <audio ref={audioRef} src={src} />
       <div className="flex gap-4   p-2   justify-center items-center ">
         <span>{formatTime(currentTime)}</span>

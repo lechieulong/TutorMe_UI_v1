@@ -238,6 +238,8 @@ const TestLayout = ({
         setSubmitting(true);
         const totalQuestionReading = getTotalQuestions(currentSkillData);
 
+        const partIds = currentSkillData.parts.map((p) => p.id);
+
         dispatch(
           submitAnswerTest({
             userAnswers,
@@ -245,6 +247,7 @@ const TestLayout = ({
             timeMinutesTaken: timeTakenData.timeMinutesTaken,
             timeSecondsTaken: timeTakenData.timeSecondsTaken,
             totalQuestions: totalQuestionReading,
+            partIds: partIds,
           })
         ).then((result) => {
           if (result.meta.requestStatus === "fulfilled") {
@@ -268,6 +271,7 @@ const TestLayout = ({
       case 1:
         setSubmitting(true);
         const totalQuestions = getTotalQuestions(currentSkillData);
+        const partIdsLis = currentSkillData.parts.map((p) => p.id);
 
         dispatch(
           submitAnswerTest({
@@ -276,6 +280,7 @@ const TestLayout = ({
             timeMinutesTaken: timeTakenData.timeMinutesTaken,
             timeSecondsTaken: timeTakenData.timeSecondsTaken,
             totalQuestions,
+            partIds: partIdsLis,
           })
         ).then((result) => {
           if (result.meta.requestStatus === "fulfilled") {
@@ -297,6 +302,7 @@ const TestLayout = ({
         break;
       case 2:
         setSubmitting(true);
+        const partIdsW = currentSkillData.parts.map((p) => p.id);
 
         (async () => {
           try {
@@ -308,6 +314,7 @@ const TestLayout = ({
                 timeMinutesTaken: timeTakenData.timeMinutesTaken,
                 timeSecondsTaken: timeTakenData.timeSecondsTaken,
                 totalQuestions,
+                partIds: partIdsW,
               })
             );
 
@@ -339,6 +346,8 @@ const TestLayout = ({
 
         (async () => {
           try {
+            const partIds = currentSkillData.parts.map((p) => p.id);
+
             const updatedAnswers = {};
             const questionIds = Object.keys(userAnswers);
             for (const questionId of questionIds) {
@@ -359,6 +368,7 @@ const TestLayout = ({
                 timeMinutesTaken: timeTakenData.timeMinutesTaken,
                 timeSecondsTaken: timeTakenData.timeSecondsTaken,
                 totalQuestions,
+                partIds: partIds,
               })
             );
 
@@ -417,6 +427,8 @@ const TestLayout = ({
                 part2Time={part2Time}
                 part1And3Time={part1And3Time}
                 selectedVoice={selectedVoice}
+                submitting={submitting}
+                practiceTestData={practiceTestData}
               />
             </div>
           </form>

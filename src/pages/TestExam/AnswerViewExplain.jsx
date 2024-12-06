@@ -1,7 +1,5 @@
 import React, { useEffect, useState } from "react";
 import AudioPlayer from "./AudioPlayer"; // Adjust the import based on your file structure
-import Writing from "../../components/Test/Part/Writing";
-import Speaking from "../../components/Test/Part/Speaking";
 import MutipleChoiceExplain from "./MutipleChoiceExplain";
 import { GoogleGenerativeAI } from "@google/generative-ai";
 import ParseHtmlExplain from "./ParseHtmlExplain";
@@ -9,8 +7,8 @@ import WritingExplain from "../ExamTest/general/WritingExplain";
 import SpeakingExplain from "../ExamTest/general/SpeakingExplain";
 import { useDispatch } from "react-redux";
 import { getScriptAudio } from "../../redux/testExam/TestSlice";
-import SingleChoiceAnswers from "./SingleChoiceAnswers";
 import SingleChoiceExplain from "./SingleChoiceExplain";
+import { highlightSpecialCharacters } from "../../utils/highlightSpecialCharacters";
 
 const genAI = new GoogleGenerativeAI(import.meta.env.VITE_GEN_AI);
 
@@ -137,8 +135,6 @@ const AnswerViewExplain = ({ partData, currentSkillKey }) => {
                     <span>Not Given</span>
                   </label>
                 )}
-
-                <div dangerouslySetInnerHTML={{ __html: question.explain }} />
               </div>
             </>
           );
@@ -163,8 +159,10 @@ const AnswerViewExplain = ({ partData, currentSkillKey }) => {
               <span className="font-bold"> {questionCounter}</span>
               {questionParts[1]} {/* Part after [] */}
               <p className="p-2 border rounded-lg border-green-500">
-                <span className="font-bold">Correct Answer</span>:{" "}
-                {question.answers[0].answerText}
+                <span className="font-bold text-yellow-500">
+                  Correct Answer
+                </span>
+                : {question.answers[0].answerText}
               </p>
             </div>
           );
@@ -480,15 +478,23 @@ const AnswerViewExplain = ({ partData, currentSkillKey }) => {
                                 </select>
                               </div>
                             ))}
-                            <p className="font-bold">
+                            <p className=" text-yellow-500">
                               Correct Answers: {question.questionName}
                             </p>
                           </div>
                         ))}
                       </div>
 
-                      <h3>Explains</h3>
-                      <p>{}</p>
+                      <h3 className="text-yellow-500 font-bold">Explains</h3>
+
+                      <p
+                        className="font-bold mt-4 mb-4"
+                        dangerouslySetInnerHTML={{
+                          __html: highlightSpecialCharacters(
+                            section?.explain || "No explanation provided."
+                          ),
+                        }}
+                      />
                     </>
                   ) : (
                     <>
@@ -502,22 +508,35 @@ const AnswerViewExplain = ({ partData, currentSkillKey }) => {
                           section.sectionType === 5)) ||
                       skill === 2 ||
                       skill === 3 ? (
-                        section.questions.map((question, index) => (
-                          <div key={index} className="mb-4">
-                            {renderQuestionName(
-                              skill,
-                              section.sectionType,
-                              question,
-                              questionCounter++
-                            )}
-                            {renderInputBasedOnSectionType(
-                              skill,
-                              section.sectionType,
-                              question,
-                              questionCounter
-                            )}
+                        <>
+                          {section.questions.map((question, index) => (
+                            <div key={index} className="mb-4">
+                              {renderQuestionName(
+                                skill,
+                                section.sectionType,
+                                question,
+                                questionCounter++
+                              )}
+                              {renderInputBasedOnSectionType(
+                                skill,
+                                section.sectionType,
+                                question,
+                                questionCounter
+                              )}
+                            </div>
+                          ))}
+                          <div>
+                            <h3 className="text-yellow-400">Explains</h3>
+                            <p
+                              className="font-bold mt-4 mb-4"
+                              dangerouslySetInnerHTML={{
+                                __html: highlightSpecialCharacters(
+                                  section?.explain || "No explanation provided."
+                                ),
+                              }}
+                            />
                           </div>
-                        ))
+                        </>
                       ) : (
                         <div>
                           <ParseHtmlExplain

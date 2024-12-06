@@ -426,10 +426,38 @@ const TestLayout = ({
         <>
           <Modal
             isOpen={submitting}
-            className="bg-warmNeutral rounded-lg shadow-lg p-6 max-w-md mx-auto text-black"
-            overlayClassName="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center"
+            className="bg-gradient-to-br from-green-800 via-red-700 to-yellow-600 rounded-lg shadow-2xl p-8 max-w-lg mx-auto text-white text-center"
+            overlayClassName="fixed inset-0 bg-black bg-opacity-60 flex items-center justify-center"
           >
-            <h3>We are calculate score ... pls wait a little bit </h3>
+            <div className="flex flex-col items-center">
+              <svg
+                className="animate-spin h-16 w-16 text-white mb-4"
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+              >
+                <circle
+                  className="opacity-25"
+                  cx="12"
+                  cy="12"
+                  r="10"
+                  stroke="currentColor"
+                  strokeWidth="4"
+                ></circle>
+                <path
+                  className="opacity-75"
+                  fill="currentColor"
+                  d="M4 12a8 8 0 018-8v8z"
+                ></path>
+              </svg>
+              <h3 className="text-2xl font-bold">Calculating Score...</h3>
+              <p className="mt-2 text-sm font-light">
+                Please wait a little while as we finish up the calculations.
+              </p>
+              <div className="mt-4 text-xs font-semibold text-yellow-200">
+                🎄 Enjoy the Noel vibes while waiting! 🎄
+              </div>
+            </div>
           </Modal>
         </>
       )}

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { DotLottieReact } from '@lottiefiles/dotlottie-react';
 import { CheckBanlance,GiveMeMyMoney,GetBanlance } from './PayOS';
@@ -72,14 +72,13 @@ const GiftList = ({UserName,userId,roomID,handleSendCommand} ) => {
   const [gifts, setGifts] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
-  const [isVisible, setIsVisible] = useState(false); // Trạng thái để kiểm soát hiển thị danh sách
+  const [isVisible, setIsVisible] = useState(true); // Trạng thái để kiểm soát hiển thị danh sách
 
   const fetchGifts = async () => {
     setLoading(true);
     setError(null); // Reset lỗi trước khi gọi API
     try {
       const response = await axios.get(`${url}/api/Gift`);
-      console.log(response.data);
       setGifts(response.data);
     } catch (error) {
       console.error('Error fetching gifts:', error);
@@ -90,16 +89,16 @@ const GiftList = ({UserName,userId,roomID,handleSendCommand} ) => {
   };
 
   const toggleGiftList = () => {
-    if (!isVisible) {
-      fetchGifts(); // Gọi API khi hiện danh sách
-    }
     setIsVisible(!isVisible); // Đảo ngược trạng thái hiển thị
   };
+  useEffect(()=>{
+    fetchGifts();
+  },[])
 
   return (
     <div>
       <button onClick={toggleGiftList} className="bg-blue-500 text-white py-2 px-4 rounded">
-        {isVisible ? 'Ẩn danh sách quà tặng' : 'Hiện danh sách quà tặng'}
+        {isVisible ? 'Hide Gift' : 'Show Gift'}
       </button>
 
       {loading && <p>Loading...</p>}

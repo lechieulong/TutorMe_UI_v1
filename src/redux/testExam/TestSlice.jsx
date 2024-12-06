@@ -4,8 +4,9 @@ import { SLICE_NAMES, ACTIONS, STATUS } from "../../constant/SliceName";
 import Cookies from "js-cookie";
 import { getUser } from "../../service/GetUser";
 
-// const API_BASE_URL = "https://aiilapi.azurewebsites.net/api";
 const API_BASE_URL = "https://localhost:7030/api";
+
+// const API_BASE_URL = "https://aiilapi.azurewebsites.net/api";
 export const fetchTests = createAsyncThunk(
   `${SLICE_NAMES.TEST}/${ACTIONS.FETCH_TESTS}`,
   async (_, { rejectWithValue }) => {
@@ -26,7 +27,14 @@ export const fetchTests = createAsyncThunk(
 export const submitAnswerTest = createAsyncThunk(
   `${SLICE_NAMES.TEST}/${ACTIONS.SUBMIT_TEST}`,
   async (
-    { userAnswers, testId, timeMinutesTaken, timeSecondsTaken, totalQuestions },
+    {
+      userAnswers,
+      testId,
+      timeMinutesTaken,
+      timeSecondsTaken,
+      totalQuestions,
+      partIds,
+    },
     { rejectWithValue }
   ) => {
     const token = Cookies.get("authToken");
@@ -40,6 +48,7 @@ export const submitAnswerTest = createAsyncThunk(
           timeMinutesTaken, // Add time in minutes
           timeSecondsTaken, // Add time in seconds
           totalQuestions,
+          partIds,
         },
         {
           Authorization: `Bearer ${token}`,

@@ -2,7 +2,6 @@ import { useState, useEffect, useCallback } from "react";
 import HeaderExplain from "../../components/Test/HeaderExplain";
 import TestViewExplain from "./TestViewExplain";
 
-import mockTestData from "../../data/mockTestExplain";
 import {
   getSkill,
   getResultTest,
@@ -10,8 +9,6 @@ import {
 } from "../../redux/testExam/TestSlice";
 import { useDispatch, useSelector } from "react-redux";
 import MainLayout from "../../layout/MainLayout";
-import { useParams } from "react-router-dom";
-
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faHeadphones,
@@ -202,56 +199,57 @@ const TestExplain = ({ totalPartsSubmit, skillResultIds, testId, skillId }) => {
             </h3>
           </div>
 
-          {testResult.map((test) => (
-            <div
-              className="flex justify-between border  p-4 rounded"
-              key={test.id}
-            >
-              <div className="space-y-4">
-                <div className="flex items-center gap-4">
-                  <span className="text-2xl text-green-800">
-                    <FontAwesomeIcon
-                      icon={skillTypeMap[test.skillType]?.icon}
-                    />
-                  </span>
-                  <p>Skill name: </p>
+          {testResult.length > 0 &&
+            testResult.map((test) => (
+              <div
+                className="flex justify-between border  p-4 rounded"
+                key={test.id}
+              >
+                <div className="space-y-4">
+                  <div className="flex items-center gap-4">
+                    <span className="text-2xl text-green-800">
+                      <FontAwesomeIcon
+                        icon={skillTypeMap[test.skillType]?.icon}
+                      />
+                    </span>
+                    <p>Skill name: </p>
 
-                  <h3 className="text-lg font-bold text-gray-800 dark:text-white">
-                    {skillTypeMap[test.skillType]?.name}
-                  </h3>
-                </div>
-                <p>
-                  <span className="text-2xl text-green-800 mr-3">
-                    <FontAwesomeIcon icon={faCheck} />
-                  </span>
-                  Total correct answer:{" "}
-                  <span className="font-bold">{test.numberOfCorrect}</span> /
-                  <span className="font-bold">{test.totalQuestion}</span>{" "}
-                </p>
-                <p>
-                  <span className="text-2xl mr-4 text-green-800">
-                    <FontAwesomeIcon icon={faClock} />
-                  </span>
-                  Time to taken: {test.timeMinutesTaken} minutes{" "}
-                  {test.secondMinutesTaken} seconds
-                </p>
-              </div>
-              <div className="flex gap-4">
-                <div className="flex justify-center  items-center gap-2">
-                  <p>CERT level</p>
-                  <p className="p-4 bg-green-600 text-customText font-semibold text-2xl">
-                    {getIeltsLevel(test.score)}
+                    <h3 className="text-lg font-bold text-gray-800 dark:text-white">
+                      {skillTypeMap[test.skillType]?.name}
+                    </h3>
+                  </div>
+                  <p>
+                    <span className="text-2xl text-green-800 mr-3">
+                      <FontAwesomeIcon icon={faCheck} />
+                    </span>
+                    Total correct answer:{" "}
+                    <span className="font-bold">{test.numberOfCorrect}</span> /
+                    <span className="font-bold">{test.totalQuestion}</span>{" "}
+                  </p>
+                  <p>
+                    <span className="text-2xl mr-4 text-green-800">
+                      <FontAwesomeIcon icon={faClock} />
+                    </span>
+                    Time to taken: {test.timeMinutesTaken} minutes{" "}
+                    {test.secondMinutesTaken} seconds
                   </p>
                 </div>
-                <div className="flex justify-center items-center gap-2">
-                  <p>Band Score </p>
-                  <p className="p-4 bg-green-600 text-customText font-semibold text-2xl">
-                    {customRound(test.score)}
-                  </p>
+                <div className="flex gap-4">
+                  <div className="flex justify-center  items-center gap-2">
+                    <p>CERT level</p>
+                    <p className="p-4 bg-green-600 text-customText font-semibold text-2xl">
+                      {getIeltsLevel(test.score)}
+                    </p>
+                  </div>
+                  <div className="flex justify-center items-center gap-2">
+                    <p>Band Score </p>
+                    <p className="p-4 bg-green-600 text-customText font-semibold text-2xl">
+                      {customRound(test.score)}
+                    </p>
+                  </div>
                 </div>
               </div>
-            </div>
-          ))}
+            ))}
         </div>
       </div>
 

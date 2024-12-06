@@ -293,7 +293,7 @@ const Sidebar = () => {
             <ul className="ml-6">
               <li>
                 <NavLink
-                  to="login"
+                  to="courseReport"
                   className={({ isActive }) =>
                     `flex items-center p-3 text-gray-700 hover:bg-gray-200 transition duration-200 ease-in-out ${
                       isActive ? "bg-lightGreen" : ""

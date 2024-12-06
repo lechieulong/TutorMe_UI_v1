@@ -17,6 +17,7 @@ export const fetchSkills = createAsyncThunk(
     }
   }
 );
+
 // Thêm Thunk để lấy mô tả kỹ năng từ skillId
 export const fetchSkillDescription = createAsyncThunk(
   "courses/fetchSkillDescription",

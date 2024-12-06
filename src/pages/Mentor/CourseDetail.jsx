@@ -5,6 +5,8 @@ import MentorSidebar from "../../components/Mentor/MentorSideBar";
 import MainLayout from "../../layout/MainLayout";
 import ClassCard from "../Class/components/ClassCard";
 import CourseSkillCard from "./component/CourseSkillCard";
+import { FaFlag } from "react-icons/fa";
+import Report from "../../components/common/Report";
 import {
   CheckUserEnrollment,
   enrollUser,
@@ -41,7 +43,6 @@ const CourseDetail = () => {
   const [skillCount, setSkillCount] = useState(0);
   const [userId, setUserId] = useState(null);
   const [userName, setUsername] = useState(null);
-  const [userRole, setUserRole] = useState(null);
   const [currentSlide, setCurrentSlide] = useState(0);
   const [selectedClassId, setSelectedClassId] = useState(null);
   const [isCreateClassOpen, setIsCreateClassOpen] = useState(false);
@@ -55,7 +56,7 @@ const CourseDetail = () => {
   const [isMentor, setIsMentor] = useState(false);
   const [course, setCourse] = useState(null);
   const [notificationUpdated, setNotificationUpdated] = useState(false);
-
+  const [isReportOpen, setIsReportOpen] = useState(false);
   const dispatch = useDispatch();
   const classes = useSelector((state) => state.classes.classes || []);
   const switchStates = useSelector((state) => state.classes.switchStates || {});
@@ -69,10 +70,17 @@ const CourseDetail = () => {
   const initializeUser = useCallback(() => {
     const userFromToken = getUser();
     setUserId(userFromToken?.sub);
-    setUserRole(userFromToken?.role);
     setUsername(userFromToken?.name);
   }, []);
-
+  const handleOpenReport = () => {
+    setIsReportOpen(true);
+  };
+  const handleCloseReport = () => {
+    setIsReportOpen(false);
+  };
+  const handleSubmitReport = () => {
+    handleCloseReport();
+  };
   useEffect(() => {
     const fetchCourseDetail = async () => {
       try {
@@ -161,10 +169,8 @@ const CourseDetail = () => {
       return;
     }
 
-    // Lấy giá tiền của khóa học
     const price = course?.price;
 
-    // Kiểm tra số dư người dùng trước khi tiếp tục
     const hasSufficientBalance = await CheckBanlance(price);
     if (!hasSufficientBalance) {
       const userChoice = window.confirm(
@@ -178,12 +184,10 @@ const CourseDetail = () => {
       return;
     }
 
-    // Nếu có đủ tiền, yêu cầu xác nhận trước khi đăng ký
     setConfirmMessage("Are you sure you want to enroll this course?");
     setConfirmStatus("Enroll");
     setConfirmAction(() => async () => {
       try {
-        // Thực hiện thanh toán
         await GiveMeMyMoney(
           userId,
           price * -1,
@@ -195,12 +199,10 @@ const CourseDetail = () => {
           `Your course has been enrolled by ${userName}`
         );
 
-        // Sau khi thanh toán thành công, gửi yêu cầu đăng ký khóa học
         await dispatch(
           enrollUser({ courseId, userId, classId: selectedClassId })
         ).unwrap();
 
-        // Cập nhật trạng thái và thông báo thành công
         setNotification("Đăng ký thành công!");
         dispatch(CheckUserEnrollment({ userId, courseId }));
       } catch (error) {
@@ -245,7 +247,9 @@ const CourseDetail = () => {
         { params: { userId } }
       );
       setHasRated(response?.data?.length > 0);
-    } catch {}
+    } catch {
+      console.log();
+    }
   };
 
   useEffect(() => {
@@ -285,7 +289,7 @@ const CourseDetail = () => {
                 </button>
               )}
             </header>
-            <div className="mx-auto bg-houseGreen text-white rounded-lg shadow-lg flex flex-col lg:flex-row p-8 space-y-8 lg:space-y-0 lg:space-x-8">
+            <div className="mx-auto bg-houseGreen text-white rounded-lg shadow-lg flex flex-col lg:flex-row p-8 space-y-8 lg:space-y-0 lg:space-x-8 ">
               <div className="flex flex-col lg:w-2/3">
                 <h1 className="text-3xl font-bold mb-4">
                   {course?.courseName}
@@ -315,7 +319,14 @@ const CourseDetail = () => {
                   </div>
                 </div>
               </div>
-              <div className="bg-lightGreen p-4 rounded-lg w-full lg:w-1/3 flex flex-col items-center text-center shadow-md">
+              <div className="bg-lightGreen p-4 rounded-lg w-full lg:w-1/3 flex flex-col items-center text-center shadow-md relative h-auto lg:h-[200px]">
+                <button
+                  onClick={handleOpenReport}
+                  className="absolute top-2 right-2 text-red-700 text-xl"
+                >
+                  <FaFlag />
+                </button>
+
                 <h2 className="text-2xl text-black font-bold mb-4">
                   {formatCurrency(course?.price)}
                 </h2>
@@ -431,6 +442,14 @@ const CourseDetail = () => {
           courseId={courseId}
           onClose={handleCloseCreateClass}
           onCreateSuccess={() => dispatch(fetchClasses(courseId))}
+        />
+      )}
+      {isReportOpen && (
+        <Report
+          userId={userId}
+          courseId={courseId}
+          onSubmit={handleSubmitReport}
+          onClose={handleCloseReport} // Truyền hàm đóng qua props
         />
       )}
     </MainLayout>

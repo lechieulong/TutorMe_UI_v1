@@ -37,13 +37,13 @@ const MentorSidebar = ({ mentorAndList, setSelectedComponent }) => {
                 to={`/courseDetail/${courseId}`}
                 onClick={() => setSelectedComponent("Information")}
                 className="flex items-center gap-x-3.5 py-2 px-2.5 bg-gray-100 text-sm text-gray-700 rounded-lg hover:bg-gray-100"
-                state={{ userId, mentorAndList }}
                 style={{
                   backgroundColor:
                     pathname === `/courseDetail/${courseId}`
                       ? "lightblue"
                       : "transparent",
-                }} // Đổi background
+                }}
+                state={{ userId, mentorAndList }}
               >
                 <FaInfo />
                 Information

@@ -11,7 +11,7 @@ import TeacherRequest from "../../components/ADMIN/TeacherRequest";
 import TeacherRequestDetail from "./Request/TeacherRequestDetail";
 import TestLayoutAdmin from "../ExamTest/general/TestLayoutAdmin";
 import TestSource from "../ExamTest/general/TestSource";
-
+import CourseReportList from "./Report/CourseReportList";
 const AdminApp = () => {
   return (
     <div className="flex h-screen w-screen overflow-hidden">
@@ -36,6 +36,7 @@ const AdminApp = () => {
                 path="/docs/teacherrequest/:requestId"
                 element={<TeacherRequestDetail />}
               />
+              <Route path="/courseReport" element={<CourseReportList />} />
               {/* Add more routes as needed */}
             </Routes>
           </div>

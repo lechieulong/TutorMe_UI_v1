@@ -18,9 +18,13 @@ import User_BalanceReducer from "./users/BalanceSlice";
 import courseSkillReducer from "./courses/CourseSkillSlice";
 import courseLessonContentReducer from "./courses/CourseLessonContentSlice";
 import coursePartReducer from "./courses/CoursePartSlice";
+import courseReportReducer from "./courses/CourseReportSlice";
+import reportReducer from "./common/ReportSlice";
 
 export const store = configureStore({
   reducer: {
+    report: reportReducer,
+    courseReport: courseReportReducer,
     coursePart: coursePartReducer,
     courseLessonContent: courseLessonContentReducer,
     courseSkill: courseSkillReducer,

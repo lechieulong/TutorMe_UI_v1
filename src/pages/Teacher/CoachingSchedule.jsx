@@ -145,9 +145,9 @@ const CoachingSchedule = () => {
                         <div>
                             <h1 className="text-2xl font-bold">CONNECTION BETWEEN TEACHERS AND STUDENTS</h1>
                             <p className="text-gray-600">Coaching 1:1
-                                {userFromToken?.role?.includes(Roles.TEACHER) && (
+                                {/* {userFromToken?.role?.includes(Roles.TEACHER) && (
                                     <a href={`/coachingschedule/${user?.userName}`} className="text-blue-500"> - Your schedule</a>
-                                )}
+                                )} */}
                             </p>
                         </div>
                         <div className="flex items-center space-x-2">
@@ -158,11 +158,15 @@ const CoachingSchedule = () => {
                                         className="bg-green-400 text-white px-4 py-2 rounded">
                                         Set Schedule
                                     </button>
+                                    <a href={`/coachingschedule/${user?.userName}`} className="bg-red-500 text-white px-4 py-2 rounded">Yours</a>
                                 </>
                             )}
-                            <button className="bg-red-500 text-white px-4 py-2 rounded">Teacher</button>
+                            {/* <button className="bg-red-500 text-white px-4 py-2 rounded">Teacher</button> */}
                             {userFromToken && (
-                                <Link to="/coachingschedule/bookedschedule" className="bg-yellow-300 text-white px-4 py-2 rounded">Scheduled</Link>
+                                <>
+                                    {/* <Link to={`/coachingschedule/${user?.userName}`} className="bg-red-500 text-white px-4 py-2 rounded">Yours</Link> */}
+                                    <Link to="/coachingschedule/bookedschedule" className="bg-yellow-300 text-white px-4 py-2 rounded">Scheduled</Link>
+                                </>
                             )}
                         </div>
                     </header>

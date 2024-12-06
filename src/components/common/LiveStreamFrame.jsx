@@ -7,11 +7,13 @@ import React from "react";
 import { getUser } from "../../service/GetUser";
 import axios from "axios";
 import GiftList from "./Gift";
-import { ZIM } from "zego-zim-web";
+import { ZIM } from 'zego-zim-web';
 import GiftNotification from "./ShowGift";
 import { isHaveTicket } from "./Ticket";
 import CreateTicketButton from "./Ticket";
 import { ToastContainer } from "react-toastify";
+import { GetUserByID } from "../../redux/users/UserSlice";
+import { useDispatch } from "react-redux";
 
 // Truy cập các biến môi trường
 const appID = Number(import.meta.env.VITE_APP_ID);
@@ -46,16 +48,89 @@ const fetchStreamSessions = async () => {
   }
 };
 
-// Kiểm tra xem phiên phát sóng có công khai không
-const isPublicLive = async (liveId) => {
+// Tạo Phiên Live
+export const createStreamSession= async (LiveStreamId,Name,Type,Status)=>{
+  console.log(LiveStreamId,Type)
+  const fomdata={
+    name:Name,
+    Status:Status,
+    Type:Type,
+    LiveStreamId:LiveStreamId
+  }
+  try{
+    const respone = await axios.post(`${url}/api/StreamSession`, fomdata, {
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    });
+    console.log("Create StreamSession: "+respone);
+  }catch(err){
+    console.error(err);
+  }
+}
+// cập nhật Phiên Live
+export const UpdateStreamSession= async (LiveStreamId,type)=>{
+  const StreamSession= await getStreamSession(LiveStreamId);
+  if(StreamSession==null){
+    return;
+  }
+  const fomdata={
+    Id:StreamSession.id,
+    Name:StreamSession.name,
+    Status:1,
+    StartTime:StreamSession.startTime,
+    EndTime:new Date().toISOString(),
+    Type:type,
+    LiveStreamId:StreamSession.liveStreamId
+  }
+  try{
+    const respone = await axios.put(`${url}/api/StreamSession`, fomdata, {
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    });
+    console.log("End StreamSession: "+respone);
+  }catch(err){
+    console.error(err);
+  }
+}
+
+
+
+// Kết Thúc Phiên Live
+const EndStreamSession= async (LiveStreamId)=>{
+  const StreamSession= await getStreamSession(LiveStreamId);
+  if(StreamSession==null){
+    return;
+  }
+  const fomdata={
+    Id:StreamSession.id,
+    Name:StreamSession.name,
+    Status:0,
+    StartTime:StreamSession.startTime,
+    EndTime:new Date().toISOString(),
+    Type:StreamSession.type,
+    LiveStreamId:StreamSession.liveStreamId
+  }
+  try{
+    const respone = await axios.put(`${url}/api/StreamSession`, fomdata, {
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    });
+    console.log("End StreamSession: "+respone);
+  }catch(err){
+    console.error(err);
+  }
+}
+// Tìm Kiếm phiên live theo LiveStreamID
+export const getStreamSession = async (liveId) => {
   try {
-    const sessions = await fetchStreamSessions();
-    return sessions.some(
-      (session) => session.liveStreamId === liveId && session.type === 0
-    );
+    const response = await axios.get(`${url}/api/StreamSession/${liveId}`);
+    return response.data;
   } catch (error) {
-    console.error("Error checking if live is public:", error);
-    return false;
+    console.error('Error fetching stream sessions:', error);
+    return null;
   }
 };
 
@@ -71,7 +146,7 @@ function randomID(len) {
 }
 
 // Hàm lấy tham số từ URL
-function getUrlParams(url = window.location.href) {
+export function getUrlParams(url = window.location.href) {
   return new URLSearchParams(url.split("?")[1]);
 }
 
@@ -101,11 +176,7 @@ export const generateRandomHexString = () => {
 };
 
 // Lấy danh sách ID phát sóng trực tiếp
-export async function GetListIdIsLiveStream(
-  appID,
-  serverSecret,
-  fetchStreamSessions
-) {
+export async function GetListIdIsLiveStream() {
   const fetchRoomData = async () => {
     const timestamp = Math.floor(Date.now() / 1000); // Current timestamp in seconds
     const signatureNonce = generateRandomHexString(); // Generate random nonce
@@ -119,7 +190,10 @@ export async function GetListIdIsLiveStream(
 
     const baseURL = `https://rtc-api.zego.im/?Action=DescribeUserNum`;
     const sessions = await fetchStreamSessions();
-    const roomIds = sessions.map((session) => session.liveStreamId);
+    if(sessions.length==0){
+      return null;
+    }
+    const roomIds = sessions.map(session => session.liveStreamId);
 
     const roomIdParams = roomIds.map((id) => `RoomId[]=${id}`).join("&");
     const generatedUrl = `${baseURL}&${roomIdParams}&AppId=${appID}&SignatureNonce=${signatureNonce}&Timestamp=${timestamp}&Signature=${encodeURIComponent(
@@ -158,21 +232,27 @@ export async function GetListIdIsLiveStream(
 const LiveStreamFrame = ({ width, height, className }) => {
   const [roomID, setRoomID] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [privacy, setPrivacy] = useState('Public'); // Default to 'Public'
   const [giftNotifications, setGiftNotifications] = useState([]); // Mảng thông báo quà tặng
   const [Access, setAccess] = useState(null);
   const user = getUser();
+  const dispatch = useDispatch();
   const UserId = user ? convertUUIDTo32Bytes(user.sub) : randomID(32);
   const role_str =
     convert32BytesToUUID(UserId) === roomID ? "Host" : "Audience";
   useEffect(() => {
     const fetchRoomData = async () => {
       try {
-        const Listid = await GetListIdIsLiveStream(
-          appID,
-          serverSecret,
-          fetchStreamSessions
-        );
-        setRoomID(getUrlParams().get("roomID") || Listid[0]);
+        const Listid = await GetListIdIsLiveStream();
+        const roomIdFromUrl = getUrlParams().get('roomID');
+        if (roomIdFromUrl) {
+          if(await getStreamSession(roomIdFromUrl)){
+            setRoomID(roomIdFromUrl);
+          }
+        } else if (Listid!=null) {
+          setRoomID(Listid[0]);
+        }    
+
       } catch (error) {
         console.error("Error fetching room data:", error);
       } finally {
@@ -185,33 +265,30 @@ const LiveStreamFrame = ({ width, height, className }) => {
 
   useEffect(() => {
     const checkAccess = async () => {
-      const isPublic = await isPublicLive(roomID);
-      const isHaveTikcet = await isHaveTicket(
-        roomID,
-        convert32BytesToUUID(UserId)
-      );
-      if (
-        isPublic ||
-        (!isPublic && isHaveTikcet) ||
-        (!isPublic && role_str === "Host")
-      ) {
-        setAccess(true);
-      } else {
-        setAccess(false);
-      }
+        const StreamSession = await getStreamSession(roomID);
+        setPrivacy(StreamSession.type==1?'Private':'Public');
+        const isPublic=!StreamSession.type==1;
+        const isHaveTikcet=await isHaveTicket(roomID,convert32BytesToUUID(UserId));
+        if(isPublic||!isPublic&&isHaveTikcet||!isPublic&&role_str==="Host"){
+           setAccess(true);
+        }else{
+          setAccess(false);
+        }
     };
     if (roomID) checkAccess();
-  }, [roomID]);
+  }, [roomID,privacy]);
 
   useEffect(() => {
     const metting = async () => {
       const element = document.getElementById("meetingContainer");
-      zp = ZegoUIKitPrebuilt.create(kitToken);
-      zp.addPlugins({ ZIM });
-      myMeeting(element);
+      zp = await ZegoUIKitPrebuilt.create(kitToken);
+      await zp.addPlugins({ ZIM });
+      myMeeting(element)  
     };
     if (Access) {
       metting();
+    }else if(zp){
+     zp.destroy();
     }
   }, [Access]);
 
@@ -236,28 +313,16 @@ const LiveStreamFrame = ({ width, height, className }) => {
 
   if (!roomID) return <div>No room data available</div>;
 
-  if (!Access) {
-    return (
-      <div
-        className={`bg-black ${className}`}
-        style={{
-          width,
-          height,
-          display: "flex",
-          justifyContent: "center",
-          alignItems: "center",
-          flexDirection: "column",
-        }}
-      >
-        {user != null && (
-          <CreateTicketButton LiveStreamId={roomID} role={role_str} />
-        )}
-        <p>Đây là private Live vui lòng mua vé</p>
-      </div>
-    );
+  if(!Access){
+        return (  
+        <div className={`bg-black ${className}`} style={{ width, height, display: 'flex', justifyContent: 'center', alignItems: 'center',flexDirection: 'column' }}>
+         {user!=null&&<CreateTicketButton roomID={roomID} role={role_str} privacy={privacy} setPrivacy={setPrivacy}/>}
+         <p>Đây là private Live vui lòng mua vé</p>
+        </div>
+        );
   }
-  // Information about the user from backend
-  const UserName = user ? user.userName : "guest";
+   // Information about the user from backend
+  const UserName = user?user.name:"guest";
   const role =
     role_str === "Host"
       ? ZegoUIKitPrebuilt.Host
@@ -287,47 +352,62 @@ const LiveStreamFrame = ({ width, height, className }) => {
   );
 
   const myMeeting = (element) => {
-    const rom = sessionStorage.getItem("roomID");
-    zp.hasJoinedRoom = false;
-    zp.joinRoom({
-      onJoinRoom: () => {
-        console.log("user join");
-        // Get the roomID
-        let roomID = zp.getRoomID();
-        // Store it in sessionStorage
-        sessionStorage.setItem("roomID", roomID);
-      },
-      onLeaveRoom: () => {
-        console.log("user leave");
-        sessionStorage.removeItem("roomID");
-        zp.destroy();
-      },
-      container: element,
-      scenario: {
-        mode: ZegoUIKitPrebuilt.LiveStreaming,
-        config: {
-          role,
+    const rom =sessionStorage.getItem('roomID');
+    zp.hasJoinedRoom=false;
+      zp.joinRoom({
+        onJoinRoom: () => {
+          console.log("user join");
+          // Get the roomID
+          let roomID = zp.getRoomID();
+          // Store it in sessionStorage
+          sessionStorage.setItem('roomID', roomID);
         },
-      },
-      sharedLinks,
-      showTextChat:
-        role_str === "Host" || window.location.pathname === "/live-stream"
-          ? true
-          : false,
-      showPreJoinView: role_str === "Host" && rom != roomID ? true : false,
-      showRoomDetailsButton:
-        role_str === "Host" || window.location.pathname === "/live-stream"
-          ? true
-          : false,
-      showLeavingView: false,
-      showRemoveUserButton: role_str === "Host" ? true : false,
-      onInRoomCustomCommandReceived(messages) {
-        if (messages[0].command.Type == "Gift") {
-          const { UserName, GiftURL } = messages[0].command;
-          addGiftNotification(UserName, GiftURL);
-        }
-      },
-    });
+        onLiveStart:(usere)=>{
+          if(role_str=='Host'){
+          createStreamSession(roomID,privacy=='Public'?0:1)
+          }
+          
+        },
+        onLiveEnd:(usere)=>{
+         EndStreamSession(roomID);
+          
+        },
+        onLeaveRoom: () =>{
+          console.log("user leave");
+          sessionStorage.removeItem('roomID');
+          zp.destroy();
+        },
+        onUserAvatarSetter:(userList)=>{
+          userList.forEach(u => {
+            dispatch(GetUserByID(convert32BytesToUUID(u.userID))).then((userInfo) => {
+              u.setUserAvatar(userInfo.payload.imageURL);
+          });
+        })
+        },
+        startLiveButtonText: "Start Live",
+        container: element,
+        scenario: {
+          mode: ZegoUIKitPrebuilt.LiveStreaming,
+          config: {
+            role,
+          },
+        },
+        sharedLinks,
+        showTextChat: role_str === "Host"||window.location.pathname.includes("/live-stream")?true:false,
+        showPreJoinView:false,
+        showRoomDetailsButton: role_str === "Host"||window.location.pathname.includes("/live-stream")?true:false,
+        showLeavingView: false,
+        showRemoveUserButton: role_str === "Host"?true:false,
+        onInRoomCustomCommandReceived(messages) {
+          if(messages[0].command.Type=="Gift"){
+             const { UserName, GiftURL } = messages[0].command;
+            addGiftNotification(UserName, GiftURL);
+          }else if(messages[0].command.Type=="Privacy"){
+            const Privacy=messages[0].command;
+            setPrivacy(Privacy);
+          };
+        },
+      }); 
   };
   // Hàm gửi thông báo quà tặng
   const handleSendCommand = (UserName, GiftURL) => {
@@ -347,31 +427,34 @@ const LiveStreamFrame = ({ width, height, className }) => {
       return false;
     }
   };
+  // Hàm gửi thông báo thay doi
+  const handleUpdateCommand = (Privacy) => {
+    if (zp) {
+      return zp
+        .sendInRoomCustomCommand({ Type: "Privacy", Privacy })
+        .then(() => {
+          return true;
+        })
+        .catch((err) => {
+          console.error(err);
+          return false;
+        });
+    } else {
+      console.error("ZegoUIKitPrebuilt instance (zp) chưa được khởi tạo.");
+      return false;
+    }
+  };
 
   return (
-    <div>
-      {" "}
-      <ToastContainer />
-      {user != null && (
-        <CreateTicketButton LiveStreamId={roomID} role={role_str} />
-      )}
-      <div style={{ position: "relative" }}>
-        <div
-          id="meetingContainer"
-          className={`bg-black ${className}`}
-          style={{ width, height }}
-        ></div>
-        {role_str != "Host" && user != null && (
-          <GiftList
-            userId={UserId}
-            roomID={roomID}
-            UserName={UserName}
-            handleSendCommand={handleSendCommand}
-          />
-        )}
-        <GiftNotification notifications={giftNotifications} />{" "}
-        {/* Sử dụng component thông báo */}
-      </div>
+    <div> <ToastContainer/>  
+     {user!=null&&<CreateTicketButton roomID={roomID} role={role_str} privacy={privacy} setPrivacy={setPrivacy} handleUpdateCommand={handleUpdateCommand}/>} 
+     <div style={{ position: "relative" }}>
+    <div id="meetingContainer" className={`bg-black ${className}`} style={{ width, height }}></div>
+     {role_str != "Host"&&user!=null&&<GiftList userId={UserId} roomID={roomID} UserName={UserName} handleSendCommand={handleSendCommand} />}
+      
+      <GiftNotification notifications={giftNotifications} /> {/* Sử dụng component thông báo */}
+     </div>
+     
     </div>
   );
 };

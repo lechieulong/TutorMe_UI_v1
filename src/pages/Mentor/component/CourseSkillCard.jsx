@@ -6,6 +6,8 @@ import Confirm from "../../../components/common/Confirm";
 import Notification from "../../../components/common/Notification";
 import TestForm from "../../ExamTest/TestForm";
 import Cookies from "js-cookie";
+import { Link } from "react-router-dom";
+
 const CourseSkillCard = ({
   courseId,
   isEnrolled,
@@ -17,43 +19,20 @@ const CourseSkillCard = ({
   const [error, setError] = useState(null);
   const [activeTab, setActiveTab] = useState(null);
   const [showCreateForm, setShowCreateForm] = useState(false);
-  const [partCounts, setPartCounts] = useState({});
   const [confirmOpen, setConfirmOpen] = useState(false);
   const [notification, setNotification] = useState("");
   const [confirmAction, setConfirmAction] = useState(() => {});
   const [isCreateTest, setIsCreateTest] = useState(false);
   const [categories, setCategories] = useState([]);
   const [skillId, setSkillId] = useState(null);
+  const [testExams, setTestExams] = useState({}); // Store tests for each skill
   const token = Cookies.get("authToken");
-
-  // const handlePartCountUpdate = (skillId, count) => {
-  //   setPartCounts((prev) => ({
-  //     ...prev,
-  //     [skillId]: count,
-  //   }));
-  // };
-
-  const handleCreateTest = async (skillId) => {
-    console.log(skillId);
-    try {
-      const response = await axios.get(
-        `https://localhost:7030/api/CourseSkills/DescriptionBySkill/${skillId}`,
-        { headers: { Authorization: `Bearer ${token}` } }
-      );
-      console.log("response.data.description, ", response.data.description);
-
-      setIsCreateTest(true);
-      setCategories([response.data.description]);
-      setSkillId(skillId);
-    } catch (error) {
-      console.error("Failed to fetch data from API", error);
-    }
-  };
 
   useEffect(() => {
     fetchSkills();
   }, [courseId]);
 
+  // Fetch skills and associated test exams
   const fetchSkills = async () => {
     if (!courseId) return;
     setLoading(true);
@@ -67,10 +46,46 @@ const CourseSkillCard = ({
       }
       setActiveTab(response.data[0]?.id || null);
       setError(null);
+
+      // Fetch tests for each skill
+      response.data.forEach((skill) => {
+        fetchTestExams(skill.id);
+      });
     } catch (err) {
       setError("Failed to fetch skills.");
     } finally {
       setLoading(false);
+    }
+  };
+
+  // Fetch test exams for a specific skill
+  const fetchTestExams = async (skillId) => {
+    try {
+      const response = await axios.get(
+        `https://localhost:7030/api/CourseSkills/GetTestExamsBySkillIdCourse?skillIdCourse=${skillId}`,
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+      setTestExams((prevExams) => ({
+        ...prevExams,
+        [skillId]: response.data, // Store test exams for the skill
+      }));
+    } catch (err) {
+      console.error("Error fetching test exams:", err);
+    }
+  };
+
+  const handleCreateTest = async (skillId) => {
+    try {
+      const response = await axios.get(
+        `https://localhost:7030/api/CourseSkills/DescriptionBySkill/${skillId}`,
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+
+      setIsCreateTest(true);
+      setCategories([response.data.description]);
+      setSkillId(skillId);
+    } catch (error) {
+      console.error("Failed to fetch data from API", error);
     }
   };
 
@@ -106,9 +121,6 @@ const CourseSkillCard = ({
 
   if (loading) return <p>Loading...</p>;
   if (error) return <p>{error}</p>;
-  skills.forEach((skill) => {
-    console.log(skill.id);
-  });
 
   return (
     <div>
@@ -191,6 +203,20 @@ const CourseSkillCard = ({
                     Create Test for {skill.description}
                   </button>
                 )}
+
+                <div className="flex space-x-4 mt-4">
+                  {testExams[skill.id]?.map((exam) => (
+                    <div key={exam.id}>
+                      <Link
+                        to={`/testDetail/${exam.id}`} // Link dẫn đến chi tiết bài kiểm tra
+                        className="py-2 px-3 text-sm font-medium rounded-lg border border-gray-200 bg-white text-gray-800 shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-gray-200"
+                      >
+                        Do Test for Skill: {skill.description} (Test:{" "}
+                        {exam.testName})
+                      </Link>
+                    </div>
+                  ))}
+                </div>
               </div>
             ))}
           </div>

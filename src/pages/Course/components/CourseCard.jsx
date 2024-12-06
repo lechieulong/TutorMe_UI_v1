@@ -1,10 +1,11 @@
-import React, { useState } from "react";
+import React, { useState, dispatch } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { FaTrash } from "react-icons/fa";
-import axios from "axios";
+import { styled, alpha } from "@mui/material/styles";
 import Notification from "../../../components/common/Notification";
 import { formatCurrency } from "../../../utils/Validator";
-
+import Switch from "@mui/material/Switch";
+import { updateCourseStatus } from "../../../redux/courses/CourseSlice";
 const CourseCard = ({
   content,
   courseName,
@@ -28,7 +29,17 @@ const CourseCard = ({
   if (!isMentorCourseList && !isEnabled) {
     return null;
   }
-
+  const GreenSwitch = styled(Switch)(({ theme }) => ({
+    "& .MuiSwitch-switchBase.Mui-checked": {
+      color: "#007549",
+      "&:hover": {
+        backgroundColor: alpha("#007549", theme.palette.action.hoverOpacity),
+      },
+    },
+    "& .MuiSwitch-switchBase.Mui-checked + .MuiSwitch-track": {
+      backgroundColor: "#007549",
+    },
+  }));
   const handleDeleteClick = () => {
     if (onDelete) {
       onDelete(courseId);
@@ -36,25 +47,21 @@ const CourseCard = ({
     }
   };
 
-  const handleSwitchChange = async () => {
+  const handleSwitchChange = () => {
     const newStatus = !isSwitchOn;
 
-    try {
-      await axios.put(
-        `https://localhost:7030/api/Courses/${courseId}/update-status`,
-        newStatus,
-        {
-          headers: { "Content-Type": "application/json" },
-        }
-      );
-      setIsSwitchOn(newStatus);
-      setNotification(
-        `Khóa học đã được ${newStatus ? "hiển thị" : "ẩn"} thành công.`
-      );
-    } catch (error) {
-      console.error("Error updating course status", error);
-      setNotification("Cập nhật trạng thái khóa học thất bại.");
-    }
+    dispatch(updateCourseStatus({ courseId, newStatus }))
+      .unwrap()
+      .then(() => {
+        setIsSwitchOn(newStatus);
+        setNotification(
+          `Khóa học đã được ${newStatus ? "hiển thị" : "ẩn"} thành công.`
+        );
+      })
+      .catch((error) => {
+        console.error("Error updating course status", error);
+        setNotification("Cập nhật trạng thái khóa học thất bại.");
+      });
   };
 
   const getSkillNames = (skillData) => {
@@ -137,6 +144,11 @@ const CourseCard = ({
             >
               <FaTrash />
             </button>
+            <GreenSwitch
+              checked={isSwitchOn}
+              onChange={handleSwitchChange}
+              inputProps={{ "aria-label": "Green switch" }}
+            />
             <input
               type="checkbox"
               id={`switch-${courseId}`}

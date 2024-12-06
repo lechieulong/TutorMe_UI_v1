@@ -30,7 +30,6 @@ const CourseList = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const coursesPerPage = 8;
 
-  // Định nghĩa danh mục
   const categories = ["All", "Listening", "Reading", "Writing", "Speaking"];
 
   useEffect(() => {

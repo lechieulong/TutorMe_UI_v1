@@ -168,7 +168,24 @@ export const fetchCourseLessons = createAsyncThunk(
     }
   }
 );
-
+export const updateCourseStatus = createAsyncThunk(
+  "courses/updateStatus",
+  async ({ courseId, newStatus }, { rejectWithValue }) => {
+    try {
+      await axios.put(
+        `https://localhost:7030/api/Courses/${courseId}/update-status`,
+        newStatus,
+        {
+          headers: { "Content-Type": "application/json" },
+        }
+      );
+      return { courseId, newStatus }; // Trả về dữ liệu cần thiết
+    } catch (error) {
+      console.error("Error updating course status", error);
+      return rejectWithValue("Cập nhật trạng thái khóa học thất bại.");
+    }
+  }
+);
 const initialState = {
   course: null,
   courses: [],
@@ -297,6 +314,20 @@ const courseSlice = createSlice({
       .addCase(CheckLecturerOfCourse.rejected, (state, action) => {
         state.checkLecturerStatus = STATUS.FAILED;
         state.checkLecturerError = action.payload || action.error.message;
+      })
+      //Handle switch course
+      .addCase(updateCourseStatus.fulfilled, (state, action) => {
+        const { courseId, newStatus } = action.payload;
+        const course = state.courses.find((c) => c.id === courseId);
+        if (course) {
+          course.isSwitchOn = newStatus;
+        }
+        state.notification = `Khóa học đã được ${
+          newStatus ? "hiển thị" : "ẩn"
+        } thành công.`;
+      })
+      .addCase(updateCourseStatus.rejected, (state, action) => {
+        state.notification = action.payload || "Đã xảy ra lỗi.";
       });
   },
 });

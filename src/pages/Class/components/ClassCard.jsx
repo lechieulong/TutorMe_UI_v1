@@ -3,6 +3,8 @@ import { useLocation, useNavigate } from "react-router-dom";
 import axios from "axios";
 import { styled, alpha } from "@mui/material/styles";
 import Switch from "@mui/material/Switch";
+import { updateEnabledStatus } from "../../../redux/classes/ClassSlice";
+import { useDispatch } from "react-redux";
 
 const GreenSwitch = styled(Switch)(({ theme }) => ({
   "& .MuiSwitch-switchBase.Mui-checked": {
@@ -29,7 +31,7 @@ const ClassCard = ({
   const location = useLocation();
   const navigate = useNavigate();
   const [isSwitchOn, setIsSwitchOn] = useState(false);
-
+  const dispatch = useDispatch();
   useEffect(() => {
     const fetchEnabledStatus = async () => {
       try {
@@ -53,40 +55,36 @@ const ClassCard = ({
     return null;
   }
 
-  const handleSwitchChange = async (event) => {
-    const newStatus = event.target.checked;
+  const handleSwitchChange = () => {
+    const newStatus = !isSwitchOn;
     const confirmationMessage = newStatus
       ? "Bạn có chắc muốn bật hiển thị lớp học này không?"
       : "Bạn có chắc muốn tắt hiển thị lớp học này không?";
 
     if (window.confirm(confirmationMessage)) {
-      try {
-        const response = await axios.put(
-          `https://localhost:7030/api/class/${classItem.id}/enabled`,
-          newStatus,
-          {
-            headers: { "Content-Type": "application/json" },
-          }
-        );
-        if (typeof response.data.isEnabled === "boolean") {
-          setIsSwitchOn(response.data.isEnabled);
-          alert(
-            `Lớp học đã được ${
-              response.data.isEnabled ? "hiển thị" : "ẩn"
-            } thành công.`
-          );
-          onSwitchChange &&
-            onSwitchChange(classItem.id, response.data.isEnabled);
-        } else {
-          throw new Error("Phản hồi từ API không hợp lệ");
-        }
-      } catch (error) {
-        console.error("Cập nhật trạng thái lớp học thất bại", error);
-      }
+      // Gọi action Redux để cập nhật trạng thái
+      dispatch(
+        updateEnabledStatus({ classId: classItem.id, isEnabled: newStatus })
+      )
+        .then(() => {
+          setIsSwitchOn(newStatus); // Cập nhật trạng thái trong component
+          alert(`Lớp học đã được ${newStatus ? "hiển thị" : "ẩn"} thành công.`);
+          // Gọi callback để xử lý cập nhật danh sách nếu cần
+          onSwitchChange && onSwitchChange(classItem.id, newStatus);
+        })
+        .catch((error) => {
+          console.error("Cập nhật trạng thái lớp học thất bại", error);
+          alert("Đã xảy ra lỗi khi cập nhật trạng thái lớp học.");
+        });
     }
   };
 
   const handleCardClick = () => {
+    // Nếu mentorAndList là true, thoát khỏi hàm mà không làm gì cả
+    if (mentorAndList) {
+      return;
+    }
+
     if (!isSwitchOn) {
       alert("Lớp học này hiện không khả dụng.");
       onSelect && onSelect(false);

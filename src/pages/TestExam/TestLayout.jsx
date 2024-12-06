@@ -25,6 +25,7 @@ const TestLayout = ({
   const [currentSkillIndex, setCurrentSkillIndex] = useState(0);
   const [testData, setTestData] = useState({});
   const [userAnswers, setUserAnswers] = useState([]);
+  const [noAnswers, setNoAnswers] = useState(false);
   const [loading, setLoading] = useState(true);
   const [submitted, setSubmitted] = useState(false);
   const [submitting, setSubmitting] = useState(false);
@@ -221,7 +222,7 @@ const TestLayout = ({
 
   const handleSubmit = () => {
     if (!userAnswers || Object.keys(userAnswers).length === 0) {
-      console.log("No answers to submit");
+      setNoAnswers(true);
       return;
     }
 
@@ -429,6 +430,27 @@ const TestLayout = ({
             overlayClassName="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center"
           >
             <h3>We are calculate score ... pls wait a little bit </h3>
+          </Modal>
+        </>
+      )}
+
+      {noAnswers && userAnswers.length == 0 && (
+        <>
+          <Modal
+            isOpen={noAnswers}
+            className="bg-warmNeutral flex justify-center gap-5 items-center  rounded-lg shadow-lg p-6 max-w-md mx-auto text-black"
+            overlayClassName="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center"
+          >
+            <h3 className="text-yellow-800 text-center">
+              Please select at least one answer
+            </h3>
+            <button
+              type="button"
+              onClick={() => setNoAnswers(false)}
+              className="bg-coolNeutral border-gray-500 text-black rounded-md px-4 py-2"
+            >
+              Close
+            </button>
           </Modal>
         </>
       )}

@@ -34,11 +34,11 @@ const TestFormLayout = () => {
   };
 
   return (
-    <>
+    <div>
       <Header />
-      <div className="flex w-screen">
+      <div className="flex w-screen  ">
         <MentorSidebar />
-        <div className="w-full ">
+        <div className="w-full h-[90vh] overflow-y-auto">
           <div className="border-b border-gray-200 dark:border-gray-700">
             <ul className="flex p-2 flex-wrap -mb-px text-sm font-medium text-center text-gray-500 dark:text-gray-400">
               {(user?.role?.includes(Roles.ADMIN) ||
@@ -106,7 +106,7 @@ const TestFormLayout = () => {
           <div className="p-7">{renderComponent()}</div>
         </div>
       </div>
-    </>
+    </div>
   );
 };
 

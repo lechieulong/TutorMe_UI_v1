@@ -1,272 +1,393 @@
-import { useForm, useFieldArray, Controller } from "react-hook-form";
-
+import React, { useState, useEffect } from "react";
+import { useForm, Controller } from "react-hook-form";
+import {
+  faLeftLong,
+  faMultiply,
+  faPaperPlane,
+} from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faMultiply, faPlus } from "@fortawesome/free-solid-svg-icons";
-import "react-toastify/dist/ReactToastify.css";
 import {
   addQuestions,
   updateQuestion,
 } from "../../../redux/testExam/TestSlice";
 import { useDispatch } from "react-redux";
-
-const QuestionFormBank = ({ setIsModalOpen, question }) => {
-  const { control, handleSubmit } = useForm({
-    defaultValues: {
-      questions: question
-        ? [question]
-        : [
-            {
-              questionName: "",
-              answers: [],
-              skill: 1,
-              questionType: 1,
-              part: 1,
-            },
-          ],
+const QuestionFormBank = ({ setIsModalOpen, editQuestion }) => {
+  const [questions, setQuestions] = useState([
+    {
+      questionName: "",
+      skillType: 0,
+      questionType: 1,
+      part: 1,
+      answers: [],
     },
-  });
-
-  const {
-    fields: questions,
-    append,
-    remove,
-  } = useFieldArray({
-    name: "questions",
-    control,
-  });
-
+  ]);
   const dispatch = useDispatch();
+  const {
+    control,
+    handleSubmit,
+    setValue,
+    formState: { errors },
+  } = useForm();
+
+  useEffect(() => {
+    if (editQuestion) {
+      setValue(`questions[0].questionName`, editQuestion.questionName);
+      setValue(`questions[0].skillType`, editQuestion.skill);
+      setValue(`questions[0].questionType`, editQuestion.questionType);
+      setValue(`questions[0].part`, editQuestion.partNumber);
+      setValue(`questions[0].answers`, editQuestion.answers);
+
+      var updateQuestion = {
+        questionName: editQuestion.questionName,
+        skillType: editQuestion.skill,
+        questionType: editQuestion.questionType,
+        part: editQuestion.partNumber,
+        answers: editQuestion.answers,
+      };
+      setQuestions([updateQuestion]);
+    } else {
+      setQuestions([
+        {
+          questionName: "",
+          skillType: 0,
+          questionType: 1,
+          part: 1,
+          answers: [],
+        },
+      ]);
+    }
+  }, [editQuestion, setValue]); // Add setValue as dependency to ensure it's called when `editQuestion` changes
+
+  const skillTypes = [
+    { value: 0, label: "Reading" },
+    { value: 1, label: "Listening" },
+    { value: 2, label: "Writing" },
+    { value: 3, label: "Speaking" },
+  ];
+
+  const questionTypes = {
+    0: [1, 2, 3], // Reading: Multiple Choice, True/False, Not Given
+    1: [8], // Listening: Multiple Choice
+    2: [0], // Writing: Default
+    3: [0], // Speaking: Default
+  };
+
+  const parts = {
+    0: [1, 2, 3], // Reading: 1, 2, 3
+    1: [1, 2, 3, 4], // Listening: 1, 2, 3, 4
+    2: [1, 2], // Writing: Default
+    3: [1, 2, 3], // Speaking: Default
+  };
+
+  const handleAddQuestion = () => {
+    setQuestions([
+      ...questions,
+      { questionName: "", skillType: 0, questionType: 1, part: 1, answers: [] },
+    ]);
+  };
+
+  const handleDeleteQuestion = (index) => {
+    const newQuestions = [...questions];
+    newQuestions.splice(index, 1);
+    setQuestions(newQuestions);
+  };
+
+  const handleAddAnswer = (index) => {
+    const newQuestions = [...questions];
+    newQuestions[index].answers.push({ answerText: "", isCorrect: 0 });
+    setQuestions(newQuestions);
+  };
+
+  const handleDeleteAnswer = (questionIndex, answerIndex) => {
+    const newQuestions = [...questions];
+    newQuestions[questionIndex].answers.splice(answerIndex, 1);
+    setQuestions(newQuestions);
+  };
+
+  const handleAnswerChange = (questionIndex, answerIndex, field, value) => {
+    const newQuestions = [...questions];
+    newQuestions[questionIndex].answers[answerIndex][field] = value;
+    setQuestions(newQuestions);
+  };
+
+  const handleQuestionChange = (index, field, value) => {
+    const newQuestions = [...questions];
+    newQuestions[index][field] = value;
+    setQuestions(newQuestions);
+  };
 
   const onSubmit = (data) => {
-    const payload = data.questions.map((question) => {
-      // If updating, include questionId and answerId
-      const updatedQuestion = {
-        questionName: question.questionName,
-        questionType: question.questionType,
-        skill: question.skill,
-        part: question.part,
-        answers: question.answers.map((answer) => ({
-          answerText: answer.answerText,
-          isCorrect: Number(answer.isCorrect), // Convert to number
-        })),
-      };
-
-      if (question.id) {
-        return {
-          ...updatedQuestion,
-          id: question.id,
-          answers: question.answers.map((answer) => ({
-            ...answer,
-            answerId: answer.id, // Include answerId if updating
-          })),
-        };
-      }
-
-      return updatedQuestion; // No questionId or answerId for adding
-    });
-
-    if (question) {
-      dispatch(
-        updateQuestion({ id: question.id, updatedQuestion: payload[0] })
-      );
+    if (editQuestion) {
+      var updateQuestion = data.questions[0];
+      dispatch(updateQuestion({ id: editQuestion.id, updateQuestion }));
     } else {
-      dispatch(addQuestions(payload));
+      dispatch(addQuestions(data));
     }
     setIsModalOpen(false);
   };
 
+  const handleSkillTypeChange = (index, value) => {
+    const newQuestions = [...questions];
+    newQuestions[index].skillType = value;
+
+    // Set questionType và part mặc định dựa trên skillType
+    newQuestions[index].questionType = questionTypes[value]?.[0] || 0;
+    newQuestions[index].part = parts[value]?.[0] || 0;
+
+    setQuestions(newQuestions);
+    setValue(
+      `questions[${index}].questionType`,
+      questionTypes[value]?.[0] || 0
+    );
+    setValue(`questions[${index}].part`, parts[value]?.[0] || 0);
+  };
+
+  const handleQuestionTypeChange = (index, value) => {
+    const newQuestions = [...questions];
+    newQuestions[index].questionType = value;
+    setQuestions(newQuestions);
+  };
+
+  const handlePartChange = (index, value) => {
+    const newQuestions = [...questions];
+    newQuestions[index].part = value;
+    setQuestions(newQuestions);
+  };
+
   return (
-    <div className="fixed inset-0 flex justify-center items-center bg-black bg-opacity-50">
-      <div className="bg-white h-[550px] rounded-lg shadow-lg p-4 w-[650px] overflow-y-auto">
-        <div className="flex justify-between items-center p-2">
-          <h3 className="text-xl font-bold ">Questions from Bank</h3>
-          <button
-            className="border border-red-400"
-            onClick={() => setIsModalOpen(false)}
+    <>
+      <button
+        className="border border-red-300 mb-2"
+        type="button"
+        onClick={() => setIsModalOpen(false)}
+      >
+        Back question banks
+        <span className="ml-2">
+          <FontAwesomeIcon icon={faLeftLong} />
+        </span>
+      </button>
+      <div className="space-y-4 border border-gray-500 p-4">
+        <h3 className="text-center font-bold text-xl "> New Question Form</h3>
+        {questions.map((question, questionIndex) => (
+          <div
+            key={questionIndex}
+            className="bg-white p-4 rounded-lg shadow-md space-y-4"
           >
-            Close
-          </button>
-        </div>
-
-        <form onSubmit={handleSubmit(onSubmit)}>
-          {questions.map((question, index) => (
-            <div
-              key={question.id}
-              className="mb-4 border p-4 rounded space-y-3"
-            >
-              <div className="flex justify-between items-center">
-                <p className="font-semibold">Question {index + 1}</p>
-                <button
-                  type="button"
-                  onClick={() => remove(index)}
-                  className="bg-red-500 text-white p-1 rounded"
-                >
-                  <FontAwesomeIcon icon={faMultiply} />
-                </button>
-              </div>
-
-              <label className="block mb-1">Question Name</label>
-              <Controller
-                name={`questions.${index}.questionName`}
-                control={control}
-                defaultValue={question.questionName || ""}
-                render={({ field }) => (
-                  <input
-                    {...field}
-                    className="border p-1 w-full mb-2"
-                    placeholder="Enter question name"
-                    required
-                  />
-                )}
-              />
-
-              <div className="flex gap-10">
-                <div>
-                  <label className="block mb-1">Skill</label>
-                  <Controller
-                    name={`questions.${index}.skill`}
-                    control={control}
-                    defaultValue={question.skill || 1}
-                    render={({ field }) => (
-                      <select {...field} className="border p-1 mb-2 w-full">
-                        <option value="1">Skill 1</option>
-                        <option value="2">Skill 2</option>
-                        <option value="3">Skill 3</option>
-                        <option value="4">Skill 4</option>
-                      </select>
-                    )}
-                  />
-                </div>
-                <div>
-                  <label className="block mb-1">Question Type</label>
-                  <Controller
-                    name={`questions.${index}.questionType`}
-                    control={control}
-                    defaultValue={question.questionType || 1}
-                    render={({ field }) => (
-                      <select {...field} className="border p-1 mb-2 w-full">
-                        <option value="1">Question Type 1</option>
-                        <option value="2">Question Type 2</option>
-                        <option value="3">Question Type 3</option>
-                        <option value="4">Question Type 4</option>
-                      </select>
-                    )}
-                  />
-                </div>
-                <div>
-                  <label className="block mb-1">Part</label>
-                  <Controller
-                    name={`questions.${index}.part`}
-                    control={control}
-                    defaultValue={question.part || 1}
-                    render={({ field }) => (
-                      <select {...field} className="border p-1 mb-2 w-full">
-                        <option value="1">Part 1</option>
-                        <option value="2">Part 2</option>
-                        <option value="3">Part 3</option>
-                        <option value="4">Part 4</option>
-                      </select>
-                    )}
-                  />
-                </div>
-              </div>
-
-              <AnswerForm control={control} questionIndex={index} />
+            <div className="flex justify-between items-center">
+              <p className="font-bold">Question {questionIndex + 1}</p>
+              <button
+                onClick={() => handleDeleteQuestion(questionIndex)}
+                className="mt-4 px-4 py-2 bg-red-500 text-white rounded-lg"
+              >
+                <FontAwesomeIcon icon={faMultiply} />
+              </button>
             </div>
-          ))}
-          <div className="flex justify-between">
+            {((question.skillType == 0 && question.questionType == 1) ||
+              (question.skillType == 1 &&
+                (question.questionType == 8 || question.questionType == 5)) ||
+              question.skillType == 2 ||
+              question.skillType == 3) && (
+              <div>
+                <label className="block text-sm font-semibold">
+                  Question Name:
+                </label>
+                <Controller
+                  name={`questions[${questionIndex}].questionName`}
+                  control={control}
+                  defaultValue={question?.questionName || ""}
+                  rules={{ required: "Question name is required" }}
+                  render={({ field }) => (
+                    <input
+                      {...field}
+                      className="w-full px-4 py-2 border border-gray-300 rounded-lg"
+                    />
+                  )}
+                />
+
+                {errors.questions?.[questionIndex]?.questionName && (
+                  <p className="text-red-500 text-sm">
+                    {errors.questions[questionIndex].questionName.message}
+                  </p>
+                )}
+              </div>
+            )}
+
+            {!editQuestion && (
+              <>
+                <div>
+                  <label className="block text-sm font-semibold">
+                    Skill Type:
+                  </label>
+                  <Controller
+                    name={`questions[${questionIndex}].skillType`}
+                    control={control}
+                    defaultValue={question.skillType}
+                    render={({ field }) => (
+                      <select
+                        {...field}
+                        onChange={(e) => {
+                          field.onChange(e); // Cập nhật giá trị cho react-hook-form
+                          handleSkillTypeChange(
+                            questionIndex,
+                            Number(e.target.value)
+                          ); // Cập nhật logic trong state
+                        }}
+                        className="w-full px-4 py-2 border border-gray-300 rounded-lg"
+                      >
+                        {skillTypes.map((skill) => (
+                          <option key={skill.value} value={skill.value}>
+                            {skill.label}
+                          </option>
+                        ))}
+                      </select>
+                    )}
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-semibold">
+                    Question Type:
+                  </label>
+                  <select
+                    value={question.questionType}
+                    onChange={(e) =>
+                      handleQuestionTypeChange(
+                        questionIndex,
+                        Number(e.target.value)
+                      )
+                    }
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg"
+                  >
+                    {questionTypes[question.skillType]?.map((type) => (
+                      <>
+                        <option key={type} value={type}>
+                          {type == 1 || type == 8
+                            ? "Multiple Choice"
+                            : type == 2
+                            ? "True/False"
+                            : type == 3
+                            ? "Not Given"
+                            : "Default"}
+                        </option>
+                      </>
+                    ))}
+                  </select>
+                </div>
+
+                <div>
+                  <label className="block text-sm font-semibold">Part:</label>
+                  <select
+                    value={question.part}
+                    onChange={(e) =>
+                      handlePartChange(questionIndex, Number(e.target.value))
+                    }
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg"
+                  >
+                    {parts[question.skillType]?.map((part) => (
+                      <option key={part} value={part}>
+                        Part {part}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+              </>
+            )}
+            <div className="space-y-2">
+              {question.answers.map((answer, answerIndex) => (
+                <div key={answerIndex} className="flex space-x-4 items-center">
+                  <input
+                    type="text"
+                    value={answer.answerText}
+                    onChange={(e) =>
+                      handleAnswerChange(
+                        questionIndex,
+                        answerIndex,
+                        "answerText",
+                        e.target.value
+                      )
+                    }
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg"
+                    placeholder="Answer Text"
+                  />
+                  {question.skillType == 0 && question.questionType == 3 ? (
+                    <select
+                      value={answer.isCorrect}
+                      onChange={(e) =>
+                        handleAnswerChange(
+                          questionIndex,
+                          answerIndex,
+                          "isCorrect",
+                          Number(e.target.value)
+                        )
+                      }
+                      className="px-4 py-2 border border-gray-300 rounded-lg"
+                    >
+                      <option value={0}>Incorrect</option>
+                      <option value={1}>Correct</option>
+                      <option value={2}>Not Given</option>
+                    </select>
+                  ) : (
+                    <select
+                      value={answer.isCorrect}
+                      onChange={(e) =>
+                        handleAnswerChange(
+                          questionIndex,
+                          answerIndex,
+                          "isCorrect",
+                          Number(e.target.value)
+                        )
+                      }
+                      className="px-4 py-2 border border-gray-300 rounded-lg"
+                    >
+                      <option value={0}>Incorrect</option>
+                      <option value={1}>Correct</option>
+                    </select>
+                  )}
+
+                  <button
+                    onClick={() =>
+                      handleDeleteAnswer(questionIndex, answerIndex)
+                    }
+                    className="px-2 py-1 bg-red-500 text-white rounded-full"
+                  >
+                    <FontAwesomeIcon icon={faMultiply} />
+                  </button>
+                </div>
+              ))}
+              <button
+                onClick={() => handleAddAnswer(questionIndex)}
+                type="button"
+                className="px-4 py-2 bg-green-500 text-white rounded-lg"
+              >
+                Add Answer
+              </button>
+            </div>
+          </div>
+        ))}
+
+        <div className="flex space-x-4">
+          {!editQuestion && (
             <button
+              onClick={handleAddQuestion}
               type="button"
-              onClick={() =>
-                append({
-                  questionName: "",
-                  answers: [],
-                  skill: 1,
-                  questionType: 1,
-                  part: 1,
-                })
-              }
-              className="bg-green-500 text-white p-2 rounded"
+              className="px-4 py-2  border border-gray-400 text-gray rounded-lg"
             >
               Add Question
-              <FontAwesomeIcon icon={faPlus} className="ml-2" />
             </button>
-            <button
-              type="submit"
-              className="bg-blue-500 text-white p-2 rounded"
-            >
-              Submit
-            </button>
-          </div>
-        </form>
-      </div>
-    </div>
-  );
-};
-
-// Component quản lý câu trả lời
-const AnswerForm = ({ control, questionIndex }) => {
-  const {
-    fields: answerFields,
-    append,
-    remove,
-  } = useFieldArray({
-    name: `questions.${questionIndex}.answers`,
-    control,
-  });
-
-  return (
-    <div className="mt-4">
-      <h4 className="font-bold">Answers</h4>
-      {answerFields.map((answer, index) => (
-        <div key={answer.id} className="flex items-center mb-2">
-          <label className="block mb-1">Answer Text</label>
-          <Controller
-            name={`questions.${questionIndex}.answers.${index}.answerText`}
-            control={control}
-            defaultValue={answer.answerText || ""}
-            render={({ field }) => (
-              <input
-                {...field}
-                className="border p-1 w-full mr-2"
-                placeholder="Enter answer text"
-                required
-              />
-            )}
-          />
-          <Controller
-            name={`questions.${questionIndex}.answers.${index}.isCorrect`}
-            control={control}
-            defaultValue={answer.isCorrect || 0}
-            render={({ field }) => (
-              <select
-                {...field}
-                className="border p-1 mb-2"
-                onChange={(e) => field.onChange(Number(e.target.value))} // Convert to number
-              >
-                <option value={0}>Incorrect</option>
-                <option value={1}>Correct</option>
-              </select>
-            )}
-          />
+          )}
 
           <button
-            type="button"
-            onClick={() => remove(index)}
-            className="bg-red-500 text-white p-1 rounded"
+            onClick={handleSubmit(onSubmit)}
+            className="px-4 py-2 bg-green-500 text-white rounded-lg"
           >
-            <FontAwesomeIcon icon={faMultiply} />
+            <span className="mr-2">
+              <FontAwesomeIcon icon={faPaperPlane} />
+            </span>
+            Submit
           </button>
         </div>
-      ))}
-      <button
-        type="button"
-        onClick={() => append({ answerText: "", isCorrect: 0 })}
-        className="bg-blue-500 text-white p-2 rounded"
-      >
-        Add Answer
-      </button>
-    </div>
+      </div>
+    </>
   );
 };
 

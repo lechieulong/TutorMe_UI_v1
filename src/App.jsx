@@ -101,6 +101,7 @@ const App = () => {
           <Route path="/gemini" element={<SpeakingGemini />} />
           {/* Test  exam*/}
           <Route path="/manageTest/:courseId" element={<TestFormLayout />} />
+          <Route path="/manageTest/:testId/results" element={<TestFormLayout />} />
           <Route path="/testing/:testId" element={<TestLayout />} />
           <Route path="/testExplain/:testId" element={<TestExplain />} />
           <Route path="/testing/:skillId/skill" element={<TestLayout />} />

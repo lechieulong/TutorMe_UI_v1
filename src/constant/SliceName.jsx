@@ -58,6 +58,9 @@ export const ACTIONS = {
   DOWNLOAD_TEMPLATE: "downloadTemplate",
   GET_QUESTIONS_BANK: "getQuestionsBank",
   GET_HISTORY_TEST: "getHistoryTest",
+  GET_TEST_BY_COURSE: "getTestByCourse",
+  GET_TEST_HISTORY: "getTestHistory",
+  GET_RESULT_OFA_TEST: "getResultOfATest",
   GET_TEST_ATTEMPT: "getTestAttempt",
   GET_ATTEMPT_TOTAL: "getAttemptTotal",
 

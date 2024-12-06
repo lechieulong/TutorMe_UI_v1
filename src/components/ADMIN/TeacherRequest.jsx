@@ -14,9 +14,8 @@ const TeacherRequests = () => {
     const [currentPage, setCurrentPage] = useState(1);
     const [searchTerm, setSearchTerm] = useState("");
     const [statusFilter, setStatusFilter] = useState(0); // 0 for Pending, 1 for Accepted, 2 for Rejected
-    const pageSize = 2;
+    const pageSize = 20;
 
-    // Fetch requests on component mount and when page or filters change
     useEffect(() => {
         dispatch(Admin_GetTeacherRequests({ page: currentPage, pageSize, status: statusFilter }));
     }, [dispatch, currentPage, statusFilter]);
@@ -31,7 +30,7 @@ const TeacherRequests = () => {
     // Handle status filter buttons
     const handleStatusChange = (status) => {
         setStatusFilter(status);
-        setCurrentPage(1); // Reset to first page on filter change
+        setCurrentPage(1); 
     };
 
     const formatDate = (dateString) => new Date(dateString).toLocaleDateString();

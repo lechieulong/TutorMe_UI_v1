@@ -11,6 +11,9 @@ const Speaking = ({
   handleAnswerChange,
   skill,
   userAnswers,
+  part2Time,
+  part1And3Time,
+  selectedVoice,
 }) => {
   const { transcript, listening, resetTranscript } = useSpeechRecognition();
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(-1); // Start with welcome message
@@ -27,11 +30,11 @@ const Speaking = ({
   const examinerVoice = () => {
     const voices = window.speechSynthesis.getVoices();
     return (
-      voices.find((voice) => voice.name.includes("Google US English Male")) ||
-      voices[1]
+      voices.find((voice) => voice.name === selectedVoice) ||
+      voices.find((voice) => voice.lang.startsWith("en")) || // Fallback to first English voice
+      voices[0] // Fallback to any available voice
     );
   };
-
   const speakText = (text, callback) => {
     if ("speechSynthesis" in window) {
       window.speechSynthesis.cancel();
@@ -69,6 +72,7 @@ const Speaking = ({
             answerId: "00000000-0000-0000-0000-000000000000",
           },
         ],
+        partId: partData.id,
         skill: skill,
         skillId: currentSkillId,
       };
@@ -105,7 +109,13 @@ const Speaking = ({
       setCurrentQuestionIndex((prevIndex) => prevIndex + 1);
       setQuestionRead(false);
       setTimeLeft(
-        partData.partNumber === 1 || partData.partNumber === 3 ? 30 : 180
+        partData.partNumber === 1 || partData.partNumber === 3
+          ? part1And3Time
+            ? part1And3Time
+            : 40
+          : part2Time
+          ? part2Time
+          : 180
       );
       resetTranscript();
       setAiText("");

@@ -40,10 +40,10 @@ const CourseSkillCard = ({
         `https://localhost:7030/api/CourseSkills/DescriptionBySkill/${skillId}`,
         { headers: { Authorization: `Bearer ${token}` } }
       );
-      console.log(response.data.description);
+      console.log("response.data.description, ", response.data.description);
 
       setIsCreateTest(true);
-      setCategories([response.data]);
+      setCategories([response.data.description]);
       setSkillId(skillId);
     } catch (error) {
       console.error("Failed to fetch data from API", error);
@@ -196,7 +196,14 @@ const CourseSkillCard = ({
           </div>
         </div>
       ) : (
-        <TestForm categories={categories} lessonId={skillId} />
+        <TestForm
+          categories={categories}
+          skillIdCourse={skillId}
+          courseId={courseId}
+          testType={2}
+          setIsCreateTest={setIsCreateTest}
+          pageType="finalTest"
+        />
       )}
 
       <Confirm

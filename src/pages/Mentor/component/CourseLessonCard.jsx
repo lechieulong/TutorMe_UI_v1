@@ -7,7 +7,7 @@ import Confirm from "../../../components/common/Confirm";
 import Notification from "../../../components/common/Notification";
 import { FaAngleDown, FaAngleUp } from "react-icons/fa";
 import TestForm from "../../ExamTest/TestForm";
-import { Link } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 
 const CourseLessonCard = ({ mentorAndList, coursePartId, isEnrolled }) => {
   const [collapsedLessons, setCollapsedLessons] = useState({});
@@ -24,13 +24,14 @@ const CourseLessonCard = ({ mentorAndList, coursePartId, isEnrolled }) => {
   const [testExams, setTestExams] = useState([]);
   const token = Cookies.get("authToken");
 
+  const { courseId } = useParams();
+
   const toggleCollapse = (lessonId) => {
     setCollapsedLessons((prev) => ({
       ...prev,
       [lessonId]: !prev[lessonId],
     }));
   };
-  console.log(testExams);
 
   const fetchCourseLessons = async () => {
     try {
@@ -194,35 +195,31 @@ const CourseLessonCard = ({ mentorAndList, coursePartId, isEnrolled }) => {
                       </div>
 
                       <div className="absolute top-2 right-2 flex gap-2">
-                        {mentorAndList && (
-                          <>
-                            <button
-                              type="button"
-                              onClick={() => handleCreateTest(courseLesson.id)}
-                              className="py-2 px-3 text-sm font-medium rounded-lg border border-gray-200 bg-white text-gray-800 shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-gray-200"
-                            >
-                              Create Test
-                            </button>
+                        <>
+                          <button
+                            type="button"
+                            onClick={() => handleCreateTest(courseLesson.id)}
+                            className="py-2 px-3 text-sm font-medium rounded-lg border border-gray-200 bg-white text-gray-800 shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-gray-200"
+                          >
+                            Create Test
+                          </button>
 
-                            <button
-                              type="button"
-                              onClick={() => addDynamicForm(courseLesson.id)}
-                              className="py-2 px-3 text-sm font-medium rounded-lg border border-gray-200 bg-white text-gray-800 shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-gray-200"
-                            >
-                              Create Lesson Content
-                            </button>
+                          <button
+                            type="button"
+                            onClick={() => addDynamicForm(courseLesson.id)}
+                            className="py-2 px-3 text-sm font-medium rounded-lg border border-gray-200 bg-white text-gray-800 shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-gray-200"
+                          >
+                            Create Lesson Content
+                          </button>
 
-                            <button
-                              type="button"
-                              onClick={() =>
-                                confirmDeleteLesson(courseLesson.id)
-                              }
-                              className="py-2 px-3 text-sm font-medium rounded-lg border border-gray-200 bg-red-500 text-white shadow-sm hover:bg-red-600 focus:outline-none focus:ring-2 focus:ring-red-500"
-                            >
-                              Delete Lesson
-                            </button>
-                          </>
-                        )}
+                          <button
+                            type="button"
+                            onClick={() => confirmDeleteLesson(courseLesson.id)}
+                            className="py-2 px-3 text-sm font-medium rounded-lg border border-gray-200 bg-red-500 text-white shadow-sm hover:bg-red-600 focus:outline-none focus:ring-2 focus:ring-red-500"
+                          >
+                            Delete Lesson
+                          </button>
+                        </>
                       </div>
 
                       {dynamicForms
@@ -269,7 +266,14 @@ const CourseLessonCard = ({ mentorAndList, coursePartId, isEnrolled }) => {
           </div>
         </>
       ) : (
-        <TestForm categories={categories} lessonId={lessonId} />
+        <TestForm
+          categories={categories}
+          lessonId={lessonId}
+          courseId={courseId}
+          pageType="lesson"
+          testType={1}
+          setIsCreateTest={setIsCreateTest}
+        />
       )}
 
       <Notification message={notification} />

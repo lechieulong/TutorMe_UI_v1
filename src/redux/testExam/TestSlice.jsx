@@ -4,16 +4,18 @@ import { SLICE_NAMES, ACTIONS, STATUS } from "../../constant/SliceName";
 import Cookies from "js-cookie";
 import { getUser } from "../../service/GetUser";
 
-const API_BASE_URL = "https://localhost:7030/api";
+const API_BASE_URL = "https://aiilapi.azurewebsites.net/api";
 
 export const fetchTests = createAsyncThunk(
   `${SLICE_NAMES.TEST}/${ACTIONS.FETCH_TESTS}`,
-  async (userId, { rejectWithValue }) => {
+  async (_, { rejectWithValue }) => {
+    // No need for the destructuring of the first argument
     try {
-      const response = await axios.get(`${API_BASE_URL}/test/${userId}`);
-
+      const response = await axios.get(`${API_BASE_URL}/test/admintests`);
+      console.log("vcl"); // Verify the response is received here
       return response.data;
     } catch (error) {
+      console.error("Error fetching tests:", error); // Log errors if any
       return rejectWithValue(
         error.response?.data?.message || "Failed to fetch tests"
       );
@@ -88,11 +90,98 @@ export const getHistorytest = createAsyncThunk(
   }
 );
 
+export const getTestsByCourse = createAsyncThunk(
+  `${SLICE_NAMES.TEST}/${ACTIONS.GET_TEST_BY_COURSE}`,
+  async ({ courseId, page, pageSize }, { rejectWithValue }) => {
+    try {
+      const response = await axios.get(
+        `${API_BASE_URL}/test/test-by-course/${courseId}`,
+        {
+          params: {
+            page,
+            pageSize
+          }
+        }
+      );
+
+      return response.data;
+    } catch (error) {
+      return rejectWithValue(
+        error.response?.data?.message || "Failed to fetch tests"
+      );
+    }
+  }
+);
+
+export const getTestHistory = createAsyncThunk(
+  `${SLICE_NAMES.TEST}/${ACTIONS.GET_TEST_HISTORY}`,
+  async (courseId, { rejectWithValue }) => {
+    try {
+      const token = Cookies.get("authToken");
+      const response = await axios.get(
+        `${API_BASE_URL}/test/test-history/${courseId}`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "multipart/form-data",
+          },
+        }
+      );
+
+      return response.data;
+    } catch (error) {
+      return rejectWithValue(
+        error.response?.data?.message || "Failed to fetch test histories"
+      );
+    }
+  }
+);
+
+export const GetResultOfATest = createAsyncThunk(
+  `${SLICE_NAMES.TEST}/${ACTIONS.GET_RESULT_OFA_TEST}`,
+  async (testId, { rejectWithValue }) => {
+    try {
+      const token = Cookies.get("authToken");
+      const response = await axios.get(
+        `${API_BASE_URL}/test/test-results/${testId}`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "multipart/form-data",
+          },
+        }
+      );
+
+      return response.data;
+    } catch (error) {
+      return rejectWithValue(
+        error.response?.data?.message || "Failed to fetch test results"
+      );
+    }
+  }
+);
+
 export const getParts = createAsyncThunk(
   `${SLICE_NAMES.TEST}/${ACTIONS.GET_PARTS}`,
   async (skillId, { rejectWithValue }) => {
     try {
       const response = await axios.get(`${API_BASE_URL}/test/${skillId}/parts`);
+      return response.data;
+    } catch (error) {
+      return rejectWithValue(
+        error.response?.data?.message || "Failed to fetch tests"
+      );
+    }
+  }
+);
+
+export const getSkillById = createAsyncThunk(
+  `${SLICE_NAMES.TEST}/${ACTIONS.GET_SKILL_BY_ID}`,
+  async (skillId, { rejectWithValue }) => {
+    try {
+      const response = await axios.get(
+        `${API_BASE_URL}/test/${skillId}/skillType`
+      );
       return response.data;
     } catch (error) {
       return rejectWithValue(
@@ -146,12 +235,16 @@ export const getTesting = createAsyncThunk(
 
 export const getExplainTest = createAsyncThunk(
   `${SLICE_NAMES.TEST}/${ACTIONS.GET_EXPLAIN_TEST}`,
-  async ({ testId, userId, skillId }, { rejectWithValue }) => {
+  async (
+    { testId, userId, skillId, totalPartsSubmit },
+    { rejectWithValue }
+  ) => {
     try {
       const response = await axios.post(`${API_BASE_URL}/test/testExplain`, {
         userId,
         testId,
         skillId,
+        totalPartsSubmit,
       });
       return response.data;
     } catch (error) {
@@ -197,6 +290,28 @@ export const uploadFile = createAsyncThunk(
     }
   }
 );
+
+export const getScriptAudio = createAsyncThunk(
+  `${SLICE_NAMES.TEST}/${ACTIONS.TRANSCRIBE}`,
+  async (fileUrl, { rejectWithValue }) => {
+    try {
+      const token = Cookies.get("authToken");
+
+      const response = await axios.post(`${API_BASE_URL}/transcribe`, fileUrl, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+      });
+      return response.data;
+    } catch (error) {
+      return rejectWithValue(
+        error.response?.data?.message || "Failed to upload file"
+      );
+    }
+  }
+);
+
 export const getResultTest = createAsyncThunk(
   `${SLICE_NAMES.TEST}/${ACTIONS.GET_RESULT_TEST}`,
   async (skillResultIds, { rejectWithValue }) => {
@@ -259,7 +374,7 @@ export const getTestBySectionCourseId = createAsyncThunk(
     } catch (error) {
       return rejectWithValue(
         error.response?.data?.message ||
-          "Failed to get test by section course id "
+        "Failed to get test by section course id "
       );
     }
   }
@@ -394,12 +509,12 @@ export const getAttemptTests = createAsyncThunk(
 // Get question bank base on sectionType
 export const getQuestionsBank = createAsyncThunk(
   `${SLICE_NAMES.TEST}/${ACTIONS.GET_QUESTIONS_BANK}`,
-  async ({ userId, sectionType, page }, { rejectWithValue }) => {
+  async ({ userId, skill, sectionType, page }, { rejectWithValue }) => {
     // Add pageSize with default value
     try {
       const pageSize = 10;
       const response = await axios.get(
-        `${API_BASE_URL}/test/${sectionType}/questionsBank/${userId}`,
+        `${API_BASE_URL}/test/${sectionType}/questionsBank/${userId}/skill/${skill}`,
         {
           params: { page, pageSize }, // Pass both page and pageSize as query parameters
         }
@@ -495,6 +610,8 @@ export const addSkills = createAsyncThunk(
 
 const initialState = {
   tests: [],
+  testHistories: [],
+  testResults: [],
   status: STATUS.IDLE,
   error: null,
   questions: [],
@@ -533,6 +650,45 @@ const TestSlice = createSlice({
         state.tests = action.payload;
       })
       .addCase(fetchTests.rejected, (state, action) => {
+        state.status = STATUS.FAILED;
+        state.error = action.payload || action.error.message;
+      })
+
+      // Fetch tests of a course
+      .addCase(getTestsByCourse.pending, (state) => {
+        state.status = STATUS.PENDING;
+      })
+      .addCase(getTestsByCourse.fulfilled, (state, action) => {
+        state.status = STATUS.SUCCESS;
+        state.tests = action.payload;
+      })
+      .addCase(getTestsByCourse.rejected, (state, action) => {
+        state.status = STATUS.FAILED;
+        state.error = action.payload || action.error.message;
+      })
+
+      // Fetch test result of a learner
+      .addCase(getTestHistory.pending, (state) => {
+        state.status = STATUS.PENDING;
+      })
+      .addCase(getTestHistory.fulfilled, (state, action) => {
+        state.status = STATUS.SUCCESS;
+        state.testHistories = action.payload;
+      })
+      .addCase(getTestHistory.rejected, (state, action) => {
+        state.status = STATUS.FAILED;
+        state.error = action.payload || action.error.message;
+      })
+
+      // Fetch test result of a test
+      .addCase(GetResultOfATest.pending, (state) => {
+        state.status = STATUS.PENDING;
+      })
+      .addCase(GetResultOfATest.fulfilled, (state, action) => {
+        state.status = STATUS.SUCCESS;
+        state.testResults = action.payload;
+      })
+      .addCase(GetResultOfATest.rejected, (state, action) => {
         state.status = STATUS.FAILED;
         state.error = action.payload || action.error.message;
       })

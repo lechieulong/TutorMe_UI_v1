@@ -60,7 +60,7 @@ const AvailableTime = () => {
         });
     };
 
-    const now = new Date().toLocaleString();
+    const now = new Date().toISOString().slice(0, 16);
 
     const validateForm = () => {
         const errors = {};

@@ -67,15 +67,16 @@ const ContributionAttempt = () => {
 
   // Fetch test analysis data and available years on component mount
   useEffect(() => {
+    if (!user?.id) return; // Prevent fetching if user ID is undefined
     const fetchData = async () => {
       setLoading(true); // Start loading
       try {
         const contributeResponseData = await dispatch(
-          getTestAnalysisAttempt(user.id)
+          getTestAnalysisAttempt(user?.id)
         );
         const contributeResponse = contributeResponseData.payload;
 
-        const yearsResponseData = await dispatch(getAttemptTests(user.id));
+        const yearsResponseData = await dispatch(getAttemptTests(user?.id));
         const yearsResponse = yearsResponseData.payload;
         // Check and handle response data
         setRadarChart([
@@ -101,11 +102,17 @@ const ContributionAttempt = () => {
           },
           {
             skillType: 3,
-            count: 5,
-            averageScore: 3.5,
+            count: 3,
+            averageScore: 6.5,
+          },
+          {
+            skillType: 3,
+            count: 3,
+            averageScore: 6.5,
           },
         ]);
         setContributeTaketest(contributeResponse.dateAnalysis);
+        setRadarChart(contributeResponse.skillAnalysis);
         if (Array.isArray(yearsResponse)) {
           setYearsOfTakeTest(yearsResponse);
           if (yearsResponse.length > 0) {
@@ -128,7 +135,7 @@ const ContributionAttempt = () => {
     fetchData();
 
     // Fake data for radar chart (skill scores)
-  }, [dispatch, user.id]);
+  }, [dispatch, user?.id]);
 
   // Update contribution and monthly data whenever selected year or contributions change
   useEffect(() => {

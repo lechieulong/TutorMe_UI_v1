@@ -10,6 +10,9 @@ const TestView = React.memo(
     currentSkillId,
     handleAnswerChange,
     userAnswers,
+    selectedVoice,
+    part1And3Time,
+    part2Time,
   }) => {
     const questionRef = useRef({});
     const [isLoading, setIsLoading] = useState(true);
@@ -112,6 +115,9 @@ const TestView = React.memo(
               currentSkillId={currentSkillId}
               handleAnswerChange={handleAnswerChange}
               userAnswers={userAnswers}
+              part2Time={part2Time}
+              part1And3Time={part1And3Time}
+              selectedVoice={selectedVoice}
             />
           </div>
         </div>

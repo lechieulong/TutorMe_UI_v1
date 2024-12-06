@@ -1,6 +1,6 @@
 import React from "react";
 
-const MultipleChoiceAnswers = ({
+const SingleChoiceAnswers = ({
   question,
   userAnswers,
   renderLetter,
@@ -11,11 +11,12 @@ const MultipleChoiceAnswers = ({
 }) => (
   <div className="flex flex-col gap-2">
     {question.answers.map((answer, index) => (
-      <div className="flex gap-2 justify-start " key={answer.id}>
+      <div className="flex gap-2 justify-start" key={answer.id}>
         <p className="font-semibold">{renderLetter(index + 1)}</p>
         <label className="flex items-center space-x-2">
           <input
-            type="checkbox"
+            type="radio"
+            name={`question-${question.id}`} // ensures only one option is selected per question
             value={answer.answerText}
             checked={
               userAnswers[question.id]?.answers?.some(
@@ -34,11 +35,11 @@ const MultipleChoiceAnswers = ({
             }
             className="h-4 w-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
           />
-          <span className="text-gray-800 text-[16px]">{answer.answerText}</span>
+          <span className="text-gray-800">{answer.answerText}</span>
         </label>
       </div>
     ))}
   </div>
 );
 
-export default MultipleChoiceAnswers;
+export default SingleChoiceAnswers;

@@ -16,18 +16,20 @@ const AnswerForm = ({
     control,
   });
 
-  const isListening = skill === "Listening" && sectionType === 8;
+  const isListening =
+    skill === "Listening" && (sectionType === 8 || sectionType === 5);
   const isReading = skill === "Reading" && sectionType === 1;
 
   const showButtonAnswerTest = isListening || isReading;
 
-  const isCorrectListening = skill === "Listening" && sectionType === 8;
+  const isCorrectListening =
+    skill === "Listening" && (sectionType === 8 || sectionType === 5);
   const isCorrectReading =
-    (skill === "Reading" && sectionType === 1) ||
-    sectionType === 2 ||
-    sectionType === 3;
+    skill === "Reading" &&
+    (sectionType === 1 || sectionType === 2 || sectionType === 3);
 
   const showIsCorrectAnswer = isCorrectListening || isCorrectReading;
+  console.log(sectionType);
 
   return (
     <div>
@@ -118,27 +120,51 @@ const AnswerForm = ({
                   )}
                 />
               ) : (
-                // Regular Correct Answer Checkbox
-                <Controller
-                  name={`skills.${skill}.parts.${partIndex}.sections.${sectionIndex}.questions.${questionIndex}.answers.${index}.isCorrect`}
-                  control={control}
-                  render={({ field }) => (
-                    <div className="flex items-center w-3/12">
-                      <input
-                        type="checkbox"
-                        checked={field.value === 1} // checked if value is 1 (true)
-                        onChange={(e) =>
-                          field.onChange(e.target.checked ? 1 : 0)
-                        } // 1 if checked, 0 if not
-                        className="mr-2"
-                      />
-                      <label>Correct Answer</label>
-                    </div>
+                <>
+                  {sectionType == 5 && (
+                    <Controller
+                      name={`skills.${skill}.parts.${partIndex}.sections.${sectionIndex}.questions.${questionIndex}.answers.${index}.isCorrect`}
+                      control={control}
+                      render={({ field }) => (
+                        <div className="flex items-center w-4/12">
+                          {/* Single choice option with radio buttons */}
+                          <input
+                            type="radio"
+                            name={`question-${questionIndex}`} // Ensure all options for this question share the same name
+                            checked={field.value === 1} // Check if this answer is marked as correct
+                            onChange={() => field.onChange(1)} // Set this answer as correct
+                            className="mr-2"
+                          />
+                          <label>Correct Answer</label>
+                        </div>
+                      )}
+                    />
                   )}
-                />
+
+                  {sectionType == 1 && (
+                    <Controller
+                      name={`skills.${skill}.parts.${partIndex}.sections.${sectionIndex}.questions.${questionIndex}.answers.${index}.isCorrect`}
+                      control={control}
+                      render={({ field }) => (
+                        <div className="flex items-center w-3/12">
+                          <input
+                            type="checkbox"
+                            checked={field.value === 1}
+                            onChange={(e) =>
+                              field.onChange(e.target.checked ? 1 : 0)
+                            }
+                            className="mr-2"
+                          />
+                          <label>Correct Answer</label>
+                        </div>
+                      )}
+                    />
+                  )}
+                </>
               )}
               {((skill === "Reading" && sectionType != 2 && sectionType != 3) ||
-                (skill === "Listening" && sectionType === 8)) && (
+                (skill === "Listening" && sectionType === 8) ||
+                sectionType === 5) && (
                 <button
                   type="button"
                   onClick={() => remove(index)}

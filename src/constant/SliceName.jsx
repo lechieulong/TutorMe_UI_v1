@@ -14,6 +14,7 @@ export const SLICE_NAMES = {
   SCHEDULESESSION: "scheduleSession",
   COMMON: "common",
   SPECIALIZATION: "specialization",
+  ADMIN_TESTEXAM: "ADMIN_testexam",
 };
 
 export const ACTIONS = {
@@ -47,14 +48,20 @@ export const ACTIONS = {
   GET_TESTING: "getTesting",
   GET_EXPLAIN_TEST: "getExplainTest",
   GET_PARTS: "getParts",
+  GET_SKILL_BY_ID: "getSkillById",
   CREATE_TEST: "createTest",
   UPDATE_TEST: "updateTest",
   DELETE_TEST: "deleteTest",
+  UPLOAD: "uploadFile",
+  TRANSCRIBE: "transcribe",
 
   IMPORT_QUESTION: "importQuestion",
   DOWNLOAD_TEMPLATE: "downloadTemplate",
   GET_QUESTIONS_BANK: "getQuestionsBank",
   GET_HISTORY_TEST: "getHistoryTest",
+  GET_TEST_BY_COURSE: "getTestByCourse",
+  GET_TEST_HISTORY: "getTestHistory",
+  GET_RESULT_OFA_TEST: "getResultOfATest",
   GET_TEST_ATTEMPT: "getTestAttempt",
   GET_ATTEMPT_TOTAL: "getAttemptTotal",
 
@@ -82,6 +89,8 @@ export const ACTIONS = {
   //Schedule
   SET_SCHEDULE: "setschedule",
   SET_SCHEDULE_SESSION: "setscheduleSession",
+  GET_IS_BOOKED_SCHEDULE_SESSION: "getisbookedscheduleSessions",
+  GET_SCHEDULE_SESSION: "getscheduleSessions",
   GET_SCHEDULE_7DAYS: "getschedule7days",
   DELETE_SCHEDULE: "deleteschedule",
   UPDATE_SCHEDULE: "updateschedule",
@@ -91,6 +100,9 @@ export const ACTIONS = {
 
   //ADMIN
   GET_ALL_USERS: "getallusers",
+  GET_ALL_TESTS: "getalltests",
+  DELETE_TEST: "deletetest",
+  UPDATE_TEST: "updatetest",
   GET_ALL_REQUESTS: "getallrequests",
   PROCESS_TEACHER_REQUEST: "processteacherrequest",
   GET_REQUEST_DETAILS: "getrequestdetails",

@@ -2,7 +2,6 @@ import React, { useState } from "react";
 import { useFieldArray, Controller } from "react-hook-form";
 import AnswerForm from "./AnswerForm";
 import QuestionCard from "./QuestionCard";
-import TableInput from "./TableInput";
 import {
   faMultiply,
   faQuestionCircle,
@@ -12,8 +11,9 @@ import {
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { addQuestion } from "../../redux/testExam/TestSlice";
 import { useDispatch } from "react-redux";
-import { CKEditor } from "@ckeditor/ckeditor5-react";
-import ClassicEditor from "@ckeditor/ckeditor5-build-classic";
+
+import { Editor } from "@tinymce/tinymce-react";
+
 const QuestionForm = ({
   skill,
   partIndex,
@@ -32,8 +32,9 @@ const QuestionForm = ({
 
   const handleAddSelectedQuestions = (questionsFromBank) => {
     const questionsToAdd = questionsFromBank.map((question) => ({
-      questionName: "", // Default value for questionName
-      answers: [], // Default empty array for answers
+      questionName: question.questionName, // Default value for questionName
+      answers: question.answers, // Default empty array for answers
+      explain: "",
       isFromQuestionBank: true, // Mark as from question bank
       questionType: question.questionType, // Retain questionType if needed
       questionId: question.id, // Assuming `id` is the questionId you want to save
@@ -72,7 +73,10 @@ const QuestionForm = ({
 
   const listeningAnswerForm =
     skill === "Listening" &&
-    (sectionType === 4 || sectionType === 6 || sectionType === 8);
+    (sectionType === 4 ||
+      sectionType === 6 ||
+      sectionType === 8 ||
+      sectionType === 5);
 
   const readingAnswerForm =
     skill === "Reading" &&
@@ -101,6 +105,13 @@ const QuestionForm = ({
   const listeningMessage =
     skill === "Listening" && (sectionType === 2 || sectionType === 7);
   const showMessageExample = readingMessage || listeningMessage;
+
+  const listeningQB = skill == "Listening" && sectionType == 8;
+  const readingQB =
+    skill == "Reading" &&
+    (sectionType == 1 || sectionType == 2 || sectionType == 3);
+  const showSelectQuestionBank =
+    listeningQB || readingQB || skill === "Writing" || skill == "Speaking";
 
   return (
     <div>
@@ -160,12 +171,6 @@ const QuestionForm = ({
           </div>
           {!question.isFromQuestionBank ? (
             <>
-              {showMessageExample && (
-                <p>
-                  this is example about message input field "hahah is not
-                  perform [] are ok " "[]" is present for answer
-                </p>
-              )}
               {showQuestionForm && (
                 <Controller
                   name={`skills.${skill}.parts.${partIndex}.sections.${sectionIndex}.questions.${index}.questionName`}
@@ -174,19 +179,18 @@ const QuestionForm = ({
                   rules={{ required: "Question Name is required" }}
                   render={({ field, fieldState }) => (
                     <div className="mb-2">
-                      <input
+                      <textarea
                         {...field}
                         className="border p-1 w-full"
                         placeholder={
                           sectionType === 4 ||
-                          sectionType === 5 ||
                           sectionType === 6 ||
                           sectionType === 7
                             ? "Heading"
                             : "Question Name"
                         }
+                        rows={2} // Optionally set a default height
                       />
-
                       {fieldState.error && (
                         <p className="text-red-500">
                           {fieldState.error.message}
@@ -207,109 +211,157 @@ const QuestionForm = ({
                   sectionType={sectionType}
                 />
               )}
-              {skill === "Listening" ||
-                (skill === "Reading" && (
-                  <div className="mb-4 border p-4 rounded">
-                    <p className="mb-2 text-gray-600">Explain</p>
-                    <Controller
-                      name={`skills.${skill}.parts.${partIndex}.sections.${sectionIndex}.questions.${index}.explain`}
-                      control={control}
-                      render={({ field, fieldState }) => (
-                        <div className="mb-2">
-                          <CKEditor
-                            editor={ClassicEditor}
-                            data={field.value || ""} // Set value to CKEditor
-                            config={{
-                              toolbar: [
-                                "heading",
-                                "|",
-                                "bold",
-                                "italic",
-                                "link",
-                                "|",
-                                "insertTable", // Add table button to the toolbar
-                                "blockQuote",
-                                "|",
-                                "undo",
-                                "redo",
-                              ],
-                              table: {
-                                contentToolbar: [
-                                  "tableColumn",
-                                  "tableRow",
-                                  "mergeTableCells",
-                                  "tableProperties",
-                                  "tableCellProperties",
-                                ],
-                              },
-                              height: 300, // Optional: Customize height of editor
-                            }}
-                            onChange={(event, editor) => {
-                              const data = editor.getData();
-                              field.onChange(data); // Update value for validation
-                            }}
-                          />
-                          {fieldState.error && (
-                            <p className="text-red-500">
-                              {fieldState.error.message}
-                            </p>
-                          )}
-                        </div>
-                      )}
-                    />
-                  </div>
-                ))}
+              {/* {((skill == "Reading" && sectionType == 1) ||
+                sectionType == 2 ||
+                sectionType == 3 ||
+                sectionType == 4 ||
+                sectionType == 5 ||
+                sectionType == 6 ||
+                (skill == "Listening" && sectionType == 5) ||
+                sectionType == 4 ||
+                sectionType == 8) && (
+                <div className="mb-4 border p-4 rounded">
+                  <Controller
+                    name={`skills.${skill}.parts.${partIndex}.sections.${sectionIndex}.questions.${index}.explain`}
+                    control={control}
+                    render={({ field, fieldState }) => (
+                      <div className="mb-2">
+                        <label className="block text-gray-700 font-medium mb-2">
+                          Question Explain
+                        </label>
+                        <Editor
+                          apiKey={import.meta.env.VITE_TINI_APIKEY}
+                          onEditorChange={field.onChange} // Directly bind to field.onChange
+                          value={field.value} // Bind the value to field.value
+                          init={{
+                            height: "300px",
+                            menubar:
+                              "file edit view insert format tools table help",
+                            plugins: [
+                              "advlist",
+                              "autolink",
+                              "lists",
+                              "link",
+                              "image",
+                              "charmap",
+                              "preview",
+                              "anchor",
+                              "searchreplace",
+                              "visualblocks",
+                              "code",
+                              "fullscreen",
+                              "insertdatetime",
+                              "media",
+                              "table",
+                              "help",
+                              "wordcount",
+                            ],
+                            toolbar:
+                              "undo redo | blocks | bold italic underline | backcolor forecolor | alignleft aligncenter " +
+                              "alignright alignjustify | bullist numlist outdent indent | removeformat | help | fullscreen | insertinput",
+                            setup: (editor) => {
+                              editor.ui.registry.addButton("insertinput", {
+                                text: "Insert Input",
+                                onAction: () => {
+                                  const questionId = uuidv4(); // Generate unique questionId
+                                  editor.insertContent(
+                                    `<input type="text" class="editor-input" data-question-id="${questionId}" />`
+                                  );
+                                },
+                              });
+                            },
+                            content_style:
+                              "body { font-family:Helvetica,Arial,sans-serif; font-size:14px; padding:10px; margin:0; }",
+                          }}
+                        />
+                        {fieldState.error && (
+                          <p className="text-red-500">
+                            {fieldState.error.message}
+                          </p>
+                        )}
+                      </div>
+                    )}
+                  />
+                </div>
+              )} */}
             </>
           ) : (
             <>
-              <p>{question.questionName}</p>
-              <p>{question.questionType}</p>
-              {question.answers.length > 0 &&
-                question.answers.map((a) => (
-                  <div>
-                    <p>AnswerText: {a.answerText}</p>
-                  </div>
-                ))}
+              {((skill == "Reading" && sectionType == 1) ||
+                (skill == "Listening" &&
+                  (sectionType == 8 || sectionType == 5)) ||
+                skill == "Writing" ||
+                skill == "Speaking") && (
+                <p>
+                  <span className="font-bold">Question Name: </span>
+                  {question.questionName}
+                </p>
+              )}
+
+              {skill !== "Speaking" &&
+                skill !== "Writing" &&
+                question.answers.length > 0 && (
+                  <>
+                    {question.answers.map((answer) => (
+                      <p key={answer.id}>
+                        {(skill === "Reading" && sectionType === 1) ||
+                        (skill === "Listening" &&
+                          (sectionType === 8 || sectionType === 5)) ? (
+                          <span className="font-bold">Answers:</span>
+                        ) : (
+                          <span className="font-bold">Question:</span>
+                        )}{" "}
+                        {answer.answerText}
+                      </p>
+                    ))}
+                  </>
+                )}
             </>
           )}
         </div>
       ))}
-
       {showAddQuestion && (
         <div>
           <div className="flex gap-2">
-            <button
-              type="button"
-              onClick={() =>
-                setShowQuestionCard({ visible: true, sectionType })
-              }
-              className="bg-blue-500 text-white p-2 rounded"
-            >
-              Select Questions
-              <span className="ml-3">
-                <FontAwesomeIcon icon={faToggleOn} />
-              </span>
-            </button>
-            <button
-              type="button"
-              onClick={() =>
-                append({
-                  questionName: "",
-                  answers: [{ answerText: "", isCorrect: 0 }],
-                  summary: "",
-                  answer: "",
-                  isFromQuestionBank: false,
-                  questionType: sectionType,
-                  explain: "",
-                })
-              }
-              className="bg-green-500 text-white p-2 rounded"
-            >
-              Add New Question
-              <span className="ml-3">
-                <FontAwesomeIcon icon={faSun} />
-              </span>
-            </button>
+            {!(skill === "Writing" && fields.length > 0) && (
+              <>
+                {showSelectQuestionBank && (
+                  <button
+                    type="button"
+                    onClick={() =>
+                      setShowQuestionCard({ visible: true, sectionType })
+                    }
+                    className="bg-blue-500 text-white p-2 rounded"
+                  >
+                    Select Questions
+                    <span className="ml-3">
+                      <FontAwesomeIcon icon={faToggleOn} />
+                    </span>
+                  </button>
+                )}
+
+                <button
+                  type="button"
+                  onClick={() =>
+                    append({
+                      questionName: "",
+                      answers: [{ answerText: "", isCorrect: 0 }],
+                      summary: "",
+                      answer: "",
+                      isFromQuestionBank: false,
+                      questionType: sectionType,
+                      explain: "",
+                    })
+                  }
+                  className="bg-green-500 text-white p-2 rounded"
+                >
+                  Add New Question
+                  <span className="ml-3">
+                    <FontAwesomeIcon icon={faSun} />
+                  </span>
+                </button>
+              </>
+            )}
           </div>
           {showQuestionCard && (
             <div className="fixed inset-0 z-50 bg-gray-900 bg-opacity-50 flex justify-center items-center">
@@ -319,6 +371,15 @@ const QuestionForm = ({
                 onClose={() => setShowQuestionCard(false)}
                 sectionType={showQuestionCard.sectionType}
                 disabledQuestions={fields}
+                skill={
+                  skill == "Reading"
+                    ? 0
+                    : skill == "Listening"
+                    ? 1
+                    : skill == "Writing"
+                    ? 2
+                    : 3
+                }
               />
             </div>
           )}

@@ -9,6 +9,7 @@ import userReducer from "./users/UserSlice";
 import eventReducer from "./event/EventSlice";
 import answerReducer from "./answer/answerSlice";
 import scheduleReducer from "./Schedule/ScheduleSlice";
+import bookedScheduleSessionReducer from "./Schedule/BookedScheduleSessionSlice";
 import specializationReducer from "./specialization/SpecializationSlice";
 import ADMIN_usersReducer from "./ADMIN/UserSlice";
 import ADMIN_teachersReducer from "./ADMIN/TeacherSlice";
@@ -18,6 +19,7 @@ import User_BalanceReducer from "./users/BalanceSlice";
 import courseSkillReducer from "./courses/CourseSkillSlice";
 import courseLessonContentReducer from "./courses/CourseLessonContentSlice";
 import coursePartReducer from "./courses/CoursePartSlice";
+import testExamReducer from "./ADMIN/TestExamSlice";
 import courseReportReducer from "./courses/CourseReportSlice";
 import reportReducer from "./common/ReportSlice";
 
@@ -41,9 +43,11 @@ export const store = configureStore({
     event: eventReducer,
     answer: answerReducer,
     schedule: scheduleReducer,
+    bookedScheduleSession: bookedScheduleSessionReducer,
     specialization: specializationReducer,
     ADMIN_userslice: ADMIN_usersReducer,
     ADMIN_teachers: ADMIN_teachersReducer,
+    ADMIN_tests: testExamReducer,
   },
 });
 

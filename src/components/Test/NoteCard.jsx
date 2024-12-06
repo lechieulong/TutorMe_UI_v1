@@ -6,15 +6,23 @@ const NoteCard = ({ onClose }) => {
   const [isDragging, setIsDragging] = useState(false);
   const [dragOffset, setDragOffset] = useState({ x: 0, y: 0 });
 
+  // Load the saved note from localStorage
   useEffect(() => {
     const savedNote = localStorage.getItem("tempNote");
     if (savedNote) {
       setNote(savedNote);
     }
+
+    const clearNoteOnUnload = () => {
+      localStorage.removeItem("tempNote");
+    };
   }, []);
 
+  // Save the note to localStorage when the note changes
   useEffect(() => {
-    localStorage.setItem("tempNote", note);
+    if (note) {
+      localStorage.setItem("tempNote", note);
+    }
   }, [note]);
 
   const handleNoteChange = (e) => {
@@ -71,6 +79,11 @@ const NoteCard = ({ onClose }) => {
     };
   }, [onClose]);
 
+  const clearNoteData = () => {
+    localStorage.removeItem("tempNote");
+    setNote(""); // Also clear the note state
+  };
+
   return (
     <div
       id="note-card"
@@ -94,11 +107,19 @@ const NoteCard = ({ onClose }) => {
       />
       <div className="flex justify-end mt-2">
         <button
-          onClick={onClose}
+          onClick={() => {
+            onClose();
+          }}
           className="bg-red-500 text-white rounded px-2 py-1 ml-2 hover:bg-red-600 transition text-sm"
         >
           Close
         </button>
+        {/* <button
+          onClick={clearNoteData} // Clear data button
+          className="bg-red-500 text-white rounded px-2 py-1 ml-2 hover:bg-red-600 transition text-sm"
+        >
+          Clear data
+        </button> */}
       </div>
     </div>
   );

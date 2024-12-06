@@ -33,7 +33,7 @@ const sectionTypesBySkill = {
     { value: 2, label: "Sentence Completion" },
     { value: 3, label: "Summary Completion" },
     { value: 4, label: "Labeling a Diagram/Map/Plan with filling" },
-
+    { value: 5, label: "Single Choice" },
     { value: 6, label: "Matching Questions" },
     { value: 7, label: "Short Answer Questions" },
 
@@ -79,6 +79,7 @@ const SectionForm = ({ skill, partIndex, control, setValue }) => {
       }
     }
   };
+
   return (
     <div>
       <h4 className="font-medium">Sections</h4>
@@ -181,7 +182,8 @@ const SectionForm = ({ skill, partIndex, control, setValue }) => {
               sectionType ? (
                 <>
                   {(skill === "Reading" &&
-                    (sectionType == 7 ||
+                    (sectionType == 6 ||
+                      sectionType == 7 ||
                       sectionType == 8 ||
                       sectionType == 11 ||
                       sectionType == 9 ||
@@ -190,7 +192,8 @@ const SectionForm = ({ skill, partIndex, control, setValue }) => {
                     (sectionType == 1 ||
                       sectionType == 2 ||
                       sectionType == 3 ||
-                      sectionType == 7)) ? (
+                      sectionType == 7 ||
+                      sectionType == 4)) ? (
                     <>
                       <h3 className="text-2xl font-semibold">Questions</h3>
                       <Demo
@@ -226,7 +229,7 @@ const SectionForm = ({ skill, partIndex, control, setValue }) => {
                 sectionType={0}
               />
             )}
-            {sectionType &&
+            {/* {sectionType &&
               ((skill === "Reading" &&
                 (sectionType == 7 ||
                   sectionType == 8 ||
@@ -237,6 +240,7 @@ const SectionForm = ({ skill, partIndex, control, setValue }) => {
                   (sectionType == 1 ||
                     sectionType == 2 ||
                     sectionType == 3 ||
+                    sectionType == 4 ||
                     sectionType == 7))) && (
                 <div className="">
                   <h3 className="text-xl font-bold mb-4 ">
@@ -245,7 +249,6 @@ const SectionForm = ({ skill, partIndex, control, setValue }) => {
                   <Controller
                     name={`skills.${skill}.parts.${partIndex}.sections.${index}.explain`}
                     control={control}
-                    rules={{ required: "Section context is required" }} // Add validation
                     render={({ field, fieldState }) => (
                       <div className="mb-2">
                         <label className="block text-gray-700 font-medium mb-2">
@@ -305,26 +308,29 @@ const SectionForm = ({ skill, partIndex, control, setValue }) => {
                     )}
                   />
                 </div>
-              )}
+              )} */}
           </div>
         );
       })}
-      <button
-        type="button"
-        onClick={() =>
-          append({
-            sectionGuide: "",
-            sectionType: 0,
-            sectionContext: "",
-            image: "",
-            explain: "",
-            questions: [],
-          })
-        }
-        className="bg-green-500 text-white p-2 rounded"
-      >
-        Add Section
-      </button>
+
+      {!(skill === "Writing" && fields.length > 0) && (
+        <button
+          type="button"
+          onClick={() =>
+            append({
+              sectionGuide: "",
+              sectionType: 0,
+              sectionContext: "",
+              image: "",
+              explain: "",
+              questions: [],
+            })
+          }
+          className="bg-green-500 text-white p-2 rounded"
+        >
+          Add Section
+        </button>
+      )}
     </div>
   );
 };

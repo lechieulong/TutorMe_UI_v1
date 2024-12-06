@@ -10,8 +10,18 @@ import { createTest } from "../../redux/testExam/TestSlice";
 import { useDispatch } from "react-redux";
 import { toast } from "react-toastify";
 import CreateTest from "./CreateTest";
+import TestInfoCard from "./general/TestInfoCard";
 
-const TestForm = ({ classId, lessonId, categories, pageType }) => {
+const TestForm = ({
+  classId,
+  lessonId,
+  skillIdCourse,
+  categories,
+  pageType,
+  courseId,
+  setIsCreateTest,
+  testType,
+}) => {
   const {
     register,
     handleSubmit,
@@ -27,11 +37,18 @@ const TestForm = ({ classId, lessonId, categories, pageType }) => {
   const onSubmit = async (data) => {
     setIsSubmitted(true);
     try {
-      const payload = { ...data, classId, lessonId };
-      const result = await dispatch(createTest(payload)).unwrap();
+      const payload = {
+        ...data,
+        classId,
+        lessonId,
+        skillIdCourse,
+        courseId,
+        testType,
+      };
 
+      // check if
+      const result = await dispatch(createTest(payload)).unwrap();
       setTestInfo(result);
-      toast.success("Test created successfully!");
     } catch (error) {
       console.error("Submission failed:", error);
       toast.error("Failed to create test. Please try again.");
@@ -46,33 +63,18 @@ const TestForm = ({ classId, lessonId, categories, pageType }) => {
     <div className="w-full">
       {isSubmitted && testInfo ? (
         !showTestFormDetail ? (
-          <div className="p-6 max-w-lg mx-auto bg-white shadow-lg rounded-xl">
-            <h2 className="text-2xl font-semibold mb-4">Test Information</h2>
-            <p>
-              <strong>Test Name:</strong> {testInfo.testName || "N/A"}
-            </p>
-            <p>
-              <strong>Class:</strong> {testInfo.class || "N/A"}
-            </p>
-            <p>
-              <strong>Start Time:</strong> {testInfo.startTime || "N/A"}
-            </p>
-            <p>
-              <strong>End Time:</strong> {testInfo.endTime || "N/A"}
-            </p>
-            <button
-              type="button"
-              onClick={() => setShowTestFormDetail(true)}
-              className="mt-4 bg-blue-500 text-white py-2 px-4 rounded-lg"
-            >
-              Create Skill
-            </button>
-          </div>
+          <TestInfoCard
+            testInfo={testInfo}
+            setShowTestFormDetail={setShowTestFormDetail}
+          />
         ) : (
           <CreateTest
+            courseId={courseId}
             skills={categories}
             testId={testInfo?.id}
             pageType={pageType}
+            classId={classId}
+            setIsCreateTest={setIsCreateTest}
           />
         )
       ) : (
@@ -103,6 +105,32 @@ const TestForm = ({ classId, lessonId, categories, pageType }) => {
               </span>
             )}
           </div>
+
+          {/* Test Type */}
+          {/* <div className="relative mt-4">
+            <label className="block text-sm font-semibold text-gray-700">
+              Test Type
+            </label>
+            <div className="flex items-center mt-2">
+              <select
+                {...register("testType", { required: "Test Type is required" })}
+                className={`w-full px-4 py-3 border ${
+                  errors.testType ? "border-red-500" : "border-gray-300"
+                } rounded-lg shadow-sm focus:ring-2 focus:ring-blue-500 sm:text-base`}
+                disabled={isSubmitted}
+              >
+                <option value={0}>Select Test Type</option>
+                <option value={1}>Practice</option>
+                <option value={2}>Testing</option>
+                <option value={3}>Register</option>
+              </select>
+            </div>
+            {errors.testType && (
+              <span className="text-red-500 text-sm">
+                {errors.testType.message}
+              </span>
+            )}
+          </div> */}
 
           {/* Start Time */}
           <div className="relative">

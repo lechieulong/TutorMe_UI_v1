@@ -1,18 +1,36 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import AudioPlayer from "./AudioPlayer"; // Adjust the import based on your file structure
 import Writing from "../../components/Test/Part/Writing";
 import Speaking from "../../components/Test/Part/Speaking";
 import MutipleChoiceExplain from "./MutipleChoiceExplain";
 import { GoogleGenerativeAI } from "@google/generative-ai";
+import ParseHtmlExplain from "./ParseHtmlExplain";
+import WritingExplain from "../ExamTest/general/WritingExplain";
+import SpeakingExplain from "../ExamTest/general/SpeakingExplain";
+import { useDispatch } from "react-redux";
+import { getScriptAudio } from "../../redux/testExam/TestSlice";
+import SingleChoiceAnswers from "./SingleChoiceAnswers";
+import SingleChoiceExplain from "./SingleChoiceExplain";
 
 const genAI = new GoogleGenerativeAI(import.meta.env.VITE_GEN_AI);
 
-const AnswerViewExplain = ({
-  partData,
-  currentSkillKey,
-  handleAnswerChange,
-}) => {
-  console.log("partData", partData);
+const AnswerViewExplain = ({ partData, currentSkillKey }) => {
+  const [script, setScript] = useState();
+
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    const fetchScript = async () => {
+      const result = await dispatch(getScriptAudio(partData.audio));
+      if (result.payload) {
+        setScript(result.payload.transcription); // Update state with transcription
+      }
+    };
+
+    if (currentSkillKey == "listening") {
+      fetchScript();
+    }
+  }, []); // Ensure `partData.audio` is updated or partData is correct
 
   let skill;
   switch (currentSkillKey) {
@@ -72,7 +90,7 @@ const AnswerViewExplain = ({
                     type="radio"
                     name={`question_${question.id}`}
                     value={1} // The value for "True"
-                    checked={question.userAnswers[0].answerText == 1} // Check if isCorrect is 1
+                    checked={question.userAnswers[0]?.answerText == 1} // Check if isCorrect is 1
                     disabled
                     className="h-4 w-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
                   />
@@ -120,10 +138,7 @@ const AnswerViewExplain = ({
                   </label>
                 )}
 
-                <p>
-                  Explaination:{" "}
-                  {question.userAnswers[0]?.answerText || "No answer selected"}
-                </p>
+                <div dangerouslySetInnerHTML={{ __html: question.explain }} />
               </div>
             </>
           );
@@ -173,6 +188,14 @@ const AnswerViewExplain = ({
           );
         }
       case 1:
+        if (sectionType === 5) {
+          return (
+            <SingleChoiceExplain
+              question={question}
+              renderLetter={renderLetter}
+            />
+          );
+        }
         if (sectionType === 6)
           return (
             <div className="flex flex-col gap-2">
@@ -370,6 +393,12 @@ const AnswerViewExplain = ({
       {currentSkillKey === "listening" && (
         <div className="my-4">
           <AudioPlayer src={partData.audio} />
+          <h3 className="text-2xl font-bold">Script audio</h3>
+          {script == null || script == undefined ? (
+            <p>Wait a little bit we are converting script of audio </p>
+          ) : (
+            <p>{script}</p>
+          )}
         </div>
       )}
 
@@ -391,9 +420,10 @@ const AnswerViewExplain = ({
                 )}
 
                 <div className="bg-gray-50 p-4 rounded-md shadow-sm">
-                  {(skill === 0 && section.sectionType === 4) ||
-                  section.sectionType === 5 ||
-                  section.sectionType === 6 ? (
+                  {skill === 0 &&
+                  (section.sectionType === 4 ||
+                    section.sectionType === 5 ||
+                    section.sectionType === 6) ? (
                     <>
                       <span className="invisible">{questionCounter++}</span>
                       <table className="min-w-full border border-gray-300">
@@ -440,35 +470,66 @@ const AnswerViewExplain = ({
                                   className="border border-gray-300 rounded px-2 py-1"
                                 >
                                   <option value="">
-                                    {question.userAnswers[0].answerText}
+                                    {/* Find and display the answerText where answer.id matches userAnswer */}
+                                    {question.answers.find(
+                                      (a) =>
+                                        a.id ===
+                                        question.userAnswers[0]?.answerText
+                                    )?.answerText || ""}
                                   </option>
                                 </select>
                               </div>
                             ))}
-                            <p className="text-green-600">
+                            <p className="font-bold">
                               Correct Answers: {question.questionName}
                             </p>
                           </div>
                         ))}
                       </div>
+
+                      <h3>Explains</h3>
+                      <p>{}</p>
                     </>
                   ) : (
-                    section.questions.map((question, index) => (
-                      <div key={index} className="mb-4">
-                        {renderQuestionName(
-                          skill,
-                          section.sectionType,
-                          question,
-                          questionCounter++
-                        )}
-                        {renderInputBasedOnSectionType(
-                          skill,
-                          section.sectionType,
-                          question,
-                          questionCounter
-                        )}
-                      </div>
-                    ))
+                    <>
+                      {(skill === 0 &&
+                        (section.sectionType === 1 ||
+                          section.sectionType === 2 ||
+                          section.sectionType === 3)) ||
+                      (skill === 1 &&
+                        (section.sectionType === 8 ||
+                          section.sectionType === 4 ||
+                          section.sectionType === 5)) ||
+                      skill === 2 ||
+                      skill === 3 ? (
+                        section.questions.map((question, index) => (
+                          <div key={index} className="mb-4">
+                            {renderQuestionName(
+                              skill,
+                              section.sectionType,
+                              question,
+                              questionCounter++
+                            )}
+                            {renderInputBasedOnSectionType(
+                              skill,
+                              section.sectionType,
+                              question,
+                              questionCounter
+                            )}
+                          </div>
+                        ))
+                      ) : (
+                        <div>
+                          <ParseHtmlExplain
+                            questionCounter={questionCounter}
+                            html={section.sectionContext} //
+                            sectionType={section.sectionType}
+                            sectionExplain={section.explain}
+                            questions={section.questions}
+                          />
+                        </div>
+                      )}
+                    </>
                   )}
                 </div>
               </div>
@@ -477,21 +538,18 @@ const AnswerViewExplain = ({
         </>
       )}
 
-      {/* {currentSkillKey === "writing" && (
-        <Writing
-          partData={partData}
-          currentSkillKey={currentSkillKey}
-          handleAnswerChange={handleAnswerChange}
-        />
-      )} */}
+      {currentSkillKey === "writing" && (
+        <>
+          <WritingExplain
+            partData={partData}
+            currentSkillKey={currentSkillKey}
+          />
+        </>
+      )}
 
-      {/* {currentSkillKey === "speaking" && (
-        <Speaking
-          partData={partData}
-          currentSkillKey={currentSkillKey}
-          handleAnswerChange={handleAnswerChange}
-        />
-      )} */}
+      {currentSkillKey === "speaking" && (
+        <SpeakingExplain partData={partData} />
+      )}
     </form>
   );
 };

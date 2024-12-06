@@ -9,12 +9,15 @@ export const fetchCourses = createAsyncThunk(
   "courses/getCourses",
   async ({ pageNumber = 1, pageSize = 8 }, { rejectWithValue }) => {
     try {
-      const response = await axios.get("https://localhost:7030/api/Courses", {
-        params: {
-          pageNumber,
-          pageSize,
-        },
-      });
+      const response = await axios.get(
+        "https://aiilapi.azurewebsites.net/api/Courses",
+        {
+          params: {
+            pageNumber,
+            pageSize,
+          },
+        }
+      );
 
       return {
         data: response.data.data || [],

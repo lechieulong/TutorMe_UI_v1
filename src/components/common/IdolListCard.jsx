@@ -1,8 +1,9 @@
 import PropTypes from "prop-types";
+import { Link } from "react-router-dom";
 
-const IdolListCard = ({ image, profileImage, title, description }) => {
+const IdolListCard = ({ id,image, profileImage, title, description }) => {
   return (
-    <div className="bg-white border border-gray-200 rounded-lg w-full max-w-sm shadow-md overflow-hidden">
+    <a type="button" href={`/live-stream/?roomID=${id}`} className="bg-white border border-gray-200 rounded-lg w-full max-w-sm shadow-md overflow-hidden">
       <img src={image} alt={title} className="w-full h-48 object-cover" />
       <div className="p-4 flex items-center">
         <img
@@ -15,7 +16,7 @@ const IdolListCard = ({ image, profileImage, title, description }) => {
           <p className="text-gray-600">{description}</p>
         </div>
       </div>
-    </div>
+    </a>
   );
 };
 

@@ -10,6 +10,7 @@ import defaulAvatar from "../../assets/images/default-avatar.jpg";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { FaGraduationCap } from "react-icons/fa";
 import { FaInfinity, FaPlusCircle } from "react-icons/fa";
+import FormWithModal from "./StreamButton";
 import {
   faHouse,
   faTv,
@@ -139,6 +140,7 @@ const Header = () => {
                   Stream now
                   <FontAwesomeIcon icon={faHeadset} />
                 </button> */}
+                <FormWithModal LiveStreamId={userFrormToken?.sub}/>
                 <button
                   onClick={handleLogout}
                   className="py-2 px-3 inline-flex items-center gap-x-2 text-sm font-medium rounded-lg border border-gray-200 bg-white text-gray-800 shadow-sm hover:bg-gray-50 focus:outline-none focus:bg-gray-50"
@@ -184,7 +186,7 @@ const Header = () => {
                 href={`/live-stream${
                   user === null || user.role === "USER"
                     ? ""
-                    : `?RoomId=${user.sub}`
+                    : `?roomID=${userFrormToken?.sub}`
                 }`}
               >
                 <span className="mr-2">

@@ -10,9 +10,6 @@ import Notification from "../../../components/common/Notification";
 
 const CoursePartCard = ({ mentorAndList, skillId, isEnrolled }) => {
   const dispatch = useDispatch();
-  const coursePartsFromState = useSelector(
-    (state) => state.coursePart.coursePart
-  );
   const [courseParts, setCourseParts] = useState([]);
   const [collapsedParts, setCollapsedParts] = useState({});
   const [showLessonForm, setShowLessonForm] = useState({});
@@ -22,6 +19,7 @@ const CoursePartCard = ({ mentorAndList, skillId, isEnrolled }) => {
   const [partToDelete, setPartToDelete] = useState(null);
   const [notification, setNotification] = useState("");
   const [should, setShould] = useState("");
+
   const fetchCourseParts = useCallback(async () => {
     if (!skillId) return;
     try {

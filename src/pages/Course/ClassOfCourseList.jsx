@@ -11,8 +11,7 @@ const ClassOfCourseList = () => {
   const { courseId, mentorAndList } = useParams();
   const dispatch = useDispatch();
 
-  // Lấy state từ Redux store
-  const { classes, status, error, switchStates } = useSelector(
+  const { classes, status, switchStates } = useSelector(
     (state) => state.classes
   );
 
@@ -27,12 +26,12 @@ const ClassOfCourseList = () => {
   };
 
   const handleCreateClassSuccess = () => {
-    setShowCreateClassModal(false); // Đóng popup
-    dispatch(fetchClasses(courseId)); // Làm mới danh sách lớp học
+    setShowCreateClassModal(false);
+    dispatch(fetchClasses(courseId));
   };
 
   useEffect(() => {
-    dispatch(fetchClasses(courseId)); // Gọi fetchClasses qua Redux khi component được mount
+    dispatch(fetchClasses(courseId));
   }, [dispatch, courseId]);
 
   if (status === "pending") {
@@ -55,7 +54,7 @@ const ClassOfCourseList = () => {
                 <button
                   type="button"
                   className="py-2 px-3 inline-flex items-center gap-x-2 text-sm font-medium rounded-lg border border-gray-200 bg-white text-gray-800 shadow-sm hover:bg-gray-50 focus:outline-none focus:bg-gray-50"
-                  onClick={() => setShowCreateClassModal(true)} // Hiển thị popup
+                  onClick={() => setShowCreateClassModal(true)}
                 >
                   Create Class
                 </button>
@@ -74,7 +73,7 @@ const ClassOfCourseList = () => {
                   <ClassCard
                     key={classItem.id}
                     classItem={classItem}
-                    switchState={switchStates[classItem.id]} // Sử dụng trạng thái switch từ Redux
+                    switchState={switchStates[classItem.id]}
                     onSwitchChange={handleSwitchChange}
                     onSelect={handleSelectClass}
                   />
@@ -88,8 +87,8 @@ const ClassOfCourseList = () => {
       {showCreateClassModal && (
         <CreateClass
           courseId={courseId}
-          onClose={() => setShowCreateClassModal(false)} // Đóng popup
-          onCreateSuccess={handleCreateClassSuccess} // Gọi lại danh sách khi tạo thành công
+          onClose={() => setShowCreateClassModal(false)}
+          onCreateSuccess={handleCreateClassSuccess}
         />
       )}
     </MainLayout>

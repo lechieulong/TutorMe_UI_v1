@@ -2,20 +2,16 @@ import React, { useState } from 'react';
 import Modal from 'react-modal';
 import axios from 'axios';
 import { getUser } from '../../service/GetUser';
-import {ToastContainer ,toast } from "react-toastify";
+import {toast } from "react-toastify";
 import { CheckBanlance,GiveMeMyMoney } from './PayOS';
+import { UpdateStreamSession } from './LiveStreamFrame';
 
 const url = import.meta.env.VITE_Backend_URL;
 const user=getUser();
 export const isHaveTicket = async (RoomId, UserId) => {
-  try {
-    const TicketId = await GetTicket(RoomId);
-    if (TicketId != null) {
-      const response = await axios.get(`${url}/api/User_Ticket/${TicketId.id}/${UserId}`);
-      return response.data.id != null;
-    } else {
-      return false;
-    }
+  try { 
+      const response = await axios.get(`${url}/api/User_Ticket/${RoomId}/${UserId}`);
+      return response.data.id != null; 
   } catch (error) {
     console.error('Error Check Ticket:', error);
     return false;
@@ -61,29 +57,30 @@ const AddUser_Ticket = async (formData) => {
   }
 }
 const GetTicket = async (RoomId) => {
+  console.log(RoomId);
   try {
     const response = await axios.get(`${url}/api/Ticket/${RoomId}`);
-    return response.data[0];
+    return response.data;
   } catch (error) {
     console.error('Error Check Ticket:', error);
     return false;
   }
 };
 
-const CreateTicketButton = ({ LiveStreamId, role }) => {
+const CreateTicketButton = ({ roomID, role,privacy,setPrivacy,handleUpdateCommand}) => {
   const [isPopupOpen, setIsPopupOpen] = useState(false);
-  const [privacy, setPrivacy] = useState('Public'); // Default to 'Public'
   const [formData, setFormData] = useState({
-    SubjectName: '',
-    LiveStreamId: LiveStreamId,
-    Price: '',
-    StartTime: '',
-    EndTime: '',
+    id:'',
+    subjectName: '',
+    liveStreamId: roomID,
+    price: '',
+    startTime: '',
+    endTime: '',
   });
   const [ticketInfo, setTicketInfo] = useState({
     id:'',
     subjectName: '',
-    liveStreamId:'',
+    liveStreamId:roomID,
     price: '',
     startTime: '',
     endTime: '',
@@ -117,19 +114,35 @@ const CreateTicketButton = ({ LiveStreamId, role }) => {
     }
   };
 
-  const handlePrivacyChange = (e) => {
+  const handlePrivacyChange = async(e) => {
     setPrivacy(e.target.value);
+    privacy=e.target.value;
+    handleUpdateCommand(e.target.value);
+    await UpdateStreamSession(roomID,e.target.value==='Private'?1:0);
   };
+  const handleTicket = async () => {
+    const Ticket = await GetTicket(roomID);
+    const { id,subjectName,price, startTime, endTime } = Ticket;
+    setFormData((prevInfo) => ({
+      ...prevInfo,
+      id,
+      subjectName,
+      liveStreamId:roomID,
+      price,
+      startTime,
+      endTime,
+    }));
+    openPopup(); 
+};
 
   const handleBuyTicket = async () => {
-      const response = await axios.get(`${url}/api/Ticket/${LiveStreamId}`);
-      const { id,subjectName, liveStreamId,price, startTime, endTime } = response.data[0];
-      console.log(subjectName);
+    const Ticket = await GetTicket(roomID);
+      const { id,subjectName,price, startTime, endTime } = Ticket;
       setTicketInfo((prevInfo) => ({
         ...prevInfo,
         id,
         subjectName,
-        liveStreamId,
+        liveStreamId:roomID,
         price,
         startTime,
         endTime,
@@ -139,131 +152,137 @@ const CreateTicketButton = ({ LiveStreamId, role }) => {
 
   return (
     <div>
-      {role === 'Host' ? (
-        <>
-          <div className="flex items-center gap-4 mb-4">
-            <select
-              value={privacy}
-              onChange={(e) => {
-                handlePrivacyChange(e);
-                if (e.target.value === 'Private') {
-                  openPopup();
-                }
-              }}
-              className={`border rounded p-2 text-black ${
-                privacy === 'Public' ? 'bg-green-500' : 'bg-red-500'
-              }`}
-            >
-              <option value="Public" className="bg-white hover:bg-yellow-300">Public</option>
-              <option value="Private" className="bg-white hover:bg-yellow-300">Private</option>
-            </select>
+  {role === 'Host' ? (
+    <>
+      <div className="flex items-center gap-4 mb-4">
+        <select
+          value={privacy}
+          onChange={(e) => {
+            handlePrivacyChange(e);
+            if (e.target.value === 'Private') {
+              handleTicket();
+            }
+          }}
+          className={`border rounded p-2 text-black ${
+            privacy === 'Public' ? 'bg-green-500' : 'bg-red-500'
+          }`}
+        >
+          <option value="Public" className="bg-white hover:bg-yellow-300">Public</option>
+          <option value="Private" className="bg-white hover:bg-yellow-300">Private</option>
+        </select>
+      </div>
+
+      <Modal
+        isOpen={isPopupOpen}
+        onRequestClose={() => {
+          closePopup();
+        }}
+        contentLabel="Create Ticket"
+        ariaHideApp={false}
+        className="bg-white p-6 rounded shadow-lg max-w-md w-full"
+        overlayClassName="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center"
+      >
+        <h2 className="text-xl mb-4">Create Ticket</h2>
+        <form onSubmit={handleSubmit}>
+          <div className="mb-4">
+            <input
+              type="text"
+              name="id"
+              value={formData.id}
+              onChange={handleChange}
+              className="border rounded p-2 w-full"
+              hidden
+            />
           </div>
-
-          <Modal
-            isOpen={isPopupOpen}
-            onRequestClose={() => {
-              closePopup();
-              setPrivacy("Public");
-            }}
-            contentLabel="Create Ticket"
-            ariaHideApp={false}
-            className="bg-white p-6 rounded shadow-lg max-w-md w-full"
-            overlayClassName="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center"
-          >
-            <h2 className="text-xl mb-4">Create Ticket</h2>
-            <form onSubmit={handleSubmit}>
-              <div className="mb-4">
-                <label className="block">Subject Name:</label>
-                <input
-                  type="text"
-                  name="SubjectName"
-                  value={formData.SubjectName}
-                  onChange={handleChange}
-                  className="border rounded p-2 w-full"
-                />
-              </div>
-              <div className="mb-4">
-                <label className="block">Price:</label>
-                <input
-                  type="text"
-                  name="Price"
-                  value={formData.Price}
-                  onChange={handleChange}
-                  className="border rounded p-2 w-full"
-                />
-              </div>
-              <div className="mb-4">
-                <label className="block">Start Time:</label>
-                <input
-                  type="datetime-local"
-                  name="StartTime"
-                  value={formData.StartTime}
-                  onChange={handleChange}
-                  className="border rounded p-2 w-full"
-                />
-              </div>
-              <div className="mb-4">
-                <label className="block">End Time:</label>
-                <input
-                  type="datetime-local"
-                  name="EndTime"
-                  value={formData.EndTime}
-                  onChange={handleChange}
-                  className="border rounded p-2 w-full"
-                />
-              </div>
-              <button type="submit" className="bg-green-500 text-white py-2 px-4 rounded mr-2">
-                Submit
-              </button>
-              <button type="button"  
-              onClick={() => {
-                    closePopup();
-                    setPrivacy("Public");
-              }} 
-              className="bg-gray-500 text-white py-2 px-4 rounded">
-                Cancel
-              </button>
-            </form>
-          </Modal>
-        </>
-      ) : (
-        // Nếu role là user
-        <div>
-          {/* Thêm thông tin vé ở đây */}
-          <button className="bg-green-500 text-white py-2 px-4 rounded" onClick={handleBuyTicket}>
-            Buy Ticket
+          <div className="mb-4">
+            <label className="block">Subject Name:</label>
+            <input
+              type="text"
+              name="subjectName"
+              value={formData.subjectName}
+              onChange={handleChange}
+              className="border rounded p-2 w-full"
+            />
+          </div>
+          <div className="mb-4">
+            <label className="block">Price:</label>
+            <input
+              type="text"
+              name="price"
+              value={formData.price}
+              onChange={handleChange}
+              className="border rounded p-2 w-full"
+            />
+          </div>
+          <div className="mb-4">
+            <label className="block">Start Time:</label>
+            <input
+              type="datetime-local"
+              name="startTime"
+              value={formData.startTime}
+              onChange={handleChange}
+              className="border rounded p-2 w-full"
+            />
+          </div>
+          <div className="mb-4">
+            <label className="block">End Time:</label>
+            <input
+              type="datetime-local"
+              name="endTime"
+              value={formData.endTime}
+              onChange={handleChange}
+              className="border rounded p-2 w-full"
+            />
+          </div>
+          <button type="submit" className="bg-green-500 text-white py-2 px-4 rounded mr-2">
+            Submit
           </button>
+          <button type="button"
+            onClick={() => {
+              closePopup();
+            }}
+            className="bg-gray-500 text-white py-2 px-4 rounded">
+            Cancel
+          </button>
+        </form>
+      </Modal>
+    </>
+  ) : (role!=undefined&&roomID!=undefined&&
+    <div>
+      <button className="bg-green-500 text-white py-2 px-4 rounded" onClick={handleBuyTicket}>
+        Buy Ticket
+      </button>
 
-          <Modal
-            isOpen={isPopupOpen}
-            onRequestClose={closePopup}
-            contentLabel="Ticket Information"
-            ariaHideApp={false}
-            className="bg-white p-6 rounded shadow-lg max-w-md w-full"
-            overlayClassName="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center"
-          >
-            <h2 className="text-xl mb-4">Ticket Information</h2>
-            {/* Hiển thị thông tin vé ở đây */}
-            {ticketInfo ? (
-              <div>
-                <p><strong>Subject Name:</strong> {ticketInfo.subjectName}</p>
-                <p><strong>Price:</strong> {ticketInfo.price}</p>
-                <p><strong>Start Time:</strong> {ticketInfo.startTime}</p>
-                <p><strong>End Time:</strong> {ticketInfo.endTime}</p>
-              </div>
-            ) : (
-              <p>No ticket information available.</p>
-            )}
-            <button type="button"  onClick={() => BuyTicket(ticketInfo.id, user.sub,ticketInfo.liveStreamId,ticketInfo.price)} className="bg-green-500 text-white py-2 px-4 rounded mr-2">
-             Mua vé
-            </button>
-            <button type="button" onClick={closePopup} className="bg-gray-500 text-white py-2 px-4 rounded">
-              Cancel
-            </button>
-          </Modal>
-        </div>
-      )}
+      <Modal
+        isOpen={isPopupOpen}
+        onRequestClose={closePopup}
+        contentLabel="Ticket Information"
+        ariaHideApp={false}
+        className="bg-white p-6 rounded shadow-lg max-w-md w-full"
+        overlayClassName="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center"
+      >
+        <h2 className="text-xl mb-4">Ticket Information</h2>
+        {ticketInfo ? (
+          <div>
+            <p><strong>Subject Name:</strong> {ticketInfo.subjectName}</p>
+            <p><strong>Price:</strong> {ticketInfo.price}</p>
+            <p><strong>Start Time:</strong> {ticketInfo.startTime}</p>
+            <p><strong>End Time:</strong> {ticketInfo.endTime}</p>
+          </div>
+        ) : (
+          <p>No ticket information available.</p>
+        )}
+        <button type="button" onClick={() => BuyTicket(ticketInfo.id, user.sub, ticketInfo.liveStreamId, ticketInfo.price)} className="bg-green-500 text-white py-2 px-4 rounded mr-2">
+          Mua vé
+        </button>
+        <button type="button" onClick={closePopup} className="bg-gray-500 text-white py-2 px-4 rounded">
+          Cancel
+        </button>
+      </Modal>
     </div>
+  )}
+</div>
+
   );
 };
 

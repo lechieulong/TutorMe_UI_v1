@@ -11,6 +11,7 @@ import NoteCard from "./NoteCard";
 import { Link } from "react-router-dom";
 
 const Header = ({
+  practiceTestData,
   submitting,
   testData,
   currentSkillIndex,
@@ -72,12 +73,20 @@ const Header = ({
         </p>
       </Link>
 
-      <div className="text-lg font-semibold text-customText flex items-center gap-2">
-        <FontAwesomeIcon icon={faClock} className="mr-2" />
-        <span className="text-sm">Time left:</span>
-        <span className="text-xl font-bold">{formatTime(timeLeft)}</span>
-        <span className="text-sm ml-2">minutes</span>
-      </div>
+      {practiceTestData?.testType == 1 ? (
+        <p className="text-white font-bold text-2xl">Practice Mode </p>
+      ) : (
+        <div>
+          {" "}
+          <div className="text-lg font-semibold text-customText flex items-center gap-2">
+            <FontAwesomeIcon icon={faClock} className="mr-2" />
+            <span className="text-sm">Time left:</span>
+            <span className="text-xl font-bold">{formatTime(timeLeft)}</span>
+            <span className="text-sm ml-2">minutes</span>
+          </div>{" "}
+        </div>
+      )}
+
       <div className="flex gap-8 items-center">
         <button
           onClick={openNoteModal}

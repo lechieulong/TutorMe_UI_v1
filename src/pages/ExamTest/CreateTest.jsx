@@ -238,7 +238,7 @@ const CreateTest = ({
                 type="submit"
                 className="py-2 px-4 rounded bg-green-500 text-white"
               >
-                Finish
+                Submit Test
               </button>
             )}
           </div>

@@ -111,8 +111,20 @@ const QuestionCard = ({
                 isDisabled ? "opacity-50" : ""
               }`}
             >
-              <span>{question.questionName}</span> {/* Display questionName */}
-              <span>{question.questionType}</span> {/* Display questionType */}
+              <div>
+                <p>
+                  <span className="font-bold">Question Name:</span>{" "}
+                  {question.questionName}
+                </p>
+                {skill != 2 && skill != 3 && (
+                  <>
+                    <p className="font-bold">Answers</p>
+                    {question.answers.map((a) => (
+                      <p>{a.answerText}</p>
+                    ))}
+                  </>
+                )}
+              </div>
               <button
                 type="button"
                 onClick={() => toggleQuestionSelection(question)}

@@ -2,7 +2,6 @@ import React, { useState } from "react";
 import { useFieldArray, Controller } from "react-hook-form";
 import AnswerForm from "./AnswerForm";
 import QuestionCard from "./QuestionCard";
-import TableInput from "./TableInput";
 import {
   faMultiply,
   faQuestionCircle,
@@ -12,8 +11,6 @@ import {
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { addQuestion } from "../../redux/testExam/TestSlice";
 import { useDispatch } from "react-redux";
-import { CKEditor } from "@ckeditor/ckeditor5-react";
-import ClassicEditor from "@ckeditor/ckeditor5-build-classic";
 
 import { Editor } from "@tinymce/tinymce-react";
 
@@ -290,16 +287,35 @@ const QuestionForm = ({
             </>
           ) : (
             <>
-              <p>
-                <span className="font-bold">Question Name: </span>
-                {question.questionName}
-              </p>
-              {question.answers.length > 0 &&
-                question.answers.map((a) => (
-                  <p key={a.id}>
-                    <span className="font-bold">Answers:</span> {a.answerText}
-                  </p>
-                ))}
+              {((skill == "Reading" && sectionType == 1) ||
+                (skill == "Listening" &&
+                  (sectionType == 8 || sectionType == 5)) ||
+                skill == "Writing" ||
+                skill == "Speaking") && (
+                <p>
+                  <span className="font-bold">Question Name: </span>
+                  {question.questionName}
+                </p>
+              )}
+
+              {skill !== "Speaking" &&
+                skill !== "Writing" &&
+                question.answers.length > 0 && (
+                  <>
+                    {question.answers.map((answer) => (
+                      <p key={answer.id}>
+                        {(skill === "Reading" && sectionType === 1) ||
+                        (skill === "Listening" &&
+                          (sectionType === 8 || sectionType === 5)) ? (
+                          <span className="font-bold">Answers:</span>
+                        ) : (
+                          <span className="font-bold">Question:</span>
+                        )}{" "}
+                        {answer.answerText}
+                      </p>
+                    ))}
+                  </>
+                )}
             </>
           )}
         </div>
@@ -355,6 +371,15 @@ const QuestionForm = ({
                 onClose={() => setShowQuestionCard(false)}
                 sectionType={showQuestionCard.sectionType}
                 disabledQuestions={fields}
+                skill={
+                  skill == "Reading"
+                    ? 0
+                    : skill == "Listening"
+                    ? 1
+                    : skill == "Writing"
+                    ? 2
+                    : 3
+                }
               />
             </div>
           )}

@@ -4,7 +4,7 @@ import { SLICE_NAMES, ACTIONS, STATUS } from "../../constant/SliceName";
 import Cookies from "js-cookie";
 import { getUser } from "../../service/GetUser";
 
-const API_BASE_URL = "https://localhost:7030/api";
+const API_BASE_URL = "https://aiilapi.azurewebsites.net/api";
 
 export const fetchTests = createAsyncThunk(
   `${SLICE_NAMES.TEST}/${ACTIONS.FETCH_TESTS}`,
@@ -166,6 +166,22 @@ export const getParts = createAsyncThunk(
   async (skillId, { rejectWithValue }) => {
     try {
       const response = await axios.get(`${API_BASE_URL}/test/${skillId}/parts`);
+      return response.data;
+    } catch (error) {
+      return rejectWithValue(
+        error.response?.data?.message || "Failed to fetch tests"
+      );
+    }
+  }
+);
+
+export const getSkillById = createAsyncThunk(
+  `${SLICE_NAMES.TEST}/${ACTIONS.GET_SKILL_BY_ID}`,
+  async (skillId, { rejectWithValue }) => {
+    try {
+      const response = await axios.get(
+        `${API_BASE_URL}/test/${skillId}/skillType`
+      );
       return response.data;
     } catch (error) {
       return rejectWithValue(

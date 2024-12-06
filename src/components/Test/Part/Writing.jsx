@@ -30,6 +30,7 @@ const Writing = ({
       ],
       skill: skill,
       skillId: currentSkillId,
+      partId: partData.id,
     };
     handleAnswerChange({ questionId: answerData.questionId, answerData });
   }, [text]);

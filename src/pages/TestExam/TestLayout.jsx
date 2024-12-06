@@ -14,10 +14,18 @@ import { generateSpeakingPrompt } from "../../components/Test/Part/generateSpeak
 
 const genAI = new GoogleGenerativeAI(import.meta.env.VITE_GEN_AI);
 
-const TestLayout = ({ skillsData, practiceTestData, fullTestId }) => {
+const TestLayout = ({
+  skillsData,
+  practiceTestData,
+  fullTestId,
+  part2Time,
+  part1And3Time,
+  selectedVoice,
+}) => {
   const [currentSkillIndex, setCurrentSkillIndex] = useState(0);
   const [testData, setTestData] = useState({});
   const [userAnswers, setUserAnswers] = useState([]);
+  const [noAnswers, setNoAnswers] = useState(false);
   const [loading, setLoading] = useState(true);
   const [submitted, setSubmitted] = useState(false);
   const [submitting, setSubmitting] = useState(false);
@@ -214,7 +222,7 @@ const TestLayout = ({ skillsData, practiceTestData, fullTestId }) => {
 
   const handleSubmit = () => {
     if (!userAnswers || Object.keys(userAnswers).length === 0) {
-      console.log("No answers to submit");
+      setNoAnswers(true);
       return;
     }
 
@@ -393,6 +401,7 @@ const TestLayout = ({ skillsData, practiceTestData, fullTestId }) => {
           <form onSubmit={handleSubmit}>
             <div className="flex flex-col">
               <Header
+                practiceTestData={practiceTestData}
                 submitting={submitting}
                 testData={testData}
                 currentSkillIndex={currentSkillIndex}
@@ -405,6 +414,9 @@ const TestLayout = ({ skillsData, practiceTestData, fullTestId }) => {
                 currentSkillId={currentSkillId}
                 handleAnswerChange={handleAnswerChange}
                 userAnswers={userAnswers}
+                part2Time={part2Time}
+                part1And3Time={part1And3Time}
+                selectedVoice={selectedVoice}
               />
             </div>
           </form>
@@ -414,10 +426,59 @@ const TestLayout = ({ skillsData, practiceTestData, fullTestId }) => {
         <>
           <Modal
             isOpen={submitting}
-            className="bg-warmNeutral rounded-lg shadow-lg p-6 max-w-md mx-auto text-black"
+            className="bg-gradient-to-br from-green-800 via-red-700 to-yellow-600 rounded-lg shadow-2xl p-8 max-w-lg mx-auto text-white text-center"
+            overlayClassName="fixed inset-0 bg-black bg-opacity-60 flex items-center justify-center"
+          >
+            <div className="flex flex-col items-center">
+              <svg
+                className="animate-spin h-16 w-16 text-white mb-4"
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+              >
+                <circle
+                  className="opacity-25"
+                  cx="12"
+                  cy="12"
+                  r="10"
+                  stroke="currentColor"
+                  strokeWidth="4"
+                ></circle>
+                <path
+                  className="opacity-75"
+                  fill="currentColor"
+                  d="M4 12a8 8 0 018-8v8z"
+                ></path>
+              </svg>
+              <h3 className="text-2xl font-bold">Calculating Score...</h3>
+              <p className="mt-2 text-sm font-light">
+                Please wait a little while as we finish up the calculations.
+              </p>
+              <div className="mt-4 text-xs font-semibold text-yellow-200">
+                🎄 Enjoy the Noel vibes while waiting! 🎄
+              </div>
+            </div>
+          </Modal>
+        </>
+      )}
+
+      {noAnswers && userAnswers.length == 0 && (
+        <>
+          <Modal
+            isOpen={noAnswers}
+            className="bg-warmNeutral flex justify-center gap-5 items-center  rounded-lg shadow-lg p-6 max-w-md mx-auto text-black"
             overlayClassName="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center"
           >
-            <h3>We are calculate score ... pls wait a little bit </h3>
+            <h3 className="text-yellow-800 text-center">
+              Please select at least one answer
+            </h3>
+            <button
+              type="button"
+              onClick={() => setNoAnswers(false)}
+              className="bg-coolNeutral border-gray-500 text-black rounded-md px-4 py-2"
+            >
+              Close
+            </button>
           </Modal>
         </>
       )}

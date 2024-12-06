@@ -118,7 +118,7 @@ const NavigationPart = ({
                         handleQuestionClickWrapper(event, question.id)
                       }
                     >
-                      <span>{questionIndex + 1}</span>
+                      <span>{question.questionOrder}</span>
                     </li>
                   );
                 })}

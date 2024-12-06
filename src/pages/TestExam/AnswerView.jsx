@@ -1,10 +1,12 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import AudioPlayer from "./AudioPlayer"; // Adjust the import based on your file structure
 import Writing from "../../components/Test/Part/Writing";
 import Speaking from "../../components/Test/Part/Speaking";
 import MultipleChoiceAnswers from "./MultipleChoiceAnswers";
 import ParseHtml from "./ParseHtml";
 import SingleChoiceAnswers from "./SingleChoiceAnswers";
+import { getScriptAudio } from "../../redux/testExam/TestSlice";
+import { useDispatch } from "react-redux";
 
 const AnswerView = ({
   partData,
@@ -12,9 +14,10 @@ const AnswerView = ({
   currentSkillId,
   handleAnswerChange,
   userAnswers,
+  selectedVoice,
+  part1And3Time,
+  part2Time,
 }) => {
-  console.log("hahah");
-
   let skill;
   switch (currentSkillKey) {
     case "reading":
@@ -467,7 +470,9 @@ const AnswerView = ({
         if (sectionType === 1 || sectionType === 2 || sectionType === 3) {
           return (
             <p>
-              <span className="font-bold">Question {questionCounter} </span>
+              <span className="font-bold">
+                Question {question.questionOrder}{" "}
+              </span>
               {question.questionName}
             </p>
           );
@@ -493,13 +498,19 @@ const AnswerView = ({
     }
   };
 
-  const handleInputChange = (questionId, value, sectionType) => {
+  const handleInputChange = (
+    questionId,
+    value,
+    sectionType,
+    sectionContext
+  ) => {
     let updateAnswer = [
       { answerText: value, answerId: "00000000-0000-0000-0000-000000000000" },
     ];
     const answerData = {
       questionId: questionId,
       sectionType: sectionType, // Adjust this if necessary
+      sectionContext: sectionContext,
       answers: updateAnswer,
       skill: skill,
       skillId: currentSkillId,
@@ -514,7 +525,7 @@ const AnswerView = ({
   };
 
   return (
-    <form className="p-4 bg-white rounded shadow-md">
+    <form className="p-4 bg-white rounded shadow-md text-md">
       {currentSkillKey === "listening" && (
         <div className="my-4">
           <AudioPlayer src={partData.audio} />
@@ -579,7 +590,7 @@ const AnswerView = ({
                                 className="flex items-center mb-2"
                               >
                                 <span className="mr-5">
-                                  {questionCounter++}
+                                  {question.questionOrder}
                                 </span>
                                 <p className="mr-2">{answer.answerText}</p>
                                 <select
@@ -618,7 +629,8 @@ const AnswerView = ({
                           section.sectionType === 3)) ||
                       (skill === 1 &&
                         (section.sectionType === 8 ||
-                          section.sectionType === 4)) ||
+                          section.sectionType === 4 ||
+                          section.sectionType === 5)) ||
                       skill === 2 ||
                       skill === 3 ? (
                         section.questions.map((question, index) => (
@@ -641,10 +653,10 @@ const AnswerView = ({
                         <div>
                           <ParseHtml
                             userAnswers={userAnswers}
-                            questionCounter={questionCounter}
                             html={section.sectionContext} // HTML content
                             sectionType={section.sectionType} // sectionType is passed as a prop
                             onInputChange={handleInputChange} // Function to handle input change
+                            section={section}
                           />
                         </div>
                       )}
@@ -674,6 +686,9 @@ const AnswerView = ({
           currentSkillId={currentSkillId}
           skill={skill}
           userAnswers={userAnswers}
+          part1And3Time={part1And3Time}
+          selectedVoice={selectedVoice}
+          part2Time={part2Time}
         />
       )}
     </form>

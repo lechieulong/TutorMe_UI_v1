@@ -4,7 +4,7 @@ import { SLICE_NAMES, ACTIONS, STATUS } from "../../constant/SliceName";
 import Cookies from "js-cookie";
 import { getUser } from "../../service/GetUser";
 
-const API_BASE_URL = "https://localhost:7030/api";
+const API_BASE_URL = "https://aiilapi.azurewebsites.net/api";
 
 export const fetchTests = createAsyncThunk(
   `${SLICE_NAMES.TEST}/${ACTIONS.FETCH_TESTS}`,

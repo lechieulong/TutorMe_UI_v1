@@ -15,7 +15,6 @@ import {
   faTrash,
   faDeleteLeft,
 } from "@fortawesome/free-solid-svg-icons";
-import AnswerSide from "./AnswerSide";
 
 const FormSkill = ({
   formData,

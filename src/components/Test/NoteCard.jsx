@@ -16,15 +16,6 @@ const NoteCard = ({ onClose }) => {
     const clearNoteOnUnload = () => {
       localStorage.removeItem("tempNote");
     };
-
-    // Add event listener for the beforeunload event
-    window.addEventListener("beforeunload", clearNoteOnUnload);
-
-    return () => {
-      // Clean up beforeunload event listener and remove from localStorage
-      window.removeEventListener("beforeunload", clearNoteOnUnload);
-      localStorage.removeItem("tempNote");
-    };
   }, []);
 
   // Save the note to localStorage when the note changes
@@ -123,12 +114,12 @@ const NoteCard = ({ onClose }) => {
         >
           Close
         </button>
-        <button
+        {/* <button
           onClick={clearNoteData} // Clear data button
           className="bg-red-500 text-white rounded px-2 py-1 ml-2 hover:bg-red-600 transition text-sm"
         >
           Clear data
-        </button>
+        </button> */}
       </div>
     </div>
   );

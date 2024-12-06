@@ -107,100 +107,155 @@ const QuestionBank = () => {
     }
   };
 
+  const convertSkill = (skill) => {
+    switch (skill) {
+      case 0:
+        return "Reading";
+      case 1:
+        return "Listening";
+      case 2:
+        return "Writing";
+      case 3:
+        return "Speaking";
+      default:
+        return "Unknown Skill";
+    }
+  };
+
+  const handleDownloadTemplate = async () => {
+    setLoading(true);
+    try {
+      const fileUrl =
+        "https://thientvhde160268.blob.core.windows.net/questionbank/Resources.xlsx";
+      const link = document.createElement("a");
+      link.href = fileUrl;
+      link.download = "Resources.xlsx";
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    } catch (error) {
+      console.error("Error downloading template:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
-    <div className="p-4 bg-gray-50">
-      <div className="mb-4 flex justify-between items-center">
-        <button
-          onClick={addNewQuestion}
-          className="flex items-center px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700"
-        >
-          <FontAwesomeIcon icon={faPlus} className="mr-2" />
-          Add New Question
-        </button>
-        <div className="flex gap-4">
-          <label className="flex items-center cursor-pointer">
-            <input
-              type="file"
-              accept=".json,.xlsx"
-              className="hidden"
-              onChange={handleImportFile}
-            />
-            <span className="flex items-center px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700">
-              <FontAwesomeIcon icon={faFileImport} className="mr-2" />
-              Import Questions
-            </span>
-          </label>
-          <button className="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700">
-            Download Template
-          </button>
-        </div>
-      </div>
-
-      <div
-        className="h-[500px] overflow-auto bg-white shadow rounded-lg"
-        ref={scrollRef}
-      >
-        <table className="w-full border-collapse">
-          <thead className="bg-green-600 ">
-            <tr>
-              <th className="px-4 py-2 text-left">Question</th>
-              <th className="px-4 py-2 text-left">Type</th>
-              <th className="px-4 py-2 text-left">Answers</th>
-              <th className="px-4 py-2 text-left">Actions</th>
-            </tr>
-          </thead>
-          <tbody>
-            {questions.length > 0 ? (
-              questions.map((question) => (
-                <tr key={question.id} className="hover:bg-gray-50">
-                  <td className="px-4 py-2 border-b">
-                    {question.questionName || <i>No name provided</i>}
-                  </td>
-                  <td className="px-4 py-2 border-b">
-                    {question.questionType}
-                  </td>
-                  <td className="px-4 py-2 border-b">
-                    {question.answers.map((answer, i) => (
-                      <div key={answer.id} className="text-gray-700">
-                        {i + 1}. {answer.answerText}
-                      </div>
-                    ))}
-                  </td>
-                  <td className="px-4 py-2 border-b flex space-x-2">
-                    <button onClick={() => updateQuestion(question)}>
-                      <FontAwesomeIcon
-                        icon={faEdit}
-                        className="text-blue-600 hover:text-blue-800"
-                      />
-                    </button>
-                    <button onClick={() => handleDeleteQuestion(question.id)}>
-                      <FontAwesomeIcon
-                        icon={faTrash}
-                        className="text-red-600 hover:text-red-800"
-                      />
-                    </button>
-                  </td>
-                </tr>
-              ))
-            ) : (
-              <tr>
-                <td colSpan="4" className="px-4 py-2 text-center text-gray-500">
-                  No questions available.
-                </td>
-              </tr>
-            )}
-          </tbody>
-        </table>
-        {loading && (
-          <div className="text-center py-4 text-green-600">Loading...</div>
-        )}
-      </div>
-
-      {isModalOpen && (
+    <div className="p-4 bg-gray-50  ">
+      {isModalOpen ? (
         <QuestionFormBank
           setIsModalOpen={setIsModalOpen}
-          question={editQuestion}
+          editQuestion={editQuestion}
         />
+      ) : (
+        <div>
+          <div className="mb-4 flex justify-between items-center">
+            <button
+              onClick={addNewQuestion}
+              className="flex items-center px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700"
+            >
+              <FontAwesomeIcon icon={faPlus} className="mr-2" />
+              Add New Question
+            </button>
+            <button className="flex gap-4">
+              <label className="flex items-center cursor-pointer">
+                <input
+                  type="file"
+                  accept=".json,.xlsx"
+                  className="hidden"
+                  onChange={handleImportFile}
+                />
+                <span className="flex items-center px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700">
+                  <FontAwesomeIcon icon={faFileImport} className="mr-2" />
+                  Import Questions
+                </span>
+              </label>
+              <button
+                onClick={handleDownloadTemplate}
+                className="px-4 py-2 text-sm border border-green-700 text-gray-500 rounded hover:bg-gray-200"
+              >
+                Download Template
+              </button>
+            </button>
+          </div>
+
+          <div
+            className="h-[600px] overflow-auto bg-white shadow rounded-lg"
+            ref={scrollRef}
+          >
+            <table className="w-full border-collapse">
+              <thead className="bg-green-600 ">
+                <tr>
+                  <th className="px-4 py-2 text-left">No </th>
+
+                  <th className="px-4 py-2 text-left ">Skill name </th>
+                  <th className="px-4 py-2 text-left">Question name</th>
+                  <th className="px-4 py-2 text-left">Question type</th>
+                  <th className="px-4 py-2 text-left">Answers</th>
+                  <th className="px-4 py-2 text-left">Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                {questions.length > 0 ? (
+                  questions.map((question, index) => (
+                    <tr
+                      key={question.id}
+                      className={`${
+                        index % 2 === 0 ? "bg-lightGreen" : "bg-white"
+                      } `}
+                    >
+                      <td className="px-4 py-2 border-b">{index + 1}</td>
+                      <td className="px-4 py-2 border-b">
+                        {convertSkill(question.skill)}
+                      </td>
+                      <td className="px-4 py-2 border-b">
+                        {question.questionName || <i>No name provided</i>}
+                      </td>
+                      <td className="px-4 py-2 border-b">
+                        {question.questionType}
+                      </td>
+                      <td className="px-4 py-2 border-b">
+                        {question.answers.map((answer, i) => (
+                          <div key={answer.id} className="text-gray-700">
+                            {i + 1}. {answer.answerText}
+                          </div>
+                        ))}
+                      </td>
+                      <td className="px-4 py-2 border-b flex space-x-2">
+                        <button onClick={() => updateQuestion(question)}>
+                          <FontAwesomeIcon
+                            icon={faEdit}
+                            className="text-blue-600 hover:text-blue-800"
+                          />
+                        </button>
+                        <button
+                          onClick={() => handleDeleteQuestion(question.id)}
+                        >
+                          <FontAwesomeIcon
+                            icon={faTrash}
+                            className="text-red-600 hover:text-red-800"
+                          />
+                        </button>
+                      </td>
+                    </tr>
+                  ))
+                ) : (
+                  <tr>
+                    <td
+                      colSpan="5"
+                      className="px-4 py-2 text-center text-gray-500"
+                    >
+                      No questions available.
+                    </td>
+                  </tr>
+                )}
+              </tbody>
+            </table>
+            {loading && (
+              <div className="text-center py-4 text-green-600">Loading...</div>
+            )}
+          </div>
+        </div>
       )}
     </div>
   );

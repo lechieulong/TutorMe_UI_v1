@@ -47,9 +47,9 @@ const Header = () => {
 
   const { user_balance } = useSelector((state) => state.user_balance);
 
-  const formattedAmount = new Intl.NumberFormat('vi-VI', {
-    style: 'currency',
-    currency: 'VND',
+  const formattedAmount = new Intl.NumberFormat("vi-VI", {
+    style: "currency",
+    currency: "VND",
   }).format(user_balance);
 
   useEffect(() => {
@@ -62,7 +62,7 @@ const Header = () => {
             setUserFromToke(userFromToken);
             //get user from DB by ID get from token
             const fetchedUser = await dispatch(
-              GetUserByID(userFromToken.sub),
+              GetUserByID(userFromToken.sub)
             ).unwrap();
             setUser(fetchedUser);
           } else {
@@ -94,7 +94,7 @@ const Header = () => {
 
   return (
     <>
-      <header className="top-0 left-0 right-0 bg-accentGreen text-white w-full bg text-sm pt-3 z-50 border-b border-gray-300">
+      <header className="top-0 left-0  right-0 bg-accentGreen text-white w-full bg text-sm pt-3 z-50 border-b border-gray-300">
         <nav className="mx-auto pb-2 px-4 flex flex-wrap basis-full items-center justify-between">
           <a
             className="sm:order-1 flex-none text-xl font-semibold focus:outline-none focus:opacity-80"
@@ -122,8 +122,13 @@ const Header = () => {
                   disabled:pointer-events-none dark:border-neutral-700 
                   transition-hover transition-transform duration-500 dark:hover:scale-110 max-w-[150px]"
                 >
-                  <p className="p-2 text-black opacity-80 truncate">{formattedAmount}</p>
-                  <Link to="/Payment" className="flex-shrink-0 bg-gray-200 p-3 rounded-lg hover:bg-gray-100">
+                  <p className="p-2 text-black opacity-80 truncate">
+                    {formattedAmount}
+                  </p>
+                  <Link
+                    to="/Payment"
+                    className="flex-shrink-0 bg-gray-200 p-3 rounded-lg hover:bg-gray-100"
+                  >
                     <FaPlusCircle />
                   </Link>
                 </span>

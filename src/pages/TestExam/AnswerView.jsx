@@ -470,7 +470,9 @@ const AnswerView = ({
         if (sectionType === 1 || sectionType === 2 || sectionType === 3) {
           return (
             <p>
-              <span className="font-bold">Question {questionCounter} </span>
+              <span className="font-bold">
+                Question {question.questionOrder}{" "}
+              </span>
               {question.questionName}
             </p>
           );
@@ -588,7 +590,7 @@ const AnswerView = ({
                                 className="flex items-center mb-2"
                               >
                                 <span className="mr-5">
-                                  {questionCounter++}
+                                  {question.questionOrder}
                                 </span>
                                 <p className="mr-2">{answer.answerText}</p>
                                 <select
@@ -651,10 +653,10 @@ const AnswerView = ({
                         <div>
                           <ParseHtml
                             userAnswers={userAnswers}
-                            questionCounter={questionCounter}
                             html={section.sectionContext} // HTML content
                             sectionType={section.sectionType} // sectionType is passed as a prop
                             onInputChange={handleInputChange} // Function to handle input change
+                            section={section}
                           />
                         </div>
                       )}

@@ -4,9 +4,8 @@ const ParseHtml = ({
   html,
   onInputChange,
   sectionType,
-  questionCounter,
   userAnswers,
-  sectionExplain,
+  section,
 }) => {
   const containerRef = useRef();
 
@@ -20,6 +19,10 @@ const ParseHtml = ({
       onInputChange(questionId, value, sectionType, html);
     }
   };
+  const questionsMap = section.questions.reduce((acc, question) => {
+    acc[question.id] = question.questionOrder; // Use question ID as key
+    return acc;
+  }, {});
 
   // Update the HTML with the correct values and placeholders
   const updatedHtml = html.replace(/<input[^>]*>/g, (match) => {
@@ -27,10 +30,10 @@ const ParseHtml = ({
     const valueMatch = match.match(/value="([^"]*)"/);
     const placeholderMatch = match.match(/placeholder="([^"]*)"/);
     const dataQuestionIdMatch = match.match(/data-question-id="([^"]*)"/);
-
+    const questionId = dataQuestionIdMatch ? dataQuestionIdMatch[1] : null;
     const value = valueMatch ? `value="${valueMatch[1]}"` : "";
-    const placeholder = placeholderMatch
-      ? `placeholder="${placeholderMatch[1]}"`
+    const placeholder = questionId
+      ? `placeholder="${questionsMap[questionId] || ""}"`
       : "";
     const dataQuestionId = dataQuestionIdMatch
       ? `data-question-id="${dataQuestionIdMatch[1]}"`

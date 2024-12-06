@@ -116,10 +116,14 @@ const QuestionCard = ({
                   <span className="font-bold">Question Name:</span>{" "}
                   {question.questionName}
                 </p>
-                <p className="font-bold">Answers</p>
-                {question.answers.map((a) => (
-                  <p>{a.answerText}</p>
-                ))}
+                {skill != 2 && skill != 3 && (
+                  <>
+                    <p className="font-bold">Answers</p>
+                    {question.answers.map((a) => (
+                      <p>{a.answerText}</p>
+                    ))}
+                  </>
+                )}
               </div>
               <button
                 type="button"

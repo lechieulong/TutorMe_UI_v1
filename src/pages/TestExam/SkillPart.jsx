@@ -19,6 +19,7 @@ import CreateTest from "../ExamTest/CreateTest";
 import TestLayout from "./TestLayout";
 import { getUser } from "../../service/GetUser";
 import { Roles } from "../../utils/config";
+import { formatDate } from "../../utils/formatDate";
 
 const SkillPart = () => {
   const [test, setTest] = useState(null);
@@ -119,7 +120,7 @@ const SkillPart = () => {
                         Start Time:
                       </span>
                       <span className="text-gray-600 text-sm dark:text-neutral-400">
-                        {test.startTime}
+                        {formatDate(test.startTime)}
                       </span>
                     </p>
                     <p className="mt-1 text-gray-500 dark:text-neutral-400 flex items-center space-x-2">
@@ -131,7 +132,7 @@ const SkillPart = () => {
                         End Time:
                       </span>
                       <span className="text-gray-600 text-sm dark:text-neutral-400">
-                        {test.endTime}
+                        {formatDate(test.endTime)}
                       </span>
                     </p>
                   </div>
@@ -187,22 +188,16 @@ const SkillPart = () => {
                     </div>
                     {test.testType != 1 && (
                       <div className="border text-gray-700 shadow-md border-gray-300 p-6 flex justify-between mt-2 rounded-xl items-center">
-                        {test.testType !== 1 ? (
-                          <button
-                            className={`text-2xl p-4 font-semibold border-green-500 bg-green-500 text-white rounded-lg 
-                 disabled:opacity-50 disabled:cursor-not-allowed`}
-                            onClick={handleTakeFullTest}
-                          >
-                            Take Full Test
-                          </button>
-                        ) : (
-                          <button
-                            className={`text-2xl p-4 font-semibold border-green-500 bg-green-500 text-white rounded-lg `}
-                            onClick={handleTakeFullTest}
-                          >
-                            Take Full Test
-                          </button>
-                        )}
+                        <button
+                          className={`text-2xl p-4 font-semibold rounded-lg ${
+                            isButtonDisabled()
+                              ? "bg-gray-300 text-gray-500 cursor-not-allowed"
+                              : "bg-green-500 text-white border-green-500 hover:bg-green-600"
+                          }`}
+                          onClick={handleTakeFullTest}
+                        >
+                          Take Full Test
+                        </button>
                       </div>
                     )}
                   </div>

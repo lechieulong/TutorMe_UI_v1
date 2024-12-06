@@ -4,8 +4,8 @@ import { SLICE_NAMES, ACTIONS, STATUS } from "../../constant/SliceName";
 import Cookies from "js-cookie";
 import { getUser } from "../../service/GetUser";
 
-const API_BASE_URL = "https://aiilapi.azurewebsites.net/api";
-
+// const API_BASE_URL = "https://aiilapi.azurewebsites.net/api";
+const API_BASE_URL = "https://localhost:7030/api";
 export const fetchTests = createAsyncThunk(
   `${SLICE_NAMES.TEST}/${ACTIONS.FETCH_TESTS}`,
   async (_, { rejectWithValue }) => {
@@ -99,8 +99,8 @@ export const getTestsByCourse = createAsyncThunk(
         {
           params: {
             page,
-            pageSize
-          }
+            pageSize,
+          },
         }
       );
 
@@ -374,7 +374,7 @@ export const getTestBySectionCourseId = createAsyncThunk(
     } catch (error) {
       return rejectWithValue(
         error.response?.data?.message ||
-        "Failed to get test by section course id "
+          "Failed to get test by section course id "
       );
     }
   }

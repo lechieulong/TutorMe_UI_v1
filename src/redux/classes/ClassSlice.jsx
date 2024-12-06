@@ -19,6 +19,40 @@ export const fetchClasses = createAsyncThunk(
     }
   }
 );
+export const fetchEnabledStatus = createAsyncThunk(
+  "class/fetchEnabledStatus",
+  async (classId, { rejectWithValue }) => {
+    try {
+      const response = await axios.get(
+        `https://localhost:7030/api/class/${classId}/enabled`
+      );
+      return { classId, isEnabled: response.data.isEnabled };
+    } catch (error) {
+      console.error("Không thể tải trạng thái enabled của lớp học:", error);
+      return rejectWithValue("Lỗi khi tải trạng thái lớp học");
+    }
+  }
+);
+
+export const updateEnabledStatus = createAsyncThunk(
+  "class/updateEnabledStatus",
+  async ({ classId, newStatus }, { rejectWithValue }) => {
+    try {
+      const response = await axios.put(
+        `https://localhost:7030/api/class/${classId}/enabled`,
+        newStatus, // Truyền trực tiếp giá trị boolean
+        {
+          headers: { "Content-Type": "application/json" },
+        }
+      );
+      // API trả về true/false nên sử dụng trực tiếp:
+      return { classId, isEnabled: response.data };
+    } catch (error) {
+      console.error("Không thể cập nhật trạng thái lớp học:", error);
+      return rejectWithValue("Lỗi khi cập nhật trạng thái lớp học");
+    }
+  }
+);
 
 // Async thunk để tạo lớp học mới
 export const createClass = createAsyncThunk(
@@ -128,6 +162,33 @@ const classSlice = createSlice({
       .addCase(createClass.rejected, (state, action) => {
         state.createStatus = STATUS.FAILED;
         state.createError = action.payload || action.error.message;
+      })
+      .addCase(fetchEnabledStatus.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(fetchEnabledStatus.fulfilled, (state, action) => {
+        const { classId, isEnabled } = action.payload;
+        state.classes[classId] = { isEnabled };
+        state.loading = false;
+      })
+      .addCase(fetchEnabledStatus.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
+      })
+      // Update trạng thái lớp học
+      .addCase(updateEnabledStatus.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(updateEnabledStatus.fulfilled, (state, action) => {
+        const { classId, isEnabled } = action.payload;
+        state.classes[classId] = { isEnabled };
+        state.loading = false;
+      })
+      .addCase(updateEnabledStatus.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
       });
   },
 });

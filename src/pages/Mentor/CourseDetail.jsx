@@ -230,9 +230,7 @@ const CourseDetail = () => {
   };
   useEffect(() => {
     if (userId) {
-      dispatch(CheckUserEnrollment({ userId, courseId })).then((result) => {
-        console.log("Enrollment check completed:", result);
-      });
+      dispatch(CheckUserEnrollment({ userId, courseId }));
     }
     dispatch(CheckLecturerOfCourse(courseId));
     dispatch(GetCourseById(courseId));

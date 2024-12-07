@@ -50,15 +50,6 @@ const Speaking = ({
     }
   };
 
-  const cleanText = (text) => {
-    return text
-      .replace(/[\*\n\r]+/g, " ")
-      .replace(/\*\s*\*/g, "")
-      .replace(/[-\u200B-\u200D\uFEFF\u202F]/g, "")
-      .replace(/\s+/g, " ")
-      .trim();
-  };
-
   const evaluateAnswer = async (userAnswer) => {
     try {
       const answerData = {

@@ -39,12 +39,40 @@ const ParseHtmlExplain = ({
     }
   );
 
+  const highlightSpecialCharacters = (text) => {
+    if (!text) return "";
+
+    // Replace special characters with highlighted spans
+    const regexSpecialChars = /[^\w\s]/g;
+    text = text.replace(
+      regexSpecialChars,
+      (match) => `<span class="text-red-500">${match}</span>`
+    );
+
+    // Add a line break before "Question"
+    const regexQuestion = /\bQuestion\b/g;
+    text = text.replace(
+      regexQuestion,
+      (match) => `<br /><span class="font-bold text-blue-500">${match}</span>`
+    );
+
+    return text;
+  };
+
   return (
     <>
       <div dangerouslySetInnerHTML={{ __html: updatedHtml }} />
       <div>
-        <p className="font-bold text-2xl mt-4 mb-4">Explained Answer:</p>
-        <p className="font-bold text-2xl mt-4 mb-4">{question[0]?.explain}</p>
+        <p className="font-bold text-yellow-400 mt-4 mb-4">Explained Answer:</p>
+        {/* Highlight special characters in the explanation */}
+        <p
+          className="font-bold mt-4 mb-4"
+          dangerouslySetInnerHTML={{
+            __html: highlightSpecialCharacters(
+              sectionExplain || "No explanation provided."
+            ),
+          }}
+        />
       </div>
     </>
   );

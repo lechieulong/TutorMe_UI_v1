@@ -1,11 +1,15 @@
-import React, { useState, dispatch } from "react";
+/* eslint-disable react/prop-types */
+import React, { useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { FaTrash } from "react-icons/fa";
 import { styled, alpha } from "@mui/material/styles";
 import Notification from "../../../components/common/Notification";
 import { formatCurrency } from "../../../utils/Validator";
 import Switch from "@mui/material/Switch";
+import { useDispatch } from "react-redux";
 import { updateCourseStatus } from "../../../redux/courses/CourseSlice";
+import Confirm from "../../../components/common/Confirm";
+
 const CourseCard = ({
   content,
   courseName,
@@ -17,18 +21,24 @@ const CourseCard = ({
   price,
   onDelete = null,
   isEnabled,
+  onSwitchChange,
 }) => {
   const location = useLocation();
   const isMentorCourseList = location.pathname === "/mentorCourseList";
   const isMyLearning = location.pathname === "/mylearning";
+  const dispatch = useDispatch();
   const [isSwitchOn, setIsSwitchOn] = useState(
     isMentorCourseList ? isEnabled : true
   );
+  const [showConfirm, setShowConfirm] = useState(false);
+  const [confirmationAction, setConfirmationAction] = useState(null); // Store the action to confirm
   const [notification, setNotification] = useState("");
+  const [should, setShould] = useState("");
 
   if (!isMentorCourseList && !isEnabled) {
     return null;
   }
+
   const GreenSwitch = styled(Switch)(({ theme }) => ({
     "& .MuiSwitch-switchBase.Mui-checked": {
       color: "#007549",
@@ -40,6 +50,7 @@ const CourseCard = ({
       backgroundColor: "#007549",
     },
   }));
+
   const handleDeleteClick = () => {
     if (onDelete) {
       onDelete(courseId);
@@ -50,27 +61,30 @@ const CourseCard = ({
   const handleSwitchChange = () => {
     const newStatus = !isSwitchOn;
 
-    dispatch(updateCourseStatus({ courseId, newStatus }))
-      .unwrap()
-      .then(() => {
-        setIsSwitchOn(newStatus);
-        setNotification(
-          `Khóa học đã được ${newStatus ? "hiển thị" : "ẩn"} thành công.`
-        );
-      })
-      .catch((error) => {
-        console.error("Error updating course status", error);
-        setNotification("Cập nhật trạng thái khóa học thất bại.");
-      });
+    // Cập nhật hành động xác nhận và mở modal
+    setConfirmationAction(() => () => {
+      dispatch(updateCourseStatus({ courseId, isEnabled: newStatus })) // Chuyển đúng tham số
+        .then(() => {
+          setIsSwitchOn(newStatus); // Cập nhật trạng thái trong component
+          setNotification(
+            `Khóa học đã được ${newStatus ? "hiển thị" : "ẩn"} thành công.`
+          );
+          setShould("yes");
+          onSwitchChange && onSwitchChange(courseId, newStatus);
+        })
+        .catch(() => {
+          setNotification("Đã xảy ra lỗi khi cập nhật trạng thái lớp học.");
+          setShould("no");
+        });
+    });
+
+    // Mở modal xác nhận
+    setShowConfirm(true);
   };
 
   const getSkillNames = (skillData) => {
-    console.log("Skill Data: ", skillData); // Kiểm tra giá trị của skillData
-
     if (typeof skillData === "string") {
-      // Nếu Skill là chuỗi, tách nó ra thành mảng và chuyển thành số
       const skills = skillData.split(",").map((s) => parseInt(s.trim(), 10));
-
       return skills
         .map((skill) => {
           switch (skill) {
@@ -89,9 +103,7 @@ const CourseCard = ({
         .filter((name) => name !== null)
         .join(", ");
     } else if (Array.isArray(skillData)) {
-      // Nếu Skill là mảng, chỉ cần chuyển các giá trị thành số
       const skills = skillData.map((s) => parseInt(s, 10));
-
       return skills
         .map((skill) => {
           switch (skill) {
@@ -110,7 +122,7 @@ const CourseCard = ({
         .filter((name) => name !== null)
         .join(", ");
     } else {
-      return "Unknown"; // Trường hợp không hợp lệ
+      return "Unknown";
     }
   };
 
@@ -122,7 +134,6 @@ const CourseCard = ({
   } else if (isMyLearning) {
     destinationPath = `/classDetail/${courseId}/${classId}`;
   }
-  console.log(price);
 
   return (
     <div className="relative bg-white shadow-md rounded-lg flex flex-col hover:bg-gray-100 transition-all">
@@ -130,6 +141,7 @@ const CourseCard = ({
         <Notification
           message={notification}
           onClose={() => setNotification("")}
+          should={should}
         />
       )}
 
@@ -149,19 +161,6 @@ const CourseCard = ({
               onChange={handleSwitchChange}
               inputProps={{ "aria-label": "Green switch" }}
             />
-            <input
-              type="checkbox"
-              id={`switch-${courseId}`}
-              checked={isSwitchOn}
-              onChange={handleSwitchChange}
-              className="hidden peer"
-            />
-            <label
-              htmlFor={`switch-${courseId}`}
-              className="cursor-pointer w-10 h-6 flex items-center bg-gray-200 rounded-full p-1 transition-colors duration-300 ease-in-out peer-checked:bg-green-400"
-            >
-              <div className="bg-white w-4 h-4 rounded-full shadow-md transform transition-transform duration-300 ease-in-out peer-checked:translate-x-4"></div>
-            </label>
           </>
         )}
       </div>
@@ -197,6 +196,15 @@ const CourseCard = ({
           </div>
         </div>
       </Link>
+
+      <Confirm
+        isOpen={showConfirm}
+        onClose={() => setShowConfirm(false)}
+        onConfirm={confirmationAction}
+        message="Are you sure you want to change the course status?"
+        status="Confirmation"
+        should="yes"
+      />
     </div>
   );
 };

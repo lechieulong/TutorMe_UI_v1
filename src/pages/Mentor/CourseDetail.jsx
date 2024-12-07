@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback } from "react";
-import { useParams, useLocation, Link } from "react-router-dom";
+import { useParams, useLocation, Link, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import MentorSidebar from "../../components/Mentor/MentorSideBar";
 import MainLayout from "../../layout/MainLayout";
@@ -7,6 +7,7 @@ import ClassCard from "../Class/components/ClassCard";
 import CourseSkillCard from "./component/CourseSkillCard";
 import { FaFlag } from "react-icons/fa";
 import Report from "../../components/common/Report";
+import useAuthToken from "../../hooks/useAuthToken";
 import {
   CheckUserEnrollment,
   enrollUser,
@@ -38,6 +39,7 @@ import { GetCourseById } from "../../redux/courses/CourseSlice";
 import { CheckBanlance, GiveMeMyMoney } from "../../components/common/PayOS";
 import Comment from "../../components/common/Comment";
 const CourseDetail = () => {
+  const navigate = useNavigate();
   const { className, courseId } = useParams();
   const location = useLocation();
   const [skillCount, setSkillCount] = useState(0);
@@ -66,7 +68,7 @@ const CourseDetail = () => {
   const isReviewPath = location.pathname.includes("/review");
   const { fromMentorCourseList = false } = location.state || {};
   const mentorAndList = isMentor && fromMentorCourseList;
-
+  const authToken = useAuthToken();
   const initializeUser = useCallback(() => {
     const userFromToken = getUser();
     setUserId(userFromToken?.sub);
@@ -164,6 +166,9 @@ const CourseDetail = () => {
   };
 
   const handleEnroll = async () => {
+    if (authToken == null) {
+      navigate("/login");
+    }
     if (!selectedClassId) {
       setNotification("Bạn chưa chọn lớp.");
       return;
@@ -318,12 +323,14 @@ const CourseDetail = () => {
                 </div>
               </div>
               <div className="bg-lightGreen p-4 rounded-lg w-full lg:w-1/3 flex flex-col items-center text-center shadow-md relative h-auto lg:h-[200px]">
-                <button
-                  onClick={handleOpenReport}
-                  className="absolute top-2 right-2 text-red-700 text-xl"
-                >
-                  <FaFlag />
-                </button>
+                {isEnrolled && (
+                  <button
+                    onClick={handleOpenReport}
+                    className="absolute top-2 right-2 text-red-700 text-xl"
+                  >
+                    <FaFlag />
+                  </button>
+                )}
 
                 <h2 className="text-2xl text-black font-bold mb-4">
                   {formatCurrency(course?.price)}

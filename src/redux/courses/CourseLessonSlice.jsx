@@ -12,28 +12,37 @@ const initialState = {
   notification: "",
   error: null,
 };
-
-// Tạo async thunk để fetch courseLessons
 export const fetchCourseLessons = createAsyncThunk(
-  "courseLesson/fetchCourseLessons",
-  async (coursePartId) => {
-    const token = Cookies.get("authToken");
-    const response = await axios.get(
-      `https://localhost:7030/api/CourseLessons/CoursePart/${coursePartId}`,
-      { headers: { Authorization: `Bearer ${token}` } }
-    );
-    return response.data.courseLessons;
-  }
-);
+  "courseLessons/fetchCourseLessons",
+  async ({ coursePartId, token, mentorAndList }, { rejectWithValue }) => {
+    try {
+      // Constructing the API URL with dynamic coursePartId
+      const response = await axios.get(
+        `https://localhost:7030/api/CourseLessons/CoursePart/${coursePartId}`, // Using coursePartId dynamically
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
 
-// Tạo async thunk để fetch TestExams
-export const fetchTestExams = createAsyncThunk(
-  "testExams/fetchTestExams",
-  async (lessonId) => {
-    const response = await axios.get(
-      `https://localhost:7030/api/CourseLessons/GetTestExamByLessonId/${lessonId}`
-    );
-    return { lessonId, testExams: response.data }; // Trả về lessonId và testExams
+      // Check if the response contains courseLessons data
+      if (response.data && response.data.courseLessons) {
+        // Creating collapsed state for lessons
+        const initialCollapsedState = response.data.courseLessons.reduce(
+          (acc, lesson) => ({ ...acc, [lesson.id]: !mentorAndList }), // Using mentorAndList to determine the collapsed state
+          {}
+        );
+
+        return {
+          courseLessons: response.data.courseLessons, // Returning the course lessons data
+          collapsedLessons: initialCollapsedState, // Returning the collapsed state for each lesson
+        };
+      } else {
+        // If the response does not have the expected data structure, throw an error
+        return rejectWithValue("No course lessons found in the response");
+      }
+    } catch (err) {
+      // Handle errors and reject with the error message
+      console.error("Failed to fetch course lessons:", err);
+      return rejectWithValue("Failed to fetch course lessons");
+    }
   }
 );
 
@@ -74,31 +83,8 @@ const courseLessonSlice = createSlice({
       .addCase(fetchCourseLessons.fulfilled, (state, action) => {
         state.status = "succeeded";
         state.courseLessons = action.payload;
-        state.collapsedLessons = action.payload.reduce(
-          (acc, lesson) => ({ ...acc, [lesson.id]: true }),
-          {}
-        );
       })
       .addCase(fetchCourseLessons.rejected, (state, action) => {
-        state.status = "failed";
-        state.error = action.error.message;
-      })
-      .addCase(fetchTestExams.pending, (state) => {
-        state.status = "loading";
-      })
-      .addCase(fetchTestExams.fulfilled, (state, action) => {
-        state.status = "succeeded";
-        const { lessonId, testExams } = action.payload; // Lấy lessonId và testExams từ payload
-        const existingLesson = state.testExams.find(
-          (exam) => exam.lessonId === lessonId
-        );
-        if (existingLesson) {
-          existingLesson.testExams = testExams; // Cập nhật bài kiểm tra nếu đã tồn tại
-        } else {
-          state.testExams.push({ lessonId, testExams }); // Thêm bài kiểm tra mới
-        }
-      })
-      .addCase(fetchTestExams.rejected, (state, action) => {
         state.status = "failed";
         state.error = action.error.message;
       });

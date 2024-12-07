@@ -1,3 +1,4 @@
+/* eslint-disable react/prop-types */
 import { useState, useEffect } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import axios from "axios";
@@ -5,7 +6,7 @@ import { styled, alpha } from "@mui/material/styles";
 import Switch from "@mui/material/Switch";
 import { updateEnabledStatus } from "../../../redux/classes/ClassSlice";
 import { useDispatch } from "react-redux";
-
+import useAuthToken from "../../../hooks/useAuthToken";
 const GreenSwitch = styled(Switch)(({ theme }) => ({
   "& .MuiSwitch-switchBase.Mui-checked": {
     color: "#007549",
@@ -21,13 +22,12 @@ const GreenSwitch = styled(Switch)(({ theme }) => ({
 const ClassCard = ({
   mentorAndList,
   classItem,
-  switchState,
   onSwitchChange,
   onSelect,
   isActive,
-  userRole,
   handleDeleteClassSuccess, // Passed down function to trigger reload in ClassList
 }) => {
+  const author = useAuthToken();
   const location = useLocation();
   const navigate = useNavigate();
   const [isSwitchOn, setIsSwitchOn] = useState(false);
@@ -80,7 +80,9 @@ const ClassCard = ({
   };
 
   const handleCardClick = () => {
-    // Nếu mentorAndList là true, thoát khỏi hàm mà không làm gì cả
+    if (author == null) {
+      navigate("/login");
+    }
     if (mentorAndList) {
       return;
     }

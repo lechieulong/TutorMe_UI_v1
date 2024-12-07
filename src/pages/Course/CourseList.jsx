@@ -1,11 +1,5 @@
 import { useEffect, useState, useMemo } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import {
-  FaBook,
-  FaSurprise,
-  FaAssistiveListeningSystems,
-  FaPenAlt,
-} from "react-icons/fa";
 import MainLayout from "../../layout/MainLayout";
 import Filter from "./components/Filter";
 import CourseCard from "./components/CourseCard";
@@ -13,10 +7,12 @@ import { fetchCourses } from "../../redux/courses/CourseSlice";
 import { STATUS } from "../../constant/SliceName";
 import Calendar from "../../components/common/linkToCalendar";
 import { Link } from "react-router-dom";
+import useAuthToken from "../../hooks/useAuthToken"; // Import useAuthToken
 import { getUser } from "../../service/GetUser";
 
 const CourseList = () => {
   const [user, setUser] = useState(null);
+  const authToken = useAuthToken(); // Lấy token từ cookie
   const dispatch = useDispatch();
   const {
     courses = [],
@@ -31,7 +27,15 @@ const CourseList = () => {
   const coursesPerPage = 8;
 
   const categories = ["All", "Listening", "Reading", "Writing", "Speaking"];
-
+  useEffect(() => {
+    if (authToken) {
+      const fetchUser = async () => {
+        const fetchedUser = await getUser(); // Fetch the user using getUser
+        setUser(fetchedUser); // Set user data in state
+      };
+      fetchUser();
+    }
+  }, [authToken]);
   useEffect(() => {
     dispatch(
       fetchCourses({ pageNumber: currentPage, pageSize: coursesPerPage })
@@ -90,9 +94,8 @@ const CourseList = () => {
           <Link
             to="/mentorCourseList"
             className={`py-2 px-3 inline-flex items-center gap-x-2 text-sm font-medium rounded-lg border border-gray-200 bg-white text-gray-800 shadow-sm hover:bg-gray-50 focus:outline-none focus:bg-gray-50 ${
-              user?.role === "USER" ? "hidden opacity-50" : ""
+              !user?.role.includes("TEACHER") ? "hidden opacity-50" : ""
             }`}
-            hidden={user?.role === "USER"}
           >
             My Course
           </Link>

@@ -1,5 +1,6 @@
+/* eslint-disable react/prop-types */
 import React, { useEffect, useCallback, useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
 import axios from "axios";
 import CourseLessonCard from "../../Mentor/component/CourseLessonCard";
 import CreateCourseLesson from "../../Mentor/component/CreateCourseLesson";

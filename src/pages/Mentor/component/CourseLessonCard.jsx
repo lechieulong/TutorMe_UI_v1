@@ -1,3 +1,4 @@
+/* eslint-disable react/prop-types */
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import Cookies from "js-cookie";
@@ -107,7 +108,6 @@ const CourseLessonCard = ({ mentorAndList, coursePartId, isEnrolled }) => {
       const response = await axios.get(
         `https://localhost:7030/api/CourseLessons/GetTestExamByLessonId/${lessonId}`
       );
-      console.log("API Response Data:", response.data);
       if (Array.isArray(response.data) && response.data.length > 0) {
         setTestExams(response.data);
       } else {
@@ -120,9 +120,7 @@ const CourseLessonCard = ({ mentorAndList, coursePartId, isEnrolled }) => {
 
   const confirmActionHandler = async () => {
     try {
-      console.log("Executing confirm action...");
       await confirmAction();
-      console.log("Action completed successfully.");
       setNotification("Action completed successfully.");
     } catch (error) {
       console.error("Error executing confirm action:", error);
@@ -133,22 +131,32 @@ const CourseLessonCard = ({ mentorAndList, coursePartId, isEnrolled }) => {
   };
 
   const confirmDeleteLesson = (lessonId) => {
-    console.log("Setting confirm action for lesson ID:", lessonId);
-    setConfirmAction(() => async () => {
-      try {
-        await axios.delete(
-          `https://localhost:7030/api/CourseLessons/${lessonId}`,
-          { headers: { Authorization: `Bearer ${token}` } }
-        );
-        console.log("Lesson deleted successfully.");
-        setNotification("Lesson deleted successfully.");
-        refreshCourseLessons();
-      } catch (error) {
-        console.error("Error deleting lesson:", error);
-        setNotification("Failed to delete the lesson.");
-      }
-    });
-    setConfirmOpen(true);
+    // In ra lessonId để kiểm tra
+    console.log(lessonId);
+
+    // Sử dụng window.confirm() để hỏi người dùng
+    const isConfirmed = window.confirm(
+      "Are you sure you want to delete this lesson?"
+    );
+
+    if (isConfirmed) {
+      // Nếu người dùng xác nhận, thực hiện xóa
+      axios
+        .delete(`https://localhost:7030/api/CourseLessons/${lessonId}`, {
+          headers: { Authorization: `Bearer ${token}` },
+        })
+        .then(() => {
+          setNotification("Lesson deleted successfully.");
+          refreshCourseLessons();
+        })
+        .catch((error) => {
+          console.error("Error deleting lesson:", error);
+          setNotification("Failed to delete the lesson.");
+        });
+    } else {
+      // Nếu người dùng không xác nhận, không làm gì cả
+      console.log("Lesson deletion cancelled.");
+    }
   };
 
   if (loading) {
@@ -193,35 +201,40 @@ const CourseLessonCard = ({ mentorAndList, coursePartId, isEnrolled }) => {
                           {courseLesson.title}
                         </h4>
                       </div>
+                      {isEnrolled ||
+                        (mentorAndList && (
+                          <div className="absolute top-2 right-2 flex gap-2">
+                            <>
+                              <button
+                                type="button"
+                                onClick={() =>
+                                  handleCreateTest(courseLesson.id)
+                                }
+                                className="py-2 px-3 text-sm font-medium rounded-lg border border-gray-200 bg-white text-gray-800 shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-gray-200"
+                              >
+                                Create Test
+                              </button>
 
-                      <div className="absolute top-2 right-2 flex gap-2">
-                        <>
-                          <button
-                            type="button"
-                            onClick={() => handleCreateTest(courseLesson.id)}
-                            className="py-2 px-3 text-sm font-medium rounded-lg border border-gray-200 bg-white text-gray-800 shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-gray-200"
-                          >
-                            Create Test
-                          </button>
+                              <button
+                                type="button"
+                                onClick={() => addDynamicForm(courseLesson.id)}
+                                className="py-2 px-3 text-sm font-medium rounded-lg border border-gray-200 bg-white text-gray-800 shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-gray-200"
+                              >
+                                Create Lesson Content
+                              </button>
 
-                          <button
-                            type="button"
-                            onClick={() => addDynamicForm(courseLesson.id)}
-                            className="py-2 px-3 text-sm font-medium rounded-lg border border-gray-200 bg-white text-gray-800 shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-gray-200"
-                          >
-                            Create Lesson Content
-                          </button>
-
-                          <button
-                            type="button"
-                            onClick={() => confirmDeleteLesson(courseLesson.id)}
-                            className="py-2 px-3 text-sm font-medium rounded-lg border border-gray-200 bg-red-500 text-white shadow-sm hover:bg-red-600 focus:outline-none focus:ring-2 focus:ring-red-500"
-                          >
-                            Delete Lesson
-                          </button>
-                        </>
-                      </div>
-
+                              <button
+                                type="button"
+                                onClick={() =>
+                                  confirmDeleteLesson(courseLesson.id)
+                                }
+                                className="py-2 px-3 text-sm font-medium rounded-lg border border-gray-200 bg-red-500 text-white shadow-sm hover:bg-red-600 focus:outline-none focus:ring-2 focus:ring-red-500"
+                              >
+                                Delete Lesson
+                              </button>
+                            </>
+                          </div>
+                        ))}
                       {dynamicForms
                         .filter((form) => form.lessonId === courseLesson.id)
                         .map((form) => (
@@ -235,29 +248,34 @@ const CourseLessonCard = ({ mentorAndList, coursePartId, isEnrolled }) => {
                           </div>
                         ))}
 
-                      {!collapsedLessons[courseLesson.id] && (
-                        <div className="mt-2 w-full">
-                          <CourseLessonContent
-                            courseLessontId={courseLesson.id}
-                            key={courseLesson.id}
-                          />
+                      {!collapsedLessons[courseLesson.id] &&
+                        (isEnrolled || mentorAndList) && (
+                          <div className="mt-2 w-full">
+                            <CourseLessonContent
+                              isEnrolled={isEnrolled}
+                              courseLessontId={courseLesson.id}
+                              key={courseLesson.id}
+                            />
+                          </div>
+                        )}
+
+                      {isEnrolled && (
+                        <div className="flex space-x-4">
+                          {testExams
+                            .filter((exam) => exam.lessonId === courseLesson.id)
+                            .map((exam) => (
+                              <div key={exam.id}>
+                                <Link
+                                  to={`/testDetail/${exam.id}`} // Link dẫn đến chi tiết bài kiểm tra
+                                  className="py-2 px-3 text-sm font-medium rounded-lg border border-gray-200 bg-white text-gray-800 shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-gray-200"
+                                >
+                                  Do Test for Lesson: {courseLesson.title}{" "}
+                                  (Test: {exam.name})
+                                </Link>
+                              </div>
+                            ))}
                         </div>
                       )}
-                      <div className="flex space-x-4">
-                        {testExams
-                          .filter((exam) => exam.lessonId === courseLesson.id)
-                          .map((exam) => (
-                            <div key={exam.id}>
-                              <Link
-                                to={`/testDetail/${exam.id}`} // Link dẫn đến chi tiết bài kiểm tra
-                                className="py-2 px-3 text-sm font-medium rounded-lg border border-gray-200 bg-white text-gray-800 shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-gray-200"
-                              >
-                                Do Test for Lesson: {courseLesson.title} (Test:{" "}
-                                {exam.name})
-                              </Link>
-                            </div>
-                          ))}
-                      </div>
                     </div>
                   ))
                 )}

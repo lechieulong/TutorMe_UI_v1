@@ -1,3 +1,4 @@
+/* eslint-disable react/prop-types */
 import React, { useState } from "react";
 import { useDispatch } from "react-redux";
 import { createReport } from "../../redux/common/ReportSlice"; // Import hàm createReport mới

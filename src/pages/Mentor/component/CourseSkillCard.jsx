@@ -1,3 +1,4 @@
+/* eslint-disable react/prop-types */
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import CoursePartCard from "../../Course/components/CoursePartCard";
@@ -203,20 +204,21 @@ const CourseSkillCard = ({
                     Create Test for {skill.description}
                   </button>
                 )}
-
-                <div className="flex space-x-4 mt-4">
-                  {testExams[skill.id]?.map((exam) => (
-                    <div key={exam.id}>
-                      <Link
-                        to={`/testDetail/${exam.id}`} // Link dẫn đến chi tiết bài kiểm tra
-                        className="py-2 px-3 text-sm font-medium rounded-lg border border-gray-200 bg-white text-gray-800 shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-gray-200"
-                      >
-                        Do Test for Skill: {skill.description} (Test:{" "}
-                        {exam.testName})
-                      </Link>
-                    </div>
-                  ))}
-                </div>
+                {isEnrolled && mentorAndList && (
+                  <div className="flex space-x-4 mt-4">
+                    {testExams[skill.id]?.map((exam) => (
+                      <div key={exam.id}>
+                        <Link
+                          to={`/testDetail/${exam.id}`} // Link dẫn đến chi tiết bài kiểm tra
+                          className="py-2 px-3 text-sm font-medium rounded-lg border border-gray-200 bg-white text-gray-800 shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-gray-200"
+                        >
+                          Do Test for Skill: {skill.description} (Test:{" "}
+                          {exam.testName})
+                        </Link>
+                      </div>
+                    ))}
+                  </div>
+                )}
               </div>
             ))}
           </div>

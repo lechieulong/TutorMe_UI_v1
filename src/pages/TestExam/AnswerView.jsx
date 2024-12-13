@@ -5,8 +5,6 @@ import Speaking from "../../components/Test/Part/Speaking";
 import MultipleChoiceAnswers from "./MultipleChoiceAnswers";
 import ParseHtml from "./ParseHtml";
 import SingleChoiceAnswers from "./SingleChoiceAnswers";
-import { getScriptAudio } from "../../redux/testExam/TestSlice";
-import { useDispatch } from "react-redux";
 
 const AnswerView = ({
   partData,

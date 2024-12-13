@@ -37,16 +37,22 @@ const TestExplain = ({ totalPartsSubmit, skillResultIds, testId, skillId }) => {
     3: { name: "Speaking", icon: faMicrophone },
   };
 
-  const customRound = (score) => {
-    if (score % 1 === 0.5) {
-      return score; // If it's exactly .5, keep it as is
-    } else if (score > 0.5) {
-      return Math.ceil(score); // Round up if score is greater than .5
-    } else {
-      return Math.floor(score); // Round down if score is less than .5
-    }
-  };
+  const customRound = (value) => {
+    const integralPart = Math.floor(value); // Get the integer part
+    const decimalPart = value - integralPart;
 
+    if (decimalPart < 0.25) {
+      return integralPart;
+    } else if (decimalPart >= 0.25 && decimalPart < 0.5) {
+      return integralPart + 0.5;
+    } else if (decimalPart >= 0.5 && decimalPart < 0.75) {
+      return integralPart + 0.5;
+    } else if (decimalPart >= 0.75) {
+      return integralPart + 1;
+    }
+
+    return value;
+  };
   // const fetchTestData = async () => {
   //   try {
   //     setLoading(true);
@@ -86,7 +92,7 @@ const TestExplain = ({ totalPartsSubmit, skillResultIds, testId, skillId }) => {
         0
       );
       const averageScore = totalScore / result.payload.length;
-      const overallScore = customRound(averageScore);
+      const overallScore = averageScore;
       setOverallScore(overallScore);
     } catch (error) {
       console.error("Unexpected error:", error);
@@ -218,14 +224,17 @@ const TestExplain = ({ totalPartsSubmit, skillResultIds, testId, skillId }) => {
                       {skillTypeMap[test.skillType]?.name}
                     </h3>
                   </div>
-                  <p>
-                    <span className="text-2xl text-green-800 mr-3">
-                      <FontAwesomeIcon icon={faCheck} />
-                    </span>
-                    Total correct answer:{" "}
-                    <span className="font-bold">{test.numberOfCorrect}</span> /
-                    <span className="font-bold">{test.totalQuestion}</span>{" "}
-                  </p>
+                  {(test.skillType == 0 || test.skillType == 1) && (
+                    <p>
+                      <span className="text-2xl text-green-800 mr-3">
+                        <FontAwesomeIcon icon={faCheck} />
+                      </span>
+                      Total correct answer:{" "}
+                      <span className="font-bold">{test.numberOfCorrect}</span>{" "}
+                      /<span className="font-bold">{test.totalQuestion}</span>{" "}
+                    </p>
+                  )}
+
                   <p>
                     <span className="text-2xl mr-4 text-green-800">
                       <FontAwesomeIcon icon={faClock} />
@@ -244,7 +253,7 @@ const TestExplain = ({ totalPartsSubmit, skillResultIds, testId, skillId }) => {
                   <div className="flex justify-center items-center gap-2">
                     <p>Band Score </p>
                     <p className="p-4 bg-green-600 text-customText font-semibold text-2xl">
-                      {customRound(test.score)}
+                      {test.score}
                     </p>
                   </div>
                 </div>

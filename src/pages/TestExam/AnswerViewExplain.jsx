@@ -5,31 +5,11 @@ import { GoogleGenerativeAI } from "@google/generative-ai";
 import ParseHtmlExplain from "./ParseHtmlExplain";
 import WritingExplain from "../ExamTest/general/WritingExplain";
 import SpeakingExplain from "../ExamTest/general/SpeakingExplain";
-import { useDispatch } from "react-redux";
-import { getScriptAudio } from "../../redux/testExam/TestSlice";
 import SingleChoiceExplain from "./SingleChoiceExplain";
 import { highlightSpecialCharacters } from "../../utils/highlightSpecialCharacters";
-
-const genAI = new GoogleGenerativeAI(import.meta.env.VITE_GEN_AI);
+import AudioPlayerExplain from "./AudioPlayerExplain";
 
 const AnswerViewExplain = ({ partData, currentSkillKey }) => {
-  const [script, setScript] = useState();
-
-  const dispatch = useDispatch();
-
-  useEffect(() => {
-    const fetchScript = async () => {
-      const result = await dispatch(getScriptAudio(partData.audio));
-      if (result.payload) {
-        setScript(result.payload.transcription); // Update state with transcription
-      }
-    };
-
-    if (currentSkillKey == "listening") {
-      fetchScript();
-    }
-  }, []); // Ensure `partData.audio` is updated or partData is correct
-
   let skill;
   switch (currentSkillKey) {
     case "reading":
@@ -386,16 +366,46 @@ const AnswerViewExplain = ({ partData, currentSkillKey }) => {
     }
   };
 
+  const [showFullScript, setShowFullScript] = useState(false);
+
+  const toggleScript = () => {
+    setShowFullScript((prev) => !prev);
+  };
+
+  const truncateText = (text, maxLength) => {
+    if (text.length > maxLength) {
+      return text.slice(0, maxLength) + "...";
+    }
+    return text;
+  };
+
+  const maxLength = 500; // Maximum length for truncated text
+
   return (
     <form className="p-4 bg-white rounded shadow-md">
       {currentSkillKey === "listening" && (
         <div className="my-4">
-          <AudioPlayer src={partData.audio} />
+          <AudioPlayerExplain src={partData.audio} />
           <h3 className="text-2xl font-bold">Script audio</h3>
-          {script == null || script == undefined ? (
-            <p>Wait a little bit we are converting script of audio </p>
+          {partData.script == null || partData.script === undefined ? (
+            <p>Script audio is not available right now</p>
           ) : (
-            <p>{script}</p>
+            <>
+              <p className="leading-8">
+                {showFullScript
+                  ? partData.script
+                  : truncateText(partData.script, maxLength)}
+              </p>
+              {partData.script.length > maxLength && (
+                <button
+                  type="button"
+                  onClick={toggleScript}
+                  className="text-green-500 l underline mt-2"
+                >
+                  {showFullScript ? "Show Less" : "more script "}
+                </button>
+              )}
+            </>
           )}
         </div>
       )}

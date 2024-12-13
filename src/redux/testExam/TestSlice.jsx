@@ -264,6 +264,26 @@ export const getExplainTest = createAsyncThunk(
   }
 );
 
+export const evaluateSpeaking = createAsyncThunk(
+  `${SLICE_NAMES.TEST}/${ACTIONS.SCORE_SPEAKING}`,
+  async ({ questionName, answer, partNumber }, { rejectWithValue }) => {
+    try {
+      console.log(questionName, answer, partNumber);
+
+      const response = await axios.post(`${API_BASE_URL}/scoreSpeaking`, {
+        questionName,
+        answer,
+        partNumber,
+      });
+      return response.data;
+    } catch (error) {
+      return rejectWithValue(
+        error.response?.data?.message || "Failed to fetch tests"
+      );
+    }
+  }
+);
+
 export const downloadTemplate = createAsyncThunk(
   `${SLICE_NAMES.TEST}/${ACTIONS.DOWNLOAD_TEMPLATE}`,
   async (id, { rejectWithValue }) => {

@@ -348,18 +348,6 @@ const TestLayout = ({
           try {
             const partIds = currentSkillData.parts.map((p) => p.id);
 
-            const updatedAnswers = {};
-            const questionIds = Object.keys(userAnswers);
-            for (const questionId of questionIds) {
-              const userAnswer = userAnswers[questionId];
-
-              const responseSpeaking = await evaluateSpeakingAnswer(userAnswer);
-              updatedAnswers[questionId] = {
-                ...userAnswer,
-                explain: responseSpeaking.feedBack,
-                overallScore: responseSpeaking.overallScore,
-              };
-            }
             const totalQuestions = getTotalQuestions(currentSkillData);
             const result = await dispatch(
               submitAnswerTest({

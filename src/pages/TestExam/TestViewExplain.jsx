@@ -6,6 +6,8 @@ import NavigationPartExplain from "../../components/Test/NavigationPartExplain";
 import AnswerViewExplain from "./AnswerViewExplain";
 
 const TestViewExplain = React.memo(({ skillData, currentSkillKey }) => {
+  console.log(skillData);
+
   const [isLoading, setIsLoading] = useState(true);
   const [isOpenSideView, setOpenSideView] = useState(false);
   const [partDatas, setPartDatas] = useState([]);

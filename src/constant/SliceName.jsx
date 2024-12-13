@@ -47,6 +47,7 @@ export const ACTIONS = {
   GET_SKILL: "getSkill",
   GET_TESTING: "getTesting",
   GET_EXPLAIN_TEST: "getExplainTest",
+  SCORE_SPEAKING: "scoreSpeaking",
   GET_PARTS: "getParts",
   GET_SKILL_BY_ID: "getSkillById",
   CREATE_TEST: "createTest",

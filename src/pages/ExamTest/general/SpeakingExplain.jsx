@@ -72,7 +72,7 @@ const SpeakingExplain = ({ partData }) => {
                 <div className="mb-4">
                   <strong>Your Answer:</strong>
                   <textarea
-                    value={question.userAnswers[0].answerText}
+                    value={question?.userAnswers[0]?.answerText}
                     className="w-full h-[150px] p-4 text-lg outline-none resize-none bg-gray-100 rounded-lg shadow-md"
                     readOnly
                   />

@@ -14,6 +14,7 @@ const CourseSkillCard = ({
   isEnrolled,
   onSkillCountUpdate,
   mentorAndList,
+  isMentor,
 }) => {
   const [skills, setSkills] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -76,6 +77,8 @@ const CourseSkillCard = ({
   };
 
   const handleCreateTest = async (skillId) => {
+    console.log(skillId);
+
     try {
       const response = await axios.get(
         `https://localhost:7030/api/CourseSkills/DescriptionBySkill/${skillId}`,
@@ -204,7 +207,7 @@ const CourseSkillCard = ({
                     Create Test for {skill.description}
                   </button>
                 )}
-                {isEnrolled && mentorAndList && (
+                {(isEnrolled || mentorAndList || isMentor) && (
                   <div className="flex space-x-4 mt-4">
                     {testExams[skill.id]?.map((exam) => (
                       <div key={exam.id}>
@@ -212,8 +215,7 @@ const CourseSkillCard = ({
                           to={`/testDetail/${exam.id}`} // Link dẫn đến chi tiết bài kiểm tra
                           className="py-2 px-3 text-sm font-medium rounded-lg border border-gray-200 bg-white text-gray-800 shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-gray-200"
                         >
-                          Do Test for Skill: {skill.description} (Test:{" "}
-                          {exam.testName})
+                          Do Test for Skill: {skill.description}
                         </Link>
                       </div>
                     ))}

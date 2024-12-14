@@ -3,6 +3,7 @@ import axios from "axios";
 import { SLICE_NAMES, ACTIONS, STATUS } from "../../constant/SliceName";
 import Cookies from "js-cookie";
 import { getUser } from "../../service/GetUser";
+import apiURLConfig from "../common/apiURLConfig";
 
 const API_BASE_URL = "https://localhost:7030/api";
 
@@ -104,7 +105,7 @@ export const getTestsByCourse = createAsyncThunk(
   async ({ courseId, page, pageSize }, { rejectWithValue }) => {
     try {
       const response = await axios.get(
-        `${API_BASE_URL}/test/test-by-course/${courseId}`,
+        `${apiURLConfig.baseURL}/test/test-by-course/${courseId}`,
         {
           params: {
             page,
@@ -128,7 +129,7 @@ export const getTestHistory = createAsyncThunk(
     try {
       const token = Cookies.get("authToken");
       const response = await axios.get(
-        `${API_BASE_URL}/test/test-history/${courseId}`,
+        `${apiURLConfig.baseURL}/test/test-history/${courseId}`,
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -152,7 +153,7 @@ export const GetResultOfATest = createAsyncThunk(
     try {
       const token = Cookies.get("authToken");
       const response = await axios.get(
-        `${API_BASE_URL}/test/test-results/${testId}`,
+        `${apiURLConfig.baseURL}/test/test-results/${testId}`,
         {
           headers: {
             Authorization: `Bearer ${token}`,

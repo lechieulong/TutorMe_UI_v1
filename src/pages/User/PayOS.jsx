@@ -36,6 +36,11 @@ import {
       setLoading
     ) {
       setLoading(true);  
+      if(Number(priceRef.current.value)<10000){
+        toast.error("vui lòng nhập số tiền tối thiểu 10000");
+        setLoading(false);
+        return;
+      }
       const user=getUser();
       const model = {
         id: 0,
@@ -173,7 +178,7 @@ import {
                 id="outlined-basic"
                 label="Nhập đơn giá"
                 variant="outlined"
-                defaultValue="1000"
+                defaultValue="10000"
                 inputRef={priceRef}
                 fullWidth
               />
@@ -186,7 +191,7 @@ import {
                 id="outlined-basic"
                 label="Nhập nội dung"
                 variant="outlined"
-                defaultValue="Thanh toan don hang"
+                defaultValue="deposit money into account"
                 inputRef={descriptionRef}
                 fullWidth
               />

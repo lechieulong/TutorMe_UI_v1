@@ -9,7 +9,7 @@ import {
   faVolumeDown,
 } from "@fortawesome/free-solid-svg-icons";
 
-const AudioPlayer = ({ src, submitting, practiceTestData }) => {
+const AudioPlayerExplain = ({ src, submitting }) => {
   const audioRef = useRef(null);
   const [isPlaying, setIsPlaying] = useState(false);
   const [currentTime, setCurrentTime] = useState(0);
@@ -28,7 +28,6 @@ const AudioPlayer = ({ src, submitting, practiceTestData }) => {
         .then(() => setIsPlaying(true))
         .catch(console.error);
     } else if (submitting && audio) {
-      // Pause when "submit"
       audio.pause();
       setIsPlaying(false);
     }
@@ -137,11 +136,7 @@ const AudioPlayer = ({ src, submitting, practiceTestData }) => {
   }, []);
 
   return (
-    <div
-      className={`flex  gap-16 items-center ${
-        practiceTestData ? "" : "invisible "
-      }`}
-    >
+    <div className={`flex  gap-16 items-center `}>
       <audio ref={audioRef} src={src} />
       <div className="flex gap-4   p-2   justify-center items-center ">
         <span>{formatTime(currentTime)}</span>
@@ -210,4 +205,4 @@ const AudioPlayer = ({ src, submitting, practiceTestData }) => {
   );
 };
 
-export default AudioPlayer;
+export default AudioPlayerExplain;

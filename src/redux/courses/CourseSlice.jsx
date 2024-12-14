@@ -1,3 +1,4 @@
+/* eslint-disable react/prop-types */
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import axios from "axios";
 import apiURLConfig from "../common/apiURLConfig";
@@ -9,23 +10,29 @@ export const fetchCourses = createAsyncThunk(
   "courses/getCourses",
   async ({ pageNumber = 1, pageSize = 8 }, { rejectWithValue }) => {
     try {
-      const response = await axios.get(
-        "https://aiilapi.azurewebsites.net/api/Courses",
-        {
-          params: {
-            pageNumber,
-            pageSize,
-          },
-        }
-      );
+      const response = await axios.get(`${apiURLConfig.baseURL}/Courses`, {
+        params: {
+          pageNumber,
+          pageSize,
+        },
+      });
+
+      const data = response.data || {};
+      const {
+        data: courses = [],
+        totalPages = 0,
+        pageNumber: currentPage = 1,
+        pageSize: currentPageSize = 8,
+      } = data;
 
       return {
-        data: response.data.data || [],
-        totalPages: response.data.totalPages || 0,
-        pageNumber: response.data.pageNumber || 1,
-        pageSize: response.data.pageSize || 8,
+        data: courses,
+        totalPages,
+        pageNumber: currentPage,
+        pageSize: currentPageSize,
       };
     } catch (error) {
+      // Trả về thông báo lỗi nếu có
       return rejectWithValue(error.response?.data || "Failed to fetch courses");
     }
   }
@@ -168,6 +175,24 @@ export const fetchCourseLessons = createAsyncThunk(
     }
   }
 );
+export const updateCourseStatus = createAsyncThunk(
+  "courses/updateStatus",
+  async ({ courseId, isEnabled }, { rejectWithValue }) => {
+    try {
+      await axios.put(
+        `https://localhost:7030/api/Courses/${courseId}/update-status`,
+        isEnabled, // Gửi trực tiếp giá trị boolean
+        {
+          headers: { "Content-Type": "application/json" },
+        }
+      );
+
+      return { courseId, isEnabled }; // Trả về courseId và trạng thái mới
+    } catch (error) {
+      return rejectWithValue("Cập nhật trạng thái khóa học thất bại.");
+    }
+  }
+);
 
 const initialState = {
   course: null,
@@ -297,6 +322,20 @@ const courseSlice = createSlice({
       .addCase(CheckLecturerOfCourse.rejected, (state, action) => {
         state.checkLecturerStatus = STATUS.FAILED;
         state.checkLecturerError = action.payload || action.error.message;
+      })
+      //Handle switch course
+      .addCase(updateCourseStatus.fulfilled, (state, action) => {
+        const { courseId, newStatus } = action.payload;
+        const course = state.courses.find((c) => c.id === courseId);
+        if (course) {
+          course.isSwitchOn = newStatus;
+        }
+        state.notification = `Khóa học đã được ${
+          newStatus ? "hiển thị" : "ẩn"
+        } thành công.`;
+      })
+      .addCase(updateCourseStatus.rejected, (state, action) => {
+        state.notification = action.payload || "Đã xảy ra lỗi.";
       });
   },
 });

@@ -13,6 +13,8 @@ const TestView = React.memo(
     selectedVoice,
     part1And3Time,
     part2Time,
+    submitting,
+    practiceTestData,
   }) => {
     const questionRef = useRef({});
     const [isLoading, setIsLoading] = useState(true);
@@ -118,6 +120,8 @@ const TestView = React.memo(
               part2Time={part2Time}
               part1And3Time={part1And3Time}
               selectedVoice={selectedVoice}
+              submitting={submitting}
+              practiceTestData={practiceTestData}
             />
           </div>
         </div>

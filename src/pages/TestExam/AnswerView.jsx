@@ -5,8 +5,6 @@ import Speaking from "../../components/Test/Part/Speaking";
 import MultipleChoiceAnswers from "./MultipleChoiceAnswers";
 import ParseHtml from "./ParseHtml";
 import SingleChoiceAnswers from "./SingleChoiceAnswers";
-import { getScriptAudio } from "../../redux/testExam/TestSlice";
-import { useDispatch } from "react-redux";
 
 const AnswerView = ({
   partData,
@@ -17,6 +15,8 @@ const AnswerView = ({
   selectedVoice,
   part1And3Time,
   part2Time,
+  submitting,
+  practiceTestData,
 }) => {
   let skill;
   switch (currentSkillKey) {
@@ -528,7 +528,11 @@ const AnswerView = ({
     <form className="p-4 bg-white rounded shadow-md text-md">
       {currentSkillKey === "listening" && (
         <div className="my-4">
-          <AudioPlayer src={partData.audio} />
+          <AudioPlayer
+            src={partData.audio}
+            submitting={submitting}
+            practiceTestData={practiceTestData}
+          />
         </div>
       )}
 

@@ -1,37 +1,15 @@
 import React, { useEffect, useState } from "react";
 import AudioPlayer from "./AudioPlayer"; // Adjust the import based on your file structure
-import Writing from "../../components/Test/Part/Writing";
-import Speaking from "../../components/Test/Part/Speaking";
 import MutipleChoiceExplain from "./MutipleChoiceExplain";
 import { GoogleGenerativeAI } from "@google/generative-ai";
 import ParseHtmlExplain from "./ParseHtmlExplain";
 import WritingExplain from "../ExamTest/general/WritingExplain";
 import SpeakingExplain from "../ExamTest/general/SpeakingExplain";
-import { useDispatch } from "react-redux";
-import { getScriptAudio } from "../../redux/testExam/TestSlice";
-import SingleChoiceAnswers from "./SingleChoiceAnswers";
 import SingleChoiceExplain from "./SingleChoiceExplain";
-
-const genAI = new GoogleGenerativeAI(import.meta.env.VITE_GEN_AI);
+import { highlightSpecialCharacters } from "../../utils/highlightSpecialCharacters";
+import AudioPlayerExplain from "./AudioPlayerExplain";
 
 const AnswerViewExplain = ({ partData, currentSkillKey }) => {
-  const [script, setScript] = useState();
-
-  const dispatch = useDispatch();
-
-  useEffect(() => {
-    const fetchScript = async () => {
-      const result = await dispatch(getScriptAudio(partData.audio));
-      if (result.payload) {
-        setScript(result.payload.transcription); // Update state with transcription
-      }
-    };
-
-    if (currentSkillKey == "listening") {
-      fetchScript();
-    }
-  }, []); // Ensure `partData.audio` is updated or partData is correct
-
   let skill;
   switch (currentSkillKey) {
     case "reading":
@@ -137,8 +115,6 @@ const AnswerViewExplain = ({ partData, currentSkillKey }) => {
                     <span>Not Given</span>
                   </label>
                 )}
-
-                <div dangerouslySetInnerHTML={{ __html: question.explain }} />
               </div>
             </>
           );
@@ -163,8 +139,10 @@ const AnswerViewExplain = ({ partData, currentSkillKey }) => {
               <span className="font-bold"> {questionCounter}</span>
               {questionParts[1]} {/* Part after [] */}
               <p className="p-2 border rounded-lg border-green-500">
-                <span className="font-bold">Correct Answer</span>:{" "}
-                {question.answers[0].answerText}
+                <span className="font-bold text-yellow-500">
+                  Correct Answer
+                </span>
+                : {question.answers[0].answerText}
               </p>
             </div>
           );
@@ -388,16 +366,46 @@ const AnswerViewExplain = ({ partData, currentSkillKey }) => {
     }
   };
 
+  const [showFullScript, setShowFullScript] = useState(false);
+
+  const toggleScript = () => {
+    setShowFullScript((prev) => !prev);
+  };
+
+  const truncateText = (text, maxLength) => {
+    if (text.length > maxLength) {
+      return text.slice(0, maxLength) + "...";
+    }
+    return text;
+  };
+
+  const maxLength = 500; // Maximum length for truncated text
+
   return (
     <form className="p-4 bg-white rounded shadow-md">
       {currentSkillKey === "listening" && (
         <div className="my-4">
-          <AudioPlayer src={partData.audio} />
+          <AudioPlayerExplain src={partData.audio} />
           <h3 className="text-2xl font-bold">Script audio</h3>
-          {script == null || script == undefined ? (
-            <p>Wait a little bit we are converting script of audio </p>
+          {partData.script == null || partData.script === undefined ? (
+            <p>Script audio is not available right now</p>
           ) : (
-            <p>{script}</p>
+            <>
+              <p className="leading-8">
+                {showFullScript
+                  ? partData.script
+                  : truncateText(partData.script, maxLength)}
+              </p>
+              {partData.script.length > maxLength && (
+                <button
+                  type="button"
+                  onClick={toggleScript}
+                  className="text-green-500 l underline mt-2"
+                >
+                  {showFullScript ? "Show Less" : "more script "}
+                </button>
+              )}
+            </>
           )}
         </div>
       )}
@@ -480,15 +488,23 @@ const AnswerViewExplain = ({ partData, currentSkillKey }) => {
                                 </select>
                               </div>
                             ))}
-                            <p className="font-bold">
+                            <p className=" text-yellow-500">
                               Correct Answers: {question.questionName}
                             </p>
                           </div>
                         ))}
                       </div>
 
-                      <h3>Explains</h3>
-                      <p>{}</p>
+                      <h3 className="text-yellow-500 font-bold">Explains</h3>
+
+                      <p
+                        className="font-bold mt-4 mb-4"
+                        dangerouslySetInnerHTML={{
+                          __html: highlightSpecialCharacters(
+                            section?.explain || "No explanation provided."
+                          ),
+                        }}
+                      />
                     </>
                   ) : (
                     <>
@@ -502,22 +518,35 @@ const AnswerViewExplain = ({ partData, currentSkillKey }) => {
                           section.sectionType === 5)) ||
                       skill === 2 ||
                       skill === 3 ? (
-                        section.questions.map((question, index) => (
-                          <div key={index} className="mb-4">
-                            {renderQuestionName(
-                              skill,
-                              section.sectionType,
-                              question,
-                              questionCounter++
-                            )}
-                            {renderInputBasedOnSectionType(
-                              skill,
-                              section.sectionType,
-                              question,
-                              questionCounter
-                            )}
+                        <>
+                          {section.questions.map((question, index) => (
+                            <div key={index} className="mb-4">
+                              {renderQuestionName(
+                                skill,
+                                section.sectionType,
+                                question,
+                                questionCounter++
+                              )}
+                              {renderInputBasedOnSectionType(
+                                skill,
+                                section.sectionType,
+                                question,
+                                questionCounter
+                              )}
+                            </div>
+                          ))}
+                          <div>
+                            <h3 className="text-yellow-400">Explains</h3>
+                            <p
+                              className="font-bold mt-4 mb-4"
+                              dangerouslySetInnerHTML={{
+                                __html: highlightSpecialCharacters(
+                                  section?.explain || "No explanation provided."
+                                ),
+                              }}
+                            />
                           </div>
-                        ))
+                        </>
                       ) : (
                         <div>
                           <ParseHtmlExplain

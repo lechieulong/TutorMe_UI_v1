@@ -39,12 +39,46 @@ const ParseHtmlExplain = ({
     }
   );
 
+  const highlightSpecialCharacters = (text) => {
+    if (!text) return "";
+
+    // Step 1: Remove IDs
+    text = text.replace(/\b[a-f0-9\-]{36}\b\s+/g, "");
+
+    // Step 2: Highlight "Correct Answer"
+    const regexCorrectAnswer = /\bCorrect Answer:\s*("[^"]+")/i;
+    text = text.replace(
+      regexCorrectAnswer,
+      (match, answer) =>
+        `<span class="font-bold text-blue-500">Correct Answer:</span> <span class="font-bold text-green-500">${answer}</span>`
+    );
+
+    // Step 3: Append "Explain here" to each section
+    const regexExplain =
+      /(The correct answer is ".*?")([^]*?)(?=(The correct answer is "|$))/g;
+    text = text.replace(
+      regexExplain,
+      (match, firstSentence, rest) =>
+        `${firstSentence}<br /><span class="font-bold text-yellow-500">Explain here:</span>${rest}`
+    );
+
+    return text;
+  };
+
   return (
     <>
       <div dangerouslySetInnerHTML={{ __html: updatedHtml }} />
       <div>
-        <p className="font-bold text-2xl mt-4 mb-4">Explained Answer:</p>
-        <p className="font-bold text-2xl mt-4 mb-4">{question[0]?.explain}</p>
+        <p className="font-bold text-yellow-400 mt-4 mb-4">Explained Answer:</p>
+        {/* Highlight special characters in the explanation */}
+        <p
+          className="mt-4 mb-4"
+          dangerouslySetInnerHTML={{
+            __html: highlightSpecialCharacters(
+              sectionExplain || "No explanation provided."
+            ),
+          }}
+        />
       </div>
     </>
   );

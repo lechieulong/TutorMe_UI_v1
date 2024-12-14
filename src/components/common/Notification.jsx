@@ -1,6 +1,12 @@
+/* eslint-disable react/prop-types */
 import React, { useState, useEffect } from "react";
 
-const Notification = ({ message, onClose, duration = 4000, shoud = "yes" }) => {
+const Notification = ({
+  message,
+  onClose,
+  duration = 4000,
+  should = "yes",
+}) => {
   const [visible, setVisible] = useState(false);
   const [animate, setAnimate] = useState(false);
 
@@ -29,7 +35,7 @@ const Notification = ({ message, onClose, duration = 4000, shoud = "yes" }) => {
         className={`px-4 py-2 rounded-lg shadow-lg transition-all duration-1000 ease-in-out transform ${
           animate ? "translate-y-0 opacity-100" : "-translate-y-10 opacity-0"
         } ${
-          shoud === "yes" ? "bg-green-600 text-white" : "bg-red-600 text-white"
+          should === "yes" ? "bg-green-600 text-white" : "bg-red-600 text-white"
         }`}
       >
         {message}

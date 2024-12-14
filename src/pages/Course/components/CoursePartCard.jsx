@@ -1,5 +1,6 @@
+/* eslint-disable react/prop-types */
 import React, { useEffect, useCallback, useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
 import axios from "axios";
 import CourseLessonCard from "../../Mentor/component/CourseLessonCard";
 import CreateCourseLesson from "../../Mentor/component/CreateCourseLesson";
@@ -10,9 +11,6 @@ import Notification from "../../../components/common/Notification";
 
 const CoursePartCard = ({ mentorAndList, skillId, isEnrolled }) => {
   const dispatch = useDispatch();
-  const coursePartsFromState = useSelector(
-    (state) => state.coursePart.coursePart
-  );
   const [courseParts, setCourseParts] = useState([]);
   const [collapsedParts, setCollapsedParts] = useState({});
   const [showLessonForm, setShowLessonForm] = useState({});
@@ -22,6 +20,7 @@ const CoursePartCard = ({ mentorAndList, skillId, isEnrolled }) => {
   const [partToDelete, setPartToDelete] = useState(null);
   const [notification, setNotification] = useState("");
   const [should, setShould] = useState("");
+
   const fetchCourseParts = useCallback(async () => {
     if (!skillId) return;
     try {

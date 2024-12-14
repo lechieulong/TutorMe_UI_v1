@@ -1,10 +1,14 @@
+/* eslint-disable react/prop-types */
 import { Link, useLocation } from "react-router-dom";
 import { useParams } from "react-router-dom";
 import { FaInfo } from "react-icons/fa";
 import { useState, useEffect, useCallback } from "react";
 import { getUser } from "../../service/GetUser";
+import useAuthToken from "../../hooks/useAuthToken"; // Import useAuthToken
 
 const MentorSidebar = ({ mentorAndList, setSelectedComponent }) => {
+  const [user, setUser] = useState(null);
+  const authToken = useAuthToken(); // Lấy token từ cookie
   const { courseId } = useParams();
   const { pathname } = useLocation(); // Lấy đường dẫn hiện tại
   const [userId, setUserId] = useState(null);
@@ -17,6 +21,18 @@ const MentorSidebar = ({ mentorAndList, setSelectedComponent }) => {
   useEffect(() => {
     initializeUser();
   }, [initializeUser]);
+
+  useEffect(() => {
+    if (authToken) {
+      const fetchUser = async () => {
+        const fetchedUser = await getUser(); // Fetch the user using getUser
+        setUser(fetchedUser); // Set user data in state
+      };
+      fetchUser();
+    }
+  }, [authToken]);
+
+  const isUser = user?.role?.includes("USER"); // Kiểm tra xem user có phải là "USER" không
 
   return (
     <div>
@@ -37,138 +53,145 @@ const MentorSidebar = ({ mentorAndList, setSelectedComponent }) => {
                 to={`/courseDetail/${courseId}`}
                 onClick={() => setSelectedComponent("Information")}
                 className="flex items-center gap-x-3.5 py-2 px-2.5 bg-gray-100 text-sm text-gray-700 rounded-lg hover:bg-gray-100"
-                state={{ userId, mentorAndList }}
                 style={{
                   backgroundColor:
                     pathname === `/courseDetail/${courseId}`
                       ? "lightblue"
                       : "transparent",
-                }} // Đổi background
+                }}
+                state={{ userId, mentorAndList }}
               >
                 <FaInfo />
                 Information
               </Link>
             </li>
-            <li>
-              <Link
-                to={`/courseDetail/${courseId}/classOfCourse`}
-                className="flex items-center gap-x-3.5 py-2 px-2.5 text-sm text-gray-700 rounded-lg hover:bg-gray-100"
-                state={{ userId, mentorAndList }}
-                style={{
-                  backgroundColor:
-                    pathname === `/courseDetail/${courseId}/classOfCourse`
-                      ? "lightblue"
-                      : "transparent",
-                }} // Đổi background
-              >
-                <svg
-                  className="size-4"
-                  xmlns="http://www.w3.org/2000/svg"
-                  width="24"
-                  height="24"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="2"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                >
-                  <path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" />
-                  <polyline points="9 22 9 12 15 12 15 22" />
-                </svg>
-                Classes
-              </Link>
-            </li>
-            <li>
-              <a
-                href="#"
-                className="flex items-center gap-x-3.5 py-2 px-2.5 text-sm text-gray-700 rounded-lg hover:bg-gray-100 focus:outline-none focus:bg-gray-100"
-                style={{
-                  backgroundColor:
-                    pathname === "#" ? "lightblue" : "transparent",
-                }} // Đổi background
-              >
-                <svg
-                  className="size-4"
-                  xmlns="http://www.w3.org/2000/svg"
-                  width="24"
-                  height="24"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="2"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                >
-                  <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2" />
-                  <circle cx="9" cy="7" r="4" />
-                  <path d="M22 21v-2a4 4 0 0 0-3-3.87" />
-                  <path d="M16 3.13a4 4 0 0 1 0 7.75" />
-                </svg>
-                Livestream
-              </a>
-            </li>
 
-            {userId && (
-              <li>
-                <Link
-                  to={`/manageTest/${courseId}`}
-                  className="flex items-center gap-x-3.5 py-2 px-2.5 text-sm text-gray-700 rounded-lg hover:bg-gray-100"
-                  state={{ userId, mentorAndList }}
-                  style={{
-                    backgroundColor:
-                      pathname === `/manageTest/${courseId}`
-                        ? "lightblue"
-                        : "transparent",
-                  }} // Đổi background
-                >
-                  <svg
-                    className="size-4"
-                    xmlns="http://www.w3.org/2000/svg"
-                    width="24"
-                    height="24"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    strokeWidth="2"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                  >
-                    <path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" />
-                    <polyline points="9 22 9 12 15 12 15 22" />
-                  </svg>
-                  Test
-                </Link>
-              </li>
-            )}
+            {/* Check if user is not 'USER', show other links */}
+            {(!isUser && authToken) ||
+              (mentorAndList && (
+                <>
+                  <li>
+                    <Link
+                      to={`/courseDetail/${courseId}/classOfCourse`}
+                      className="flex items-center gap-x-3.5 py-2 px-2.5 text-sm text-gray-700 rounded-lg hover:bg-gray-100"
+                      state={{ userId, mentorAndList }}
+                      style={{
+                        backgroundColor:
+                          pathname === `/courseDetail/${courseId}/classOfCourse`
+                            ? "lightblue"
+                            : "transparent",
+                      }} // Đổi background
+                    >
+                      <svg
+                        className="size-4"
+                        xmlns="http://www.w3.org/2000/svg"
+                        width="24"
+                        height="24"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        strokeWidth="2"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                      >
+                        <path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" />
+                        <polyline points="9 22 9 12 15 12 15 22" />
+                      </svg>
+                      Classes
+                    </Link>
+                  </li>
+                  <li>
+                    <a
+                      href="#"
+                      className="flex items-center gap-x-3.5 py-2 px-2.5 text-sm text-gray-700 rounded-lg hover:bg-gray-100 focus:outline-none focus:bg-gray-100"
+                      style={{
+                        backgroundColor:
+                          pathname === "#" ? "lightblue" : "transparent",
+                      }} // Đổi background
+                    >
+                      <svg
+                        className="size-4"
+                        xmlns="http://www.w3.org/2000/svg"
+                        width="24"
+                        height="24"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        strokeWidth="2"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                      >
+                        <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2" />
+                        <circle cx="9" cy="7" r="4" />
+                        <path d="M22 21v-2a4 4 0 0 0-3-3.87" />
+                        <path d="M16 3.13a4 4 0 0 1 0 7.75" />
+                      </svg>
+                      Livestream
+                    </a>
+                  </li>
 
-            <li>
-              <a
-                href="#"
-                className="flex items-center gap-x-3.5 py-2 px-2.5 text-sm text-gray-700 rounded-lg hover:bg-gray-100 focus:outline-none focus:bg-gray-100"
-                style={{
-                  backgroundColor:
-                    pathname === "#" ? "lightblue" : "transparent",
-                }}
-              >
-                <svg
-                  className="size-4"
-                  xmlns="http://www.w3.org/2000/svg"
-                  width="24"
-                  height="24"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="2"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                >
-                  <path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z" />
-                  <path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 1 1 3-3h7z" />
-                </svg>
-                Report
-              </a>
-            </li>
+                  {userId && (
+                    <li>
+                      <Link
+                        to={`/manageTest/${courseId}`}
+                        className="flex items-center gap-x-3.5 py-2 px-2.5 text-sm text-gray-700 rounded-lg hover:bg-gray-100"
+                        state={{ userId, mentorAndList }}
+                        style={{
+                          backgroundColor:
+                            pathname === `/manageTest/${courseId}`
+                              ? "lightblue"
+                              : "transparent",
+                        }} // Đổi background
+                      >
+                        <svg
+                          className="size-4"
+                          xmlns="http://www.w3.org/2000/svg"
+                          width="24"
+                          height="24"
+                          viewBox="0 0 24 24"
+                          fill="none"
+                          stroke="currentColor"
+                          strokeWidth="2"
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                        >
+                          <path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" />
+                          <polyline points="9 22 9 12 15 12 15 22" />
+                        </svg>
+                        Test
+                      </Link>
+                    </li>
+                  )}
+
+                  <li>
+                    <a
+                      href="#"
+                      className="flex items-center gap-x-3.5 py-2 px-2.5 text-sm text-gray-700 rounded-lg hover:bg-gray-100 focus:outline-none focus:bg-gray-100"
+                      style={{
+                        backgroundColor:
+                          pathname === "#" ? "lightblue" : "transparent",
+                      }}
+                    >
+                      <svg
+                        className="size-4"
+                        xmlns="http://www.w3.org/2000/svg"
+                        width="24"
+                        height="24"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        strokeWidth="2"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                      >
+                        <path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z" />
+                        <path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 1 1 3-3h7z" />
+                      </svg>
+                      Report
+                    </a>
+                  </li>
+                </>
+              ))}
           </ul>
         </nav>
       </div>

@@ -7,13 +7,17 @@ const NavigationPart = ({
   handlePartClick,
   handleQuestionClick,
   userAnswers, // Add userAnswers prop
+  selectedPart,
 }) => {
-  const [openPart, setOpenPart] = useState(0);
+  console.log(selectedPart);
+
+  const [openPart, setOpenPart] = useState(selectedPart);
 
   // Reset openPart to 0 whenever partDatas changes
+
   useEffect(() => {
-    setOpenPart(0);
-  }, [partDatas]);
+    setOpenPart(selectedPart);
+  }, [selectedPart]);
 
   const handleAccordionClick = (partNumber) => {
     if (openPart === partNumber) {
@@ -28,6 +32,8 @@ const NavigationPart = ({
     event.stopPropagation();
     handleQuestionClick(questionId);
   };
+
+  const isSpeakingSkill = currentSkillKey === "speaking";
 
   return (
     <div className="bottom-0 left-0 right-0">
@@ -45,7 +51,11 @@ const NavigationPart = ({
                 openPart === index
                   ? "active flex-[4_4_0%] border-green-700 p-2"
                   : "flex-1 border-gray-300"
-              } p-2 border text-white flex justify-between gap-2 cursor-pointer rounded-2xl`}
+              } p-2 border text-white flex justify-between gap-2 rounded-2xl ${
+                isSpeakingSkill
+                  ? "opacity-50 cursor-not-allowed pointer-events-none"
+                  : ""
+              }`}
               onClick={() => handleAccordionClick(index)}
             >
               <div

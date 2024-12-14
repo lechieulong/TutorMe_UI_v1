@@ -104,19 +104,6 @@ const Sidebar = () => {
           </li>
           <li>
             <NavLink
-              to="calendar"
-              className={({ isActive }) =>
-                `flex items-center p-3 text-gray-700 hover:bg-gray-200 transition duration-200 ease-in-out ${
-                  isActive ? "bg-lightGreen" : ""
-                }`
-              }
-            >
-              <FaCalendarAlt />
-              <span className="ml-3">Calendar</span>
-            </NavLink>
-          </li>
-          <li>
-            <NavLink
               to="test"
               className={({ isActive }) =>
                 `flex items-center p-3 text-gray-700 hover:bg-gray-200 transition duration-200 ease-in-out ${
@@ -142,72 +129,7 @@ const Sidebar = () => {
               <span className="ml-3">Test Source</span>
             </NavLink>
           </li>
-          {/* <li className="flex items-center justify-between p-3 text-gray-700 hover:bg-gray-200 cursor-pointer transition duration-200 ease-in-out" onClick={togglePagesDropdown}>
-                        <div className="flex items-center">
-                            <FaFileAlt />
-                            <span className="ml-3">Pages</span>
-                        </div>
-                        <FaAngleDown className={`transform transition-transform ${isPagesOpen ? 'rotate-180' : ''}`} />
-                    </li>
-                    {isPagesOpen && (
-                        <ul className="ml-6">
-                            <li>
-                                <NavLink
-                                    to="login"
-                                    className={({ isActive }) =>
-                                        `flex items-center p-3 text-gray-700 hover:bg-gray-200 transition duration-200 ease-in-out ${isActive ? 'bg-gray-200' : ''}`
-                                    }
-                                >
-                                    <FaSignInAlt />
-                                    <span className="ml-3">Login</span>
-                                </NavLink>
-                            </li>
-                            <li>
-                                <NavLink
-                                    to="register"
-                                    className={({ isActive }) =>
-                                        `flex items-center p-3 text-gray-700 hover:bg-gray-200 transition duration-200 ease-in-out ${isActive ? 'bg-gray-200' : ''}`
-                                    }
-                                >
-                                    <FaUserPlus />
-                                    <span className="ml-3">Register</span>
-                                </NavLink>
-                            </li>
-                            <li>
-                                <NavLink
-                                    to="forgot-password"
-                                    className={({ isActive }) =>
-                                        `flex items-center p-3 text-gray-700 hover:bg-gray-200 transition duration-200 ease-in-out ${isActive ? 'bg-gray-200' : ''}`
-                                    }
-                                >
-                                    <FaUnlockAlt />
-                                    <span className="ml-3">Forgot Password</span>
-                                </NavLink>
-                            </li>
-                            <li>
-                                <NavLink
-                                    to="blank-page"
-                                    className={({ isActive }) =>
-                                        `flex items-center p-3 text-gray-700 hover:bg-gray-200 transition duration-200 ease-in-out ${isActive ? 'bg-gray-200' : ''}`
-                                    }
-                                >
-                                    <FaFileAlt />
-                                    <span className="ml-3">Blank Page</span>
-                                </NavLink>
-                            </li>
-                            <li>
-                                <NavLink
-                                    to="404"
-                                    className={({ isActive }) =>
-                                        `flex items-center p-3 text-gray-700 hover:bg-gray-200 transition duration-200 ease-in-out ${isActive ? 'bg-gray-200' : ''}`
-                                    }
-                                >
-                                    <FaExclamationTriangle />
-                                    <span className="ml-3">404</span>
-                                </NavLink>
-                            </li>
-                        </ul>
-                    )} */}
+          
           <li
             className="flex items-center justify-between p-3 text-gray-700 hover:bg-gray-200 cursor-pointer transition duration-200 ease-in-out"
             onClick={toggleDocsDropdown}
@@ -245,31 +167,7 @@ const Sidebar = () => {
                     }`
                   }
                 >
-                  <span className="ml-3">Request register teacher</span>
-                </NavLink>
-              </li>
-              <li>
-                <NavLink
-                  to="docs/assignteacher"
-                  className={({ isActive }) =>
-                    `flex items-center p-3 text-gray-700 hover:bg-gray-200 transition duration-200 ease-in-out ${
-                      isActive ? "bg-gray-200" : ""
-                    }`
-                  }
-                >
-                  <span className="ml-3">Assign teacher</span>
-                </NavLink>
-              </li>
-              <li>
-                <NavLink
-                  to="docs/getting-started"
-                  className={({ isActive }) =>
-                    `flex items-center p-3 text-gray-700 hover:bg-gray-200 transition duration-200 ease-in-out ${
-                      isActive ? "bg-gray-200" : ""
-                    }`
-                  }
-                >
-                  <span className="ml-3">Request register course</span>
+                  <span className="ml-3">Register teacher request</span>
                 </NavLink>
               </li>
               {/* Add more documentation links as needed */}

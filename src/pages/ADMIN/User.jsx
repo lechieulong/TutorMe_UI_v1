@@ -176,7 +176,7 @@ const Users = () => {
                                 )
                                 .map((user, index) => (
                                     <tr key={index} className={`border-t hover:bg-gray-50 ${index % 2 === 0 ? 'bg-white' : 'bg-gray-100'}`}>
-                                        <td className="py-3 px-6 flex items-center">
+                                        <td className="py-1 px-3 flex items-center">
                                             <img
                                                 src={user.imageURL || 'https://placehold.co/32x32'}
                                                 alt={`Profile of ${user.name}`}
@@ -184,11 +184,11 @@ const Users = () => {
                                             />
                                             <span className="font-medium">{user.name}</span>
                                         </td>
-                                        <td className="py-3 px-6">{user.email}</td>
-                                        <td className="py-3 px-6">{user.dob ? formatDOB(new Date(user.dob).toLocaleDateString()) : 'N/A'}</td>
-                                        <td className="py-3 px-6">{user.phoneNumber || 'N/A'}</td>
-                                        <td className="py-3 px-6">{user.lockoutEnd ? new Date(user.lockoutEnd).toLocaleString() : 'N/A'}</td>
-                                        <td className="py-3 px-6 text-center">
+                                        <td className="py-1 px-3">{user.email}</td>
+                                        <td className="py-1 px-3">{user.dob ? formatDOB(new Date(user.dob).toLocaleDateString()) : 'N/A'}</td>
+                                        <td className="py-1 px-3">{user.phoneNumber || 'N/A'}</td>
+                                        <td className="py-1 px-3">{user.lockoutEnd ? new Date(user.lockoutEnd).toLocaleString() : 'N/A'}</td>
+                                        <td className="py-1 px-3 text-center">
                                             {user.lockoutEnd && new Date(user.lockoutEnd) > new Date() ? (
                                                 <button onClick={() => handleUnlockClick(user)}>
                                                     <FaLock className="text-red-500 cursor-pointer" />

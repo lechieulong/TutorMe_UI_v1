@@ -117,7 +117,7 @@ const TestSubmitted = () => {
                             {formatDateTime(result.updateAt)}
                           </td>
                           <td className="px-2 py-1 text-gray-700 capitalize cursor-pointer">
-                            {new Date(result.startTime) < new Date(new Date().toISOString().slice(0, 16)) ? (
+                            {new Date(result.startTime) > new Date(new Date().toISOString().slice(0, 16)) ? (
                               <FaRegEdit />
                             ) : (
                               <FaArrowRight onClick={() => handleTestClick(result.id.toString())} />

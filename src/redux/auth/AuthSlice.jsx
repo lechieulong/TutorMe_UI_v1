@@ -131,7 +131,7 @@ export const requestForgotAPI = createAsyncThunk(
       return response.data;
     } catch (error) {
       return rejectWithValue(
-        error.response?.data?.message || "Failed to change password."
+        error.response?.data?.message || "Failed to reset password."
       );
     }
   }

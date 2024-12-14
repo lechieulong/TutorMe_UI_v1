@@ -17,6 +17,8 @@ const AnswerView = ({
   part2Time,
   submitting,
   practiceTestData,
+  nextPartHandler,
+  totalPart,
 }) => {
   let skill;
   switch (currentSkillKey) {
@@ -36,6 +38,8 @@ const AnswerView = ({
       skill = undefined;
       break;
   }
+
+  console.log(partData);
 
   const handleChangeWrap = (
     e,
@@ -693,6 +697,8 @@ const AnswerView = ({
           part1And3Time={part1And3Time}
           selectedVoice={selectedVoice}
           part2Time={part2Time}
+          nextPartHandler={nextPartHandler}
+          totalPart={totalPart}
         />
       )}
     </form>

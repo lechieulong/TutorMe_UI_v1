@@ -38,6 +38,8 @@ export const submitAnswerTest = createAsyncThunk(
     },
     { rejectWithValue }
   ) => {
+    console.log("kkkk");
+
     const token = Cookies.get("authToken");
     const userId = getUser().sub;
 
@@ -276,6 +278,8 @@ export const evaluateSpeaking = createAsyncThunk(
         answer,
         partNumber,
       });
+      console.log(response);
+
       return response.data;
     } catch (error) {
       return rejectWithValue(

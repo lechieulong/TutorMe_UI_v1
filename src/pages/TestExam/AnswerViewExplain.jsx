@@ -576,9 +576,9 @@ const AnswerViewExplain = ({ partData, currentSkillKey }) => {
         </>
       )}
 
-      {currentSkillKey === "speaking" && (
+      {/* {currentSkillKey === "speaking" && (
         <SpeakingExplain partData={partData} />
-      )}
+      )} */}
     </form>
   );
 };

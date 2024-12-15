@@ -4,8 +4,10 @@ import { DotLottieReact } from '@lottiefiles/dotlottie-react';
 import { CheckBanlance,GiveMeMyMoney,GetBanlance } from './PayOS';
 import {toast } from "react-toastify";
 import { convert32BytesToUUID } from './LiveStreamFrame';
+import apiURLConfig from "../../redux/common/apiURLConfig";
+import { FaGift } from 'react-icons/fa';
 
-const url= import.meta.env.VITE_Backend_URL;
+const url= apiURLConfig.baseURL;
 
 async function sendGift(GiftId, GiftURL,UserName,userId, roomID,handleSendCommand) {
   const user=convert32BytesToUUID(userId);
@@ -48,7 +50,7 @@ async function sendGift(GiftId, GiftURL,UserName,userId, roomID,handleSendComman
 
 const getGift= async (id)=>{
   try {
-    const response = await axios.get(`${url}/api/Gift/${id}`);
+    const response = await axios.get(`${url}/Gift/${id}`);
     return response.data;
   } catch (error) {
     console.error('Error fetching gifts:', error);
@@ -57,7 +59,7 @@ const getGift= async (id)=>{
 }
 const AddUser_Gift= async (formData)=>{
   try {
-    const response = await axios.post(`${url}/api/User_Gift`, formData, {
+    const response = await axios.post(`${url}/User_Gift`, formData, {
       headers: {
         'Content-Type': 'application/json',
       },
@@ -78,7 +80,7 @@ const GiftList = ({UserName,userId,roomID,handleSendCommand} ) => {
     setLoading(true);
     setError(null); // Reset lỗi trước khi gọi API
     try {
-      const response = await axios.get(`${url}/api/Gift`);
+      const response = await axios.get(`${url}/Gift`);
       setGifts(response.data);
     } catch (error) {
       console.error('Error fetching gifts:', error);
@@ -97,8 +99,8 @@ const GiftList = ({UserName,userId,roomID,handleSendCommand} ) => {
 
   return (
     <div>
-      <button onClick={toggleGiftList} className="bg-blue-500 text-white py-2 px-4 rounded">
-        {isVisible ? 'Hide Gift' : 'Show Gift'}
+      <button onClick={toggleGiftList} className="bg-green-500 hover:bg-green-600 text-white font-semibold py-2 px-4 rounded-lg transition duration-200">
+        <FaGift/>
       </button>
 
       {loading && <p>Loading...</p>}
@@ -108,8 +110,8 @@ const GiftList = ({UserName,userId,roomID,handleSendCommand} ) => {
       {isVisible && (
         <ul className="flex flex-wrap mt-4">
           {gifts.map(gift => (
-            <li key={gift.id} className="w-1/5 p-2 mb-2 border relative">
-              <button onClick={() => sendGift(gift.id, gift.url,UserName,userId, roomID,handleSendCommand)} className="block w-full h-full focus:outline-none">
+            <li key={gift.id} className="w-1/5 p-2 mb-2 relative">
+              <button onClick={() => sendGift(gift.id, gift.url,UserName,userId, roomID,handleSendCommand)} className="block w-full h-full focus:outline-none bg-gradient-to-r from-blue-300 to-purple-300 bg-opacity-70 rounded-lg">
                <DotLottieReact src={gift.url} loop autoplay />
                <div className="absolute inset-0 flex flex-col justify-center items-center text-black bg-opacity-50">
                <h3 className="font-bold">{gift.name}</h3>

@@ -10,7 +10,7 @@ const GiftNotification = ({ notifications }) => {
               key={notification.id}
               style={{
                 position: "absolute",
-                top: "41px",
+                top: "50px",
                 left: "10px",
                 padding: "5px 10px", // Giảm padding để nhỏ hơn
                 backgroundColor: "rgba(0, 0, 0, 0.5)", // Thay đổi độ trong suốt

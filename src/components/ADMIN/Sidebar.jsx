@@ -1,6 +1,8 @@
 import React, { useState } from "react";
 import { NavLink } from "react-router-dom";
 import {
+  FaGift,
+  FaRegEye,
   FaAngleDown,
   FaThLarge,
   FaUserFriends,
@@ -87,6 +89,32 @@ const Sidebar = () => {
             >
               <FaDollarSign />
               <span className="ml-3">Transactions</span>
+            </NavLink>
+          </li>
+          <li>
+            <NavLink
+              to="liveStreams"
+              className={({ isActive }) =>
+                `flex items-center p-3 text-gray-700 hover:bg-gray-200 transition duration-200 ease-in-out ${
+                  isActive ? "bg-lightGreen" : ""
+                }`
+              }
+            >
+              <FaRegEye />
+              <span className="ml-3">LiveStreams</span>
+            </NavLink>
+          </li>
+          <li>
+            <NavLink
+              to="gifts"
+              className={({ isActive }) =>
+                `flex items-center p-3 text-gray-700 hover:bg-gray-200 transition duration-200 ease-in-out ${
+                  isActive ? "bg-lightGreen" : ""
+                }`
+              }
+            >
+              <FaGift />
+              <span className="ml-3">Gifts</span>
             </NavLink>
           </li>
           <li>

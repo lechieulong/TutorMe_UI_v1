@@ -28,6 +28,7 @@ const ClassOfCourseList = () => {
   const [notification, setNotification] = useState("");
   const [isConfirmOpen, setIsConfirmOpen] = useState(false);
   const [userId, setUserId] = useState(null);
+
   const { classes, status, switchStates } = useSelector((state) => ({
     classes: state.classes.classes[courseId] || [], // Lấy danh sách lớp học theo courseId
     status: state.classes.status,

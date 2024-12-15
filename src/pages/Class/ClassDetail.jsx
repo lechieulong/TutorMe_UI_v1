@@ -41,7 +41,8 @@ const ClassDetail = () => {
     }
   };
   const location = useLocation();
-  const { mentorAndList } = location.state || {};
+  const { mentorAndList } = location.state || {}; // Lấy mentorAndList từ state
+  console.log("mentorAndList:", mentorAndList);
   const getFileIcon = (filePath) => {
     const extension = filePath.split(".").pop().toLowerCase();
     switch (extension) {
@@ -75,7 +76,7 @@ const ClassDetail = () => {
       setClassFiles([]);
     }
   };
-
+  console.log(mentorAndList);
   const handleCreateTest = async () => {
     try {
       const response = await axios.get(

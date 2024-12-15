@@ -488,17 +488,15 @@ const AnswerViewExplain = ({ partData, currentSkillKey }) => {
                                 </select>
                               </div>
                             ))}
-                            <p className=" text-yellow-500">
+                            <p className=" text-yellow-700">
                               Correct Answers: {question.questionName}
                             </p>
                           </div>
                         ))}
                       </div>
 
-                      <h3 className="text-yellow-500 font-bold">Explains</h3>
-
                       <p
-                        className="font-bold mt-4 mb-4"
+                        className=" mt-4 mb-4"
                         dangerouslySetInnerHTML={{
                           __html: highlightSpecialCharacters(
                             section?.explain || "No explanation provided."

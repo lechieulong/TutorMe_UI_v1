@@ -13,7 +13,7 @@ import {
   getAllQuestionsById,
   deleteQuestion,
 } from "../../../redux/testExam/TestSlice";
-import { toast } from "react-toastify";
+import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
 const QuestionBank = () => {
@@ -40,7 +40,7 @@ const QuestionBank = () => {
         setHasMore(false);
       }
     } catch (error) {
-      toast.error("Failed to fetch questions");
+      console.log(error);
     } finally {
       setLoading(false);
     }
@@ -103,10 +103,8 @@ const QuestionBank = () => {
 
     try {
       await dispatch(importQuestion(formData));
-      window.location.reload();
-      console.log("hahah");
-
       toast.success("Questions imported successfully");
+      window.location.reload();
     } catch (error) {
       toast.error("Failed to import questions");
     }
@@ -149,6 +147,8 @@ const QuestionBank = () => {
 
   return (
     <div className="p-4 bg-gray-50">
+      <ToastContainer autoClose={3000} newestOnTop closeOnClick />
+
       {isModalOpen ? (
         <QuestionFormBank
           setIsModalOpen={setIsModalOpen}

@@ -8,7 +8,7 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 import { createTest } from "../../redux/testExam/TestSlice";
 import { useDispatch } from "react-redux";
-import { toast } from "react-toastify";
+import { toast, ToastContainer } from "react-toastify";
 import CreateTest from "./CreateTest";
 import TestInfoCard from "./general/TestInfoCard";
 
@@ -48,6 +48,8 @@ const TestForm = ({
 
       // check if
       const result = await dispatch(createTest(payload)).unwrap();
+      toast.success("Create test successfully.");
+
       setTestInfo(result);
     } catch (error) {
       console.error("Submission failed:", error);
@@ -61,6 +63,8 @@ const TestForm = ({
 
   return (
     <div className="w-full">
+      <ToastContainer autoClose={3000} newestOnTop closeOnClick />
+
       {isSubmitted && testInfo ? (
         !showTestFormDetail ? (
           <TestInfoCard

@@ -4,7 +4,7 @@ import { useDispatch, useSelector } from "react-redux";
 import MentorSidebar from "../../components/Mentor/MentorSideBar";
 import MainLayout from "../../layout/MainLayout";
 import ClassCard from "../Class/components/ClassCard";
-import CourseSkillCard from "./component/CourseSkillCard";
+import CourseSkillCard from "../Mentor/component/CourseSkillCard";
 import { FaFlag } from "react-icons/fa";
 import Report from "../../components/common/Report";
 import useAuthToken from "../../hooks/useAuthToken";
@@ -17,7 +17,6 @@ import {
   fetchSkills,
   fetchSkillDescription,
 } from "../../redux/courses/CourseSkillSlice";
-import CreateClass from "../Class/CreateClass";
 import Rating from "../../components/common/Rating";
 import Notification from "../../components/common/Notification";
 import Confirm from "../../components/common/Confirm";
@@ -47,7 +46,6 @@ const CourseDetail = () => {
   const [userName, setUsername] = useState(null);
   const [currentSlide, setCurrentSlide] = useState(0);
   const [selectedClassId, setSelectedClassId] = useState(null);
-  const [isCreateClassOpen, setIsCreateClassOpen] = useState(false);
   const [isRatingOpen, setIsRatingOpen] = useState(false);
   const [hasRated, setHasRated] = useState(false);
   const [notification, setNotification] = useState("");
@@ -60,14 +58,15 @@ const CourseDetail = () => {
   const [notificationUpdated, setNotificationUpdated] = useState(false);
   const [isReportOpen, setIsReportOpen] = useState(false);
   const dispatch = useDispatch();
-  const classes = useSelector((state) => state.classes.classes || []);
+  const { classes } = useSelector((state) => ({
+    classes: state.classes.classes[courseId] || [], // Lấy danh sách lớp học theo courseId
+  }));
+
   const switchStates = useSelector((state) => state.classes.switchStates || {});
   const isEnrolled = useSelector(
     (state) => state.enrollment.isEnrolled || false
   );
   const isReviewPath = location.pathname.includes("/review");
-  const { fromMentorCourseList = false } = location.state || {};
-  const mentorAndList = isMentor && fromMentorCourseList;
   const authToken = useAuthToken();
   const initializeUser = useCallback(() => {
     const userFromToken = getUser();
@@ -225,9 +224,6 @@ const CourseDetail = () => {
       Math.min(prev + 1, Math.ceil(classes.length / 4) - 1)
     );
 
-  const handleOpenCreateClass = () => setIsCreateClassOpen(true);
-  const handleCloseCreateClass = () => setIsCreateClassOpen(false);
-
   const handleCreateTestClick = (skillId) => {
     dispatch(fetchSkillDescription(skillId))
       .unwrap()
@@ -256,11 +252,11 @@ const CourseDetail = () => {
   };
 
   useEffect(() => {
-    if ((mentorAndList || isMentor) && !notificationUpdated) {
+    if (isMentor && !notificationUpdated) {
       setNotification("This is your course!");
       setNotificationUpdated(true);
     }
-  }, [mentorAndList, isMentor, notificationUpdated]);
+  }, [isMentor, notificationUpdated]);
 
   return (
     <MainLayout>
@@ -279,7 +275,7 @@ const CourseDetail = () => {
           status={confirmStatus}
         />
         <div className="flex w-full">
-          <MentorSidebar mentorAndList={mentorAndList} />
+          <MentorSidebar isEnrolled={isEnrolled} isMentor={isMentor} />
           <div className="flex-1 p-4 overflow-y-auto">
             <header className="mb-4 flex justify-between items-center">
               <h1 className="text-4xl font-bold text-black">{className}</h1>
@@ -357,7 +353,7 @@ const CourseDetail = () => {
                     <span>25 lessons</span>
                   </li>
                 </ul>
-                {!mentorAndList && !isEnrolled && !isMentor && (
+                {!isEnrolled && !isMentor && (
                   <button
                     onClick={handleEnroll}
                     className="bg-accentGreen hover:bg-accentGreen-dark text-white py-2 px-4 rounded-lg w-full flex items-center justify-center transition duration-300"
@@ -368,18 +364,10 @@ const CourseDetail = () => {
               </div>
             </div>
             <section className="mb-4 mt-4">
-              {(mentorAndList || !isEnrolled) && (
+              {!isEnrolled && (
                 <>
                   <div className="flex justify-between items-center">
                     <p className="text-xl font-bold">Classes</p>
-                    {mentorAndList && (
-                      <button
-                        className="py-2 px-3 text-sm font-medium rounded-lg border bg-white text-gray-800 shadow-sm hover:bg-gray-50"
-                        onClick={handleOpenCreateClass}
-                      >
-                        Create Class
-                      </button>
-                    )}
                   </div>
                   <div className="overflow-hidden">
                     <div
@@ -395,7 +383,6 @@ const CourseDetail = () => {
                           switchState={switchStates[classItem.id] || false}
                           onSelect={() => setSelectedClassId(classItem.id)}
                           isActive={selectedClassId === classItem.id}
-                          mentorAndList={mentorAndList}
                         />
                       ))}
                     </div>
@@ -426,9 +413,9 @@ const CourseDetail = () => {
                 isReviewPath={isReviewPath}
                 courseId={courseId}
                 isEnrolled={isEnrolled}
-                mentorAndList={mentorAndList}
                 onCreateTestClick={handleCreateTestClick}
                 onSkillCountUpdate={setSkillCount}
+                isMentor={isMentor}
               />
               <Comment courseId={courseId} />
             </div>
@@ -442,13 +429,7 @@ const CourseDetail = () => {
           onClose={handleCloseRating}
         />
       )}
-      {isCreateClassOpen && (
-        <CreateClass
-          courseId={courseId}
-          onClose={handleCloseCreateClass}
-          onCreateSuccess={() => dispatch(fetchClasses(courseId))}
-        />
-      )}
+
       {isReportOpen && (
         <Report
           userId={userId}

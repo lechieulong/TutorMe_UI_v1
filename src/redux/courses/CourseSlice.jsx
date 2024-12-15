@@ -8,12 +8,17 @@ import Cookies from "js-cookie";
 // Thunk để lấy tất cả khóa học với phân trang
 export const fetchCourses = createAsyncThunk(
   "courses/getCourses",
-  async ({ pageNumber = 1, pageSize = 8 }, { rejectWithValue }) => {
+  async (
+    { pageNumber = 1, pageSize = 8, searchTerm = "", categoryFilter = "" },
+    { rejectWithValue }
+  ) => {
     try {
       const response = await axios.get(`${apiURLConfig.baseURL}/Courses`, {
         params: {
           pageNumber,
           pageSize,
+          searchTerm,
+          categoryFilter,
         },
       });
 
@@ -32,7 +37,6 @@ export const fetchCourses = createAsyncThunk(
         pageSize: currentPageSize,
       };
     } catch (error) {
-      // Trả về thông báo lỗi nếu có
       return rejectWithValue(error.response?.data || "Failed to fetch courses");
     }
   }

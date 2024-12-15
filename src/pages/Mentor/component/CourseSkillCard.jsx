@@ -77,8 +77,6 @@ const CourseSkillCard = ({
   };
 
   const handleCreateTest = async (skillId) => {
-    console.log(skillId);
-
     try {
       const response = await axios.get(
         `https://localhost:7030/api/CourseSkills/DescriptionBySkill/${skillId}`,
@@ -125,6 +123,7 @@ const CourseSkillCard = ({
 
   if (loading) return <p>Loading...</p>;
   if (error) return <p>{error}</p>;
+  console.log(isCreateTest);
 
   return (
     <div>
@@ -173,7 +172,6 @@ const CourseSkillCard = ({
               )}
             </div>
 
-            {/* Show Create Form if it's active */}
             {showCreateForm && activeTab && (
               <div className="mt-4 p-4 bg-gray-100 rounded-lg shadow-md">
                 <CreateCoursePart
@@ -196,6 +194,7 @@ const CourseSkillCard = ({
                   mentorAndList={mentorAndList}
                   skillId={skill.id}
                   isEnrolled={isEnrolled}
+                  isMentor={isMentor}
                 />
 
                 {mentorAndList && (

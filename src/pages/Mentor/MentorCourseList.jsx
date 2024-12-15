@@ -195,6 +195,7 @@ const MentorCourseList = () => {
                 onDelete={handleDelete}
                 isEnabled={course.isEnabled}
                 price={course.price}
+                imageUrl={course.imageUrl}
               />
             ))}
           </div>

@@ -13,7 +13,7 @@ import {
   faFilePowerpoint,
   faStickyNote,
 } from "@fortawesome/free-solid-svg-icons";
-
+import { useLocation } from "react-router-dom";
 const ClassDetail = () => {
   const { courseId, classId } = useParams();
   const [classDetail, setClassDetail] = useState(null);
@@ -40,6 +40,8 @@ const ClassDetail = () => {
       setLoading(false);
     }
   };
+  const location = useLocation();
+  const { mentorAndList } = location.state || {};
   const getFileIcon = (filePath) => {
     const extension = filePath.split(".").pop().toLowerCase();
     switch (extension) {
@@ -113,6 +115,8 @@ const ClassDetail = () => {
       const response = await axios.get(
         `https://localhost:7030/api/class/GetTestExamsByClassId/${classId}`
       );
+      console.log(response);
+
       if (Array.isArray(response.data) && response.data.length > 0) {
         setTestExams(response.data); // Lưu danh sách bài kiểm tra vào state
       } else {
@@ -169,20 +173,22 @@ const ClassDetail = () => {
                   <span className="font-semibold">End Date: </span>
                   {new Date(classDetail.endDate).toLocaleDateString()}
                 </p>
-                <div className="flex gap-4">
-                  <button
-                    onClick={handleCreateTest}
-                    className="py-2 px-3 inline-flex items-center text-sm font-medium rounded-lg border border-gray-200 bg-white text-gray-800 shadow-sm hover:bg-gray-50"
-                  >
-                    Create Test
-                  </button>
-                  <button
-                    onClick={() => setIsUploadFileOpen(true)}
-                    className="py-2 px-3 inline-flex items-center text-sm font-medium rounded-lg border border-gray-200 bg-white text-gray-800 shadow-sm hover:bg-gray-50"
-                  >
-                    Upload File
-                  </button>
-                </div>
+                {mentorAndList && (
+                  <div className="flex gap-4">
+                    <button
+                      onClick={handleCreateTest}
+                      className="py-2 px-3 inline-flex items-center text-sm font-medium rounded-lg border border-gray-200 bg-white text-gray-800 shadow-sm hover:bg-gray-50"
+                    >
+                      Create Test
+                    </button>
+                    <button
+                      onClick={() => setIsUploadFileOpen(true)}
+                      className="py-2 px-3 inline-flex items-center text-sm font-medium rounded-lg border border-gray-200 bg-white text-gray-800 shadow-sm hover:bg-gray-50"
+                    >
+                      Upload File
+                    </button>
+                  </div>
+                )}
               </div>
               {isUploadFileOpen && (
                 <div className="mt-4">

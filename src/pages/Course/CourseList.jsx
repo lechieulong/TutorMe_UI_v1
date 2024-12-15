@@ -1,4 +1,4 @@
-import { useEffect, useState, useMemo } from "react";
+import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import MainLayout from "../../layout/MainLayout";
 import Filter from "./components/Filter";
@@ -7,13 +7,14 @@ import { fetchCourses } from "../../redux/courses/CourseSlice";
 import { STATUS } from "../../constant/SliceName";
 import Calendar from "../../components/common/linkToCalendar";
 import { Link } from "react-router-dom";
-import useAuthToken from "../../hooks/useAuthToken"; // Import useAuthToken
+import useAuthToken from "../../hooks/useAuthToken";
 import { getUser } from "../../service/GetUser";
 
 const CourseList = () => {
   const [user, setUser] = useState(null);
-  const authToken = useAuthToken(); // Lấy token từ cookie
+  const authToken = useAuthToken();
   const dispatch = useDispatch();
+
   const {
     courses = [],
     status,
@@ -24,23 +25,19 @@ const CourseList = () => {
   const [selectedSkill, setSelectedSkill] = useState("All");
   const [currentPage, setCurrentPage] = useState(1);
   const [searchTerm, setSearchTerm] = useState("");
-  const coursesPerPage = 8;
 
+  const coursesPerPage = 8;
   const categories = ["All", "Listening", "Reading", "Writing", "Speaking"];
+
   useEffect(() => {
     if (authToken) {
       const fetchUser = async () => {
-        const fetchedUser = await getUser(); // Fetch the user using getUser
-        setUser(fetchedUser); // Set user data in state
+        const fetchedUser = await getUser();
+        setUser(fetchedUser);
       };
       fetchUser();
     }
   }, [authToken]);
-  useEffect(() => {
-    dispatch(
-      fetchCourses({ pageNumber: currentPage, pageSize: coursesPerPage })
-    );
-  }, [dispatch, currentPage]);
 
   const handleNextPage = () => {
     if (currentPage < totalPages) {
@@ -54,15 +51,27 @@ const CourseList = () => {
     }
   };
 
-  const filteredCourses = useMemo(() => {
-    if (status === STATUS.SUCCESS) {
-      return courses.filter((course) => {
-        if (selectedSkill === "All") return true;
-        return course.categories.includes(selectedSkill);
-      });
-    }
-    return [];
-  }, [courses, selectedSkill, status]);
+  const handleSearchSubmit = () => {
+    dispatch(
+      fetchCourses({
+        pageNumber: 1,
+        pageSize: coursesPerPage,
+        categoryFilter: selectedSkill === "All" ? null : selectedSkill,
+        searchTerm,
+      })
+    );
+  };
+
+  useEffect(() => {
+    dispatch(
+      fetchCourses({
+        pageNumber: currentPage,
+        pageSize: coursesPerPage,
+        categoryFilter: selectedSkill === "All" ? null : selectedSkill,
+        searchTerm,
+      })
+    );
+  }, [dispatch, currentPage, selectedSkill]);
 
   if (status === STATUS.PENDING) return <p>Loading...</p>;
   if (status === STATUS.FAILED) return <p>Error: {error}</p>;
@@ -82,19 +91,22 @@ const CourseList = () => {
 
         <div className="flex items-center justify-between mb-4">
           <Filter
-            categories={categories} // Sử dụng categories ở đây
+            categories={categories}
             selectedSkill={selectedSkill}
-            onSkillSelect={(Skill) => {
-              setSelectedSkill(Skill);
+            onSkillSelect={(skill) => {
+              setSelectedSkill(skill);
               setCurrentPage(1);
             }}
             searchTerm={searchTerm}
-            onSearchChange={(term) => setSearchTerm(term)}
+            onSearchChange={(term) => {
+              setSearchTerm(term);
+            }}
+            onSearchSubmit={handleSearchSubmit} // Gọi API tìm kiếm khi nhấn Enter
           />
           <Link
             to="/mentorCourseList"
             className={`py-2 px-3 inline-flex items-center gap-x-2 text-sm font-medium rounded-lg border border-gray-200 bg-white text-gray-800 shadow-sm hover:bg-gray-50 focus:outline-none focus:bg-gray-50 ${
-              !user?.role.includes("TEACHER") ? "hidden opacity-50" : ""
+              !user?.role?.includes("TEACHER") ? "hidden opacity-50" : ""
             }`}
           >
             My Course
@@ -102,7 +114,7 @@ const CourseList = () => {
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-10">
-          {filteredCourses.map((course) => (
+          {courses.map((course) => (
             <CourseCard
               key={course.id}
               imageUrl={course.imageUrl}

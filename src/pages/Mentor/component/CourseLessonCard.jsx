@@ -10,7 +10,12 @@ import { FaAngleDown, FaAngleUp } from "react-icons/fa";
 import TestForm from "../../ExamTest/TestForm";
 import { Link, useParams } from "react-router-dom";
 
-const CourseLessonCard = ({ mentorAndList, coursePartId, isEnrolled }) => {
+const CourseLessonCard = ({
+  mentorAndList,
+  coursePartId,
+  isEnrolled,
+  isMentor,
+}) => {
   const [collapsedLessons, setCollapsedLessons] = useState({});
   const [courseLessons, setCourseLessons] = useState([]);
   const [isCreateTest, setIsCreateTest] = useState(false);
@@ -249,7 +254,7 @@ const CourseLessonCard = ({ mentorAndList, coursePartId, isEnrolled }) => {
                         ))}
 
                       {!collapsedLessons[courseLesson.id] &&
-                        (isEnrolled || mentorAndList) && (
+                        (isEnrolled || mentorAndList || isMentor) && (
                           <div className="mt-2 w-full">
                             <CourseLessonContent
                               isEnrolled={isEnrolled}

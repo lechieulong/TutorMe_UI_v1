@@ -136,9 +136,6 @@ const ClassCard = ({
             {classItem.className}
           </h5>
           <p className="text-sm text-gray-500 mt-1">
-            Thời gian: {classItem.startTime} - {classItem.endTime}
-          </p>
-          <p className="text-sm text-gray-500 mt-1">
             Người ghi danh: {classItem.enrollmentCount}
           </p>
           <p className="text-sm text-gray-500 mt-1">

@@ -63,10 +63,31 @@ const CreateCourse = ({ onClose, onCreateSuccess }) => {
       return;
     }
 
+    // Định dạng ngày hiện tại thành dd/mm/yyyy
+    const formatDate = (date) => {
+      const day = String(date.getDate()).padStart(2, "0");
+      const month = String(date.getMonth() + 1).padStart(2, "0");
+      const year = date.getFullYear();
+      return `${day}/${month}/${year}`;
+    };
+
+    const today = formatDate(new Date());
+
+    // Thêm createdAt và updatedAt vào dữ liệu
+    const courseWithTimestamps = {
+      ...course,
+      createdAt: today,
+      updatedAt: today,
+    };
+    console.log(courseWithTimestamps);
+
     setConfirmMessage("Are you sure you want to create new course?");
     setConfirmAction(() => async () => {
       try {
-        await axios.post("https://localhost:7030/api/Courses", course);
+        await axios.post(
+          "https://localhost:7030/api/Courses",
+          courseWithTimestamps
+        );
         setNotification("Create new course success!");
         onCreateSuccess();
         onClose();
@@ -98,7 +119,7 @@ const CreateCourse = ({ onClose, onCreateSuccess }) => {
         message={confirmMessage}
         status="Create new course"
       />
-      <div className="bg-white p-6 rounded-lg shadow-lg w-1/3  relative">
+      <div className="bg-white p-6 rounded-lg shadow-lg w-1/3 relative">
         <h2 className="text-xl font-semibold mb-4">Create New Course</h2>
         <form onSubmit={handleSubmit}>
           <div className="mb-4">

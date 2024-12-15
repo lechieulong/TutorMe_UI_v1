@@ -1,7 +1,8 @@
-import React, { useEffect, useState } from "react";
-import ClassCard from "./ClassCard";
+import React, { useEffect } from "react";
+import { useSelector, useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
-import axios from "axios";
+import { fetchClasses } from "../../../redux/classes/ClassSlice";
+import ClassCard from "./ClassCard";
 
 const ClassList = ({
   courseId,
@@ -10,32 +11,32 @@ const ClassList = ({
   handlePrev,
   handleNext,
 }) => {
-  const [classes, setClasses] = useState([]);
-  const [reload, setReload] = useState(false);
+  const dispatch = useDispatch();
   const navigate = useNavigate();
 
-  const fetchClasses = async () => {
-    try {
-      const response = await axios.get(
-        `https://localhost:7030/api/class/course/${courseId}/classes`
-      );
-      setClasses(response.data.result);
-    } catch (error) {
-      console.error("Failed to fetch classes:", error);
-    }
-  };
+  const { classes, status, error } = useSelector((state) => state.classes);
 
   useEffect(() => {
-    fetchClasses();
-  }, [reload]);
+    if (courseId) {
+      dispatch(fetchClasses(courseId)); // Fetch classes when courseId changes
+    }
+  }, [courseId, dispatch]);
 
   const handleCreateSuccess = () => {
-    setReload(!reload);
+    dispatch(fetchClasses(courseId)); // Refetch classes after creation
   };
 
   const handleDeleteClassSuccess = () => {
-    setReload(!reload); // Trigger reload after deletion
+    dispatch(fetchClasses(courseId)); // Refetch classes after deletion
   };
+
+  if (status === "loading") {
+    return <p>Loading classes...</p>;
+  }
+
+  if (status === "failed") {
+    return <p className="text-red-500">Error: {error}</p>;
+  }
 
   return (
     <div className="flex flex-col bg-white border w-full shadow-sm rounded-xl p-4 md:p-5 relative group mb-4">

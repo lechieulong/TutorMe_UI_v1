@@ -3,7 +3,6 @@ import axios from "axios";
 import { SLICE_NAMES, ACTIONS, STATUS } from "../../constant/SliceName";
 import apiURLConfig from "../common/apiURLConfig";
 
-// Async thunk để lấy danh sách lớp học
 export const fetchClasses = createAsyncThunk(
   `${SLICE_NAMES.CLASSES}/${ACTIONS.GET_CLASSESOFCOURSE}`,
   async (courseId, { rejectWithValue }) => {
@@ -11,7 +10,7 @@ export const fetchClasses = createAsyncThunk(
       const response = await axios.get(
         `${apiURLConfig.baseURL}/class/course/${courseId}/classes`
       );
-      return response.data.result || []; // Trả về mảng trống nếu không có lớp học
+      return { courseId, classes: response.data.result || [] }; // Gắn kèm courseId để sử dụng sau
     } catch (error) {
       return rejectWithValue(
         error.response?.data?.message || "Failed to get classes from course."
@@ -19,6 +18,26 @@ export const fetchClasses = createAsyncThunk(
     }
   }
 );
+
+export const fetchUnenrolledClasses = createAsyncThunk(
+  "unenrolledClasses/fetchUnenrolledClasses",
+  async ({ courseId, userId }, { rejectWithValue }) => {
+    try {
+      const response = await axios.get(
+        `https://localhost:7030/api/class/unenrolled`,
+        {
+          params: { courseId, userId },
+        }
+      );
+      return { courseId, classes: response.data }; // Trả về dữ liệu kèm courseId
+    } catch (error) {
+      return rejectWithValue(
+        error.response?.data?.message || "Failed to fetch unenrolled classes."
+      );
+    }
+  }
+);
+
 export const fetchEnabledStatus = createAsyncThunk(
   "class/fetchEnabledStatus",
   async (classId, { rejectWithValue }) => {
@@ -116,7 +135,8 @@ export const uploadClassFile = createAsyncThunk(
 );
 
 const initialState = {
-  classes: [],
+  unenrolledClassesByCourse: {},
+  classes: {},
   status: STATUS.IDLE,
   error: null,
   switchStates: {},
@@ -136,20 +156,17 @@ const classSlice = createSlice({
   extraReducers: (builder) => {
     builder
       .addCase(fetchClasses.pending, (state) => {
-        state.status = STATUS.PENDING;
+        state.status = STATUS.LOADING;
+        state.error = null;
       })
       .addCase(fetchClasses.fulfilled, (state, action) => {
-        state.status = STATUS.SUCCESS;
-        state.classes = action.payload;
-        const initialSwitchStates = {};
-        action.payload.forEach((classItem) => {
-          initialSwitchStates[classItem.id] = classItem.isEnabled;
-        });
-        state.switchStates = initialSwitchStates;
+        const { courseId, classes } = action.payload;
+        state.status = STATUS.SUCCEEDED;
+        state.classes[courseId] = classes; // Gắn danh sách classes theo courseId
       })
       .addCase(fetchClasses.rejected, (state, action) => {
         state.status = STATUS.FAILED;
-        state.error = action.payload || action.error.message;
+        state.error = action.payload;
       })
       .addCase(createClass.pending, (state) => {
         state.createStatus = STATUS.PENDING;
@@ -188,6 +205,19 @@ const classSlice = createSlice({
       })
       .addCase(updateEnabledStatus.rejected, (state, action) => {
         state.loading = false;
+        state.error = action.payload;
+      })
+      .addCase(fetchUnenrolledClasses.pending, (state) => {
+        state.status = STATUS.LOADING;
+        state.error = null;
+      })
+      .addCase(fetchUnenrolledClasses.fulfilled, (state, action) => {
+        const { courseId, classes } = action.payload;
+        state.status = STATUS.SUCCEEDED;
+        state.unenrolledClassesByCourse[courseId] = classes; // Lưu danh sách theo courseId
+      })
+      .addCase(fetchUnenrolledClasses.rejected, (state, action) => {
+        state.status = STATUS.FAILED;
         state.error = action.payload;
       });
   },

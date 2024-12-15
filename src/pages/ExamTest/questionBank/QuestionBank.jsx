@@ -27,6 +27,7 @@ const QuestionBank = () => {
   const { user } = useSelector((state) => state.user);
   const scrollRef = useRef(null);
 
+  // Fetch questions function
   const fetchQuestions = async () => {
     setLoading(true);
     try {
@@ -45,19 +46,22 @@ const QuestionBank = () => {
     }
   };
 
+  // Handle infinite scroll
   const handleScroll = () => {
     if (!scrollRef.current) return;
 
     const { scrollTop, scrollHeight, clientHeight } = scrollRef.current;
-    if (scrollHeight - scrollTop <= clientHeight + 100) {
+    if (scrollHeight - scrollTop <= clientHeight + 100 && hasMore && !loading) {
       setPage((prevPage) => prevPage + 1);
     }
   };
 
+  // First useEffect to fetch data on mount
   useEffect(() => {
     fetchQuestions();
   }, []);
 
+  // Handle scroll event to load more questions
   useEffect(() => {
     const currentScrollRef = scrollRef.current;
     if (currentScrollRef) {
@@ -144,7 +148,7 @@ const QuestionBank = () => {
   console.log(questions);
 
   return (
-    <div className="p-4 bg-gray-50  ">
+    <div className="p-4 bg-gray-50">
       {isModalOpen ? (
         <QuestionFormBank
           setIsModalOpen={setIsModalOpen}
@@ -186,11 +190,10 @@ const QuestionBank = () => {
             ref={scrollRef}
           >
             <table className="w-full border-collapse">
-              <thead className="bg-green-600 ">
+              <thead className="bg-green-600">
                 <tr>
                   <th className="px-4 py-2 text-left">No </th>
-
-                  <th className="px-4 py-2 text-left ">Skill name </th>
+                  <th className="px-4 py-2 text-left">Skill name </th>
                   <th className="px-4 py-2 text-left">Question name</th>
                   <th className="px-4 py-2 text-left">Question type</th>
                   <th className="px-4 py-2 text-left">Answers</th>

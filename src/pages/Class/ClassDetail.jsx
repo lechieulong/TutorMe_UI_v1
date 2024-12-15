@@ -12,6 +12,7 @@ import {
   faFileWord,
   faFilePowerpoint,
   faStickyNote,
+  faClipboard,
 } from "@fortawesome/free-solid-svg-icons";
 import { useLocation } from "react-router-dom";
 const ClassDetail = () => {
@@ -208,14 +209,17 @@ const ClassDetail = () => {
                   {testExams.length > 0 ? (
                     <ul className="list-disc pl-6">
                       {testExams.map((test) => (
-                        <li key={test.id} className="mb-2">
-                          <span className="font-semibold">{test.testName}</span>
-                          <p className="text-gray-600">Test ID: {test.id}</p>
+                        <li key={test.id} className="mb-2   gap-2">
+                          <p>Test name </p>
                           <Link
                             to={`/testDetail/${test.id}`}
                             className="py-2 px-3 inline-flex items-center text-sm font-medium rounded-lg border border-gray-200 bg-white text-gray-800 shadow-sm hover:bg-gray-50"
                           >
-                            Do Test
+                            {test.testName}
+                            <FontAwesomeIcon
+                              icon={faClipboard}
+                              className="ml-4"
+                            />
                           </Link>
                         </li>
                       ))}

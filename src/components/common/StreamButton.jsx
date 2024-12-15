@@ -50,11 +50,11 @@ const FormWithModal = ({ LiveStreamId }) => {
   };
 
   return (
-    <div className="p-4">
+    <div className="">
       <button
         onClick={() => setIsModalOpen(true)}
         type="button"
-        className="py-2 px-3 inline-flex items-center gap-x-2 text-sm font-medium rounded-lg border border-gray-200 bg-lightGreen text-gray-800 shadow-sm hover:bg-gray-50 focus:outline-none focus:bg-gray-50 disabled:opacity-50 disabled:pointer-events-none   dark:border-neutral-700 transition-hover transition-transform duration-500 dark:hover:scale-110"
+        className=" px-3 inline-flex items-center gap-x-2 text-sm font-medium rounded-lg border border-gray-200 bg-lightGreen text-gray-800 shadow-sm hover:bg-gray-50 focus:outline-none focus:bg-gray-50 disabled:opacity-50 disabled:pointer-events-none   dark:border-neutral-700 transition-hover transition-transform duration-500 dark:hover:scale-110"
       >
         Stream now
         <FontAwesomeIcon icon={faHeadset} />

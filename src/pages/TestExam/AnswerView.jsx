@@ -39,7 +39,29 @@ const AnswerView = ({
       break;
   }
 
-  console.log(partData);
+  useEffect(() => {
+    const handleBeforeUnload = (event) => {
+      event.preventDefault();
+      event.returnValue =
+        "Are you sure you want to leave? Your progress might be lost.";
+    };
+
+    const preventNavigation = () => {
+      window.history.pushState(null, document.title, window.location.href);
+    };
+
+    // Ngăn người dùng thoát trang
+    window.addEventListener("beforeunload", handleBeforeUnload);
+
+    // Ngăn nút Back
+    window.history.pushState(null, document.title, window.location.href);
+    window.addEventListener("popstate", preventNavigation);
+
+    return () => {
+      window.removeEventListener("beforeunload", handleBeforeUnload);
+      window.removeEventListener("popstate", preventNavigation);
+    };
+  }, []);
 
   const handleChangeWrap = (
     e,
@@ -529,7 +551,17 @@ const AnswerView = ({
   };
 
   return (
-    <form className="p-4 bg-white rounded shadow-md text-md">
+    <form
+      className={`p-4 rounded shadow-md text-md ${
+        currentSkillKey == "reading"
+          ? "bg-green-50"
+          : currentSkillKey == "writing"
+          ? "bg-pink-50"
+          : currentSkillKey == "listening"
+          ? "bg-blue-50"
+          : ""
+      }`}
+    >
       {currentSkillKey === "listening" && (
         <div className="my-4">
           <AudioPlayer

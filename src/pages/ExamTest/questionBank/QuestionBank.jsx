@@ -28,8 +28,6 @@ const QuestionBank = () => {
   const scrollRef = useRef(null);
 
   const fetchQuestions = async () => {
-    if (!hasMore || loading) return;
-
     setLoading(true);
     try {
       const questionsBank = await dispatch(
@@ -58,7 +56,7 @@ const QuestionBank = () => {
 
   useEffect(() => {
     fetchQuestions();
-  }, [page]);
+  }, []);
 
   useEffect(() => {
     const currentScrollRef = scrollRef.current;
@@ -101,6 +99,9 @@ const QuestionBank = () => {
 
     try {
       await dispatch(importQuestion(formData));
+      window.location.reload();
+      console.log("hahah");
+
       toast.success("Questions imported successfully");
     } catch (error) {
       toast.error("Failed to import questions");
@@ -140,6 +141,8 @@ const QuestionBank = () => {
     }
   };
 
+  console.log(questions);
+
   return (
     <div className="p-4 bg-gray-50  ">
       {isModalOpen ? (
@@ -161,7 +164,6 @@ const QuestionBank = () => {
               <label className="flex items-center cursor-pointer">
                 <input
                   type="file"
-                  accept=".json,.xlsx"
                   className="hidden"
                   onChange={handleImportFile}
                 />
@@ -222,12 +224,23 @@ const QuestionBank = () => {
                         ))}
                       </td>
                       <td className="px-4 py-2 border-b flex space-x-2">
-                        <button onClick={() => updateQuestion(question)}>
-                          <FontAwesomeIcon
-                            icon={faEdit}
-                            className="text-blue-600 hover:text-blue-800"
-                          />
-                        </button>
+                        {((question.skill === 0 &&
+                          (question.questionType === 1 ||
+                            question.questionType === 2 ||
+                            question.questionType === 3)) ||
+                          (question.skill === 1 &&
+                            question.questionType === 8) ||
+                          question.questionType === 5 ||
+                          question.skill === 2 ||
+                          question.skill === 3) && (
+                          <button onClick={() => updateQuestion(question)}>
+                            <FontAwesomeIcon
+                              icon={faEdit}
+                              className="text-blue-600 hover:text-blue-800"
+                            />
+                          </button>
+                        )}
+
                         <button
                           onClick={() => handleDeleteQuestion(question.id)}
                         >

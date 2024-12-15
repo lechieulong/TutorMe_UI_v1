@@ -166,8 +166,11 @@ const CreateTest = ({
     ) {
       setIsCreateTest(false);
       toast.success("Skill created successfully!");
+      // Reload the browser
+      window.location.reload();
     } else {
-      navigate("/listTest");
+      window.location.reload();
+
       toast.success("Skill created successfully!");
     }
   });

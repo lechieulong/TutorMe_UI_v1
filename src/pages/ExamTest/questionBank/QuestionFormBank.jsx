@@ -12,6 +12,7 @@ import {
   updateQuestion,
 } from "../../../redux/testExam/TestSlice";
 import { useDispatch } from "react-redux";
+import { toast, ToastContainer } from "react-toastify";
 
 const QuestionFormBank = ({ setIsModalOpen, editQuestion }) => {
   const dispatch = useDispatch();
@@ -90,8 +91,6 @@ const QuestionFormBank = ({ setIsModalOpen, editQuestion }) => {
   };
 
   const onSubmit = (data) => {
-    console.log(data);
-
     if (editQuestion) {
       dispatch(
         updateQuestion({
@@ -99,10 +98,13 @@ const QuestionFormBank = ({ setIsModalOpen, editQuestion }) => {
           updatedQuestion: data,
         })
       );
+      toast.success("Update question  successfully");
+      setIsModalOpen(false);
     } else {
       dispatch(addQuestions(data));
+      toast.success(" Import question successfully");
+      setIsModalOpen(false);
     }
-    setIsModalOpen(false);
   };
 
   const handleSkillTypeChange = (value) => {
@@ -127,6 +129,8 @@ const QuestionFormBank = ({ setIsModalOpen, editQuestion }) => {
 
   return (
     <>
+      <ToastContainer autoClose={3000} newestOnTop closeOnClick />
+
       <button
         className="border border-red-300 mb-2"
         type="button"

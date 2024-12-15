@@ -101,7 +101,7 @@ const Header = () => {
             className="sm:order-1 flex-none text-xl font-semibold focus:outline-none focus:opacity-80"
             href="#"
           >
-            Brand
+            AIIELTS
           </a>
           <div className="sm:order-3 flex items-center gap-x-2">
             {authToken ? (

@@ -67,11 +67,9 @@ const Header = ({
 
   return (
     <div className="flex justify-between  items-center p-4 bg-green-600 shadow-lg rounded-lg">
-      <Link to={"/"}>
-        <p className="text-lg font-semibold text-white flex items-center gap-2">
-          IELTS <FontAwesomeIcon icon={faLanguage} />
-        </p>
-      </Link>
+      <p className="text-lg font-semibold text-white flex items-center gap-2">
+        IELTS <FontAwesomeIcon icon={faLanguage} />
+      </p>
 
       {practiceTestData?.testType == 1 ? (
         <p className="text-white font-bold text-2xl">Practice Mode </p>

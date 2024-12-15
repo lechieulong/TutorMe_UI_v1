@@ -41,7 +41,6 @@ const QuestionCard = ({
       }
     } catch (error) {
       console.error("Failed to fetch questions:", error);
-      toast.error("Failed to fetch questions");
     } finally {
       setIsLoading(false);
     }

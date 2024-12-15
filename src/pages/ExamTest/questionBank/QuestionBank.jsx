@@ -58,10 +58,8 @@ const QuestionBank = () => {
 
   // First useEffect to fetch data on mount
   useEffect(() => {
-    if (user.id) {
-      fetchQuestions();
-    }
-  }, [user.id, page]); // Rerun whenever user id or page changes
+    fetchQuestions();
+  }, []);
 
   // Handle scroll event to load more questions
   useEffect(() => {
@@ -106,6 +104,8 @@ const QuestionBank = () => {
     try {
       await dispatch(importQuestion(formData));
       window.location.reload();
+      console.log("hahah");
+
       toast.success("Questions imported successfully");
     } catch (error) {
       toast.error("Failed to import questions");
@@ -144,6 +144,8 @@ const QuestionBank = () => {
       setLoading(false);
     }
   };
+
+  console.log(questions);
 
   return (
     <div className="p-4 bg-gray-50">
@@ -241,6 +243,7 @@ const QuestionBank = () => {
                             />
                           </button>
                         )}
+
                         <button
                           onClick={() => handleDeleteQuestion(question.id)}
                         >

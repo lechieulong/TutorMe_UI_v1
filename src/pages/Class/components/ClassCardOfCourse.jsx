@@ -32,12 +32,8 @@ const ClassCardOfCourse = ({
     }
   };
 
-  const cardClassName = location.pathname.includes("/classOfCourse")
-    ? "flex-shrink-0 w-full sm:w-1/1 md:w-1/2 lg:w-1/2 p-2"
-    : "flex-shrink-0 w-full sm:w-1/2 md:w-1/3 lg:w-1/4 p-2";
-
   return (
-    <div className={cardClassName} onClick={handleCardClick}>
+    <div className="bg-green-50" onClick={handleCardClick}>
       <div
         className={`border rounded-lg shadow ${
           isDisabled
@@ -45,19 +41,17 @@ const ClassCardOfCourse = ({
             : "hover:shadow-lg cursor-pointer"
         } transition-transform duration-200 ${
           isActive && !isDisabled ? "border-green-400" : "border-gray-200"
-        }`}
+        } p-4`}
       >
-        <div className="pl-4 pr-4 pt-4 bg-white">
-          <h5 className="text-lg font-semibold text-gray-800">
-            {classItem.className}
-          </h5>
-          <p className="text-sm text-gray-500 mt-1">
-            Người ghi danh: {classItem.enrollmentCount}
-          </p>
-          <p className="text-sm text-gray-500 mt-1">
-            Ngày bắt đầu: {classItem.startDate}
-          </p>
-        </div>
+        <h5 className="text-lg font-semibold text-gray-800">
+          {classItem.className}
+        </h5>
+        <p className="text-sm text-gray-500 mt-1">
+          Người ghi danh: {classItem.enrollmentCount}
+        </p>
+        <p className="text-sm text-gray-500 mt-1">
+          Ngày bắt đầu: {classItem.startDate}
+        </p>
       </div>
     </div>
   );

@@ -5,7 +5,11 @@ import { STATUS } from "../../constant/SliceName";
 
 const ClassListOfCourse = (courseId) => {
   const dispatch = useDispatch();
-  const { classes, status, error } = useSelector((state) => state.classes);
+  const { classes, status, error } = useSelector((state) => ({
+    classes: state.classes.classes[courseId] || [], // Lấy danh sách lớp học theo courseId
+    status: state.classes.status,
+    switchStates: state.classes.switchStates,
+  }));
 
   useEffect(() => {
     if (status === STATUS.SUCCESS) {

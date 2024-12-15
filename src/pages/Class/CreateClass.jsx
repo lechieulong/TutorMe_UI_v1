@@ -1,3 +1,4 @@
+/* eslint-disable react/prop-types */
 import React, { useState } from "react";
 import { useDispatch } from "react-redux";
 import { createClass } from "../../redux/classes/ClassSlice";
@@ -8,8 +9,6 @@ const CreateClass = ({ courseId, onClose, onCreateSuccess }) => {
   const [count, setCount] = useState(0);
   const [startDate, setStartDate] = useState("");
   const [endDate, setEndDate] = useState("");
-  const [startTime, setStartTime] = useState("");
-  const [endTime, setEndTime] = useState("");
   const [isEnabled, setIsEnabled] = useState(true);
   const dispatch = useDispatch();
   const [inputErrors, setInputErrors] = useState({
@@ -18,8 +17,6 @@ const CreateClass = ({ courseId, onClose, onCreateSuccess }) => {
     count: false,
     startDate: false,
     endDate: false,
-    startTime: false,
-    endTime: false,
   });
 
   const validateStartDate = () => {
@@ -31,28 +28,9 @@ const CreateClass = ({ courseId, onClose, onCreateSuccess }) => {
     setInputErrors((prev) => ({ ...prev, endDate: endDate < startDate }));
   };
 
-  const validateStartTime = () => {
-    const [hours] = startTime.split(":").map(Number);
-    setInputErrors((prev) => ({
-      ...prev,
-      startTime: hours < 6 || hours >= 22,
-    }));
-  };
-
-  const validateEndTime = () => {
-    const [startHours] = startTime.split(":").map(Number);
-    const [endHours] = endTime.split(":").map(Number);
-    setInputErrors((prev) => ({
-      ...prev,
-      endTime: endHours < startHours || endHours >= 22,
-    }));
-  };
-
   const validateFields = () => {
     validateStartDate();
     validateEndDate();
-    validateStartTime();
-    validateEndTime();
     return !Object.values(inputErrors).some((error) => error);
   };
 
@@ -61,8 +39,8 @@ const CreateClass = ({ courseId, onClose, onCreateSuccess }) => {
 
     if (!validateFields()) return;
 
-    const startDateTime = new Date(`${startDate}T${startTime}`).toISOString();
-    const endDateTime = new Date(`${endDate}T${endTime}`).toISOString();
+    const startDateTime = new Date().toISOString().split("T")[0];
+    const endDateTime = new Date().toISOString().split("T")[0];
 
     const newClass = {
       className,
@@ -73,15 +51,13 @@ const CreateClass = ({ courseId, onClose, onCreateSuccess }) => {
       endDate: endDateTime,
       isEnabled,
     };
+    console.log(newClass);
 
     try {
       await dispatch(createClass({ newClass })).unwrap();
-
-      alert("Lớp học đã được tạo thành công!");
       onCreateSuccess(); // Gọi callback nếu có
       onClose(); // Đóng form
     } catch (error) {
-      console.error("Failed to create class:", error.message || error);
       onCreateSuccess(); // Gọi callback nếu có
       onClose(); // Đóng form
     }
@@ -185,44 +161,6 @@ const CreateClass = ({ courseId, onClose, onCreateSuccess }) => {
               />
             </div>
           </div>
-
-          <div className="mb-4 grid grid-cols-2 gap-4">
-            <div>
-              <label className="block text-sm font-semibold mb-2">
-                Thời Gian Bắt Đầu
-              </label>
-              <input
-                type="time"
-                value={startTime}
-                onChange={(e) => {
-                  setStartTime(e.target.value);
-                  validateStartTime();
-                }}
-                required
-                className={`w-full border p-2 rounded focus:outline-none focus:border-blue-500 ${
-                  inputErrors.startTime ? "border-red-500" : "border-gray-300"
-                }`}
-              />
-            </div>
-            <div>
-              <label className="block text-sm font-semibold mb-2">
-                Thời Gian Kết Thúc
-              </label>
-              <input
-                type="time"
-                value={endTime}
-                onChange={(e) => {
-                  setEndTime(e.target.value);
-                  validateEndTime();
-                }}
-                required
-                className={`w-full border p-2 rounded focus:outline-none focus:border-blue-500 ${
-                  inputErrors.endTime ? "border-red-500" : "border-gray-300"
-                }`}
-              />
-            </div>
-          </div>
-
           <div className="mb-4">
             <label className="inline-flex items-center">
               <input

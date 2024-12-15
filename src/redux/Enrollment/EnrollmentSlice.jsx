@@ -26,7 +26,30 @@ export const CheckUserEnrollment = createAsyncThunk(
     }
   }
 );
+export const fetchClassIds = createAsyncThunk(
+  "enrollment/fetchClassIds",
 
+  async ({ courseId, userId }, { rejectWithValue }) => {
+    try {
+      const token = Cookies.get("authToken"); // Điều chỉnh phương thức xác thực nếu cần
+      const response = await axios.get(
+        `https://localhost:7030/api/Enrollment/classIds`, // Sử dụng API endpoint chính xác
+        {
+          params: { courseId, userId }, // Truyền tham số qua query string
+          headers: {
+            Authorization: `Bearer ${token}`, // Thêm header Authorization nếu cần
+          },
+        }
+      );
+
+      return response.data; // Trả về dữ liệu trả về từ API (danh sách classIds)
+    } catch (error) {
+      return rejectWithValue(
+        error.response?.data?.message || "Failed to fetch class IDs" // Xử lý lỗi nếu có
+      );
+    }
+  }
+);
 export const enrollUser = createAsyncThunk(
   "enrollment/enrollUser",
   async ({ courseId, userId, classId }, { rejectWithValue }) => {
@@ -61,6 +84,9 @@ const initialState = {
   isEnrolled: false,
   error: null,
   enrollmentsError: null,
+  classIds: [],
+  classIdsStatus: "idle",
+  classIdsError: null,
 };
 
 const EnrollmentSlice = createSlice({
@@ -82,6 +108,17 @@ const EnrollmentSlice = createSlice({
       .addCase(CheckUserEnrollment.rejected, (state, action) => {
         state.enrollmentStatus = "failed";
         state.error = action.payload || action.error.message;
+      })
+      .addCase(fetchClassIds.pending, (state) => {
+        state.classIdsStatus = "pending";
+      })
+      .addCase(fetchClassIds.fulfilled, (state, action) => {
+        state.classIdsStatus = "succeeded";
+        state.classIds = action.payload;
+      })
+      .addCase(fetchClassIds.rejected, (state, action) => {
+        state.classIdsStatus = "failed";
+        state.classIdsError = action.payload || action.error.message;
       });
   },
 });

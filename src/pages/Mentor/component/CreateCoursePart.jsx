@@ -51,8 +51,6 @@ const CreateCoursePart = ({
     }
   };
 
-  console.log("State in CreateCoursePart:", coursePart);
-
   return (
     <div>
       <h2 className="text-xl font-semibold mb-4">Create Course Part</h2>

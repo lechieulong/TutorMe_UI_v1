@@ -8,11 +8,7 @@ import {
 } from "../../redux/testExam/TestSlice";
 import { useDispatch } from "react-redux";
 import TestExplain from "./TestExplain";
-import { GoogleGenerativeAI } from "@google/generative-ai";
 import Modal from "react-modal";
-import { generateSpeakingPrompt } from "../../components/Test/Part/generateSpeakingPrompt";
-
-const genAI = new GoogleGenerativeAI(import.meta.env.VITE_GEN_AI);
 
 const TestLayout = ({
   skillsData,
@@ -58,46 +54,6 @@ const TestLayout = ({
       window.removeEventListener("beforeunload", handleBeforeUnload);
     };
   }, []);
-
-  const evaluateSpeakingAnswer = async (userAnswers) => {
-    try {
-      const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
-
-      const prompt = generateSpeakingPrompt(
-        userAnswers.questionName,
-        userAnswers.answers[0].answerText,
-        1
-      );
-
-      const result = await model.generateContent(prompt);
-      console.log("response AI finish ");
-
-      const aiResponse =
-        result?.response?.candidates?.[0]?.content?.parts?.[0]?.text;
-
-      const overallScoreLine = aiResponse
-        .split("\n")
-        .find((line) => line.toLowerCase().includes("overall score:"));
-
-      if (!overallScoreLine) {
-        throw new Error("Overall Score not found in AI response.");
-      }
-
-      const avgScore =
-        overallScoreLine.split(":")[1]?.match(/[\d.]+/)?.[0] || "N/A";
-
-      return {
-        overallScore: avgScore,
-        feedBack: aiResponse,
-      };
-    } catch (error) {
-      console.error("Error evaluating speaking answer:", error);
-      return {
-        overallScore: "N/A",
-        feedBack: "Error processing answer.",
-      };
-    }
-  };
 
   const fetchTestData = async () => {
     try {
@@ -348,22 +304,11 @@ const TestLayout = ({
           try {
             const partIds = currentSkillData.parts.map((p) => p.id);
 
-            const updatedAnswers = {};
-            const questionIds = Object.keys(userAnswers);
-            for (const questionId of questionIds) {
-              const userAnswer = userAnswers[questionId];
-
-              const responseSpeaking = await evaluateSpeakingAnswer(userAnswer);
-              updatedAnswers[questionId] = {
-                ...userAnswer,
-                explain: responseSpeaking.feedBack,
-                overallScore: responseSpeaking.overallScore,
-              };
-            }
             const totalQuestions = getTotalQuestions(currentSkillData);
+
             const result = await dispatch(
               submitAnswerTest({
-                userAnswers: updatedAnswers,
+                userAnswers,
                 testId,
                 timeMinutesTaken: timeTakenData.timeMinutesTaken,
                 timeSecondsTaken: timeTakenData.timeSecondsTaken,
@@ -371,6 +316,7 @@ const TestLayout = ({
                 partIds: partIds,
               })
             );
+            console.log("hahha");
 
             if (result.meta.requestStatus === "fulfilled") {
               setSkillResultIds((prev) => [...prev, result.payload.id]);

@@ -3,6 +3,7 @@ import axios from "axios";
 import { SLICE_NAMES, ACTIONS, STATUS } from "../../constant/SliceName";
 import Cookies from "js-cookie";
 import { getUser } from "../../service/GetUser";
+import apiURLConfig from "../common/apiURLConfig";
 
 const API_BASE_URL = "https://localhost:7030/api";
 
@@ -37,6 +38,8 @@ export const submitAnswerTest = createAsyncThunk(
     },
     { rejectWithValue }
   ) => {
+    console.log("kkkk");
+
     const token = Cookies.get("authToken");
     const userId = getUser().sub;
 
@@ -104,7 +107,7 @@ export const getTestsByCourse = createAsyncThunk(
   async ({ courseId, page, pageSize }, { rejectWithValue }) => {
     try {
       const response = await axios.get(
-        `${API_BASE_URL}/test/test-by-course/${courseId}`,
+        `${apiURLConfig.baseURL}/test/test-by-course/${courseId}`,
         {
           params: {
             page,
@@ -128,7 +131,7 @@ export const getTestHistory = createAsyncThunk(
     try {
       const token = Cookies.get("authToken");
       const response = await axios.get(
-        `${API_BASE_URL}/test/test-history/${courseId}`,
+        `${apiURLConfig.baseURL}/test/test-history/${courseId}`,
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -152,7 +155,7 @@ export const GetResultOfATest = createAsyncThunk(
     try {
       const token = Cookies.get("authToken");
       const response = await axios.get(
-        `${API_BASE_URL}/test/test-results/${testId}`,
+        `${apiURLConfig.baseURL}/test/test-results/${testId}`,
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -255,6 +258,28 @@ export const getExplainTest = createAsyncThunk(
         skillId,
         totalPartsSubmit,
       });
+      return response.data;
+    } catch (error) {
+      return rejectWithValue(
+        error.response?.data?.message || "Failed to fetch tests"
+      );
+    }
+  }
+);
+
+export const evaluateSpeaking = createAsyncThunk(
+  `${SLICE_NAMES.TEST}/${ACTIONS.SCORE_SPEAKING}`,
+  async ({ questionName, answer, partNumber }, { rejectWithValue }) => {
+    try {
+      console.log(questionName, answer, partNumber);
+
+      const response = await axios.post(`${API_BASE_URL}/scoreSpeaking`, {
+        questionName,
+        answer,
+        partNumber,
+      });
+      console.log(response);
+
       return response.data;
     } catch (error) {
       return rejectWithValue(
@@ -582,10 +607,18 @@ export const updateQuestion = createAsyncThunk(
     try {
       const response = await axios.put(
         `${API_BASE_URL}/test/questionsBank/${id}/update`,
-        updatedQuestion
+        updatedQuestion,
+        {
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
       );
-      return response.data;
+
+      return response.data; // This should return the updated data
     } catch (error) {
+      // Log error details for debugging
+      console.error("Error updating question:", error);
       return rejectWithValue(
         error.response?.data?.message || "Failed to update question"
       );

@@ -5,8 +5,6 @@ import Speaking from "../../components/Test/Part/Speaking";
 import MultipleChoiceAnswers from "./MultipleChoiceAnswers";
 import ParseHtml from "./ParseHtml";
 import SingleChoiceAnswers from "./SingleChoiceAnswers";
-import { getScriptAudio } from "../../redux/testExam/TestSlice";
-import { useDispatch } from "react-redux";
 
 const AnswerView = ({
   partData,
@@ -19,6 +17,8 @@ const AnswerView = ({
   part2Time,
   submitting,
   practiceTestData,
+  nextPartHandler,
+  totalPart,
 }) => {
   let skill;
   switch (currentSkillKey) {
@@ -38,6 +38,8 @@ const AnswerView = ({
       skill = undefined;
       break;
   }
+
+  console.log(partData);
 
   const handleChangeWrap = (
     e,
@@ -695,6 +697,8 @@ const AnswerView = ({
           part1And3Time={part1And3Time}
           selectedVoice={selectedVoice}
           part2Time={part2Time}
+          nextPartHandler={nextPartHandler}
+          totalPart={totalPart}
         />
       )}
     </form>

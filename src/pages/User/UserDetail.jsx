@@ -26,7 +26,6 @@ const UserDetail = () => {
   // Get user information and status from the Redux store
   const { user } = useSelector((state) => state.user);
 
-  console.log("user: ", user);
   // Check authentication token
   useEffect(() => {
     const token = Cookies.get("authToken");

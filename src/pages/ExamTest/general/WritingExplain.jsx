@@ -3,7 +3,11 @@ import React, { useState, useEffect } from "react";
 const WritingExplain = ({ partData, currentSkillId }) => {
   // Function to clean and highlight text
   const cleanAndHighlightText = (explainText) => {
-    // Define key words and phrases to highlight
+    if (!explainText) {
+      // Return an empty string or a default message if explainText is null or undefined
+      return "No explanation available.";
+    }
+
     const keywords = [
       "Task Relevance",
       "Task Response",
@@ -25,27 +29,20 @@ const WritingExplain = ({ partData, currentSkillId }) => {
       "weak",
     ];
 
-    // Function to highlight the keywords
     const highlightKeyword = (text, keyword) => {
-      const regex = new RegExp(`(${keyword})`, "gi"); // Case insensitive search
+      const regex = new RegExp(`(${keyword})`, "gi");
       return text.replace(
         regex,
         `<mark style="background-color: yellow; font-weight: bold;">$1</mark>`
       );
     };
 
-    // Clean and highlight the given explainText
-    let cleanedText = explainText;
+    let cleanedText = explainText.replace(/\n/g, "<br />");
 
-    // Replace newline characters with <br /> for line breaks
-    cleanedText = cleanedText.replace(/\n/g, "<br />");
-
-    // Highlight keywords
     keywords.forEach((keyword) => {
       cleanedText = highlightKeyword(cleanedText, keyword);
     });
 
-    // Return the cleaned and highlighted text
     return cleanedText;
   };
 
@@ -61,7 +58,9 @@ const WritingExplain = ({ partData, currentSkillId }) => {
         {/* Textarea for user answer */}
         <div className="mb-6">
           <textarea
-            value={partData.sections[0].questions[0].userAnswers[0].answerText}
+            value={
+              partData?.sections[0]?.questions[0]?.userAnswers[0]?.answerText
+            }
             className="w-full h-[450px] p-4 text-lg outline-none resize-none bg-gray-100 rounded-lg shadow-md"
             placeholder="Start writing your article here..."
           />
@@ -74,7 +73,7 @@ const WritingExplain = ({ partData, currentSkillId }) => {
             className="text-lg text-gray-700"
             dangerouslySetInnerHTML={{
               __html: cleanAndHighlightText(
-                partData.sections[0].questions[0].explain
+                partData?.sections[0]?.questions[0]?.explain
               ),
             }}
           />

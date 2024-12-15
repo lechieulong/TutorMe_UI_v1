@@ -42,18 +42,24 @@ const ParseHtmlExplain = ({
   const highlightSpecialCharacters = (text) => {
     if (!text) return "";
 
-    // Replace special characters with highlighted spans
-    const regexSpecialChars = /[^\w\s]/g;
+    // Step 1: Remove IDs
+    text = text.replace(/\b[a-f0-9\-]{36}\b\s+/g, "");
+
+    // Step 2: Highlight "Correct Answer"
+    const regexCorrectAnswer = /\bCorrect Answer:\s*("[^"]+")/i;
     text = text.replace(
-      regexSpecialChars,
-      (match) => `<span class="text-red-500">${match}</span>`
+      regexCorrectAnswer,
+      (match, answer) =>
+        `<span class="font-bold text-blue-500">Correct Answer:</span> <span class="font-bold text-green-500">${answer}</span>`
     );
 
-    // Add a line break before "Question"
-    const regexQuestion = /\bQuestion\b/g;
+    // Step 3: Append "Explain here" to each section
+    const regexExplain =
+      /(The correct answer is ".*?")([^]*?)(?=(The correct answer is "|$))/g;
     text = text.replace(
-      regexQuestion,
-      (match) => `<br /><span class="font-bold text-blue-500">${match}</span>`
+      regexExplain,
+      (match, firstSentence, rest) =>
+        `${firstSentence}<br /><span class="font-bold text-yellow-500">Explain here:</span>${rest}`
     );
 
     return text;
@@ -66,7 +72,7 @@ const ParseHtmlExplain = ({
         <p className="font-bold text-yellow-400 mt-4 mb-4">Explained Answer:</p>
         {/* Highlight special characters in the explanation */}
         <p
-          className="font-bold mt-4 mb-4"
+          className="mt-4 mb-4"
           dangerouslySetInnerHTML={{
             __html: highlightSpecialCharacters(
               sectionExplain || "No explanation provided."

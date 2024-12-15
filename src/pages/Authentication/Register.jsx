@@ -44,24 +44,44 @@ const SignUp = () => {
     });
   };
 
+  const formatPhoneNumber = (phoneNumber) => {
+    const cleaned = ('' + phoneNumber).replace(/\D/g, '');
+
+    if (cleaned.length === 10 && cleaned[0] === '0') {
+      return `0${cleaned.slice(1, 4)} ${cleaned.slice(4, 7)} ${cleaned.slice(7, 10)}`;
+    }
+
+    return phoneNumber;
+  };
+
+
   const validateForm = () => {
     const errors = {};
     const passwordRegex = /^(?=.*[A-Z])(?=.*[!@#$%^&*]).{8,}$/;
 
+    const formattedPhone = formatPhoneNumber(formData.phonenumber);
+
     if (!formData.name) errors.name = "Full Name is required";
     if (!formData.email) errors.email = "Email is required";
-    if (!formData.phonenumber) errors.phonenumber = "Phone Number is required";
+
+    if (!formData.phonenumber) {
+      errors.phonenumber = "Phone Number is required";
+    } else if (formattedPhone !== formData.phonenumber) {
+      errors.phonenumber = "Phone Number is invalid";
+    }
+
     if (!formData.password) {
       errors.password = "Password is required";
     } else if (!passwordRegex.test(formData.password)) {
-      errors.password =
-        "8 characters, 1 uppercase and 1 special";
+      errors.password = "Password must be 8 characters, 1 uppercase letter, and 1 special character";
     }
-    if (formData.password !== formData.confirmPassword)
+
+    if (formData.password !== formData.confirmPassword) {
       errors.confirmPassword = "Passwords do not match";
+    }
+
     return errors;
   };
-
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -159,7 +179,7 @@ const SignUp = () => {
           <InputField
             label="Phone Number"
             id="phonenumber"
-            type="number"
+            type="text"
             name="phonenumber"
             value={formData.phonenumber}
             onChange={handleChange}

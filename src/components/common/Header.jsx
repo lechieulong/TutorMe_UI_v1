@@ -95,8 +95,8 @@ const Header = () => {
 
   return (
     <>
-      <header className="top-0 left-0  right-0 bg-accentGreen text-white w-full bg text-sm pt-3 z-50 border-b border-gray-300">
-        <nav className="mx-auto pb-2 px-4 flex flex-wrap basis-full items-center justify-between">
+      <header className="top-0 left-0  py-[17px] right-0 bg-accentGreen text-white w-full bg text-sm z-50 border-b border-gray-300">
+        <nav className="mx-auto  px-4 flex  basis-full items-center justify-between">
           <a
             className="sm:order-1 flex-none text-xl font-semibold focus:outline-none focus:opacity-80"
             href="#"
@@ -115,15 +115,13 @@ const Header = () => {
                     <FaInfinity className="text-xl" />
                   </Link>
                 )}
-                <span
+                <p
                   type="button"
-                  className="inline-flex items-center text-sm font-medium rounded-lg border 
+                  className="inline-flex items-center text-sm font-medium  rounded-lg border 
                   border-gray-200 bg-white text-gray-800 shadow-sm hover:bg-gray-50 
-                  focus:outline-none focus:bg-gray-50 disabled:opacity-50 
-                  disabled:pointer-events-none dark:border-neutral-700 
-                  transition-hover transition-transform duration-500 dark:hover:scale-110 max-w-[150px]"
+                  transition-hover transition-transform duration-500 dark:hover:scale-110 max-w-[160px]"
                 >
-                  <p className="p-2 text-black opacity-80 truncate">
+                  <p className=" text-black opacity-80 truncate  px-1">
                     {formattedAmount}
                   </p>
                   <Link
@@ -132,7 +130,7 @@ const Header = () => {
                   >
                     <FaPlusCircle />
                   </Link>
-                </span>
+                </p>
                 {/* <button
                   type="button"
                   className="py-2 px-3 inline-flex items-center gap-x-2 text-sm font-medium rounded-lg border border-gray-200 bg-lightGreen text-gray-800 shadow-sm hover:bg-gray-50 focus:outline-none focus:bg-gray-50 disabled:opacity-50 disabled:pointer-events-none   dark:border-neutral-700 transition-hover transition-transform duration-500 dark:hover:scale-110"
@@ -140,7 +138,7 @@ const Header = () => {
                   Stream now
                   <FontAwesomeIcon icon={faHeadset} />
                 </button> */}
-                <FormWithModal LiveStreamId={userFrormToken?.sub}/>
+                <FormWithModal LiveStreamId={userFrormToken?.sub} />
                 <button
                   onClick={handleLogout}
                   className="py-2 px-3 inline-flex items-center gap-x-2 text-sm font-medium rounded-lg border border-gray-200 bg-white text-gray-800 shadow-sm hover:bg-gray-50 focus:outline-none focus:bg-gray-50"
@@ -170,7 +168,7 @@ const Header = () => {
             id="hs-navbar-alignment"
             className="hs-collapse hidden overflow-hidden transition-all duration-300 basis-full grow sm:grow-0 sm:basis-auto sm:block sm:order-2"
           >
-            <div className="flex flex-col gap-5 mt-5 sm:flex-row sm:items-center sm:mt-0 sm:ps-5">
+            <div className="flex text-[15px] flex-col gap-5 mt-5 ml-4 sm:flex-row sm:items-center sm:mt-0 sm:ps-5">
               <a
                 className="font-medium text-white focus:outline-none"
                 href="/"

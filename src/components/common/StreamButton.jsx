@@ -1,8 +1,10 @@
 import React, { useState } from "react";
 import Modal from "react-modal";
 import { createStreamSession } from "./LiveStreamFrame";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faHeadset } from "@fortawesome/free-solid-svg-icons";
 
-const FormWithModal = ({LiveStreamId}) => {
+const FormWithModal = ({ LiveStreamId }) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [formData, setFormData] = useState({
     name: "",
@@ -42,18 +44,20 @@ const FormWithModal = ({LiveStreamId}) => {
 
   const handleCreate = () => {
     console.log("Dữ liệu tạo:", formData);
-    createStreamSession(LiveStreamId,formData.name,formData.Type,1);
+    createStreamSession(LiveStreamId, formData.name, formData.Type, 1);
     setIsModalOpen(false);
-    window.location.href=`/live-stream?roomID=${LiveStreamId}`;
+    window.location.href = `/live-stream?roomID=${LiveStreamId}`;
   };
 
   return (
-    <div className="p-4">
+    <div className="">
       <button
         onClick={() => setIsModalOpen(true)}
-        className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
+        type="button"
+        className=" px-3 inline-flex items-center gap-x-2 text-sm font-medium rounded-lg border border-gray-200 bg-lightGreen text-gray-800 shadow-sm hover:bg-gray-50 focus:outline-none focus:bg-gray-50 disabled:opacity-50 disabled:pointer-events-none   dark:border-neutral-700 transition-hover transition-transform duration-500 dark:hover:scale-110"
       >
-       Stream Now
+        Stream now
+        <FontAwesomeIcon icon={faHeadset} />
       </button>
 
       <Modal

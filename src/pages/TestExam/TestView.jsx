@@ -122,6 +122,8 @@ const TestView = React.memo(
               selectedVoice={selectedVoice}
               submitting={submitting}
               practiceTestData={practiceTestData}
+              nextPartHandler={handlePartClick}
+              totalPart={skillData.parts.length}
             />
           </div>
         </div>
@@ -134,6 +136,7 @@ const TestView = React.memo(
               handlePartClick={handlePartClick} // Handle part click to update selected part
               handleQuestionClick={handleQuestionClick}
               userAnswers={userAnswers}
+              selectedPart={selectedPart}
             />
           )}
         </div>

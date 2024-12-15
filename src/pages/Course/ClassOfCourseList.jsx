@@ -14,6 +14,8 @@ import Confirm from "../../components/common/Confirm";
 import Notification from "../../components/common/Notification";
 import ClassToEnroll from "../Class/components/ClassToEnroll";
 import { useLocation } from "react-router-dom";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faChalkboard } from "@fortawesome/free-solid-svg-icons";
 
 const ClassOfCourseList = () => {
   const location = useLocation();
@@ -81,7 +83,13 @@ const ClassOfCourseList = () => {
           <MentorSidebar mentorAndList={true} />
           <div className="flex-1 p-6 bg-white rounded-lg shadow-md mx-4">
             <div className="flex items-center justify-between mb-6">
-              <h2 className="text-2xl font-bold text-gray-700">Class List</h2>
+              <h2 className="text-2xl font-bold text-gray-700">
+                Class List
+                <FontAwesomeIcon
+                  icon={faChalkboard}
+                  className="text-gray-500 ml-4"
+                />
+              </h2>
               {!isMentor && (
                 <>
                   {!mentorAndList && (
@@ -112,7 +120,7 @@ const ClassOfCourseList = () => {
                 </p>
               </div>
             ) : (
-              <div className="grid grid-cols-1 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-4">
+              <div className="grid grid-cols-4 gap-4 justify-between">
                 {classes.map((classItem) => (
                   <ClassCardOfCourse
                     mentorAndList={mentorAndList}

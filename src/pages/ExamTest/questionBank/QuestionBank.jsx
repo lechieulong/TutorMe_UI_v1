@@ -27,9 +27,8 @@ const QuestionBank = () => {
   const { user } = useSelector((state) => state.user);
   const scrollRef = useRef(null);
 
+  // Fetch questions function
   const fetchQuestions = async () => {
-    if (!hasMore || loading) return;
-
     setLoading(true);
     try {
       const questionsBank = await dispatch(
@@ -47,19 +46,24 @@ const QuestionBank = () => {
     }
   };
 
+  // Handle infinite scroll
   const handleScroll = () => {
     if (!scrollRef.current) return;
 
     const { scrollTop, scrollHeight, clientHeight } = scrollRef.current;
-    if (scrollHeight - scrollTop <= clientHeight + 100) {
+    if (scrollHeight - scrollTop <= clientHeight + 100 && hasMore && !loading) {
       setPage((prevPage) => prevPage + 1);
     }
   };
 
+  // First useEffect to fetch data on mount
   useEffect(() => {
-    fetchQuestions();
-  }, [page]);
+    if (user.id) {
+      fetchQuestions();
+    }
+  }, [user.id, page]); // Rerun whenever user id or page changes
 
+  // Handle scroll event to load more questions
   useEffect(() => {
     const currentScrollRef = scrollRef.current;
     if (currentScrollRef) {
@@ -101,6 +105,7 @@ const QuestionBank = () => {
 
     try {
       await dispatch(importQuestion(formData));
+      window.location.reload();
       toast.success("Questions imported successfully");
     } catch (error) {
       toast.error("Failed to import questions");
@@ -141,7 +146,7 @@ const QuestionBank = () => {
   };
 
   return (
-    <div className="p-4 bg-gray-50  ">
+    <div className="p-4 bg-gray-50">
       {isModalOpen ? (
         <QuestionFormBank
           setIsModalOpen={setIsModalOpen}
@@ -161,7 +166,6 @@ const QuestionBank = () => {
               <label className="flex items-center cursor-pointer">
                 <input
                   type="file"
-                  accept=".json,.xlsx"
                   className="hidden"
                   onChange={handleImportFile}
                 />
@@ -184,11 +188,10 @@ const QuestionBank = () => {
             ref={scrollRef}
           >
             <table className="w-full border-collapse">
-              <thead className="bg-green-600 ">
+              <thead className="bg-green-600">
                 <tr>
                   <th className="px-4 py-2 text-left">No </th>
-
-                  <th className="px-4 py-2 text-left ">Skill name </th>
+                  <th className="px-4 py-2 text-left">Skill name </th>
                   <th className="px-4 py-2 text-left">Question name</th>
                   <th className="px-4 py-2 text-left">Question type</th>
                   <th className="px-4 py-2 text-left">Answers</th>
@@ -222,12 +225,22 @@ const QuestionBank = () => {
                         ))}
                       </td>
                       <td className="px-4 py-2 border-b flex space-x-2">
-                        <button onClick={() => updateQuestion(question)}>
-                          <FontAwesomeIcon
-                            icon={faEdit}
-                            className="text-blue-600 hover:text-blue-800"
-                          />
-                        </button>
+                        {((question.skill === 0 &&
+                          (question.questionType === 1 ||
+                            question.questionType === 2 ||
+                            question.questionType === 3)) ||
+                          (question.skill === 1 &&
+                            question.questionType === 8) ||
+                          question.questionType === 5 ||
+                          question.skill === 2 ||
+                          question.skill === 3) && (
+                          <button onClick={() => updateQuestion(question)}>
+                            <FontAwesomeIcon
+                              icon={faEdit}
+                              className="text-blue-600 hover:text-blue-800"
+                            />
+                          </button>
+                        )}
                         <button
                           onClick={() => handleDeleteQuestion(question.id)}
                         >

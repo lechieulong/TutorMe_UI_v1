@@ -607,10 +607,18 @@ export const updateQuestion = createAsyncThunk(
     try {
       const response = await axios.put(
         `${API_BASE_URL}/test/questionsBank/${id}/update`,
-        updatedQuestion
+        updatedQuestion,
+        {
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
       );
-      return response.data;
+
+      return response.data; // This should return the updated data
     } catch (error) {
+      // Log error details for debugging
+      console.error("Error updating question:", error);
       return rejectWithValue(
         error.response?.data?.message || "Failed to update question"
       );

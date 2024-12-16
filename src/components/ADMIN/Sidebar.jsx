@@ -42,7 +42,7 @@ const Sidebar = () => {
     <aside className="w-64 bg-white shadow-lg h-screen">
       <div className="flex items-center p-4">
         <img
-          src="/assets/aiillogo-COWiBZRk.ico"
+          src="https://hydra13.blob.core.windows.net/63a5630a-687a-4c38-98e2-f5ce440f3f09/Your paragraph text.png"
           alt="Logo"
           className="w-10 h-10 text-white flex items-center justify-center rounded-full"
         />

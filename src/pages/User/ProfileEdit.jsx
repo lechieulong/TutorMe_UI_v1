@@ -111,7 +111,7 @@ const ProfileEditSection = () => {
                                     <p className="text-gray-500 text-xs mt-1">Joined 09 Dec 2017</p>
                                 </div>
                                 <label className="mt-2 px-3 py-1 bg-blue-600 text-white rounded-lg text-xs cursor-pointer">
-                                    <input type="file" className="hidden" onChange={(e) => handleFileChange(e)} />
+                                    <input type="file" className="hidden" onChange={(e) => handleFileChange(e)} accept="image/*"/>
                                     Change Photo
                                 </label>
                             </div>

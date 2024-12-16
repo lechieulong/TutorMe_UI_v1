@@ -17,15 +17,15 @@ import { formatDOB } from "../../utils/Validator";
 import { Admin_ImportUser } from "../../redux/ADMIN/UserSlice";
 
 const Users = () => {
-    const dispatch = useDispatch();
-    const { users, getuserstatus, totalUsers, totalPages, importUserError, importedResponse, importUserStatus } = useSelector((state) => state.ADMIN_userslice); // totalUsers để biết tổng số người dùng
-    const [isModalOpen, setModalOpen] = useState(false);
-    const [isUnlockModalOpen, setUnlockModalOpen] = useState(false);
-    const [isNotifyOpen, setNotifyOpen] = useState(false);
-    const [searchTerm, setSearchTerm] = useState("");
-    const [currentUser, setCurrentUser] = useState(null);
-    const [currentPage, setCurrentPage] = useState(1);
-    const pageSize = 20;
+  const dispatch = useDispatch();
+  const { users, getuserstatus, totalUsers, totalPages, importUserError, importedResponse, importUserStatus } = useSelector((state) => state.ADMIN_userslice); // totalUsers để biết tổng số người dùng
+  const [isModalOpen, setModalOpen] = useState(false);
+  const [isUnlockModalOpen, setUnlockModalOpen] = useState(false);
+  const [isNotifyOpen, setNotifyOpen] = useState(false);
+  const [searchTerm, setSearchTerm] = useState("");
+  const [currentUser, setCurrentUser] = useState(null);
+  const [currentPage, setCurrentPage] = useState(1);
+  const pageSize = 20;
 
   useEffect(() => {
     dispatch(Admin_GetUsers({ page: currentPage, pageSize }));
@@ -121,96 +121,96 @@ const Users = () => {
             onChange={(e) => setSearchTerm(e.target.value)}
             className="border border-gray-300 rounded-lg p-2 text-sm focus:outline-none focus:ring focus:ring-opacity-50 focus:ring-[#d4e9e2]"
           />
-          {/* <button className="bg-purple-700 text-white px-4 py-2 rounded-lg shadow hover:bg-purple-600 transition">
-                        Add New
-                    </button> */}
-                    <button className="border border-gray-300 rounded-lg p-2 flex items-center mr-2">
-                        <FaFilter className="mr-2" /> Filter
-                    </button>
-                    <button
-                        className={`bg-red-500 text-white px-4 py-2 rounded-lg shadow transition ${importUserStatus === "pending" ? "hover:bg-red-500" : "hover:bg-red-400"
-                            }`}
-                        onClick={() => {
-                            if (importUserStatus !== "pending") {
-                                document.getElementById("fileInput").click();
-                            }
-                        }}
-                        disabled={importUserStatus === "pending"} // Disables button during import
-                    >
-                        {importUserStatus === "pending" ? "Importing..." : "Import User"}
-                    </button>
-                    <input
-                        type="file"
-                        id="fileInput"
-                        style={{ display: "none" }}
-                        onChange={(e) => handleFileChange(e)}
-                    />
-                </div>
-            </div>
+          <button className="border border-gray-300 rounded-lg p-2 flex items-center mr-2">
+            <FaFilter className="mr-2" /> Filter
+          </button>
+          <button
+            className={`bg-red-500 text-white px-4 py-2 rounded-lg shadow transition ${importUserStatus === "pending" ? "hover:bg-red-500" : "hover:bg-red-400"
+              }`}
+            onClick={() => {
+              if (importUserStatus !== "pending") {
+                document.getElementById("fileInput").click();
+              }
+            }}
+            disabled={importUserStatus === "pending"} // Disables button during import
+          >
+            {importUserStatus === "pending" ? "Importing..." : "Import User"}
+          </button>
+          <input
+            type="file"
+            id="fileInput"
+            style={{ display: "none" }}
+            onChange={(e) => handleFileChange(e)}
+            accept=".xls,.xlsx"
+          />
+        </div>
+      </div>
 
-            <div className="h-[400px] overflow-auto">
-                <table className="w-full text-left table-auto border-collapse">
-                    <thead>
-                        <tr className="bg-gray-200 text-gray-600 uppercase text-sm leading-normal">
-                            <th className="py-3 px-6">Name</th>
-                            <th className="py-3 px-6">Email</th>
-                            <th className="py-3 px-6">DOB</th>
-                            <th className="py-3 px-6">Phone number</th>
-                            <th className="py-3 px-6">Lockout End</th>
-                            <th className="py-3 px-6"></th>
-                        </tr>
-                    </thead>
-                    <tbody className="text-gray-700 text-sm">
-                        {getuserstatus === 'pending' ? (
-                            <tr>
-                                <td colSpan="6" className="text-yellow-300 text-center py-4">Loading...</td>
-                            </tr>
-                        ) : getuserstatus === 'failed' ? (
-                            <tr>
-                                <td colSpan="6" className="text-center py-4 text-red-500">An error occurred while fetching users. Please try again later.</td>
-                            </tr>
-                        ) : (
-                            users
-                                .filter((user) =>
-                                    user.email.toLowerCase().includes(searchTerm.toLowerCase())
-                                )
-                                .map((user, index) => (
-                                    <tr key={index} className={`border-t hover:bg-gray-50 ${index % 2 === 0 ? 'bg-white' : 'bg-gray-100'}`}>
-                                        <td className="py-1 px-3 flex items-center">
-                                            <img
-                                                src={user.imageURL || 'https://placehold.co/32x32'}
-                                                alt={`Profile of ${user.name}`}
-                                                className="w-8 h-8 rounded-full mr-2"
-                                            />
-                                            <span className="font-medium">{user.name}</span>
-                                        </td>
-                                        <td className="py-1 px-3">{user.email}</td>
-                                        <td className="py-1 px-3">{user.dob ? formatDOB(new Date(user.dob).toLocaleDateString()) : 'N/A'}</td>
-                                        <td className="py-1 px-3">{user.phoneNumber || 'N/A'}</td>
-                                        <td className="py-1 px-3">{user.lockoutEnd ? new Date(user.lockoutEnd).toLocaleString() : 'N/A'}</td>
-                                        <td className="py-1 px-3 text-center">
-                                            {user.lockoutEnd && new Date(user.lockoutEnd) > new Date() ? (
-                                                <button onClick={() => handleUnlockClick(user)}>
-                                                    <FaLock className="text-red-500 cursor-pointer" />
-                                                </button>
-                                            ) : (
-                                                <button onClick={() => handleLockClick(user)}>
-                                                    <FaLockOpen className="text-green-500 cursor-pointer" />
-                                                </button>
-                                            )}
-                                        </td>
-                                    </tr>
-                                ))
-                        )}
-                    </tbody>
-                </table>
-            </div>
-            {/* //Phan trang */}
-            <Pagination
-                currentPage={currentPage}
-                totalPages={totalPages}
-                onPageChange={setCurrentPage} // Set the current page directly
-            />
+      <div className="h-[400px] overflow-auto">
+        <table className="w-full text-left table-auto border-collapse">
+          <thead>
+            <tr className="bg-gray-200 text-gray-600 uppercase text-sm leading-normal">
+              <th className="py-2 px-3">Name</th>
+              <th className="py-2 px-3">Email</th>
+              <th className="py-2 px-3">DOB</th>
+              <th className="py-2 px-3">Phone number</th>
+              <th className="py-2 px-3">Role</th>
+              <th className="py-2 px-3">Lockout End</th>
+              <th className="py-2 px-3"></th>
+            </tr>
+          </thead>
+          <tbody className="text-gray-700 text-sm">
+            {getuserstatus === 'pending' ? (
+              <tr>
+                <td colSpan="6" className="text-yellow-300 text-center py-4">Loading...</td>
+              </tr>
+            ) : getuserstatus === 'failed' ? (
+              <tr>
+                <td colSpan="6" className="text-center py-4 text-red-500">An error occurred while fetching users. Please try again later.</td>
+              </tr>
+            ) : (
+              users
+                .filter((user) =>
+                  user.email.toLowerCase().includes(searchTerm.toLowerCase())
+                )
+                .map((user, index) => (
+                  <tr key={index} className={`border-t hover:bg-gray-50 ${index % 2 === 0 ? 'bg-white' : 'bg-gray-100'}`}>
+                    <td className="py-1 px-3 flex items-center">
+                      <img
+                        src={user.imageURL || 'https://placehold.co/32x32'}
+                        alt={`Profile of ${user.name}`}
+                        className="w-8 h-8 rounded-full mr-2"
+                      />
+                      <span className="font-medium">{user.name}</span>
+                    </td>
+                    <td className="py-1 px-3">{user.email}</td>
+                    <td className="py-1 px-3">{user.dob ? formatDOB(new Date(user.dob).toLocaleDateString()) : 'N/A'}</td>
+                    <td className="py-1 px-3">{user.phoneNumber || 'N/A'}</td>
+                    <td className="py-1 px-3">{user.roles && user.roles.length > 0 ? user.roles.join(', ') : 'N/A'}</td>
+                    <td className="py-1 px-3">{user.lockoutEnd ? new Date(user.lockoutEnd).toLocaleString() : 'N/A'}</td>
+                    <td className="py-1 px-3 text-center">
+                      {user.lockoutEnd && new Date(user.lockoutEnd) > new Date() ? (
+                        <button onClick={() => handleUnlockClick(user)}>
+                          <FaLock className="text-red-500 cursor-pointer" />
+                        </button>
+                      ) : (
+                        <button onClick={() => handleLockClick(user)}>
+                          <FaLockOpen className="text-green-500 cursor-pointer" />
+                        </button>
+                      )}
+                    </td>
+                  </tr>
+                ))
+            )}
+          </tbody>
+        </table>
+      </div>
+      {/* //Phan trang */}
+      <Pagination
+        currentPage={currentPage}
+        totalPages={totalPages}
+        onPageChange={setCurrentPage} // Set the current page directly
+      />
 
       <ToastContainer autoClose={3000} newestOnTop closeOnClick />
     </section>

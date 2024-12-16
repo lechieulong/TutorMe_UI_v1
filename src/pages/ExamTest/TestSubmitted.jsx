@@ -5,6 +5,9 @@ import { useParams, useNavigate } from "react-router-dom";  // Import useNavigat
 import { formatDateTime } from "../../utils/Validator";
 import { FaRegEdit, FaArrowRight } from "react-icons/fa";
 import ResultList from "./ResultList";
+import { UpdateTest } from "../../redux/ADMIN/TestExamSlice";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 const TestSubmitted = () => {
   const [activeTab, setActiveTab] = useState("Dashboard");
@@ -19,12 +22,73 @@ const TestSubmitted = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const pageSize = 10;
   const [selectedTestId, setSelectedTestId] = useState(null);
+  const [isUpdateModalOpen, setIsUpdateModalOpen] = useState(false);
+  const [selectedTest, setSelectedTest] = useState(null);
+  const [formErrors, setFormErrors] = useState({});
+
+  const { updateStatus } = useSelector((state) => state.ADMIN_tests);
 
   const skillTypes = {
     0: "Reading",
     1: "Listening",
     2: "Writing",
     3: "Speaking",
+  };
+
+  const openUpdatePopup = (item) => {
+    setSelectedTest(item);
+    setFormData({
+      id: item.id,
+      testName: item.testName,
+      startTime: item.startTime,
+      endTime: item.endTime,
+    });
+    setIsUpdateModalOpen(true);
+  };
+
+  const closeUpdatePopup = () => {
+    setIsUpdateModalOpen(false);
+    setSelectedTest(null);
+  };
+
+  const [formData, setFormData] = useState({
+    testName: '',
+    startTime: '',
+    endTime: '',
+  });
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setFormData({
+      ...formData,
+      [name]: value,
+    });
+  };
+
+  const validateForm = () => {
+    const errors = {};
+    if (!formData.testName) errors.testName = 'Test Name is required';
+    if (!formData.startTime) errors.startTime = 'Start Time is required';
+    if (!formData.endTime) errors.endTime = 'End Time is required';
+    return errors;
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    const errors = validateForm();
+
+    if (Object.keys(errors).length === 0) {
+      setFormErrors({});
+      try {
+        await dispatch(UpdateTest(formData)).unwrap();
+        toast.success("Test updated successfully!");
+        closeUpdatePopup();
+      } catch (error) {
+        toast.error(error.message || "Failed to update test.");
+      }
+    } else {
+      setFormErrors(errors);
+    }
   };
 
   const fetchResults = async (courseId, currentPage, pageSize) => {
@@ -48,7 +112,7 @@ const TestSubmitted = () => {
 
   useEffect(() => {
     fetchResults(courseId, currentPage, pageSize);
-  }, [courseId, currentPage]);
+  }, [courseId, currentPage, updateStatus]);
 
   const handleNextPage = () => {
     if (currentPage < totalPages) {
@@ -97,7 +161,7 @@ const TestSubmitted = () => {
                         <th className="px-2 py-3 text-left text-sm font-semibold">Start Time</th>
                         <th className="px-2 py-3 text-left text-sm font-semibold">End Time</th>
                         <th className="px-2 py-3 text-left text-sm font-semibold">Created At</th>
-                        <th className="px-2 py-3 text-left text-sm font-semibold">Updated At</th>
+                        <th className="px-2 py-3 text-left text-sm font-semibold">Last Updated</th>
                       </tr>
                     </thead>
                     <tbody className="divide-y divide-gray-200">
@@ -118,7 +182,7 @@ const TestSubmitted = () => {
                           </td>
                           <td className="px-2 py-1 text-gray-700 capitalize cursor-pointer">
                             {new Date(result.startTime) > new Date(new Date().toISOString().slice(0, 16)) ? (
-                              <FaRegEdit />
+                              <FaRegEdit onClick={() => openUpdatePopup(result)} />
                             ) : (
                               <FaArrowRight onClick={() => handleTestClick(result.id.toString())} />
                             )}
@@ -160,6 +224,69 @@ const TestSubmitted = () => {
           </>
         )}
       </div>
+      {/* Update modal */}
+      {isUpdateModalOpen && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
+          <div className="bg-white rounded-lg p-8 max-w-lg w-full">
+            <h2 className="text-2xl font-bold mb-4">Update Test</h2>
+            <form onSubmit={handleSubmit}>
+              <div className="mb-4">
+                <label className="block text-gray-700 text-sm font-bold mb-2">Test Name</label>
+                <input
+                  type="text"
+                  name="testName"
+                  value={formData.testName}
+                  onChange={handleChange}
+                  className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                  required
+                />
+                {formErrors.testName && <p className="text-red-500 text-xs">{formErrors.testName}</p>}
+              </div>
+              <div className="mb-4">
+                <label className="block text-gray-700 text-sm font-bold mb-2">Start Time</label>
+                <input
+                  type="datetime-local"
+                  name="startTime"
+                  value={formData.startTime}
+                  onChange={handleChange}
+                  className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                  min={new Date().toISOString().slice(0, 16)}
+                  required
+                />
+                {formErrors.startTime && <p className="text-red-500 text-xs">{formErrors.startTime}</p>}
+              </div>
+              <div className="mb-4">
+                <label className="block text-gray-700 text-sm font-bold mb-2">End Time</label>
+                <input
+                  type="datetime-local"
+                  name="endTime"
+                  value={formData.endTime}
+                  onChange={handleChange}
+                  className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                  min={new Date().toISOString().slice(0, 16)}
+                  required
+                />
+                {formErrors.endTime && <p className="text-red-500 text-xs">{formErrors.endTime}</p>}
+              </div>
+
+              <div className="flex justify-end">
+                <button
+                  type="button"
+                  onClick={closeUpdatePopup}
+                  className="bg-gray-400 text-white px-4 py-2 rounded mr-2">
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  className="bg-green-400 text-white px-4 py-2 rounded">
+                  Submit
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+      <ToastContainer autoClose={3000} newestOnTop closeOnClick />
     </>
   );
 };

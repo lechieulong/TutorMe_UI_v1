@@ -59,7 +59,7 @@ const QuestionBank = () => {
   // First useEffect to fetch data on mount
   useEffect(() => {
     fetchQuestions();
-  }, []);
+  }, [page]);
 
   // Handle scroll event to load more questions
   useEffect(() => {
@@ -186,89 +186,84 @@ const QuestionBank = () => {
           </div>
 
           <div
-            className="h-[600px] overflow-auto bg-white shadow rounded-lg"
+            className="grid grid-cols-1  gap-4 p-4 h-[500px] overflow-auto"
             ref={scrollRef}
           >
-            <table className="w-full border-collapse">
-              <thead className="bg-green-600">
-                <tr>
-                  <th className="px-4 py-2 text-left">No </th>
-                  <th className="px-4 py-2 text-left">Skill name </th>
-                  <th className="px-4 py-2 text-left">Question name</th>
-                  <th className="px-4 py-2 text-left">Question type</th>
-                  <th className="px-4 py-2 text-left">Answers</th>
-                  <th className="px-4 py-2 text-left">Actions</th>
-                </tr>
-              </thead>
-              <tbody>
-                {questions.length > 0 ? (
-                  questions.map((question, index) => (
-                    <tr
-                      key={question.id}
-                      className={`${
-                        index % 2 === 0 ? "bg-lightGreen" : "bg-white"
-                      } `}
-                    >
-                      <td className="px-4 py-2 border-b">{index + 1}</td>
-                      <td className="px-4 py-2 border-b">
-                        {convertSkill(question.skill)}
-                      </td>
-                      <td className="px-4 py-2 border-b">
-                        {question.questionName || <i>No name provided</i>}
-                      </td>
-                      <td className="px-4 py-2 border-b">
-                        {question.questionType}
-                      </td>
-                      <td className="px-4 py-2 border-b">
-                        {question.answers.map((answer, i) => (
-                          <div key={answer.id} className="text-gray-700">
-                            {i + 1}. {answer.answerText}
-                          </div>
-                        ))}
-                      </td>
-                      <td className="px-4 py-2 border-b flex space-x-2">
-                        {((question.skill === 0 &&
-                          (question.questionType === 1 ||
-                            question.questionType === 2 ||
-                            question.questionType === 3)) ||
-                          (question.skill === 1 &&
-                            question.questionType === 8) ||
-                          question.questionType === 5 ||
-                          question.skill === 2 ||
-                          question.skill === 3) && (
-                          <button onClick={() => updateQuestion(question)}>
-                            <FontAwesomeIcon
-                              icon={faEdit}
-                              className="text-blue-600 hover:text-blue-800"
-                            />
-                          </button>
-                        )}
+            {questions.length > 0 ? (
+              questions.map((question, index) => (
+                <div
+                  key={question.id}
+                  className="bg-white shadow-lg rounded-xl p-6 border border-gray-200 hover:shadow-2xl transition-all ease-in-out duration-300"
+                >
+                  <div className="text-sm text-gray-500 mb-3">
+                    Question {index + 1}
+                  </div>
 
-                        <button
-                          onClick={() => handleDeleteQuestion(question.id)}
-                        >
-                          <FontAwesomeIcon
-                            icon={faTrash}
-                            className="text-red-600 hover:text-red-800"
-                          />
-                        </button>
-                      </td>
-                    </tr>
-                  ))
-                ) : (
-                  <tr>
-                    <td
-                      colSpan="5"
-                      className="px-4 py-2 text-center text-gray-500"
+                  <h3 className="text-xl font-semibold text-gray-800 mb-3">
+                    {convertSkill(question.skill)}
+                  </h3>
+
+                  <p className="text-sm text-gray-600 mb-4">
+                    <span className="font-medium">Question Name:</span>{" "}
+                    {question.questionName || <i>No name provided</i>}
+                  </p>
+
+                  {question.skill != 2 && question.skill != 3 && (
+                    <p className="text-sm text-gray-600 mb-4">
+                      <span className="font-medium">Question Type:</span>{" "}
+                      {question.questionType}
+                    </p>
+                  )}
+
+                  {question.skill != 2 && question.skill != 3 && (
+                    <div className="text-sm text-gray-700 mb-4">
+                      <span className="font-medium">Answers:</span>
+                      {question.answers.map((answer, i) => (
+                        <div key={answer.id} className="ml-4 mb-2">
+                          <span className="font-bold text-gray-600">
+                            {i + 1}.
+                          </span>{" "}
+                          {answer.answerText}
+                        </div>
+                      ))}
+                    </div>
+                  )}
+
+                  <div className="flex space-x-3 items-center mt-4">
+                    {((question.skill === 0 &&
+                      (question.questionType === 1 ||
+                        question.questionType === 2 ||
+                        question.questionType === 3)) ||
+                      (question.skill === 1 && question.questionType === 8) ||
+                      question.questionType === 5 ||
+                      question.skill === 2 ||
+                      question.skill === 3) && (
+                      <button
+                        onClick={() => updateQuestion(question)}
+                        className="text-blue-600 hover:text-blue-800 focus:outline-none focus:ring-2 focus:ring-blue-600 focus:ring-opacity-50 p-2 rounded-lg"
+                      >
+                        <FontAwesomeIcon icon={faEdit} />
+                      </button>
+                    )}
+
+                    <button
+                      onClick={() => handleDeleteQuestion(question.id)}
+                      className="text-red-600 hover:text-red-800 focus:outline-none focus:ring-2 focus:ring-red-600 focus:ring-opacity-50 p-2 rounded-lg"
                     >
-                      No questions available.
-                    </td>
-                  </tr>
-                )}
-              </tbody>
-            </table>
+                      <FontAwesomeIcon icon={faTrash} />
+                    </button>
+                  </div>
+                </div>
+              ))
+            ) : (
+              <div className="col-span-full text-center text-gray-500">
+                No questions available.
+              </div>
+            )}
             {loading && (
-              <div className="text-center py-4 text-green-600">Loading...</div>
+              <div className="col-span-full text-center text-green-600">
+                Loading...
+              </div>
             )}
           </div>
         </div>

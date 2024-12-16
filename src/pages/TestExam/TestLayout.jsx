@@ -38,23 +38,6 @@ const TestLayout = ({
 
   const dispatch = useDispatch();
 
-  useEffect(() => {
-    const handleBeforeUnload = (event) => {
-      // Ngăn reload ngay lập tức
-      event.preventDefault();
-      event.returnValue = ""; // Kích hoạt cảnh báo mặc định của trình duyệt
-
-      return ""; // Duy trì hành vi mặc định
-    };
-
-    window.addEventListener("beforeunload", handleBeforeUnload);
-
-    return () => {
-      // Loại bỏ listener khi component bị unmount
-      window.removeEventListener("beforeunload", handleBeforeUnload);
-    };
-  }, []);
-
   const fetchTestData = async () => {
     try {
       setLoading(true);

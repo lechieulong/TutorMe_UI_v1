@@ -9,7 +9,7 @@ import { FaAngleDown, FaAngleUp } from "react-icons/fa";
 import Confirm from "../../../components/common/Confirm";
 import Notification from "../../../components/common/Notification";
 
-const CoursePartCard = ({ mentorAndList, skillId, isEnrolled }) => {
+const CoursePartCard = ({ mentorAndList, skillId, isEnrolled, isMentor }) => {
   const dispatch = useDispatch();
   const [courseParts, setCourseParts] = useState([]);
   const [collapsedParts, setCollapsedParts] = useState({});
@@ -179,6 +179,7 @@ const CoursePartCard = ({ mentorAndList, skillId, isEnrolled }) => {
               mentorAndList={mentorAndList}
               coursePartId={coursePart.id}
               isEnrolled={isEnrolled}
+              isMentor={isMentor}
             />
           </div>
         </div>

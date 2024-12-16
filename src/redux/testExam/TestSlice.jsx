@@ -38,6 +38,8 @@ export const submitAnswerTest = createAsyncThunk(
     },
     { rejectWithValue }
   ) => {
+    console.log("kkkk");
+
     const token = Cookies.get("authToken");
     const userId = getUser().sub;
 
@@ -276,6 +278,8 @@ export const evaluateSpeaking = createAsyncThunk(
         answer,
         partNumber,
       });
+      console.log(response);
+
       return response.data;
     } catch (error) {
       return rejectWithValue(
@@ -603,10 +607,18 @@ export const updateQuestion = createAsyncThunk(
     try {
       const response = await axios.put(
         `${API_BASE_URL}/test/questionsBank/${id}/update`,
-        updatedQuestion
+        updatedQuestion,
+        {
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
       );
-      return response.data;
+
+      return response.data; // This should return the updated data
     } catch (error) {
+      // Log error details for debugging
+      console.error("Error updating question:", error);
       return rejectWithValue(
         error.response?.data?.message || "Failed to update question"
       );

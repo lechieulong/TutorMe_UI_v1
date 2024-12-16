@@ -23,17 +23,15 @@ import Calendar from "./pages/Calendar/Calendar";
 import CoachingSchedule from "./pages/Teacher/CoachingSchedule";
 import ConfirmBook from "./pages/Schedule/ConfirmBook";
 import BookedSchedule from "./pages/Schedule/Scheduled";
-
+import MentorCourseDetail from "./pages/Mentor/MentorCourseDetail";
 import SkillPart from "./pages/TestExam/SkillPart";
 import LiveStream from "./pages/LiveStream";
 import MetorInfor from "./pages/Mentor/MentorInforTest";
 import CourseList from "./pages/Course/CourseList";
 import ClassOfCourse from "./pages/Course/ClassOfCourseList";
 import TestList from "./pages/User/TestList";
-import CourseDetail from "./pages/Mentor/CourseDetail";
+import CourseDetail from "./pages/User/CourseDetail";
 import CourseInfo from "./pages/Course/CourseInfo";
-// import MyLearning from "./pages/Class/MyLearning";
-// import CourseDetail from './CourseDetail';
 import CourseSkillCard from "./pages/Mentor/component/CourseSkillCard";
 import "preline";
 import TestLayout from "./pages/TestExam/TestLayout";
@@ -101,7 +99,10 @@ const App = () => {
           <Route path="/gemini" element={<SpeakingGemini />} />
           {/* Test  exam*/}
           <Route path="/manageTest/:courseId" element={<TestFormLayout />} />
-          <Route path="/manageTest/:testId/results" element={<TestFormLayout />} />
+          <Route
+            path="/manageTest/:testId/results"
+            element={<TestFormLayout />}
+          />
           <Route path="/testing/:testId" element={<TestLayout />} />
           <Route path="/testExplain/:testId" element={<TestExplain />} />
           <Route path="/testing/:skillId/skill" element={<TestLayout />} />
@@ -151,6 +152,10 @@ const App = () => {
           <Route path="/courseList" element={<CourseList />} />
           <Route path="/courseinfo" element={<CourseInfo />} />
           <Route path="/createCourse" element={<CreateCourse />} />
+          <Route
+            path="/mentorCourseDetail/:courseId/"
+            element={<MentorCourseDetail />}
+          />
           <Route path="/courseDetail/:courseId/" element={<CourseDetail />} />
           <Route path="/courseinfo/:courseId/infor" element={<CourseInfo />} />
           <Route path="createCourseLesson" element={<CreateCourseLesson />} />

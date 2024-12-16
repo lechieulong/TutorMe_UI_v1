@@ -6,7 +6,7 @@ import { useNavigate } from "react-router-dom";
 import TestFormDetail from "./TestFormDetail";
 import PreviewTest from "./PreviewTest";
 import Modal from "react-modal"; // Import react-modal
-import { toast } from "react-toastify";
+import { toast, ToastContainer } from "react-toastify";
 
 const CreateTest = ({
   testId,
@@ -158,17 +158,21 @@ const CreateTest = ({
     dispatch(addSkills({ skillsData: data, testId }));
 
     if (pageType === "admin") {
+      toast.success("Skill created successfully!");
+
       navigate("/admin/app/testsource");
     } else if (
       pageType === "class" ||
       pageType === "lesson" ||
       pageType === "finalTest"
     ) {
-      setIsCreateTest(false);
       toast.success("Skill created successfully!");
+      // Reload the browser
+      window.location.reload();
     } else {
-      navigate("/listTest");
       toast.success("Skill created successfully!");
+
+      window.location.reload();
     }
   });
 
@@ -179,6 +183,8 @@ const CreateTest = ({
 
   return (
     <>
+      <ToastContainer autoClose={2000} newestOnTop closeOnClick />
+
       <form onSubmit={handleFinish}>
         <div className="mt-16">
           <ul className="relative flex flex-row justify-between gap-x-2">

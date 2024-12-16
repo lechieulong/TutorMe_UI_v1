@@ -144,7 +144,8 @@ const SkillPart = () => {
                       <CreateTest testId={testId} />
                     ) : (
                       <>
-                        {user?.role?.includes(Roles.ADMIN || Roles.TEACHER) ? (
+                        {user?.role?.includes(Roles.ADMIN) ||
+                        user?.role?.includes(Roles.TEACHER) ? (
                           <button
                             className="p-2 bg-red-100"
                             onClick={() => setCreateSkill(true)}
@@ -152,7 +153,7 @@ const SkillPart = () => {
                             Create Skill
                           </button>
                         ) : (
-                          <p>No skills is available now </p>
+                          <p>No skills are available now</p>
                         )}
                       </>
                     )}

@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { FaStar } from "react-icons/fa";
 import axios from "axios";
 
-const Rating = ({ courseId, userId, onClose }) => {
+const EnrollmentCourseList = ({ courseId, userId, onClose }) => {
   const [ratingValue, setRatingValue] = useState(0);
   const [review, setReview] = useState("");
 
@@ -66,4 +66,4 @@ const Rating = ({ courseId, userId, onClose }) => {
   );
 };
 
-export default Rating;
+export default EnrollmentCourseList;

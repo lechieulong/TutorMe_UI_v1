@@ -128,13 +128,12 @@ const CourseCard = ({
 
   let destinationPath;
   if (location.pathname === "/mentorCourseList") {
-    destinationPath = `/courseDetail/${courseId}`;
+    destinationPath = `/mentorCourseDetail/${courseId}`;
   } else if (location.pathname === "/courseList") {
     destinationPath = `/courseDetail/${courseId}`;
   } else if (isMyLearning) {
     destinationPath = `/classDetail/${courseId}/${classId}`;
   }
-
   return (
     <div className="relative bg-white shadow-md rounded-lg flex flex-col hover:bg-gray-100 transition-all">
       {notification && (
@@ -174,7 +173,7 @@ const CourseCard = ({
           <img
             src={imageUrl}
             alt={courseName}
-            className="w-full h-32 object-cover rounded-t-lg mb-4"
+            className="w-full h-60 object-cover rounded-t-lg mb-4"
           />
         )}
         <div className="p-4">

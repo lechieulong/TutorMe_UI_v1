@@ -6,29 +6,19 @@ import MentorSidebar from "../../components/Mentor/MentorSideBar";
 import ClassCardOfCourse from "../Class/components/ClassCardOfCourse";
 import CreateClass from "../Class/CreateClass";
 import { fetchClasses } from "../../redux/classes/ClassSlice";
-import { useNavigate } from "react-router-dom";
-import useAuthToken from "../../hooks/useAuthToken";
 import { fetchClassIds } from "../../redux/Enrollment/EnrollmentSlice";
 import { getUser } from "../../service/GetUser";
-import Confirm from "../../components/common/Confirm";
-import Notification from "../../components/common/Notification";
 import ClassToEnroll from "../Class/components/ClassToEnroll";
 import { useLocation } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faChalkboard } from "@fortawesome/free-solid-svg-icons";
-
+import { toast, ToastContainer } from "react-toastify";
 const ClassOfCourseList = () => {
   const location = useLocation();
   const { mentorAndList, isMentor } = location.state || {};
   const { courseId } = useParams();
   const dispatch = useDispatch();
-  const navigate = useNavigate();
-  const authToken = useAuthToken();
-  const [confirmMessage, setConfirmMessage] = useState("");
-  const [confirmStatus, setConfirmStatus] = useState("");
-  const [confirmAction, setConfirmAction] = useState(() => {});
-  const [notification, setNotification] = useState("");
-  const [isConfirmOpen, setIsConfirmOpen] = useState(false);
+
   const [userId, setUserId] = useState(null);
 
   const { classes, status, switchStates } = useSelector((state) => ({
@@ -50,6 +40,14 @@ const ClassOfCourseList = () => {
 
   const handleCreateClassSuccess = () => {
     setShowCreateClassModal(false);
+    toast.success("Class created successfully.");
+    dispatch(fetchClasses(courseId));
+    dispatch(fetchClassIds({ courseId, userId }));
+  };
+
+  const handleEnrollSuccess = () => {
+    setIsPopupOpen(false);
+    toast.success("Enrolled successfully.");
     dispatch(fetchClasses(courseId));
     dispatch(fetchClassIds({ courseId, userId }));
   };
@@ -78,6 +76,7 @@ const ClassOfCourseList = () => {
 
   return (
     <MainLayout>
+      <ToastContainer autoClose={3000} newestOnTop closeOnClick />
       <div className="flex flex-col w-screen min-h-screen bg-gray-50">
         <div className="flex flex-1 w-full">
           <MentorSidebar mentorAndList={true} />
@@ -141,27 +140,16 @@ const ClassOfCourseList = () => {
         <CreateClass
           courseId={courseId}
           onClose={() => setShowCreateClassModal(false)}
-          onCreateSuccess={handleCreateClassSuccess}
+          onCreateSuccess={handleCreateClassSuccess} // Chỉ xử lý tạo lớp
         />
       )}
-      {notification && (
-        <Notification
-          message={notification}
-          onClose={() => setNotification("")}
-        />
-      )}
-      <Confirm
-        isOpen={isConfirmOpen}
-        onClose={() => setIsConfirmOpen(false)}
-        onConfirm={confirmAction}
-        message={confirmMessage}
-        status={confirmStatus}
-      />
+
       {isPopupOpen && (
         <ClassToEnroll
           courseId={courseId}
-          userId={userId}
-          onClose={handleClosePopup}
+          userlearnerId={userId}
+          onClose={handleClosePopup} // Đóng popup sau khi đăng ký
+          onEnrollSuccess={handleEnrollSuccess} // Chỉ xử lý enroll
         />
       )}
     </MainLayout>

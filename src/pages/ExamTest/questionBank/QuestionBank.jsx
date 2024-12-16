@@ -98,6 +98,13 @@ const QuestionBank = () => {
     const file = event.target.files[0];
     if (!file) return;
 
+    const allowedExtensions = ["txt"];
+    const fileExtension = file.name.split(".").pop().toLowerCase();
+    if (!allowedExtensions.includes(fileExtension)) {
+      toast.error("Only .txt files are allowed!");
+      return;
+    }
+
     const formData = new FormData();
     formData.append("file", file);
 

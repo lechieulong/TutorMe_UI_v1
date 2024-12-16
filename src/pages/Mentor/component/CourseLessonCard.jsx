@@ -264,23 +264,25 @@ const CourseLessonCard = ({
                           </div>
                         )}
 
-                      {isEnrolled && (
-                        <div className="flex space-x-4">
-                          {testExams
-                            .filter((exam) => exam.lessonId === courseLesson.id)
-                            .map((exam) => (
-                              <div key={exam.id}>
-                                <Link
-                                  to={`/testDetail/${exam.id}`} // Link dẫn đến chi tiết bài kiểm tra
-                                  className="py-2 px-3 text-sm font-medium rounded-lg border border-gray-200 bg-white text-gray-800 shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-gray-200"
-                                >
-                                  Do Test for Lesson: {courseLesson.title}{" "}
-                                  (Test: {exam.name})
-                                </Link>
-                              </div>
-                            ))}
-                        </div>
-                      )}
+                      {isEnrolled ||
+                        (mentorAndList && (
+                          <div className="flex space-x-4">
+                            {testExams
+                              .filter(
+                                (exam) => exam.lessonId === courseLesson.id
+                              )
+                              .map((exam) => (
+                                <div key={exam.id}>
+                                  <Link
+                                    to={`/testDetail/${exam.id}`} // Link dẫn đến chi tiết bài kiểm tra
+                                    className="py-2 px-3 text-sm font-medium rounded-lg border border-gray-200 bg-white text-gray-800 shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-gray-200"
+                                  >
+                                    {exam.testName}
+                                  </Link>
+                                </div>
+                              ))}
+                          </div>
+                        ))}
                     </div>
                   ))
                 )}

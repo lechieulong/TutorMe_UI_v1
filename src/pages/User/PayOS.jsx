@@ -37,7 +37,7 @@ import {
     ) {
       setLoading(true);  
       if(Number(priceRef.current.value)<10000){
-        toast.error("vui lòng nhập số tiền tối thiểu 10000");
+        toast.error("Please input minimum isis 10000");
         setLoading(false);
         return;
       }
@@ -88,7 +88,7 @@ import {
         setLoading(false);
       } catch (error) {
         setLoading(false);
-        toast.error("Có lỗi xảy ra");
+        toast.error("ERROR");
       }
     };
     const openUICustom = (checkoutResponse) => {
@@ -169,14 +169,14 @@ import {
         >
           <ToastContainer />
           <Typography component="h4" variant="h4" className="!font-bold">
-            Tạo mới đơn hàng
+            New Transaction
           </Typography>
           <Box component="div" sx={{ marginTop: "20px", marginBottom: "20px" }}>
-            <Typography>Đơn giá:</Typography>
+            <Typography>Amount:</Typography>
             <Box component="div" sx={{ width: "100%", marginTop: "10px" }}>
               <TextField
                 id="outlined-basic"
-                label="Nhập đơn giá"
+                label="input Amount"
                 variant="outlined"
                 defaultValue="10000"
                 inputRef={priceRef}
@@ -185,11 +185,11 @@ import {
             </Box>
           </Box>
           <Box component="div" sx={{ marginBottom: "20px" }}>
-            <Typography>Nội dung thanh toán:</Typography>
+            <Typography>Decription:</Typography>
             <Box component="div" sx={{ width: "100%", marginTop: "10px" }}>
               <TextField
                 id="outlined-basic"
-                label="Nhập nội dung"
+                label="Decription"
                 variant="outlined"
                 defaultValue="deposit money into account"
                 inputRef={descriptionRef}
@@ -206,7 +206,7 @@ import {
               disabled={redirectLoading}
               className="!bg-[#5D5FEF] !normal-case"
             >
-              Đến trang thanh toán
+              Payment
               {redirectLoading ? (
                 <>
                   {" "}

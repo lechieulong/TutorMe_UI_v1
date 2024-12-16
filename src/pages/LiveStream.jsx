@@ -51,7 +51,6 @@ const LiveStream = () => {
     
         // Cập nhật IdolData với đối tượng
         setIdolData(data);
-        console.log(data);
       } catch (error) {
         console.error("Error in fetchData", error);
       }

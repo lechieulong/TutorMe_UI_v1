@@ -1,19 +1,18 @@
 import React, { useEffect, useState } from "react";
-import { FaFileExport } from "react-icons/fa";
+import { getLives,EndLive } from "../../components/ADMIN/Lives";
+import {FaRegEyeSlash, FaFileExport, FaPlus,  } from "react-icons/fa";
 import { handleExport } from "../../components/ADMIN/CSV";
-import { getTransactions } from "../../components/ADMIN/Transaction";
 
-const TransactionPage = () => {
-  const [transactions, setTransactions] = useState([]);
+const LivesPage = () => {
+  const [lives, setLives] = useState([]);
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(0);
   const [searchQuery, setSearchQuery] = useState("");
-
   const pageSize = 10;
 
   const fetchProducts = async () => {
-    const result = await getTransactions(page, pageSize, searchQuery);
-    setTransactions(result.transactions);
+    const result = await getLives(page, pageSize, searchQuery);
+    setLives(result.lives);
     setTotalPages(result.totalPages);
   };
 
@@ -26,15 +25,10 @@ const TransactionPage = () => {
     setPage(1);
     fetchProducts();
   };
-
-  const handleOpenModal = (gift = null) => {
-    setSelectedGift(gift);
-    setIsModalOpen(true);
-  };
   return (
     <section className="bg-white p-6 rounded-lg shadow-md">
       <div className="flex justify-between items-center mb-4">
-        <h2 className="text-xl font-semibold">Transactions</h2>
+        <h2 className="text-xl font-semibold">Lives</h2>
         <div className="flex items-center">
           <form onSubmit={handleSearch} className="flex items-center">
             <input
@@ -45,7 +39,7 @@ const TransactionPage = () => {
               className="border border-gray-300 rounded-lg p-2 mr-2"
             />
             <button
-            onClick={() => handleExport(transactions)} 
+            onClick={() => handleExport(lives)} 
               type="button"
               className="border border-gray-300 rounded-lg p-2 flex items-center"
             >
@@ -58,31 +52,39 @@ const TransactionPage = () => {
       <table className="w-full text-left">
         <thead>
           <tr className="border-b">
-            <th className="py-2">UserId</th>
-            <th className="py-2">Amount</th>
-            <th className="py-2">PaymentStatus</th>
-            <th className="py-2">Created Date</th>
+            <th className="py-2">Name</th>
+            <th className="py-2">RoomId</th>
+            <th className="py-2">Status</th>
+            <th className="py-2">StartTime</th>
+            <th className="py-2">Type</th>
             <th className="py-2">Actions</th>
           </tr>
         </thead>
         <tbody>
-          {transactions.length > 0 ? (
-            transactions.map((transaction) => (
-              <tr key={transaction.id} className="border-b">
-                <td className="py-2">{transaction.userId}</td>
-                <td className="py-2">{transaction.amount}</td>
-                <td className="py-2">{transaction.paymentStatus}</td>
+          {lives.length > 0 ? (
+            lives.map((live) => (
+              <tr key={live.id} className="border-b">
+                <td className="py-2">{live.name}</td>
+                <td className="py-2">{live.liveStreamId}</td>
+                <td className="py-2">{live.status==1?"Live":"End Live"}</td>
                 <td className="py-2">
-                  {new Date(transaction.createdAt).toLocaleString()}
-                </td>
-                <td className="py-2 flex whitespace-nowrap">
-               </td>  
+                  {new Date(live.startTime).toLocaleString()}
+                </td>  
+                <td className="py-2">{live.type==0?"Public":"Private"}</td>     
+                <td className="py-2 flex space-x-2">
+                  <button
+                    onClick={() => EndLive(live.liveStreamId)}
+                    className="px-2 py-1 bg-red-500 text-white rounded-lg flex items-center"
+                  >
+                    <FaRegEyeSlash className="mr-1" /> Stop Live
+                  </button>
+                </td>     
               </tr>
             ))
           ) : (
             <tr>
               <td colSpan="6" className="py-2 text-center">
-                No transactions found.
+                No Lives found.
               </td>
             </tr>
           )}
@@ -118,4 +120,4 @@ const TransactionPage = () => {
   );
 };
 
-export default TransactionPage;
+export default LivesPage;

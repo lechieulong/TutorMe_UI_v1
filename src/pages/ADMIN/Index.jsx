@@ -11,10 +11,14 @@ import TeacherRequest from "../../components/ADMIN/TeacherRequest";
 import TeacherRequestDetail from "./Request/TeacherRequestDetail";
 import TestLayoutAdmin from "../ExamTest/general/TestLayoutAdmin";
 import TestList from "./TestList";
+import GiftPage  from "./Gifts";
+import LivesPage from "./LiveStream";
+import { ToastContainer } from "react-toastify";
 import CourseReportList from "./Report/CourseReportList";
 const AdminApp = () => {
   return (
     <div className="flex h-screen w-screen overflow-hidden">
+      <ToastContainer/>
       <Sidebar className="hidden sm:block w-64 bg-gray-800" />
       <div className="flex-1 flex flex-col">
         <AdminHeader className="bg-white shadow" />
@@ -30,6 +34,8 @@ const AdminApp = () => {
               <Route path="/testsource" element={<TestList />} />
               <Route path="/test" element={<TestLayoutAdmin />} />
               <Route path="/transactions" element={<Transaction />} />
+              <Route path="/gifts" element={<GiftPage  />} />
+              <Route path="/liveStreams" element={<LivesPage  />} />
               <Route path="/docs/importuser" element={<ImportUser />} />
               <Route path="/docs/teacherrequest" element={<TeacherRequest />} />
               <Route

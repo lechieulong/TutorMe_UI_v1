@@ -111,14 +111,21 @@ const GiftList = ({UserName,userId,roomID,handleSendCommand} ) => {
         <ul className="flex flex-wrap mt-4">
           {gifts.map(gift => (
             <li key={gift.id} className="w-1/5 p-2 mb-2 relative">
-              <button onClick={() => sendGift(gift.id, gift.url,UserName,userId, roomID,handleSendCommand)} className="block w-full h-full focus:outline-none bg-gradient-to-r from-blue-300 to-purple-300 bg-opacity-70 rounded-lg">
-               <DotLottieReact src={gift.url} loop autoplay />
-               <div className="absolute inset-0 flex flex-col justify-center items-center text-black bg-opacity-50">
-               <h3 className="font-bold">{gift.name}</h3>
-               <p>Price: {gift.price}</p>
-               </div>
-              </button>
-            </li>
+            <button
+              onClick={() =>
+                sendGift(gift.id, gift.url, UserName, userId, roomID, handleSendCommand)
+              }
+              className="block w-full h-full focus:outline-none bg-gradient-to-r from-blue-300 to-purple-300 bg-opacity-70 rounded-lg"
+            >
+              <DotLottieReact src={gift.url} loop autoplay />
+              <div className="absolute inset-0 flex flex-col justify-between items-center text-black bg-opacity-50 p-2">
+                {/* Hiển thị tên ở đầu giữa */}
+                <h3 className="font-bold text-center">{gift.name}</h3>
+                {/* Hiển thị giá ở góc trái bên dưới */}
+                <p className="self-start text-sm">{gift.price}</p>
+              </div>
+            </button>
+          </li>
           ))}
         </ul>
       )}

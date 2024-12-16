@@ -28,6 +28,7 @@ const BuyTicket = async (TicketId,UserId,liveStreamId,Price) => {
       UserId:UserId,}
       await AddUser_Ticket(formData);
       toast.success("Buy Ticket successfully.");
+      window.location.href = window.location.href;
     }else {
       // Hiện thông báo khi số dư không đủ
       const userChoice = window.confirm("Số dư không đủ. Bạn có muốn nạp tiền không?");
@@ -275,7 +276,7 @@ const CreateTicketButton = ({ roomID, role,privacy,setPrivacy,handleUpdateComman
           <p>No ticket information available.</p>
         )}
         <button type="button" onClick={() => BuyTicket(ticketInfo.id, user.sub, ticketInfo.liveStreamId, ticketInfo.price)} className="bg-green-500 text-white py-2 px-4 rounded mr-2">
-          Mua vé
+          Buy
         </button>
         <button type="button" onClick={closePopup} className="bg-gray-500 text-white py-2 px-4 rounded">
           Cancel

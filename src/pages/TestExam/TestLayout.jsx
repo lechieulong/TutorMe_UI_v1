@@ -187,6 +187,7 @@ const TestLayout = ({
             timeSecondsTaken: timeTakenData.timeSecondsTaken,
             totalQuestions: totalQuestionReading,
             partIds: partIds,
+            totalParts: parts,
           })
         ).then((result) => {
           if (result.meta.requestStatus === "fulfilled") {
@@ -220,6 +221,7 @@ const TestLayout = ({
             timeSecondsTaken: timeTakenData.timeSecondsTaken,
             totalQuestions,
             partIds: partIdsLis,
+            totalParts: parts,
           })
         ).then((result) => {
           if (result.meta.requestStatus === "fulfilled") {
@@ -254,6 +256,7 @@ const TestLayout = ({
                 timeSecondsTaken: timeTakenData.timeSecondsTaken,
                 totalQuestions,
                 partIds: partIdsW,
+                totalParts: parts,
               })
             );
 
@@ -297,6 +300,7 @@ const TestLayout = ({
                 timeSecondsTaken: timeTakenData.timeSecondsTaken,
                 totalQuestions,
                 partIds: partIds,
+                totalParts: parts,
               })
             );
             console.log("hahha");

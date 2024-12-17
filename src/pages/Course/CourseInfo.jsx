@@ -182,6 +182,7 @@ const CourseInfo = () => {
           <div className="flex flex-col bg-white border w-full shadow-sm rounded-xl p-4 relative group mb-4 mt-4">
             <div className="flex justify-between items-center mb-4">
               <h4 className="text-md font-bold text-gray-800">Classes</h4>
+
               {userRole !== "USER" && (
                 <button
                   type="button"

@@ -206,40 +206,37 @@ const CourseLessonCard = ({
                           {courseLesson.title}
                         </h4>
                       </div>
-                      {isEnrolled ||
-                        (mentorAndList && (
-                          <div className="absolute top-2 right-2 flex gap-2">
-                            <>
-                              <button
-                                type="button"
-                                onClick={() =>
-                                  handleCreateTest(courseLesson.id)
-                                }
-                                className="py-2 px-3 text-sm font-medium rounded-lg border border-gray-200 bg-white text-gray-800 shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-gray-200"
-                              >
-                                Create Test
-                              </button>
+                      {mentorAndList && (
+                        <div className="absolute top-2 right-2 flex gap-2">
+                          <>
+                            <button
+                              type="button"
+                              onClick={() => handleCreateTest(courseLesson.id)}
+                              className="py-2 px-3 text-sm font-medium rounded-lg border border-gray-200 bg-white text-gray-800 shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-gray-200"
+                            >
+                              Create Test
+                            </button>
 
-                              <button
-                                type="button"
-                                onClick={() => addDynamicForm(courseLesson.id)}
-                                className="py-2 px-3 text-sm font-medium rounded-lg border border-gray-200 bg-white text-gray-800 shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-gray-200"
-                              >
-                                Create Lesson Content
-                              </button>
+                            <button
+                              type="button"
+                              onClick={() => addDynamicForm(courseLesson.id)}
+                              className="py-2 px-3 text-sm font-medium rounded-lg border border-gray-200 bg-white text-gray-800 shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-gray-200"
+                            >
+                              Create Lesson Content
+                            </button>
 
-                              <button
-                                type="button"
-                                onClick={() =>
-                                  confirmDeleteLesson(courseLesson.id)
-                                }
-                                className="py-2 px-3 text-sm font-medium rounded-lg border border-gray-200 bg-red-500 text-white shadow-sm hover:bg-red-600 focus:outline-none focus:ring-2 focus:ring-red-500"
-                              >
-                                Delete Lesson
-                              </button>
-                            </>
-                          </div>
-                        ))}
+                            <button
+                              type="button"
+                              onClick={() =>
+                                confirmDeleteLesson(courseLesson.id)
+                              }
+                              className="py-2 px-3 text-sm font-medium rounded-lg border border-gray-200 bg-red-500 text-white shadow-sm hover:bg-red-600 focus:outline-none focus:ring-2 focus:ring-red-500"
+                            >
+                              Delete Lesson
+                            </button>
+                          </>
+                        </div>
+                      )}
                       {dynamicForms
                         .filter((form) => form.lessonId === courseLesson.id)
                         .map((form) => (
@@ -261,26 +258,22 @@ const CourseLessonCard = ({
                               courseLessontId={courseLesson.id}
                               key={courseLesson.id}
                             />
+                            {testExams
+                              .filter(
+                                (exam) => exam.lessonId === courseLesson.id
+                              )
+                              .map((exam) => (
+                                <div key={exam.id}>
+                                  <Link
+                                    to={`/testDetail/${exam.id}`} // Link dẫn đến chi tiết bài kiểm tra
+                                    className="py-2 px-3 text-sm font-medium rounded-lg border border-gray-200 bg-white text-gray-800 shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-gray-200"
+                                  >
+                                    {exam.testName}
+                                  </Link>
+                                </div>
+                              ))}
                           </div>
                         )}
-
-                      {isEnrolled && (
-                        <div className="flex space-x-4">
-                          {testExams
-                            .filter((exam) => exam.lessonId === courseLesson.id)
-                            .map((exam) => (
-                              <div key={exam.id}>
-                                <Link
-                                  to={`/testDetail/${exam.id}`} // Link dẫn đến chi tiết bài kiểm tra
-                                  className="py-2 px-3 text-sm font-medium rounded-lg border border-gray-200 bg-white text-gray-800 shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-gray-200"
-                                >
-                                  Do Test for Lesson: {courseLesson.title}{" "}
-                                  (Test: {exam.name})
-                                </Link>
-                              </div>
-                            ))}
-                        </div>
-                      )}
                     </div>
                   ))
                 )}

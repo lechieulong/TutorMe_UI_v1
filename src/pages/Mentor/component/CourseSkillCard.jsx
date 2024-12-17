@@ -214,7 +214,7 @@ const CourseSkillCard = ({
                           to={`/testDetail/${exam.id}`} // Link dẫn đến chi tiết bài kiểm tra
                           className="py-2 px-3 text-sm font-medium rounded-lg border border-gray-200 bg-white text-gray-800 shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-gray-200"
                         >
-                          Do Test for Skill: {skill.description}
+                          {exam.testName}
                         </Link>
                       </div>
                     ))}

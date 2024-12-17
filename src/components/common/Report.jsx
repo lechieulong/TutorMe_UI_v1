@@ -5,6 +5,7 @@ import { createReport } from "../../redux/common/ReportSlice"; // Import hàm cr
 import Notification from "./Notification"; // Import Notification component
 import Confirm from "./Confirm"; // Import Confirm component
 import debounce from "lodash.debounce";
+import InputFileUpload from "./InputFileUpload";
 const Report = ({ userId, courseId, teacherId, liveStreamId, onClose }) => {
   const dispatch = useDispatch();
   const [formData, setFormData] = useState({
@@ -15,7 +16,6 @@ const Report = ({ userId, courseId, teacherId, liveStreamId, onClose }) => {
     priority: "medium",
     feedbackOption: false,
   });
-
   const [notificationMessage, setNotificationMessage] = useState(null);
   const [notificationStatus, setNotificationStatus] = useState("yes"); // To set success or failure status
   const [showConfirm, setShowConfirm] = useState(false);
@@ -79,10 +79,8 @@ const Report = ({ userId, courseId, teacherId, liveStreamId, onClose }) => {
               required
             >
               <option value="">Select Report Type</option>
-              <option value="website">Website</option>
               <option value="course">Course</option>
               <option value="teacher">Teacher</option>
-              <option value="livestream">LiveStream</option>
             </select>
           </div>
 
@@ -96,7 +94,7 @@ const Report = ({ userId, courseId, teacherId, liveStreamId, onClose }) => {
               name="issueTitle"
               value={formData.issueTitle}
               onChange={handleChange}
-              className="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+              className="mt-1 p-2 block w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
               placeholder="Briefly describe the issue"
               required
             />
@@ -111,24 +109,10 @@ const Report = ({ userId, courseId, teacherId, liveStreamId, onClose }) => {
               name="issueDescription"
               value={formData.issueDescription}
               onChange={handleChange}
-              className="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+              className="mt-1 p-2 block w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
               rows="4"
               placeholder="Describe the issue in detail"
               required
-            />
-          </div>
-
-          {/* Attachment URL (Now allows image upload) */}
-          <div>
-            <label className="block text-sm font-medium text-gray-700">
-              Attachment (Image)
-            </label>
-            <input
-              type="text"
-              name="attachmentUrl"
-              onChange={handleChange}
-              className="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
-              accept="image/*" // Only allow image files
             />
           </div>
 
@@ -141,7 +125,7 @@ const Report = ({ userId, courseId, teacherId, liveStreamId, onClose }) => {
               name="priority"
               value={formData.priority}
               onChange={handleChange}
-              className="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+              className="mt-1 p-2 block w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
             >
               <option value="low">Low</option>
               <option value="medium">Medium</option>

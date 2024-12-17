@@ -16,6 +16,7 @@ const VisuallyHiddenInput = styled("input")({
   width: 1,
 });
 
+// Thêm các định dạng ảnh vào allowedExtensions
 const allowedExtensions = [
   "application/vnd.openxmlformats-officedocument.wordprocessingml.document", // .docx
   "application/msword", // .doc
@@ -23,6 +24,10 @@ const allowedExtensions = [
   "application/vnd.ms-excel", // .xls
   "application/vnd.ms-powerpoint", // .ppt
   "application/vnd.openxmlformats-officedocument.presentationml.presentation", // .pptx
+  "image/jpeg", // .jpg, .jpeg
+  "image/png", // .png
+  "image/gif", // .gif
+  "image/webp", // .webp
 ];
 
 export default function InputFileUpload({ type, onUpload }) {
@@ -37,7 +42,7 @@ export default function InputFileUpload({ type, onUpload }) {
 
     if (invalidFiles.length > 0) {
       setNotificationMessage(
-        `Unsupported file type(s) detected. Please upload Word, Excel, or PowerPoint files only.`
+        `Unsupported file type(s) detected. Please upload Word, Excel, PowerPoint, or image files only.`
       );
       setNotificationType("no");
       return;

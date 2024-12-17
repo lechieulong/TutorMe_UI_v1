@@ -264,21 +264,19 @@ const TestExplain = ({ totalPartsSubmit, skillResultIds, testId, skillId }) => {
 
       {currentSkillKey != "speaking" && (
         <div>
-          <div>
-            {testData != undefined && (
-              <div className="flex flex-col">
-                <HeaderExplain
-                  testData={testData}
-                  currentSkillIndex={currentSkillIndex}
-                  handleNextSkill={handleNextSkill}
-                />
-                <TestViewExplain
-                  skillData={currentSkillData}
-                  currentSkillKey={currentSkillKey}
-                />
-              </div>
-            )}
-          </div>
+          {testData != undefined && (
+            <div className="flex flex-col">
+              <HeaderExplain
+                testData={testData}
+                currentSkillIndex={currentSkillIndex}
+                handleNextSkill={handleNextSkill}
+              />
+              <TestViewExplain
+                skillData={currentSkillData}
+                currentSkillKey={currentSkillKey}
+              />
+            </div>
+          )}
         </div>
       )}
     </MainLayout>

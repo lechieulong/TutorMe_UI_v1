@@ -35,6 +35,7 @@ export const submitAnswerTest = createAsyncThunk(
       timeSecondsTaken,
       totalQuestions,
       partIds,
+      totalParts,
     },
     { rejectWithValue }
   ) => {
@@ -52,6 +53,7 @@ export const submitAnswerTest = createAsyncThunk(
           timeSecondsTaken, // Add time in seconds
           totalQuestions,
           partIds,
+          totalParts,
         },
         {
           Authorization: `Bearer ${token}`,

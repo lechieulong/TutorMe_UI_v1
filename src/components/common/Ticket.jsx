@@ -5,12 +5,13 @@ import { getUser } from '../../service/GetUser';
 import {toast } from "react-toastify";
 import { CheckBanlance,GiveMeMyMoney } from './PayOS';
 import { UpdateStreamSession } from './LiveStreamFrame';
+import apiURLConfig from "../../redux/common/apiURLConfig";
 
-const url = import.meta.env.VITE_Backend_URL;
+const url = apiURLConfig.baseURL;
 const user=getUser();
 export const isHaveTicket = async (RoomId, UserId) => {
   try { 
-      const response = await axios.get(`${url}/api/User_Ticket/${RoomId}/${UserId}`);
+      const response = await axios.get(`${url}/User_Ticket/${RoomId}/${UserId}`);
       return response.data.id != null; 
   } catch (error) {
     console.error('Error Check Ticket:', error);
@@ -27,6 +28,7 @@ const BuyTicket = async (TicketId,UserId,liveStreamId,Price) => {
       UserId:UserId,}
       await AddUser_Ticket(formData);
       toast.success("Buy Ticket successfully.");
+      window.location.href = window.location.href;
     }else {
       // Hiện thông báo khi số dư không đủ
       const userChoice = window.confirm("Số dư không đủ. Bạn có muốn nạp tiền không?");
@@ -45,7 +47,7 @@ const BuyTicket = async (TicketId,UserId,liveStreamId,Price) => {
 };
 const AddUser_Ticket = async (formData) => {
   try {
-      const response = await axios.post(`${url}/api/User_Ticket/`,formData, {
+      const response = await axios.post(`${url}/User_Ticket/`,formData, {
         headers: {
           'Content-Type': 'application/json',
         },
@@ -59,7 +61,7 @@ const AddUser_Ticket = async (formData) => {
 const GetTicket = async (RoomId) => {
   console.log(RoomId);
   try {
-    const response = await axios.get(`${url}/api/Ticket/${RoomId}`);
+    const response = await axios.get(`${url}/Ticket/${RoomId}`);
     return response.data;
   } catch (error) {
     console.error('Error Check Ticket:', error);
@@ -102,7 +104,7 @@ const CreateTicketButton = ({ roomID, role,privacy,setPrivacy,handleUpdateComman
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const response = await axios.post(`${url}/api/Ticket`, formData, {
+      const response = await axios.post(`${url}/Ticket`, formData, {
         headers: {
           'Content-Type': 'application/json',
         },
@@ -114,11 +116,11 @@ const CreateTicketButton = ({ roomID, role,privacy,setPrivacy,handleUpdateComman
     }
   };
 
-  const handlePrivacyChange = async(e) => {
-    setPrivacy(e.target.value);
-    privacy=e.target.value;
-    handleUpdateCommand(e.target.value);
-    await UpdateStreamSession(roomID,e.target.value==='Private'?1:0);
+  const handlePrivacyChange = async(value) => {
+    handleUpdateCommand(value);
+    await UpdateStreamSession(roomID,value==='Private'?1:0);
+    privacy=value;
+    setPrivacy(value);
   };
   const handleTicket = async () => {
     const Ticket = await GetTicket(roomID);
@@ -158,7 +160,7 @@ const CreateTicketButton = ({ roomID, role,privacy,setPrivacy,handleUpdateComman
         <select
           value={privacy}
           onChange={(e) => {
-            handlePrivacyChange(e);
+            handlePrivacyChange(e.target.value);
             if (e.target.value === 'Private') {
               handleTicket();
             }
@@ -179,8 +181,8 @@ const CreateTicketButton = ({ roomID, role,privacy,setPrivacy,handleUpdateComman
         }}
         contentLabel="Create Ticket"
         ariaHideApp={false}
-        className="bg-white p-6 rounded shadow-lg max-w-md w-full"
-        overlayClassName="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center"
+        className="bg-white p-6 rounded shadow-lg max-w-md w-full z-50"
+        overlayClassName="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-40"
       >
         <h2 className="text-xl mb-4">Create Ticket</h2>
         <form onSubmit={handleSubmit}>
@@ -249,17 +251,18 @@ const CreateTicketButton = ({ roomID, role,privacy,setPrivacy,handleUpdateComman
     </>
   ) : (role!=undefined&&roomID!=undefined&&
     <div>
-      <button className="bg-green-500 text-white py-2 px-4 rounded" onClick={handleBuyTicket}>
+      {privacy==="Private"&&<button className="bg-green-500 text-white py-2 px-4 rounded" onClick={handleBuyTicket}>
         Buy Ticket
-      </button>
+      </button>}
+      
 
       <Modal
         isOpen={isPopupOpen}
         onRequestClose={closePopup}
         contentLabel="Ticket Information"
         ariaHideApp={false}
-        className="bg-white p-6 rounded shadow-lg max-w-md w-full"
-        overlayClassName="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center"
+        className="bg-white p-6 rounded shadow-lg max-w-md w-full z-50"
+        overlayClassName="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-40"
       >
         <h2 className="text-xl mb-4">Ticket Information</h2>
         {ticketInfo ? (
@@ -273,7 +276,7 @@ const CreateTicketButton = ({ roomID, role,privacy,setPrivacy,handleUpdateComman
           <p>No ticket information available.</p>
         )}
         <button type="button" onClick={() => BuyTicket(ticketInfo.id, user.sub, ticketInfo.liveStreamId, ticketInfo.price)} className="bg-green-500 text-white py-2 px-4 rounded mr-2">
-          Mua vé
+          Buy
         </button>
         <button type="button" onClick={closePopup} className="bg-gray-500 text-white py-2 px-4 rounded">
           Cancel

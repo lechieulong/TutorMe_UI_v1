@@ -2,7 +2,11 @@ import LiveStreamFrame from "../components/common/LiveStreamFrame";
 import MainLayout from "../layout/MainLayout";
 import CreateTicketButton from "../components/common/Ticket";
 import LiveStreamList from "../components/common/LiveStreamList";
-import { GetListIdIsLiveStream,getUrlParams,getStreamSession } from "../components/common/LiveStreamFrame";
+import {
+  GetListIdIsLiveStream,
+  getUrlParams,
+  getStreamSession,
+} from "../components/common/LiveStreamFrame";
 import { useState, useEffect } from "react";
 import { useDispatch } from "react-redux";
 import { GetUserByID } from "../redux/users/UserSlice";
@@ -14,15 +18,14 @@ const LiveStream = () => {
     const fetchRoomData = async () => {
       try {
         const Listid = await GetListIdIsLiveStream();
-        const roomIdFromUrl = getUrlParams().get('roomID');
+        const roomIdFromUrl = getUrlParams().get("roomID");
         if (roomIdFromUrl) {
-          if(await getStreamSession(roomIdFromUrl)){
+          if (await getStreamSession(roomIdFromUrl)) {
             setRoomID(roomIdFromUrl);
           }
-        } else if (Listid!=null) {
+        } else if (Listid != null) {
           setRoomID(Listid[0]);
-        }    
-
+        }
       } catch (error) {
         console.error("Error fetching room data:", error);
       } finally {
@@ -35,31 +38,30 @@ const LiveStream = () => {
   useEffect(() => {
     async function fetchData() {
       if (!roomID) return; // Dừng nếu roomID không tồn tại
-    
+
       try {
-    
         // Lấy thông tin streamSession và userInfo
         const streamSession = await getStreamSession(roomID);
         const userInfo = await dispatch(GetUserByID(roomID));
-    
+
         // Tạo đối tượng chứa dữ liệu hợp nhất
-        const data = { 
-          ...streamSession, 
-          description: streamSession.name, 
-          ...userInfo?.payload 
+        const data = {
+          ...streamSession,
+          description: streamSession.name,
+          ...userInfo?.payload,
         };
-    
+
         // Cập nhật IdolData với đối tượng
         setIdolData(data);
-        console.log(data);
       } catch (error) {
         console.error("Error in fetchData", error);
       }
     }
-    if(roomID){
+    if (roomID) {
       fetchData();
     }
   }, [roomID]);
+
   return (
     <MainLayout>
       <div className="flex flex-col h-min mt-16">
@@ -91,10 +93,9 @@ const LiveStream = () => {
           </div>
           <p className="text-black mt-1 mb-4">{idolData.description}</p>
           <hr className="border-t-2 border-gray-300 my-4 w-full" />
-          <p className="text-black mt-1 mb-4">Giới thiệu</p>
 
-          <h2 className="text-black font-bold mb-4">Livestreams</h2>
-         <LiveStreamList/>
+          <h2 className="text-black font-bold mb-4">Hot Livestreams</h2>
+          <LiveStreamList />
         </div>
       </div>
     </MainLayout>

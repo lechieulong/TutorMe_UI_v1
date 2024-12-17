@@ -14,11 +14,11 @@ import CreateTicketButton from "./Ticket";
 import { ToastContainer } from "react-toastify";
 import { GetUserByID } from "../../redux/users/UserSlice";
 import { useDispatch } from "react-redux";
-
+import apiURLConfig from "../../redux/common/apiURLConfig";
 // Truy cập các biến môi trường
 const appID = Number(import.meta.env.VITE_APP_ID);
 const serverSecret = import.meta.env.VITE_SERVER_SECRET;
-const url = import.meta.env.VITE_Backend_URL;
+const url = apiURLConfig.baseURL;
 let zp = null;
 
 // Hàm chuyển UUID sang chuỗi 32 byte (xóa dấu gạch nối)
@@ -40,7 +40,7 @@ export const convert32BytesToUUID = (uuid32Bytes) => {
 // Lấy danh sách phiên phát sóng trực tiếp
 const fetchStreamSessions = async () => {
   try {
-    const response = await axios.get(`${url}/api/StreamSession`);
+    const response = await axios.get(`${url}/StreamSession`);
     return response.data;
   } catch (error) {
     console.error("Error fetching stream sessions:", error);
@@ -58,7 +58,7 @@ export const createStreamSession= async (LiveStreamId,Name,Type,Status)=>{
     LiveStreamId:LiveStreamId
   }
   try{
-    const respone = await axios.post(`${url}/api/StreamSession`, fomdata, {
+    const respone = await axios.post(`${url}/StreamSession`, fomdata, {
       headers: {
         'Content-Type': 'application/json',
       },
@@ -84,7 +84,7 @@ export const UpdateStreamSession= async (LiveStreamId,type)=>{
     LiveStreamId:StreamSession.liveStreamId
   }
   try{
-    const respone = await axios.put(`${url}/api/StreamSession`, fomdata, {
+    const respone = await axios.put(`${url}/StreamSession`, fomdata, {
       headers: {
         'Content-Type': 'application/json',
       },
@@ -113,7 +113,7 @@ const EndStreamSession= async (LiveStreamId)=>{
     LiveStreamId:StreamSession.liveStreamId
   }
   try{
-    const respone = await axios.put(`${url}/api/StreamSession`, fomdata, {
+    const respone = await axios.put(`${url}/StreamSession`, fomdata, {
       headers: {
         'Content-Type': 'application/json',
       },
@@ -126,7 +126,7 @@ const EndStreamSession= async (LiveStreamId)=>{
 // Tìm Kiếm phiên live theo LiveStreamID
 export const getStreamSession = async (liveId) => {
   try {
-    const response = await axios.get(`${url}/api/StreamSession/${liveId}`);
+    const response = await axios.get(`${url}/StreamSession/${liveId}`);
     return response.data;
   } catch (error) {
     console.error('Error fetching stream sessions:', error);
@@ -269,7 +269,7 @@ const LiveStreamFrame = ({ width, height, className }) => {
         setPrivacy(StreamSession.type==1?'Private':'Public');
         const isPublic=!StreamSession.type==1;
         const isHaveTikcet=await isHaveTicket(roomID,convert32BytesToUUID(UserId));
-        if(isPublic||!isPublic&&isHaveTikcet||!isPublic&&role_str==="Host"){
+        if(isPublic||!isPublic&&isHaveTikcet||!isPublic&&role_str==="Host"||!isPublic&&user?.role?.includes("ADMIN")){
            setAccess(true);
         }else{
           setAccess(false);
@@ -277,18 +277,14 @@ const LiveStreamFrame = ({ width, height, className }) => {
     };
     if (roomID) checkAccess();
   }, [roomID,privacy]);
+  
 
   useEffect(() => {
     const metting = async () => {
-      const element = document.getElementById("meetingContainer");
-      zp = await ZegoUIKitPrebuilt.create(kitToken);
-      await zp.addPlugins({ ZIM });
-      myMeeting(element)  
+      myMeeting(document.getElementById("meetingContainer"));
     };
     if (Access) {
       metting();
-    }else if(zp){
-     zp.destroy();
     }
   }, [Access]);
 
@@ -309,17 +305,70 @@ const LiveStreamFrame = ({ width, height, className }) => {
       3000
     );
   };
-  if (loading) return <div>Loading...</div>;
+  if (loading){
+    return <div
+    className={`relative border-4 border-blue-500 rounded-lg overflow-hidden ${className}`}
+    style={{ width, height }}
+  >
+    {/* Background */}
+    <div
+      className="absolute inset-0 bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500"
+    ></div>
+  
+    {/* Overlay */}
+    <div
+      className="absolute inset-0 bg-black/50 flex items-center justify-center"
+    >
+      <span className="text-white text-lg font-semibold animate-pulse">
+        Loading
+      </span>
+    </div>
+  </div>
+  }
 
-  if (!roomID) return <div>No room data available</div>;
+  if (!roomID) {
+    return <div className={`relative border-4 border-blue-500 rounded-lg overflow-hidden ${className}`} style={{ width, height }}>
+    {/* Background */}
+    <div className="absolute inset-0 bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500"></div>
+  
+    {/* Overlay */}
+    <div
+      className="absolute inset-0 bg-black/50 flex items-center justify-center"
+    >
+      <span className="text-white text-lg font-semibold animate-pulse">
+      No Room Exists 
+      </span>
+    </div>
+  </div>
+    
+  }
+
 
   if(!Access){
-        return (  
-        <div className={`bg-black ${className}`} style={{ width, height, display: 'flex', justifyContent: 'center', alignItems: 'center',flexDirection: 'column' }}>
-         {user!=null&&<CreateTicketButton roomID={roomID} role={role_str} privacy={privacy} setPrivacy={setPrivacy}/>}
-         <p>Đây là private Live vui lòng mua vé</p>
+    return (
+      <div
+        className={`relative border-4 border-blue-500 rounded-lg overflow-hidden ${className}`}
+        style={{ width, height }}
+      >
+        {/* Background */}
+        <div className="absolute inset-0 bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500"></div>
+    
+        {/* Overlay */}
+        <div className="absolute inset-0 bg-black/50 flex flex-col items-center justify-center space-y-4">
+          <span className="text-white text-lg font-semibold animate-pulse text-center">
+            This room is private, Please buy ticket.
+          </span>
+          {user != null && (
+            <CreateTicketButton
+              roomID={roomID}
+              role={role_str}
+              privacy={privacy}
+              setPrivacy={setPrivacy}
+            />
+          )}
         </div>
-        );
+      </div>
+    );
   }
    // Information about the user from backend
   const UserName = user?user.name:"guest";
@@ -342,18 +391,18 @@ const LiveStreamFrame = ({ width, height, className }) => {
         roomID,
     },
   ];
-
-  const kitToken = ZegoUIKitPrebuilt.generateKitTokenForTest(
-    appID,
-    serverSecret,
-    roomID,
-    UserId,
-    UserName
-  );
-
-  const myMeeting = (element) => {
-    const rom =sessionStorage.getItem('roomID');
-    zp.hasJoinedRoom=false;
+  const myMeeting = async (element) => {
+    const kitToken = ZegoUIKitPrebuilt.generateKitTokenForTest(
+      appID,
+      serverSecret,
+      roomID,
+      UserId,
+      UserName
+    );
+    zp = ZegoUIKitPrebuilt.create(kitToken);
+    zp.addPlugins({ ZIM });
+    setTimeout(() => {
+      zp.hasJoinedRoom=false;
       zp.joinRoom({
         onJoinRoom: () => {
           console.log("user join");
@@ -375,7 +424,6 @@ const LiveStreamFrame = ({ width, height, className }) => {
         onLeaveRoom: () =>{
           console.log("user leave");
           sessionStorage.removeItem('roomID');
-          zp.destroy();
         },
         onUserAvatarSetter:(userList)=>{
           userList.forEach(u => {
@@ -405,9 +453,13 @@ const LiveStreamFrame = ({ width, height, className }) => {
           }else if(messages[0].command.Type=="Privacy"){
             const Privacy=messages[0].command;
             setPrivacy(Privacy);
-          };
+          }else if(messages[0].command.Type=="Test"){
+           console.log("hello");
+          }
+          ;
         },
       }); 
+    }, 3000);
   };
   // Hàm gửi thông báo quà tặng
   const handleSendCommand = (UserName, GiftURL) => {
@@ -427,9 +479,10 @@ const LiveStreamFrame = ({ width, height, className }) => {
       return false;
     }
   };
+
   // Hàm gửi thông báo thay doi
   const handleUpdateCommand = (Privacy) => {
-    if (zp) {
+    if (zp&&zp.hasJoinedRoom) {
       return zp
         .sendInRoomCustomCommand({ Type: "Privacy", Privacy })
         .then(() => {
@@ -446,16 +499,17 @@ const LiveStreamFrame = ({ width, height, className }) => {
   };
 
   return (
-    <div> <ToastContainer/>  
-     {user!=null&&<CreateTicketButton roomID={roomID} role={role_str} privacy={privacy} setPrivacy={setPrivacy} handleUpdateCommand={handleUpdateCommand}/>} 
-     <div style={{ position: "relative" }}>
-    <div id="meetingContainer" className={`bg-black ${className}`} style={{ width, height }}></div>
-     {role_str != "Host"&&user!=null&&<GiftList userId={UserId} roomID={roomID} UserName={UserName} handleSendCommand={handleSendCommand} />}
-      
-      <GiftNotification notifications={giftNotifications} /> {/* Sử dụng component thông báo */}
+    <div className={`relative border-4 border-blue-500 rounded-lg overflow-hidden  inset-0 bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 ${className}`}>
+    {user!=null&&window.location.pathname.includes("/live-stream")&&!user?.role.includes("USER")&&<CreateTicketButton roomID={roomID} role={role_str} privacy={privacy} setPrivacy={setPrivacy} handleUpdateCommand={handleUpdateCommand}/>} 
+    <div  className={`relative border-blue-500 rounded-lg overflow-hidden ${className}`} style={{ width, height }}> <ToastContainer/>       
+     <div className="absolute inset-0 bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500" style={{ position: "relative" }}>
+        <div id="meetingContainer" className={`bg-black ${className}`} style={{ width, height }}></div>
      </div>
-     
     </div>
+    {role_str != "Host"&&user!=null&&window.location.pathname.includes("/live-stream")&&<GiftList userId={UserId} roomID={roomID} UserName={UserName} handleSendCommand={handleSendCommand} />}
+    <GiftNotification notifications={giftNotifications} /> {/* Sử dụng component thông báo */}
+    </div>
+    
   );
 };
 

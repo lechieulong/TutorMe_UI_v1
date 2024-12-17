@@ -159,7 +159,6 @@ const CreateTest = ({
 
     if (pageType === "admin") {
       toast.success("Skill created successfully!");
-
       navigate("/admin/app/testsource");
     } else if (
       pageType === "class" ||
@@ -168,10 +167,11 @@ const CreateTest = ({
     ) {
       toast.success("Skill created successfully!");
       // Reload the browser
+      setIsCreateTest(false);
       window.location.reload();
     } else {
       toast.success("Skill created successfully!");
-
+      setIsCreateTest(false);
       window.location.reload();
     }
   });

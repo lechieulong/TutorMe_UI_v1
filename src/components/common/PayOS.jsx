@@ -1,5 +1,9 @@
 import axios from "axios";
 import { getUser } from '../../service/GetUser';
+import apiURLConfig from "../../redux/common/apiURLConfig";
+import CryptoJS from "crypto-js";
+
+const url= apiURLConfig.baseURL;
 
 export async function createPaymentLink(formData) {
   try {
@@ -70,7 +74,7 @@ export async function CreateOrder_backend(formData){
     console.log(formData)
       const res = await axios({
         method: "POST",
-        url: `${import.meta.env.VITE_Backend_URL}/api/Transaction`,
+        url: `${url}/Transaction`,
         data: formData,
         headers: {
           "Content-Type": "application/json",
@@ -85,7 +89,7 @@ export async function UpdateOrder_backend(formData){
   try {
       const res = await axios({
         method: "Put",
-        url: `${import.meta.env.VITE_Backend_URL}/api/Transaction`,
+        url: `${url}/Transaction`,
         data: formData,
         headers: {
           "Content-Type": "application/json",
@@ -100,7 +104,7 @@ export async function getOrder_Backend(orderId){
   try {
       const res = await axios({
         method: "GET",
-        url: `${import.meta.env.VITE_Backend_URL}/api/Transaction/${orderId}`,
+        url: `${url}/Transaction/${orderId}`,
         headers: {
           "Content-Type": "application/json",
         },
@@ -111,21 +115,26 @@ export async function getOrder_Backend(orderId){
     }
 }
 export async function GiveMeMyMoney(UserId,money,Message){
+  const data = `userid=${UserId}&money=${money}&message=${Message}`;
+  const checksumKey = `${import.meta.env.VITE_Checksum_Key}`;
+  const signature = CryptoJS.HmacSHA256(data, checksumKey).toString(CryptoJS.enc.Hex);
   const model={
     UserId:UserId,
     Balance:money,
     Message:Message,
-    signature:"signature"
+    signature:signature
   }
+  console.log(model);
   try {
       const res = await axios({
         method: "PUT",
-        url: `${import.meta.env.VITE_Backend_URL}/api/AccountBalance`,
+        url: `${url}/AccountBalance`,
         data:model,
         headers: {
           "Content-Type": "application/json",
         },
       });
+      console.log(res.data);
       return res.data;
     } catch (error) {
       return error.response.data;
@@ -136,7 +145,7 @@ export async function GetBanlance(){
   try {
       const res = await axios({
         method: "GET",
-        url: `${import.meta.env.VITE_Backend_URL}/api/AccountBalance/${user.sub}`,
+        url: `${url}/AccountBalance/${user.sub}`,
         headers: {
           "Content-Type": "application/json",
         },

@@ -21,9 +21,11 @@ const FormWithModal = ({ LiveStreamId }) => {
       transform: "translate(-50%, -50%)",
       width: "400px",
       borderRadius: "10px",
+      zIndex: "1000",
     },
     overlay: {
       backgroundColor: "rgba(0, 0, 0, 0.5)",
+      zIndex: "999",
     },
   };
 

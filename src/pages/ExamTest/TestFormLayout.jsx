@@ -12,6 +12,7 @@ import { useSelector } from "react-redux";
 
 const TestFormLayout = () => {
   const user = getUser();
+  const [isViewExplain, setIsViewExplain] = useState(false);
 
   const initActiveTab =
     user?.role?.includes(Roles.ADMIN) || user?.role?.includes(Roles.TEACHER)
@@ -26,8 +27,8 @@ const TestFormLayout = () => {
     switch (activeTab) {
       case "QuestionBanks":
         return <QuestionBank />;
-      case "Dashboard":
-        return <TestSubmitted />;
+      // case "Dashboard":
+      //   return <TestSubmitted setIsViewExplain={setIsViewExplain} />;
       case "Settings":
         return <ContributionAttempt />;
       case "History":
@@ -38,75 +39,87 @@ const TestFormLayout = () => {
   };
   return (
     <div>
-      <Header />
+      {!isViewExplain && <Header />}
       <div className="flex w-screen  ">
-        <MentorSidebar isEnrolled={isEnrolled} />
-        <div className="w-full h-[90vh] overflow-y-auto">
-          <div className="border-b border-gray-200 dark:border-gray-700">
-            <ul className="flex p-2 flex-wrap -mb-px text-sm font-medium text-center text-gray-500 dark:text-gray-400">
-              {(user?.role?.includes(Roles.ADMIN) ||
-                user?.role?.includes(Roles.TEACHER)) && (
+        {!isViewExplain && <MentorSidebar isEnrolled={isEnrolled} />}
+
+        <div
+          className={`w-full ${
+            !isViewExplain ? "h-[90vh]" : "h-[100vh]"
+          } overflow-y-auto`}
+        >
+          {!isViewExplain && (
+            <div className="border-b border-gray-200 dark:border-gray-700">
+              <ul className="flex p-2 flex-wrap -mb-px text-sm font-medium text-center text-gray-500 dark:text-gray-400">
+                {(user?.role?.includes(Roles.ADMIN) ||
+                  user?.role?.includes(Roles.TEACHER)) && (
+                  <li className="me-2">
+                    <button
+                      type="button"
+                      onClick={() => setActiveTab("QuestionBanks")}
+                      className={`inline-flex items-center justify-center p-4 border-b-2 rounded-t-lg ${
+                        activeTab === "QuestionBanks"
+                          ? "text-accentGreen-600 border-accentGreen" // Active state
+                          : "hover:text-gray-600 hover:border-gray-300"
+                      } dark:hover:text-gray-300`}
+                    >
+                      Question Bank
+                    </button>
+                  </li>
+                )}
+
+                {(user?.role?.includes(Roles.ADMIN) ||
+                  user?.role?.includes(Roles.TEACHER)) && (
+                  <li className="me-2">
+                    <button
+                      type="button"
+                      onClick={() => setActiveTab("Dashboard")}
+                      className={`inline-flex items-center justify-center p-4 border-b-2 rounded-t-lg ${
+                        activeTab === "Dashboard"
+                          ? "text-accentGreen-600 border-accentGreen" // Active state
+                          : "hover:text-gray-600 hover:border-gray-300"
+                      } dark:hover:text-gray-300`}
+                    >
+                      Test Submitted
+                    </button>
+                  </li>
+                )}
+
                 <li className="me-2">
                   <button
                     type="button"
-                    onClick={() => setActiveTab("QuestionBanks")}
+                    onClick={() => setActiveTab("Settings")}
                     className={`inline-flex items-center justify-center p-4 border-b-2 rounded-t-lg ${
-                      activeTab === "QuestionBanks"
+                      activeTab === "Settings"
                         ? "text-accentGreen-600 border-accentGreen" // Active state
                         : "hover:text-gray-600 hover:border-gray-300"
                     } dark:hover:text-gray-300`}
                   >
-                    Question Bank
+                    Test Analysis
                   </button>
                 </li>
-              )}
-
-              {(user?.role?.includes(Roles.ADMIN) ||
-                user?.role?.includes(Roles.TEACHER)) && (
                 <li className="me-2">
                   <button
                     type="button"
-                    onClick={() => setActiveTab("Dashboard")}
+                    onClick={() => setActiveTab("History")}
                     className={`inline-flex items-center justify-center p-4 border-b-2 rounded-t-lg ${
-                      activeTab === "Dashboard"
+                      activeTab === "History"
                         ? "text-accentGreen-600 border-accentGreen" // Active state
                         : "hover:text-gray-600 hover:border-gray-300"
                     } dark:hover:text-gray-300`}
                   >
-                    Test Submitted
+                    History
                   </button>
                 </li>
-              )}
+              </ul>
+            </div>
+          )}
 
-              <li className="me-2">
-                <button
-                  type="button"
-                  onClick={() => setActiveTab("Settings")}
-                  className={`inline-flex items-center justify-center p-4 border-b-2 rounded-t-lg ${
-                    activeTab === "Settings"
-                      ? "text-accentGreen-600 border-accentGreen" // Active state
-                      : "hover:text-gray-600 hover:border-gray-300"
-                  } dark:hover:text-gray-300`}
-                >
-                  Test Analysis
-                </button>
-              </li>
-              <li className="me-2">
-                <button
-                  type="button"
-                  onClick={() => setActiveTab("History")}
-                  className={`inline-flex items-center justify-center p-4 border-b-2 rounded-t-lg ${
-                    activeTab === "History"
-                      ? "text-accentGreen-600 border-accentGreen" // Active state
-                      : "hover:text-gray-600 hover:border-gray-300"
-                  } dark:hover:text-gray-300`}
-                >
-                  History
-                </button>
-              </li>
-            </ul>
-          </div>
-          <div className="p-7">{renderComponent()}</div>
+          <div className="">{renderComponent()}</div>
+
+          {activeTab === "Dashboard" && (
+            <TestSubmitted setIsViewExplain={setIsViewExplain} />
+          )}
         </div>
       </div>
     </div>

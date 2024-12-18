@@ -10,14 +10,14 @@ const API_BASE_URL = "https://localhost:7030/api";
 // const API_BASE_URL = "https://aiilapi.azurewebsites.net/api";
 export const fetchTests = createAsyncThunk(
   `${SLICE_NAMES.TEST}/${ACTIONS.FETCH_TESTS}`,
-  async (_, { rejectWithValue }) => {
-    // No need for the destructuring of the first argument
+  async ({ pageNumber = 1, pageSize = 10 }, { rejectWithValue }) => {
     try {
-      const response = await axios.get(`${API_BASE_URL}/test/admintests`);
-      console.log("vcl"); // Verify the response is received here
+      const response = await axios.get(`${API_BASE_URL}/test/admintests`, {
+        params: { pageNumber, pageSize },
+      });
       return response.data;
     } catch (error) {
-      console.error("Error fetching tests:", error); // Log errors if any
+      console.error("Error fetching tests:", error);
       return rejectWithValue(
         error.response?.data?.message || "Failed to fetch tests"
       );

@@ -171,7 +171,6 @@ const CreateTest = ({
       window.location.reload();
     } else {
       toast.success("Skill created successfully!");
-      setIsCreateTest(false);
       window.location.reload();
     }
   });

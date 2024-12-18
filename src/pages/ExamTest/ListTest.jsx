@@ -11,7 +11,7 @@ const ListTest = () => {
   const [tests, setTests] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
-  const [testsPerPage] = useState(4);
+  const [testsPerPage] = useState(6);
   const dispatch = useDispatch();
 
   useEffect(() => {
@@ -20,8 +20,11 @@ const ListTest = () => {
         fetchTests({ pageNumber: currentPage, pageSize: testsPerPage })
       );
       if (result.payload) {
+        console.log("Payload:", result.payload);
         setTests(result.payload.data || []);
-        setTotalPages(result.payload.TotalPages || 1);
+        console.log(result.payload.totalPages);
+
+        setTotalPages(result.payload.totalPages || 1);
       }
     };
 

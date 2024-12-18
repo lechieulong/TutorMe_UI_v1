@@ -54,30 +54,6 @@ const Speaking = ({
     );
   };
 
-  useEffect(() => {
-    const handleBeforeUnload = (event) => {
-      event.preventDefault();
-      event.returnValue =
-        "Are you sure you want to leave? Your progress might be lost.";
-    };
-
-    const preventNavigation = () => {
-      window.history.pushState(null, document.title, window.location.href);
-    };
-
-    // Ngăn người dùng thoát trang
-    window.addEventListener("beforeunload", handleBeforeUnload);
-
-    // Ngăn nút Back
-    window.history.pushState(null, document.title, window.location.href);
-    window.addEventListener("popstate", preventNavigation);
-
-    return () => {
-      window.removeEventListener("beforeunload", handleBeforeUnload);
-      window.removeEventListener("popstate", preventNavigation);
-    };
-  }, []);
-
   const scoringAndExplain = async (answer) => {
     try {
       const result = await dispatch(
@@ -185,8 +161,6 @@ const Speaking = ({
     window.speechSynthesis.cancel();
     setLoadingSubmit(false);
     setExplaining(false);
-    console.log("last question ");
-    console.log("Total part ", totalPart);
 
     if (isLastQuestion && partData.partNumber < totalPart) {
       console.log("handlePart ne ");

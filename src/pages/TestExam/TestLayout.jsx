@@ -38,10 +38,37 @@ const TestLayout = ({
 
   const dispatch = useDispatch();
 
+  useEffect(() => {
+    if (practiceTestData) return;
+    const handleBeforeUnload = (event) => {
+      event.preventDefault();
+      event.returnValue =
+        "Are you sure you want to leave? Your progress might be lost.";
+    };
+
+    const preventNavigation = () => {
+      window.history.pushState(null, document.title, window.location.href);
+    };
+
+    // Ngăn người dùng thoát trang
+    window.addEventListener("beforeunload", handleBeforeUnload);
+
+    // Ngăn nút Back
+    window.history.pushState(null, document.title, window.location.href);
+    window.addEventListener("popstate", preventNavigation);
+
+    return () => {
+      window.removeEventListener("beforeunload", handleBeforeUnload);
+      window.removeEventListener("popstate", preventNavigation);
+    };
+  }, []);
+
   const fetchTestData = async () => {
     try {
       setLoading(true);
       const result = await dispatch(getTesting(fullTestId));
+      console.log(result.payload);
+
       setTestData(result.payload);
     } catch (error) {
       console.error("Error fetching test data:", error);

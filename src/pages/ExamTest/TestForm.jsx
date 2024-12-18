@@ -53,7 +53,6 @@ const TestForm = ({
 
       setTestInfo(result);
     } catch (error) {
-      console.error("Submission failed:", error);
       toast.error("Failed to create test. Please try again.");
       setIsSubmitted(false); // Reset submission state on failure
     }

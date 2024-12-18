@@ -1,112 +1,109 @@
 import React, { useState, useEffect } from "react";
 import { useDispatch } from "react-redux";
 import { fetchTests } from "../../redux/testExam/TestSlice";
-import { getUser } from "../../service/GetUser";
 import MainLayout from "../../layout/MainLayout";
 import { Link } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faEye, faClipboardList } from "@fortawesome/free-solid-svg-icons"; // Import the eye and clipboard list icons
+import { faEye, faClipboardList } from "@fortawesome/free-solid-svg-icons";
 import { formatDate } from "../../utils/formatDate";
 
 const ListTest = () => {
   const [tests, setTests] = useState([]);
-  const [currentPage, setCurrentPage] = useState(1); // Track current page
-  const [testsPerPage] = useState(4); // Number of tests per page
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
+  const [testsPerPage] = useState(4);
   const dispatch = useDispatch();
 
-  // Fetch the tests based on the current page
   useEffect(() => {
     const fetchData = async () => {
-      const result = await dispatch(fetchTests()); // Assuming fetchTests returns a promise
+      const result = await dispatch(
+        fetchTests({ pageNumber: currentPage, pageSize: testsPerPage })
+      );
       if (result.payload) {
-        setTests(result.payload); // Store the fetched data in state
+        setTests(result.payload.data || []);
+        setTotalPages(result.payload.TotalPages || 1);
       }
     };
 
     fetchData();
-  }, []);
+  }, [currentPage, dispatch, testsPerPage]);
 
-  // Calculate the tests to display on the current page
-  const indexOfLastTest = currentPage * testsPerPage;
-  const indexOfFirstTest = indexOfLastTest - testsPerPage;
-  const currentTests = tests.slice(indexOfFirstTest, indexOfLastTest);
-
-  // Handle page change
   const paginate = (pageNumber) => setCurrentPage(pageNumber);
-
-  // Calculate total pages
-  const totalPages = Math.ceil(tests.length / testsPerPage);
 
   return (
     <MainLayout>
       <div className="p-10">
-        <div className="flex items-center space-x-2 ">
+        <header className="flex items-center space-x-3 mb-6">
           <FontAwesomeIcon
             icon={faClipboardList}
             className="text-green-600 text-2xl"
           />
-          <h3 className="text-2xl p-2 font-semibold text-green-600">
-            Test Input
-          </h3>
-        </div>
+          <h1 className="text-3xl font-bold text-green-600">Test Management</h1>
+        </header>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mt-5 px-4">
-          {currentTests.length > 0 ? (
-            currentTests.map((test, index) => (
+        <section className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+          {tests.length > 0 ? (
+            tests.map((test, index) => (
               <Link
                 to={`/testDetail/${test.id}`}
-                key={test.Id || index}
-                className="bg-white rounded-lg shadow-md border border-gray-200 p-4 hover:shadow-lg transition-shadow duration-300"
+                key={test.id || index}
+                className="block bg-white rounded-lg shadow-lg border border-gray-200 p-6 hover:shadow-xl transition-shadow duration-300"
               >
-                <h3 className="text-lg font-semibold text-gray-800 mb-2">
+                <h2 className="text-xl font-semibold text-gray-800 mb-4">
                   {test.testName || "Untitled Test"}
-                </h3>
-
-                {/* Display start and end time */}
-                <p className="text-gray-600 mb-2">
-                  <strong>Start Time:</strong>
-                </p>
-                <p className="text-sm">{formatDate(test.startTime) || "N/A"}</p>
-                <p className="text-gray-600 mb-2">
-                  <strong>End Time:</strong>
-                </p>
-                <p className="text-sm">{formatDate(test.endTime) || "N/A"}</p>
-
-                <div className="flex justify-between items-center mt-2">
-                  <button className="bg-green-600 text-white text-sm px-3 py-1 rounded-lg hover:bg-green-700 transition duration-200 flex items-center">
-                    <FontAwesomeIcon icon={faEye} className="mr-2" />
-                    View Details
-                  </button>
+                </h2>
+                <div className="text-gray-600 text-sm">
+                  <p className="mb-2">
+                    <strong>Start Time:</strong>{" "}
+                    {formatDate(test.startTime) || "N/A"}
+                  </p>
+                  <p className="mb-2">
+                    <strong>End Time:</strong>{" "}
+                    {formatDate(test.endTime) || "N/A"}
+                  </p>
                 </div>
+                <button className="mt-4 bg-green-600 text-white text-sm px-4 py-2 rounded-lg hover:bg-green-700 transition duration-200 flex items-center">
+                  <FontAwesomeIcon icon={faEye} className="mr-2" />
+                  View Details
+                </button>
               </Link>
             ))
           ) : (
-            <p className="col-span-3 text-center text-gray-600">
+            <p className="col-span-full text-center text-gray-600 text-lg">
               No tests available.
             </p>
           )}
-        </div>
+        </section>
 
-        {/* Pagination Controls */}
-        <div className="flex justify-center mt-6">
-          <button
-            onClick={() => paginate(currentPage - 1)}
-            className="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition duration-200"
-            disabled={currentPage === 1}
-          >
-            Previous
-          </button>
-          <span className="mx-4 text-lg text-gray-600">
-            Page {currentPage} of {totalPages}
-          </span>
-          <button
-            onClick={() => paginate(currentPage + 1)}
-            className="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition duration-200"
-            disabled={currentPage === totalPages}
-          >
-            Next
-          </button>
-        </div>
+        {totalPages > 1 && (
+          <div className="flex justify-center items-center mt-8 space-x-4">
+            <button
+              onClick={() => paginate(currentPage - 1)}
+              className={`px-4 py-2 text-white rounded-lg transition duration-200 ${
+                currentPage === 1
+                  ? "bg-gray-400 cursor-not-allowed"
+                  : "bg-green-600 hover:bg-green-700"
+              }`}
+              disabled={currentPage === 1}
+            >
+              Previous
+            </button>
+            <span className="text-lg font-medium text-gray-700">
+              Page {currentPage} of {totalPages}
+            </span>
+            <button
+              onClick={() => paginate(currentPage + 1)}
+              className={`px-4 py-2 text-white rounded-lg transition duration-200 ${
+                currentPage === totalPages
+                  ? "bg-gray-400 cursor-not-allowed"
+                  : "bg-green-600 hover:bg-green-700"
+              }`}
+              disabled={currentPage === totalPages}
+            >
+              Next
+            </button>
+          </div>
+        )}
       </div>
     </MainLayout>
   );

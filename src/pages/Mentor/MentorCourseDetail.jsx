@@ -34,7 +34,7 @@ import {
   FaRegPlayCircle,
 } from "react-icons/fa";
 import { getUser } from "../../service/GetUser";
-import { CheckLecturerOfCourse } from "../../redux/courses/CourseSlice";
+import { LecturerOfCourse } from "../../redux/courses/CourseSlice";
 import { GetCourseById } from "../../redux/courses/CourseSlice";
 import { CheckBanlance, GiveMeMyMoney } from "../../components/common/PayOS";
 import Comment from "../../components/common/Comment";
@@ -239,7 +239,7 @@ const MentorCourseDetail = () => {
     if (userId) {
       dispatch(CheckUserEnrollment({ userId, courseId }));
     }
-    dispatch(CheckLecturerOfCourse(courseId));
+    dispatch(LecturerOfCourse(courseId));
     dispatch(GetCourseById(courseId));
   }, [dispatch, userId, courseId]);
 

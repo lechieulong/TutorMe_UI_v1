@@ -106,23 +106,22 @@ export const GetCreatedCourses = createAsyncThunk(
 );
 
 // Action check lecturer
-export const CheckLecturerOfCourse = createAsyncThunk(
-  `${SLICE_NAMES.COURSES}/${ACTIONS.CHECK_LECTURER_OF_COURSE}`,
-  async (courseId, { rejectWithValue }) => {
+export const LecturerOfCourse = createAsyncThunk(
+  "course/LecturerOfCourse",
+  async ({ courseId, userId }, { rejectWithValue }) => {
     try {
-      const token = Cookies.get("authToken");
       const response = await axios.get(
-        `${apiURLConfig.baseURL}/Courses/check-lecturer/${courseId}`,
+        `${apiURLConfig.baseURL}/Courses/check-lecturer`,
         {
-          headers: {
-            Authorization: `Bearer ${token}`, // Include the token in headers
-          },
+          params: { courseId, userId },
         }
       );
-      return response.data.result;
+
+      return !!response?.data?.result; // Chỉ lấy kết quả boolean từ API
     } catch (error) {
       return rejectWithValue(
-        error.response?.data?.message || "Failed to check lecturer!"
+        error.response?.data?.message ||
+          "Failed to check lecturer of the course."
       );
     }
   }
@@ -184,7 +183,7 @@ export const updateCourseStatus = createAsyncThunk(
   async ({ courseId, isEnabled }, { rejectWithValue }) => {
     try {
       await axios.put(
-        `https://localhost:7030/api/Courses/${courseId}/update-status`,
+        `${apiURLConfig.baseURL}/Courses/${courseId}/update-status`,
         isEnabled, // Gửi trực tiếp giá trị boolean
         {
           headers: { "Content-Type": "application/json" },
@@ -199,6 +198,9 @@ export const updateCourseStatus = createAsyncThunk(
 );
 
 const initialState = {
+  isMentor: false,
+  isLoading: false,
+  error: null,
   course: null,
   courses: [],
   createdCourses: [],
@@ -210,7 +212,6 @@ const initialState = {
   status: STATUS.IDLE,
   getCreatedCoursesStatus: STATUS.IDLE,
   checkLecturerStatus: STATUS.IDLE,
-  error: null,
   getCreatedCoursesError: null,
   checkLecturerError: null,
   totalPages: 0,
@@ -313,19 +314,17 @@ const courseSlice = createSlice({
         state.getCreatedCoursesStatus = STATUS.FAILED;
         state.getCreatedCoursesError = action.payload || action.error.message;
       })
-
-      // Handle check lecturer
-      .addCase(CheckLecturerOfCourse.pending, (state) => {
-        state.checkLecturerStatus = STATUS.PENDING;
-        state.checkLecturerError = null;
+      .addCase(LecturerOfCourse.pending, (state) => {
+        state.isLoading = true;
+        state.error = null;
       })
-      .addCase(CheckLecturerOfCourse.fulfilled, (state, action) => {
-        state.checkLecturerStatus = STATUS.SUCCESS;
-        state.checkLecturer = action.payload;
+      .addCase(LecturerOfCourse.fulfilled, (state, action) => {
+        state.isLoading = false;
+        state.isMentor = action.payload; // Nhận kết quả true/false
       })
-      .addCase(CheckLecturerOfCourse.rejected, (state, action) => {
-        state.checkLecturerStatus = STATUS.FAILED;
-        state.checkLecturerError = action.payload || action.error.message;
+      .addCase(LecturerOfCourse.rejected, (state, action) => {
+        state.isLoading = false;
+        state.error = action.payload;
       })
       //Handle switch course
       .addCase(updateCourseStatus.fulfilled, (state, action) => {

@@ -9,8 +9,8 @@ import {
   faCalendarAlt,
   faClock,
   faPlay,
-  faThunderstorm,
 } from "@fortawesome/free-solid-svg-icons";
+import { toast, ToastContainer } from "react-toastify";
 import { useEffect, useState } from "react";
 import { getTest, getSkills } from "../../redux/testExam/TestSlice";
 import { useDispatch } from "react-redux";
@@ -69,6 +69,10 @@ const SkillPart = () => {
   };
 
   const handleTakeFullTest = () => {
+    if (isButtonDisabled) {
+      toast.warning("Test not available  now");
+      return;
+    }
     if (user) {
       setTakeFullTest(true);
     } else {
@@ -86,11 +90,15 @@ const SkillPart = () => {
       return false;
     }
 
-    return test.testType === 2 && startTime < currentTime;
+    console.log(test.testType);
+
+    return test.testType === 2 && startTime > currentTime;
   };
 
   return (
     <>
+      <ToastContainer autoClose={2000} newestOnTop closeOnClick />
+
       {takeFullTest ? (
         <TestLayout fullTestId={testId} />
       ) : (

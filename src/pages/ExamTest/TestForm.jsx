@@ -1,3 +1,4 @@
+/* eslint-disable react/prop-types */
 import React, { useState } from "react";
 import { useForm } from "react-hook-form";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -52,7 +53,6 @@ const TestForm = ({
 
       setTestInfo(result);
     } catch (error) {
-      console.error("Submission failed:", error);
       toast.error("Failed to create test. Please try again.");
       setIsSubmitted(false); // Reset submission state on failure
     }

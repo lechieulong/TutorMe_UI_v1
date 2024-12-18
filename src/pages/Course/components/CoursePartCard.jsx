@@ -10,11 +10,11 @@ import Confirm from "../../../components/common/Confirm";
 import Notification from "../../../components/common/Notification";
 
 const CoursePartCard = ({ mentorAndList, skillId, isEnrolled, isMentor }) => {
+  const [isLoading, setIsLoading] = useState(false);
   const dispatch = useDispatch();
   const [courseParts, setCourseParts] = useState([]);
   const [collapsedParts, setCollapsedParts] = useState({});
   const [showLessonForm, setShowLessonForm] = useState({});
-  const [error, setError] = useState(null);
   const [componentKeys, setComponentKeys] = useState({});
   const [confirmOpen, setConfirmOpen] = useState(false);
   const [partToDelete, setPartToDelete] = useState(null);
@@ -22,7 +22,7 @@ const CoursePartCard = ({ mentorAndList, skillId, isEnrolled, isMentor }) => {
   const [should, setShould] = useState("");
 
   const fetchCourseParts = useCallback(async () => {
-    if (!skillId) return;
+    setIsLoading(true);
     try {
       const response = await axios.get(
         `https://localhost:7030/api/CourseParts/ByCourseSkill/${skillId}`
@@ -40,15 +40,18 @@ const CoursePartCard = ({ mentorAndList, skillId, isEnrolled, isMentor }) => {
         return acc;
       }, {});
       setComponentKeys(initialKeys);
-
-      setError(null);
-    } catch (err) {
-      setError("No course part found.");
+    } finally {
+      setIsLoading(false);
     }
   }, [skillId]);
 
   useEffect(() => {
-    fetchCourseParts();
+    setIsLoading(true);
+    try {
+      fetchCourseParts();
+    } finally {
+      setIsLoading(false);
+    }
   }, [skillId, fetchCourseParts]);
 
   const toggleCollapse = (partId) => {
@@ -113,8 +116,13 @@ const CoursePartCard = ({ mentorAndList, skillId, isEnrolled, isMentor }) => {
     }
   };
 
-  if (error) return <p>{error}</p>;
-
+  {
+    isLoading && (
+      <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+        <div className="w-16 h-16 border-4 border-t-transparent border-blue-500 rounded-full animate-spin"></div>
+      </div>
+    );
+  }
   return (
     <div className="p-4 mb-4">
       {courseParts.map((coursePart) => (

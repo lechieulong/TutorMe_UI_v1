@@ -1,20 +1,22 @@
 import React, { useState, useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { getTestsByCourse } from "../../redux/testExam/TestSlice"; // Import your API action
-import { useParams, useNavigate } from "react-router-dom";  // Import useNavigate
+import { useParams, useNavigate } from "react-router-dom"; // Import useNavigate
 import { formatDateTime } from "../../utils/Validator";
 import { FaRegEdit, FaArrowRight } from "react-icons/fa";
 import ResultList from "./ResultList";
+import TestExplain from "../TestExam/TestExplain";
 import { UpdateTest } from "../../redux/ADMIN/TestExamSlice";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
-const TestSubmitted = () => {
+const TestSubmitted = ({ setIsViewExplain }) => {
   const [activeTab, setActiveTab] = useState("Dashboard");
   const [results, setResults] = useState([]);
   const [count, setCount] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [viewExplain, setViewExplain] = useState(false);
   const [totalPages, setTotalPages] = useState(1);
   const dispatch = useDispatch();
   const { user } = useSelector((state) => state.user);
@@ -128,20 +130,27 @@ const TestSubmitted = () => {
 
   const handleTestClick = (testId) => {
     setSelectedTestId(testId); // Set the selected test ID
-    setActiveTab("Results");   // Show the results tab
+
+    setActiveTab("Results"); // Show the results tab
   };
 
   return (
-    <>
+    <div className="w-full">
       <div className="h-[400px]">
         {activeTab === "Results" ? (
-          <ResultList testId={selectedTestId} />
-        ) : activeTab === "Dashboard" && (
-          <>
-            <header className="card-header bg-accentGreen text-white py-4 px-6 rounded-t-lg">
-              <h1 className="text-2xl font-bold">IELTS Test List</h1>
-              <p className="text-sm">List all tests of this course: {count} tests</p>
-            </header>
+          <ResultList
+            testId={selectedTestId}
+            setIsViewExplain={setIsViewExplain}
+          />
+        ) : (
+          activeTab === "Dashboard" && (
+            <>
+              <header className="card-header bg-accentGreen text-white py-4 px-6 rounded-t-lg">
+                <h1 className="text-2xl font-bold">IELTS Test List</h1>
+                <p className="text-sm">
+                  List all tests of this course: {count} tests
+                </p>
+              </header>
 
             {loading ? (
               <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
@@ -193,35 +202,38 @@ const TestSubmitted = () => {
                   </table>
                 </div>
 
-                {/* Pagination Controls */}
-                <div className="flex justify-between items-center">
-                  <button
-                    onClick={handlePreviousPage}
-                    disabled={currentPage === 1}
-                    className={`px-4 py-2 rounded-md text-sm font-medium ${currentPage === 1
-                      ? "bg-gray-200 text-gray-500 cursor-not-allowed"
-                      : "bg-blue-500 text-white hover:bg-blue-600"
+                  {/* Pagination Controls */}
+                  <div className="flex justify-between items-center">
+                    <button
+                      onClick={handlePreviousPage}
+                      disabled={currentPage === 1}
+                      className={`px-4 py-2 rounded-md text-sm font-medium ${
+                        currentPage === 1
+                          ? "bg-gray-200 text-gray-500 cursor-not-allowed"
+                          : "bg-blue-500 text-white hover:bg-blue-600"
                       }`}
-                  >
-                    Previous
-                  </button>
-                  <span className="text-gray-600 text-sm">
-                    Page {currentPage} of {totalPages}
-                  </span>
-                  <button
-                    onClick={handleNextPage}
-                    disabled={currentPage === totalPages}
-                    className={`px-4 py-2 rounded-md text-sm font-medium ${currentPage === totalPages
-                      ? "bg-gray-200 text-gray-500 cursor-not-allowed"
-                      : "bg-blue-500 text-white hover:bg-blue-600"
+                    >
+                      Previous
+                    </button>
+                    <span className="text-gray-600 text-sm">
+                      Page {currentPage} of {totalPages}
+                    </span>
+                    <button
+                      onClick={handleNextPage}
+                      disabled={currentPage === totalPages}
+                      className={`px-4 py-2 rounded-md text-sm font-medium ${
+                        currentPage === totalPages
+                          ? "bg-gray-200 text-gray-500 cursor-not-allowed"
+                          : "bg-blue-500 text-white hover:bg-blue-600"
                       }`}
-                  >
-                    Next
-                  </button>
+                    >
+                      Next
+                    </button>
+                  </div>
                 </div>
-              </div>
-            )}
-          </>
+              )}
+            </>
+          )
         )}
       </div>
       {/* Update modal */}

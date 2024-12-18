@@ -24,9 +24,11 @@ import courseReportReducer from "./courses/CourseReportSlice";
 import reportReducer from "./common/ReportSlice";
 import courseLessonReducer from "./courses/CourseLessonSlice";
 import testExamCourseReducer from "./courses/TestExamCourseSlice";
+import teacherReducer from "./users/teacherSlice";
 
 export const store = configureStore({
   reducer: {
+    teachers: teacherReducer,
     testExamCourse: testExamCourseReducer,
     courseLesson: courseLessonReducer,
     report: reportReducer,

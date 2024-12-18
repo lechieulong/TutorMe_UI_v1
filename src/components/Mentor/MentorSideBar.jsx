@@ -6,12 +6,7 @@ import { useState, useEffect, useCallback } from "react";
 import { getUser } from "../../service/GetUser";
 import useAuthToken from "../../hooks/useAuthToken"; // Import useAuthToken
 
-const MentorSidebar = ({
-  mentorAndList,
-  setSelectedComponent,
-  isEnrolled,
-  isMentor,
-}) => {
+const MentorSidebar = ({ mentorAndList, setSelectedComponent, isMentor }) => {
   const [user, setUser] = useState(null);
   const authToken = useAuthToken(); // Lấy token từ cookie
   const { courseId } = useParams();
@@ -36,8 +31,6 @@ const MentorSidebar = ({
       fetchUser();
     }
   }, [authToken]);
-
-  const isUser = user?.role?.includes("USER"); // Kiểm tra xem user có phải là "USER" không
 
   return (
     <div>

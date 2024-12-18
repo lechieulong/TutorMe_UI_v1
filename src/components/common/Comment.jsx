@@ -1,62 +1,49 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
-import { FaStar } from "react-icons/fa"; // Import FaStar icon
+import { FaStar } from "react-icons/fa";
 
-// Rating component to show a star rating based on ratingValue
 const StarRating = ({ rating }) => {
   const stars = [];
-
-  // Render filled and empty stars based on rating
   for (let i = 0; i < 5; i++) {
-    if (i < rating) {
-      stars.push(<FaStar key={i} className="text-yellow-500" />); // Filled star
-    } else {
-      stars.push(<FaStar key={i} className="text-gray-300" />); // Empty star
-    }
+    stars.push(
+      <FaStar
+        key={i}
+        className={i < rating ? "text-yellow-500" : "text-gray-300"}
+      />
+    );
   }
-
-  return <div className="flex space-x-1">{stars}</div>; // Use flex to align stars in a row
+  return <div className="flex space-x-1">{stars}</div>;
 };
 
-// Main component to display ratings for a course
-const Comment = ({ courseId }) => {
+const Comment = ({ courseId, onLoadingChange }) => {
   const [ratings, setRatings] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
+  const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
-    // Fetch course ratings from the API
     const fetchRatings = async () => {
+      setIsLoading(true);
+      onLoadingChange?.(true); // Notify parent that loading has started
       try {
         const response = await axios.get(
           `https://localhost:7030/api/CourseRating/${courseId}`
         );
         setRatings(response.data);
-      } catch (error) {
-        setError("");
       } finally {
-        setLoading(false);
+        setIsLoading(false);
+        onLoadingChange?.(false); // Notify parent that loading has ended
       }
     };
 
     fetchRatings();
-  }, [courseId]);
-
-  if (loading) {
-    return <div>Loading...</div>;
-  }
-
-  if (error) {
-    return <div>{error}</div>;
-  }
+  }, [courseId, onLoadingChange]);
 
   return (
     <div>
-      <h3 className="text-xl font-semibold mb-4">Course Ratings</h3>
       {ratings.length === 0 ? (
-        <p>No ratings yet for this course.</p>
+        <p></p>
       ) : (
         <div className="space-y-4">
+          <h3 className="text-xl font-semibold mb-4">Course Ratings</h3>
           {ratings.map((rating, index) => (
             <div key={index} className="border p-4 rounded-lg shadow-sm">
               <div className="flex items-center mb-2">

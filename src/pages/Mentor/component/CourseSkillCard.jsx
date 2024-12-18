@@ -8,7 +8,7 @@ import Notification from "../../../components/common/Notification";
 import TestForm from "../../ExamTest/TestForm";
 import Cookies from "js-cookie";
 import { Link } from "react-router-dom";
-
+import { toast, ToastContainer } from "react-toastify";
 const CourseSkillCard = ({
   courseId,
   isEnrolled,
@@ -17,17 +17,15 @@ const CourseSkillCard = ({
   isMentor,
 }) => {
   const [skills, setSkills] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
   const [activeTab, setActiveTab] = useState(null);
   const [showCreateForm, setShowCreateForm] = useState(false);
   const [confirmOpen, setConfirmOpen] = useState(false);
   const [notification, setNotification] = useState("");
-  const [confirmAction, setConfirmAction] = useState(() => {});
   const [isCreateTest, setIsCreateTest] = useState(false);
   const [categories, setCategories] = useState([]);
   const [skillId, setSkillId] = useState(null);
   const [testExams, setTestExams] = useState({}); // Store tests for each skill
+  const [isLoading, setIsLoading] = useState(false);
   const token = Cookies.get("authToken");
 
   useEffect(() => {
@@ -37,7 +35,7 @@ const CourseSkillCard = ({
   // Fetch skills and associated test exams
   const fetchSkills = async () => {
     if (!courseId) return;
-    setLoading(true);
+    setIsLoading(true);
     try {
       const response = await axios.get(
         `https://localhost:7030/api/CourseSkills/Course/${courseId}`
@@ -47,21 +45,19 @@ const CourseSkillCard = ({
         onSkillCountUpdate(response.data.length);
       }
       setActiveTab(response.data[0]?.id || null);
-      setError(null);
 
       // Fetch tests for each skill
       response.data.forEach((skill) => {
         fetchTestExams(skill.id);
       });
-    } catch (err) {
-      setError("Failed to fetch skills.");
     } finally {
-      setLoading(false);
+      setIsLoading(false);
     }
   };
 
   // Fetch test exams for a specific skill
   const fetchTestExams = async (skillId) => {
+    setIsLoading(true);
     try {
       const response = await axios.get(
         `https://localhost:7030/api/CourseSkills/GetTestExamsBySkillIdCourse?skillIdCourse=${skillId}`,
@@ -71,12 +67,13 @@ const CourseSkillCard = ({
         ...prevExams,
         [skillId]: response.data, // Store test exams for the skill
       }));
-    } catch (err) {
-      console.error("Error fetching test exams:", err);
+    } finally {
+      setIsLoading(false);
     }
   };
 
   const handleCreateTest = async (skillId) => {
+    setIsLoading(true);
     try {
       const response = await axios.get(
         `https://localhost:7030/api/CourseSkills/DescriptionBySkill/${skillId}`,
@@ -86,8 +83,8 @@ const CourseSkillCard = ({
       setIsCreateTest(true);
       setCategories([response.data.description]);
       setSkillId(skillId);
-    } catch (error) {
-      console.error("Failed to fetch data from API", error);
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -100,31 +97,31 @@ const CourseSkillCard = ({
   };
 
   const handlePartCreated = () => {
-    fetchSkills();
-    closeCreateForm();
-  };
-
-  const handleConfirmAction = (action) => {
-    setConfirmAction(() => action);
-    setConfirmOpen(true);
-  };
-
-  const confirmDeleteSkill = async () => {
+    setIsLoading(true);
     try {
-      await confirmAction();
-      setNotification("Skill deleted successfully.");
-    } catch (error) {
-      console.error("Error deleting skill:", error);
-      setNotification("Failed to delete skill.");
+      fetchSkills();
+      closeCreateForm();
     } finally {
-      setConfirmOpen(false);
+      setIsLoading(false);
     }
   };
 
-  if (loading) return <p>Loading...</p>;
-  if (error) return <p>{error}</p>;
-  console.log(isCreateTest);
+  const confirmDeleteSkill = async () => {
+    setIsLoading(true);
+    try {
+      setNotification("Skill deleted successfully.");
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
+  {
+    isLoading && (
+      <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+        <div className="w-16 h-16 border-4 border-t-transparent border-blue-500 rounded-full animate-spin"></div>
+      </div>
+    );
+  }
   return (
     <div>
       {!isCreateTest ? (
@@ -160,10 +157,10 @@ const CourseSkillCard = ({
                 <button
                   type="button"
                   onClick={handleCreatePartClick}
-                  disabled={loading}
+                  disabled={isLoading}
                   className="py-2 px-3 text-sm font-medium rounded-lg border border-gray-200 bg-green-500 text-white shadow-sm hover:bg-green-600 focus:outline-none"
                 >
-                  {loading
+                  {isLoading
                     ? "Loading..."
                     : showCreateForm
                     ? "Close Form"
@@ -214,7 +211,7 @@ const CourseSkillCard = ({
                           to={`/testDetail/${exam.id}`} // Link dẫn đến chi tiết bài kiểm tra
                           className="py-2 px-3 text-sm font-medium rounded-lg border border-gray-200 bg-white text-gray-800 shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-gray-200"
                         >
-                          Do Test for Skill: {skill.description}
+                          {exam.testName}
                         </Link>
                       </div>
                     ))}
@@ -223,6 +220,7 @@ const CourseSkillCard = ({
               </div>
             ))}
           </div>
+          <ToastContainer autoClose={3000} newestOnTop closeOnClick />
         </div>
       ) : (
         <TestForm

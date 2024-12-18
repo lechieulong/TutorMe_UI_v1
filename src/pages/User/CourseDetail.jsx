@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { useParams, useLocation, Link, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import MentorSidebar from "../../components/Mentor/MentorSideBar";
@@ -18,7 +18,6 @@ import {
   fetchSkillDescription,
 } from "../../redux/courses/CourseSkillSlice";
 import Rating from "../../components/common/Rating";
-import Notification from "../../components/common/Notification";
 import Confirm from "../../components/common/Confirm";
 import axios from "axios";
 import { formatCurrency } from "../../utils/Validator";
@@ -32,11 +31,13 @@ import {
   FaRegStickyNote,
   FaRegPlayCircle,
 } from "react-icons/fa";
+import { toast, ToastContainer } from "react-toastify";
 import { getUser } from "../../service/GetUser";
-import { CheckLecturerOfCourse } from "../../redux/courses/CourseSlice";
+import { LecturerOfCourse } from "../../redux/courses/CourseSlice";
 import { GetCourseById } from "../../redux/courses/CourseSlice";
 import { CheckBanlance, GiveMeMyMoney } from "../../components/common/PayOS";
 import Comment from "../../components/common/Comment";
+import RatingTeacher from "../../components/common/RatingTeacher";
 const CourseDetail = () => {
   const navigate = useNavigate();
   const { className, courseId } = useParams();
@@ -48,19 +49,25 @@ const CourseDetail = () => {
   const [selectedClassId, setSelectedClassId] = useState(null);
   const [isRatingOpen, setIsRatingOpen] = useState(false);
   const [hasRated, setHasRated] = useState(false);
-  const [notification, setNotification] = useState("");
   const [isConfirmOpen, setIsConfirmOpen] = useState(false);
   const [confirmMessage, setConfirmMessage] = useState("");
   const [confirmStatus, setConfirmStatus] = useState("");
   const [confirmAction, setConfirmAction] = useState(() => {});
-  const [isMentor, setIsMentor] = useState(false);
   const [course, setCourse] = useState(null);
-  const [notificationUpdated, setNotificationUpdated] = useState(false);
   const [isReportOpen, setIsReportOpen] = useState(false);
+  const [isRatingTeacherOpen, setIsRatingTeacherOpen] = useState(false);
+  const [selectedTeacherId, setSelectedTeacherId] = useState("");
   const dispatch = useDispatch();
-  const { classes } = useSelector((state) => ({
-    classes: state.classes.classes[courseId] || [], // Lấy danh sách lớp học theo courseId
-  }));
+  const [isLoading, setIsLoading] = useState(false);
+  const classes = useSelector((state) => state.classes.classes[courseId] || []);
+  const isMentor = useSelector((state) => state.courses.isMentor);
+  const handleOpenTeacherRating = (teacherId) => {
+    setSelectedTeacherId(teacherId);
+    setIsRatingTeacherOpen(true);
+  };
+  const handleCloseTeacherRating = async () => {
+    setIsRatingTeacherOpen(false);
+  };
 
   const switchStates = useSelector((state) => state.classes.switchStates || {});
   const isEnrolled = useSelector(
@@ -84,11 +91,12 @@ const CourseDetail = () => {
   };
   useEffect(() => {
     const fetchCourseDetail = async () => {
+      setIsLoading(true); // Bắt đầu hiển thị spinner
       try {
         const courseDetail = await dispatch(GetCourseById(courseId)).unwrap(); // Truyền courseId vào action
         setCourse(courseDetail); // Kết quả trả về là thông tin chi tiết của khóa học
-      } catch (error) {
-        console.error("Failed to fetch course details:", error);
+      } finally {
+        setIsLoading(false); // Ẩn spinner sau khi fetch xong
       }
     };
 
@@ -98,48 +106,44 @@ const CourseDetail = () => {
   }, [dispatch, courseId]);
 
   useEffect(() => {
+    setIsLoading(true);
     initializeUser();
-    if (courseId) {
-      dispatch(fetchClasses(courseId));
-      dispatch(fetchSkills(courseId));
+    try {
+      if (courseId) {
+        dispatch(fetchClasses(courseId));
+        dispatch(fetchSkills(courseId));
+      }
+    } finally {
+      setIsLoading(false);
     }
   }, [initializeUser, dispatch, courseId]);
 
   useEffect(() => {
-    if (userId && courseId) {
-      dispatch(CheckUserEnrollment({ userId, courseId }));
+    setIsLoading(true);
+    try {
+      if (userId && courseId) {
+        dispatch(CheckUserEnrollment({ userId, courseId }));
+      }
+    } finally {
+      setIsLoading(false);
     }
   }, [dispatch, userId, courseId]);
 
   useEffect(() => {
     const checkIfRated = async () => {
       if (!userId || !courseId) return;
-
+      setIsLoading(true);
       try {
         const response = await axios.get(
           `https://localhost:7030/api/CourseRating/${courseId}/ratings`,
           { params: { userId } }
         );
         setHasRated(response?.data?.length > 0);
-      } catch {
-        setHasRated(false);
+      } finally {
+        setIsLoading(false);
       }
     };
     checkIfRated();
-  }, [userId, courseId]);
-
-  useEffect(() => {
-    const checkIfMentor = async () => {
-      try {
-        const { data } = await axios.get(
-          `https://localhost:7030/api/Courses/check-lecturer?courseId=${courseId}&userId=${userId}`
-        );
-        setIsMentor(!!data.result);
-      } catch {
-        setIsMentor(false);
-      }
-    };
-    checkIfMentor();
   }, [userId, courseId]);
 
   const renderStars = (rating) => {
@@ -169,7 +173,7 @@ const CourseDetail = () => {
       navigate("/login");
     }
     if (!selectedClassId) {
-      setNotification("Bạn chưa chọn lớp.");
+      toast.error("Bạn chưa chọn lớp.");
       return;
     }
 
@@ -183,7 +187,7 @@ const CourseDetail = () => {
       if (userChoice) {
         window.location.href = "/Payment";
       } else {
-        setNotification("Đăng ký thất bại! Bạn không có đủ tiền.");
+        toast.error("Đăng ký thất bại! Bạn không có đủ tiền.");
       }
       return;
     }
@@ -192,6 +196,7 @@ const CourseDetail = () => {
     setConfirmStatus("Enroll");
     setConfirmAction(() => async () => {
       try {
+        setIsLoading(true);
         await GiveMeMyMoney(
           userId,
           price * -1,
@@ -207,10 +212,10 @@ const CourseDetail = () => {
           enrollUser({ courseId, userId, classId: selectedClassId })
         ).unwrap();
 
-        setNotification("Đăng ký thành công!");
+        toast.success("Đăng ký thành công!");
         dispatch(CheckUserEnrollment({ userId, courseId }));
-      } catch (error) {
-        setNotification("Đăng ký thất bại! Vui lòng thử lại.");
+      } finally {
+        setIsLoading(false); // Kết thúc trạng thái loading
       }
       setIsConfirmOpen(false);
     });
@@ -229,62 +234,64 @@ const CourseDetail = () => {
       .unwrap()
       .catch(() => {});
   };
+
   useEffect(() => {
-    if (userId) {
-      dispatch(CheckUserEnrollment({ userId, courseId }));
+    setIsLoading(true);
+    try {
+      if (userId) {
+        dispatch(CheckUserEnrollment({ userId, courseId }));
+        dispatch(LecturerOfCourse({ courseId, userId }));
+      }
+      dispatch(GetCourseById(courseId));
+    } finally {
+      setIsLoading(false);
     }
-    dispatch(CheckLecturerOfCourse(courseId));
-    dispatch(GetCourseById(courseId));
   }, [dispatch, userId, courseId]);
 
   const handleOpenRating = () => setIsRatingOpen(true);
   const handleCloseRating = async () => {
     setIsRatingOpen(false);
+    setIsLoading(true);
     try {
       const response = await axios.get(
         `https://localhost:7030/api/CourseRating/${courseId}/ratings`,
         { params: { userId } }
       );
       setHasRated(response?.data?.length > 0);
-    } catch {
-      console.log();
+    } finally {
+      setIsLoading(false);
     }
   };
-
-  useEffect(() => {
-    if (isMentor && !notificationUpdated) {
-      setNotification("This is your course!");
-      setNotificationUpdated(true);
-    }
-  }, [isMentor, notificationUpdated]);
+  {
+    isLoading && (
+      <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+        <div className="w-16 h-16 border-4 border-t-transparent border-blue-500 rounded-full animate-spin"></div>
+      </div>
+    );
+  }
 
   return (
     <MainLayout>
       <div className="flex flex-col w-screen">
-        {notification && (
-          <Notification
-            message={notification}
-            onClose={() => setNotification("")}
-          />
-        )}
-        <Confirm
-          isOpen={isConfirmOpen}
-          onClose={() => setIsConfirmOpen(false)}
-          onConfirm={confirmAction}
-          message={confirmMessage}
-          status={confirmStatus}
-        />
         <div className="flex w-full">
           <MentorSidebar isEnrolled={isEnrolled} isMentor={isMentor} />
           <div className="flex-1 p-4 overflow-y-auto">
-            <header className="mb-4 flex justify-between items-center">
+            <header className="mb-4 flex">
               <h1 className="text-4xl font-bold text-black">{className}</h1>
-              {isEnrolled && !hasRated && (
+              {isEnrolled && !hasRated && !isMentor && (
                 <button
                   className="py-2 px-3 text-sm font-medium rounded-lg border bg-white text-gray-800 shadow-sm hover:bg-gray-50"
                   onClick={handleOpenRating}
                 >
                   Rate This Course
+                </button>
+              )}
+              {!isMentor && isEnrolled && (
+                <button
+                  className="py-2 px-3 text-sm font-medium rounded-lg border bg-white text-gray-800 shadow-sm hover:bg-gray-50"
+                  onClick={() => handleOpenTeacherRating(course?.userId)}
+                >
+                  Rate This Teacher
                 </button>
               )}
             </header>
@@ -364,49 +371,50 @@ const CourseDetail = () => {
               </div>
             </div>
             <section className="mb-4 mt-4">
-              {!isEnrolled && (
-                <>
-                  <div className="flex justify-between items-center">
-                    <p className="text-xl font-bold">Classes</p>
-                  </div>
-                  <div className="overflow-hidden">
-                    <div
-                      className="flex transition-transform"
-                      style={{
-                        transform: `translateX(-${currentSlide * 100}%)`,
-                      }}
-                    >
-                      {classes.map((classItem) => (
-                        <ClassCard
-                          key={classItem.id}
-                          classItem={classItem}
-                          switchState={switchStates[classItem.id] || false}
-                          onSelect={() => setSelectedClassId(classItem.id)}
-                          isActive={selectedClassId === classItem.id}
-                        />
-                      ))}
+              {!isEnrolled ||
+                (isMentor && (
+                  <>
+                    <div className="flex justify-between items-center">
+                      <p className="text-xl font-bold">Classes</p>
                     </div>
-                  </div>
-                  <div className="flex justify-between mt-2">
-                    <button
-                      onClick={handlePrev}
-                      disabled={currentSlide === 0}
-                      className="py-2 px-3 bg-gray-200 rounded-lg shadow-sm hover:bg-gray-300"
-                    >
-                      Prev
-                    </button>
-                    <button
-                      onClick={handleNext}
-                      disabled={
-                        currentSlide >= Math.ceil(classes.length / 4) - 1
-                      }
-                      className="py-2 px-3 bg-gray-200 rounded-lg shadow-sm hover:bg-gray-300"
-                    >
-                      Next
-                    </button>
-                  </div>
-                </>
-              )}
+                    <div className="overflow-hidden">
+                      <div
+                        className="flex transition-transform"
+                        style={{
+                          transform: `translateX(-${currentSlide * 100}%)`,
+                        }}
+                      >
+                        {classes.map((classItem) => (
+                          <ClassCard
+                            key={classItem.id}
+                            classItem={classItem}
+                            switchState={switchStates[classItem.id] || false}
+                            onSelect={() => setSelectedClassId(classItem.id)}
+                            isActive={selectedClassId === classItem.id}
+                          />
+                        ))}
+                      </div>
+                    </div>
+                    <div className="flex justify-between mt-2">
+                      <button
+                        onClick={handlePrev}
+                        disabled={currentSlide === 0}
+                        className="py-2 px-3 bg-gray-200 rounded-lg shadow-sm hover:bg-gray-300"
+                      >
+                        Prev
+                      </button>
+                      <button
+                        onClick={handleNext}
+                        disabled={
+                          currentSlide >= Math.ceil(classes.length / 4) - 1
+                        }
+                        className="py-2 px-3 bg-gray-200 rounded-lg shadow-sm hover:bg-gray-300"
+                      >
+                        Next
+                      </button>
+                    </div>
+                  </>
+                ))}
             </section>
             <div className="mt-4">
               <CourseSkillCard
@@ -430,6 +438,14 @@ const CourseDetail = () => {
         />
       )}
 
+      {isRatingTeacherOpen && (
+        <RatingTeacher
+          teacherId={selectedTeacherId}
+          userId={userId}
+          onClose={handleCloseTeacherRating}
+        />
+      )}
+
       {isReportOpen && (
         <Report
           userId={userId}
@@ -438,6 +454,14 @@ const CourseDetail = () => {
           onClose={handleCloseReport} // Truyền hàm đóng qua props
         />
       )}
+      <ToastContainer autoClose={3000} newestOnTop closeOnClick />
+      <Confirm
+        isOpen={isConfirmOpen}
+        onClose={() => setIsConfirmOpen(false)}
+        onConfirm={confirmAction}
+        message={confirmMessage}
+        status={confirmStatus}
+      />
     </MainLayout>
   );
 };

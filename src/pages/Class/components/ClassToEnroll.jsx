@@ -8,7 +8,7 @@ import { useNavigate } from "react-router-dom";
 import useAuthToken from "../../../hooks/useAuthToken";
 import { CheckBanlance, GiveMeMyMoney } from "../../../components/common/PayOS";
 import { enrollUser } from "../../../redux/Enrollment/EnrollmentSlice";
-const ClassToEnroll = ({ courseId, userId, onClose }) => {
+const ClassToEnroll = ({ courseId, userId, onClose, onEnrollSuccess }) => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const authToken = useAuthToken();
@@ -46,7 +46,6 @@ const ClassToEnroll = ({ courseId, userId, onClose }) => {
       return;
     }
 
-    // Tìm thông tin lớp đã chọn
     const selectedClass = unenrolledClasses.find(
       (classItem) => classItem.classId === selectedClassId
     );
@@ -56,7 +55,12 @@ const ClassToEnroll = ({ courseId, userId, onClose }) => {
       return;
     }
 
-    const { price, userId: classOwnerId, className } = selectedClass;
+    const { price, teacherID, className } = selectedClass;
+    console.log(selectedClass);
+    console.log(userId);
+    console.log(price);
+
+    console.log(teacherID);
 
     const hasSufficientBalance = await CheckBanlance(price);
     if (!hasSufficientBalance) {
@@ -75,27 +79,35 @@ const ClassToEnroll = ({ courseId, userId, onClose }) => {
     setConfirmStatus("Enroll");
     setConfirmAction(() => async () => {
       try {
-        // Trừ tiền từ tài khoản người dùng
+        // Thanh toán tiền
         await GiveMeMyMoney(userId, price * -1, `Đăng ký lớp ${className}`);
-        // Chuyển tiền cho chủ sở hữu lớp
         await GiveMeMyMoney(
-          classOwnerId,
+          teacherID,
           price,
           `Lớp của bạn đã được đăng ký bởi ${userId}`
         );
-        console.log(courseId + "||" + userId + "||" + selectedClassId);
 
-        // Gọi API để hoàn tất việc đăng ký
+        // Đăng ký người dùng vào lớp
         await dispatch(
           enrollUser({ courseId, userId, classId: selectedClassId })
         ).unwrap();
 
+        // Thông báo thành công
         setNotification("Đăng ký thành công!");
+
+        // Gọi callback và đóng popup
+        onEnrollSuccess?.();
+        onClose?.();
       } catch (error) {
+        // Xử lý lỗi và hiển thị thông báo thất bại
+        console.error("Đăng ký thất bại:", error);
         setNotification("Đăng ký thất bại! Vui lòng thử lại.");
+      } finally {
+        // Đóng cửa sổ xác nhận
+        setIsConfirmOpen(false);
       }
-      setIsConfirmOpen(false);
     });
+
     setIsConfirmOpen(true);
   };
 
@@ -138,9 +150,11 @@ const ClassToEnroll = ({ courseId, userId, onClose }) => {
       {notification && (
         <Notification
           message={notification}
+          type={notification === "Đăng ký thành công!" ? "success" : "error"} // Phân loại thông báo
           onClose={() => setNotification("")}
         />
       )}
+
       <Confirm
         isOpen={isConfirmOpen}
         onClose={() => setIsConfirmOpen(false)}

@@ -4,7 +4,11 @@ import { useParams } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faBolt } from "@fortawesome/free-solid-svg-icons";
 import { useDispatch } from "react-redux";
-import { getParts, getSkillById } from "../../redux/testExam/TestSlice";
+import {
+  getParts,
+  getSkillById,
+  getTest,
+} from "../../redux/testExam/TestSlice";
 import TestLayout from "./TestLayout";
 import SantaClausImage from "../../assets/santa-claus.jpg"; // Include a Santa image asset
 // import Tree from "../../assets/treef.jpg"; // Include a Santa image asset
@@ -14,6 +18,8 @@ const TestSetting = () => {
   const { skillId, testId } = useParams();
 
   const [parts, setParts] = useState(null);
+  const [testTypeForSpeak, setTestTypeForSpeak] = useState(null);
+
   const [practiceTestData, setPracticeTestData] = useState({});
   const [timeLimit, setTimeLimit] = useState(60);
   const [selectedParts, setSelectedParts] = useState([]);
@@ -55,9 +61,15 @@ const TestSetting = () => {
     }
   };
 
+  const getTestAsync = async (testId) => {
+    const result = await dispatch(getTest(testId));
+    setTestTypeForSpeak(result.payload.testType);
+  };
+
   useEffect(() => {
     fetchSkillPartsInfo();
     getSkillByIdNE(skillId);
+    getTestAsync(testId);
   }, [dispatch, skillId]);
 
   const handlePartSelection = (part) => {
@@ -180,16 +192,21 @@ const TestSetting = () => {
                   <h4 className="text-lg font-medium mb-2">
                     Choose time limit:
                   </h4>
-                  <select
-                    value={timeLimit}
-                    onChange={handleTimeLimitChange}
-                    className="form-select w-full p-2 border border-gray-300 rounded-md mb-4"
-                  >
-                    <option value={60}>60 mins</option>
-                    <option value={45}>45 mins</option>
-                    <option value={30}>30 mins</option>
-                    <option value={15}>15 mins</option>
-                  </select>
+                  {testTypeForSpeak == 3 && skillType == 3 ? (
+                    <p className="text-red-800">You have 5 minutes to try</p>
+                  ) : (
+                    <select
+                      value={timeLimit}
+                      onChange={handleTimeLimitChange}
+                      className="form-select w-full p-2 border border-gray-300 rounded-md mb-4"
+                    >
+                      <option value={60}>60 mins</option>
+                      <option value={45}>45 mins</option>
+                      <option value={30}>30 mins</option>
+                      <option value={15}>15 mins</option>
+                    </select>
+                  )}
+
                   <button
                     onClick={handleStartTest}
                     disabled={selectedParts.length === 0}

@@ -18,9 +18,13 @@ import "react-toastify/dist/ReactToastify.css";
 const EducationSection = () => {
   const [takeTest, setTakeTest] = useState(false);
   const [testId, setTestId] = useState(null);
-
+  const [isReasonModalOpen, setIsReasonModalOpen] = useState(false);
   const navigate = useNavigate();
   const dispatch = useDispatch();
+
+  const openReasonPopup = () => {
+    setIsReasonModalOpen(true);
+  };
 
   // Extracting specializations and user data from Redux state
   const { specializations, getspecializationstatus } = useSelector(
@@ -88,6 +92,7 @@ const EducationSection = () => {
         const resultAction = await dispatch(uploadFile(file));
         if (uploadFile.fulfilled.match(resultAction)) {
           const fileUrl = resultAction.payload.fileUrl;
+          console.log("fileUrl: ", fileUrl);
           setFormData((prevData) => ({ ...prevData, degreeURL: fileUrl }));
         } else {
           console.error("Upload failed:", resultAction.error.message);
@@ -130,6 +135,9 @@ const EducationSection = () => {
     }
     if (!formData.grade || formData.grade <= 0) {
       errors.grade = "IELTS Grade must be a positive number";
+    }
+    if (formData.grade > 9) {
+      errors.grade = "IELTS Grade must be less than 9";
     }
     if (!formData.acceptedTerms)
       errors.acceptedTerms = "You must accept the terms and policies";
@@ -393,7 +401,7 @@ const EducationSection = () => {
                                         name={specialization.id}
                                         checked={
                                           formData.specialization[
-                                            specialization.id
+                                          specialization.id
                                           ] || false
                                         }
                                         onChange={handleChange}
@@ -445,7 +453,7 @@ const EducationSection = () => {
                           {teacherRequest?.status === 1 && (
                             <>
                               <p className="font-mono px-4 py-2 text-xs text-yellow-400 text-center mt-2">
-                                Your request has been approved...
+                                Your request has been approved. Click reset window to update.
                               </p>
                               {roleUpdateStatus === "pending" && (
                                 <Link
@@ -469,7 +477,7 @@ const EducationSection = () => {
                                   onClick={updateRole}
                                   className="px-4 py-2 bg-red-500 text-white rounded hover:bg-red-400"
                                 >
-                                  Update role
+                                  Reset window
                                 </button>
                               )}
                             </>
@@ -477,8 +485,14 @@ const EducationSection = () => {
 
                           {teacherRequest?.status === 2 && (
                             <>
-                              <p className="font-mono px-4 py-2 text-xs text-red-500 text-center mt-2">
-                                Your request has been rejected...
+                              <p className="font-mono px-4 text-xs text-red-500 text-center mt-2">
+                                Your request has been rejected.
+                                <button
+                                  onClick={openReasonPopup}
+                                  className="text-blue-500 underline bg-gray-100"
+                                >
+                                  View reason
+                                </button>
                               </p>
                               <Link
                                 to="/updateteacherrequest"
@@ -510,6 +524,23 @@ const EducationSection = () => {
               </div>
             </div>
           </div>
+          {/* Reason modal */}
+          {isReasonModalOpen && (
+            <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
+              <div className="bg-white rounded-lg p-6 max-w-lg w-full shadow-lg">
+                <h2 className="text-xl font-bold mb-4">Reason</h2>
+                <p className="text-gray-700 mb-6">
+                  {teacherRequest?.description}
+                </p>
+                <button
+                  onClick={() => setIsReasonModalOpen(false)}
+                  className="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600"
+                >
+                  Close
+                </button>
+              </div>
+            </div>
+          )}
           <ToastContainer autoClose={3000} newestOnTop closeOnClick />
         </MainLayout>
       )}

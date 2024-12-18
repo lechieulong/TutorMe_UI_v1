@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { FaEye, FaRegUser, FaSignOutAlt, FaUserGraduate } from "react-icons/fa";
+import { FaEye, FaRegUser, FaSignOutAlt, FaUserGraduate, FaHistory, FaPenNib  } from "react-icons/fa";
 import { NavLink } from 'react-router-dom'; // Use NavLink instead of Link
 import { useDispatch, useSelector } from "react-redux";
 import { getUser } from "../../../service/GetUser";
@@ -30,7 +30,7 @@ const Sidebar = () => {
 
     return (
         <nav className="w-60 bg-white shadow-lg lg:w-60 md:w-48 sm:w-24">
-            <div className="p-4 pt-8">
+            <div className="p-4 pt-6">
                 <div className="space-y-3">
                     <NavLink
                         to={`/user/${userInfor?.userName}`}
@@ -70,6 +70,23 @@ const Sidebar = () => {
                         <span className="hidden sm:inline">Change Password</span>
                     </NavLink>
 
+                    <NavLink
+                        to="/purchase-history"
+                        className={({ isActive }) =>
+                            `flex items-center p-3 ${isActive ? 'bg-lightGreen text-gray-700 hover:bg-gray-200' : 'text-gray-700 hover:bg-gray-200'} rounded-lg transition-colors duration-300 text-sm`
+                        }>
+                        <FaHistory className="mr-3 text-lg text-gray-500" />
+                        <span className="hidden sm:inline">Purchase History</span>
+                    </NavLink>
+
+                    <NavLink
+                        to="/logout"
+                        className={({ isActive }) =>
+                            `flex items-center p-3 ${isActive ? 'bg-lightGreen text-gray-700 hover:bg-gray-200' : 'text-gray-700 hover:bg-gray-200'} rounded-lg transition-colors duration-300 text-sm`
+                        }>
+                        <FaPenNib className="mr-3 text-lg text-gray-500" />
+                        <span className="hidden sm:inline">Test History</span>
+                    </NavLink>
                     {/* <NavLink
                         to="/logout"
                         className={({ isActive }) =>

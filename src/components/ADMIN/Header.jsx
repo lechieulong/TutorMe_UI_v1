@@ -9,12 +9,12 @@ const AdminHeader = () => {
             </div>
             <div className="flex items-center">
                 <i className="fas fa-sun text-xl mr-4"></i>
-                <div className="relative">
+                {/* <div className="relative">
                     <FaBell className="text-xl"/>
                     <span className="absolute top-0 right-0 bg-pink-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">15</span>
-                </div>
+                </div> */}
                 <div className="ml-4">
-                    <img src="https://placehold.co/32x32" alt="profile" className="w-8 h-8 rounded-full"/>
+                    <img src="https://hydra13.blob.core.windows.net/63a5630a-687a-4c38-98e2-f5ce440f3f09/Your paragraph text.png" alt="profile" className="w-8 h-8 rounded-full"/>
                 </div>
             </div>
         </header>

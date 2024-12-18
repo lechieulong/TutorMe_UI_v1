@@ -58,7 +58,6 @@ const CourseLessonCard = ({
         fetchTestExams(lesson.id);
       });
 
-      setNotification("Course lessons loaded successfully.");
       setLoading(false);
     } catch (err) {
       setError("Failed to fetch course lessons");

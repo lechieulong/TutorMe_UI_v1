@@ -134,6 +134,45 @@ export const uploadClassFile = createAsyncThunk(
   }
 );
 
+export const updateClass = createAsyncThunk(
+  `${SLICE_NAMES.CLASSES}/${ACTIONS.UPDATE_CLASS}`,
+  async ({ classId, classDto }, { rejectWithValue }) => {
+    try {
+      const response = await axios.put(
+        `${apiURLConfig.baseURL}/class/update/${classId}`,
+        classDto,
+        { headers: { "Content-Type": "application/json" } }
+      );
+      return response.data.result;
+    } catch (error) {
+      console.error("Cập nhật lớp học thất bại:", error);
+      return rejectWithValue(
+        error.response?.data?.message || "Failed to update class."
+      );
+    }
+  }
+);
+
+export const fetchClassById = createAsyncThunk(
+  `${SLICE_NAMES.CLASSES}/fetchClassById`,
+  async (id, { rejectWithValue }) => {
+    try {
+      const response = await axios.get(`${apiURLConfig.baseURL}/class/${id}`);
+
+      if (response.data?.isSuccess) {
+        return response.data.result; // Trả về thông tin lớp học
+      }
+
+      throw new Error(response.data?.message || "Failed to fetch class data");
+    } catch (error) {
+      console.error("Không thể lấy thông tin lớp học:", error);
+      return rejectWithValue(
+        error.response?.data?.message || "Failed to fetch class."
+      );
+    }
+  }
+);
+
 const initialState = {
   unenrolledClassesByCourse: {},
   classes: {},
@@ -142,6 +181,8 @@ const initialState = {
   switchStates: {},
   createStatus: STATUS.IDLE,
   createError: null,
+  classDetails: null,
+  loading: false,
 };
 
 const classSlice = createSlice({
@@ -218,6 +259,31 @@ const classSlice = createSlice({
       })
       .addCase(fetchUnenrolledClasses.rejected, (state, action) => {
         state.status = STATUS.FAILED;
+        state.error = action.payload;
+      })
+      .addCase(updateClass.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(updateClass.fulfilled, (state, action) => {
+        state.loading = false;
+        const updatedClass = action.payload;
+        state.classes[updatedClass.id] = updatedClass; // Cập nhật thông tin lớp học mới
+      })
+      .addCase(updateClass.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
+      })
+      .addCase(fetchClassById.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(fetchClassById.fulfilled, (state, action) => {
+        state.loading = false;
+        state.classDetails = action.payload;
+      })
+      .addCase(fetchClassById.rejected, (state, action) => {
+        state.loading = false;
         state.error = action.payload;
       });
   },

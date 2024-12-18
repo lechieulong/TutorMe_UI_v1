@@ -30,7 +30,6 @@ import CourseList from "./pages/Course/CourseList";
 import ClassOfCourse from "./pages/Course/ClassOfCourseList";
 import TestList from "./pages/User/TestList";
 import CourseDetail from "./pages/User/CourseDetail";
-import CourseInfo from "./pages/Course/CourseInfo";
 import CourseSkillCard from "./pages/Mentor/component/CourseSkillCard";
 import "preline";
 import TestLayout from "./pages/TestExam/TestLayout";
@@ -150,14 +149,12 @@ const App = () => {
           {/* Course */}
           {/* <Route path="/courseLayout" element={<CourseLayout />} /> */}
           <Route path="/courseList" element={<CourseList />} />
-          <Route path="/courseinfo" element={<CourseInfo />} />
           <Route path="/createCourse" element={<CreateCourse />} />
           <Route
             path="/mentorCourseDetail/:courseId/"
             element={<MentorCourseDetail />}
           />
           <Route path="/courseDetail/:courseId/" element={<CourseDetail />} />
-          <Route path="/courseinfo/:courseId/infor" element={<CourseInfo />} />
           <Route path="createCourseLesson" element={<CreateCourseLesson />} />
           <Route
             path="createCourseLessonContent"

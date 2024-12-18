@@ -185,7 +185,7 @@ const SignIn = () => {
               // ux_mode="popup"
               />
             </GoogleOAuthProvider>
-            <button className="group h-12 px-4 border-2 border-gray-300 rounded-full transition duration-300 hover:border-blue-400 focus:bg-blue-50 active:bg-blue-100">
+            {/* <button className="group h-12 px-4 border-2 border-gray-300 rounded-full transition duration-300 hover:border-blue-400 focus:bg-blue-50 active:bg-blue-100">
               <div className="relative flex items-center space-x-3 justify-center">
                 <img
                   src="https://upload.wikimedia.org/wikipedia/en/0/04/Facebook_f_logo_%282021%29.svg"
@@ -196,9 +196,9 @@ const SignIn = () => {
                   Continue with Facebook
                 </span>
               </div>
-            </button>
+            </button> */}
           </div>
-          <div className="mt-8 text-center">
+          <div className="mt-12 text-center">
             <p className="text-xs">
               You don't have an account?{" "}
               <Link to="/register" className="underline">

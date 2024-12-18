@@ -52,8 +52,8 @@ const ResultList = ({ testId }) => {
                         </h1>
                     </header>
                     {loading ? (
-                        <div className="flex justify-center items-center h-64">
-                            <div className="animate-spin rounded-full  w-12 border-t-2 border-b-2 border-blue-500"></div>
+                        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+                            <div className="w-16 h-16 border-4 border-t-transparent border-blue-500 rounded-full animate-spin"></div>
                         </div>
                     ) : error ? (
                         <div className="text-red-500 text-center">{error}</div>

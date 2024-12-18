@@ -15,6 +15,7 @@ import { FaAngleLeft, FaAngleRight } from "react-icons/fa";
 import Pagination from "../../components/ADMIN/Pagination";
 import { formatDOB } from "../../utils/Validator";
 import { Admin_ImportUser } from "../../redux/ADMIN/UserSlice";
+import { formatDateTime } from "../../utils/Validator";
 
 const Users = () => {
   const dispatch = useDispatch();
@@ -25,6 +26,7 @@ const Users = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [currentUser, setCurrentUser] = useState(null);
   const [currentPage, setCurrentPage] = useState(1);
+  const [isLoading, setIsLoading] = useState(false);
   const pageSize = 20;
 
   useEffect(() => {
@@ -40,29 +42,45 @@ const Users = () => {
     setUnlockModalOpen(true);
   };
 
-  const handleLock = (duration) => {
+  const handleLock = (duration, unit, reason) => {
     if (currentUser) {
+      let lockoutForever = false;
+      let durationValue = duration;
+      let durationUnit = unit;
+
+      if (unit === 'untilUnlock') {
+        lockoutForever = true;
+        durationValue = 0;
+        durationUnit = unit;
+      }
+      setIsLoading(true);
       dispatch(
         Admin_LockUser({
           userId: currentUser.id,
-          durationInMinutes: duration,
+          lockoutReason: reason,
+          lockoutForever: lockoutForever,
+          durationValue: durationValue,
+          durationUnit: durationUnit,
         })
       )
         .unwrap()
         .then(() => {
-          toast.success(`User locked for ${duration} minutes`);
-          // Gọi lại danh sách người dùng
+          toast.success(`User locked${lockoutForever ? ' forever' : ` for ${duration} ${unit}(s)`}`);
           dispatch(Admin_GetUsers({ page: currentPage, pageSize }));
         })
         .catch((error) => {
           toast.error("Failed to lock user");
           console.error("Failed to lock user:", error);
+        })
+        .finally(() => {
+          setIsLoading(false);
         });
     }
   };
 
   // New function to handle unlocking a user
   const handleUnlockUser = (currentUser) => {
+    setIsLoading(true);
     dispatch(Admin_UnlockUser(currentUser.id))
       .unwrap()
       .then(() => {
@@ -72,6 +90,9 @@ const Users = () => {
       .catch((error) => {
         toast.error("Failed to unlock user");
         console.error("Failed to unlock user:", error);
+      })
+      .finally(() => {
+        setIsLoading(false);
       });
   };
 
@@ -94,6 +115,11 @@ const Users = () => {
   // const totalPages = totalUsers > pageSize ? Math.ceil(totalUsers / pageSize) : 1;
   return (
     <section className="bg-white p-6 rounded-lg shadow-md">
+      {isLoading && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="w-16 h-16 border-4 border-t-transparent border-blue-500 rounded-full animate-spin"></div>
+        </div>
+      )}
       <LockoutModal
         isOpen={isModalOpen}
         onClose={() => setModalOpen(false)}
@@ -162,7 +188,7 @@ const Users = () => {
           <tbody className="text-gray-700 text-sm">
             {getuserstatus === 'pending' ? (
               <tr>
-                <td colSpan="6" className="text-yellow-300 text-center py-4">Loading...</td>
+                <td colSpan="6" className="text-green-300 text-center py-4">It may take a few seconds...</td>
               </tr>
             ) : getuserstatus === 'failed' ? (
               <tr>
@@ -187,7 +213,7 @@ const Users = () => {
                     <td className="py-1 px-3">{user.dob ? formatDOB(new Date(user.dob).toLocaleDateString()) : 'N/A'}</td>
                     <td className="py-1 px-3">{user.phoneNumber || 'N/A'}</td>
                     <td className="py-1 px-3">{user.roles && user.roles.length > 0 ? user.roles.join(', ') : 'N/A'}</td>
-                    <td className="py-1 px-3">{user.lockoutEnd ? new Date(user.lockoutEnd).toLocaleString() : 'N/A'}</td>
+                    <td className="py-1 px-3">{user.lockoutEnd ? formatDateTime(user.lockoutEnd) : 'N/A'}</td>
                     <td className="py-1 px-3 text-center">
                       {user.lockoutEnd && new Date(user.lockoutEnd) > new Date() ? (
                         <button onClick={() => handleUnlockClick(user)}>

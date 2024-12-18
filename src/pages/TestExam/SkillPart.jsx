@@ -27,6 +27,7 @@ const SkillPart = () => {
   const [createSkill, setCreateSkill] = useState(false);
   const [user, setUser] = useState(null);
   const [takeFullTest, setTakeFullTest] = useState(false);
+  const [disableFinalTest, setDisableFinalTest] = useState(false);
 
   const navigate = useNavigate();
   const dispatch = useDispatch();
@@ -69,7 +70,7 @@ const SkillPart = () => {
   };
 
   const handleTakeFullTest = () => {
-    if (isButtonDisabled) {
+    if (disableFinalTest) {
       toast.warning("Test not available  now");
       return;
     }
@@ -80,25 +81,23 @@ const SkillPart = () => {
     }
   };
 
-  const isButtonDisabled = () => {
-    const startTime = new Date(test.startTime); // Convert startTime to a Date object
-    const currentTime = new Date(); // Get the current date and time
+  useEffect(() => {
+    if (test) {
+      const startTime = new Date(test.startTime); // Convert startTime to a Date object
+      const currentTime = new Date(); // Get the current date and time
 
-    // Ensure both dates are valid
-    if (isNaN(startTime) || isNaN(currentTime)) {
-      console.error("Invalid Date(s)");
-      return false;
+      // Ensure both dates are valid
+      if (!isNaN(startTime) && !isNaN(currentTime)) {
+        setDisableFinalTest(test.testType === 2 && startTime > currentTime);
+      }
     }
+  }, [test]);
 
-    console.log(test.testType);
-
-    return test.testType === 2 && startTime > currentTime;
-  };
+  const isButtonDisabled = disableFinalTest; // Use the state value directly
 
   return (
     <>
       <ToastContainer autoClose={2000} newestOnTop closeOnClick />
-
       {takeFullTest ? (
         <TestLayout fullTestId={testId} />
       ) : (
@@ -152,8 +151,10 @@ const SkillPart = () => {
                       <CreateTest testId={testId} />
                     ) : (
                       <>
-                        {user?.role?.includes(Roles.ADMIN) ||
-                        user?.role?.includes(Roles.TEACHER) ? (
+                        {(user?.role?.includes(Roles.ADMIN) &&
+                          test.testType == 3) ||
+                        (user?.role?.includes(Roles.TEACHER) &&
+                          test.testType != 3) ? (
                           <button
                             className="p-2 bg-red-100"
                             onClick={() => setCreateSkill(true)}
@@ -199,11 +200,12 @@ const SkillPart = () => {
                       <div className="border text-gray-700 shadow-md border-gray-300 p-6 flex justify-between mt-2 rounded-xl items-center">
                         <button
                           className={`text-2xl p-4 font-semibold rounded-lg ${
-                            isButtonDisabled()
+                            isButtonDisabled
                               ? "bg-gray-300 text-gray-500 cursor-not-allowed"
                               : "bg-green-500 text-white border-green-500 hover:bg-green-600"
                           }`}
                           onClick={handleTakeFullTest}
+                          disabled={isButtonDisabled} // Ensure button is disabled when needed
                         >
                           Take Full Test
                         </button>

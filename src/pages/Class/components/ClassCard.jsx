@@ -93,7 +93,9 @@ const ClassCard = ({
     } else {
       onSelect && onSelect(classItem.id);
       if (location.pathname.includes("/classOfCourse")) {
-        navigate(`/classDetail/${classItem.courseId}/${classItem.id}`);
+        navigate(`/classDetail/${classItem.courseId}/${classItem.id}`, {
+          state: { mentorAndList },
+        });
       }
     }
   };

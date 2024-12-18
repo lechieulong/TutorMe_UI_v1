@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { useParams, useLocation, Link, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import MentorSidebar from "../../components/Mentor/MentorSideBar";
@@ -37,6 +37,7 @@ import { CheckLecturerOfCourse } from "../../redux/courses/CourseSlice";
 import { GetCourseById } from "../../redux/courses/CourseSlice";
 import { CheckBanlance, GiveMeMyMoney } from "../../components/common/PayOS";
 import Comment from "../../components/common/Comment";
+import RatingTeacher from "../../components/common/RatingTeacher";
 const CourseDetail = () => {
   const navigate = useNavigate();
   const { className, courseId } = useParams();
@@ -57,10 +58,21 @@ const CourseDetail = () => {
   const [course, setCourse] = useState(null);
   const [notificationUpdated, setNotificationUpdated] = useState(false);
   const [isReportOpen, setIsReportOpen] = useState(false);
+  const [isRatingTeacherOpen, setIsRatingTeacherOpen] = useState(false);
+  const [selectedTeacherId, setSelectedTeacherId] = useState("");
   const dispatch = useDispatch();
   const { classes } = useSelector((state) => ({
     classes: state.classes.classes[courseId] || [], // Lấy danh sách lớp học theo courseId
   }));
+
+  const handleOpenTeacherRating = (teacherId) => {
+    setSelectedTeacherId(teacherId);
+    setIsRatingTeacherOpen(true);
+  };
+
+  const handleCloseTeacherRating = async () => {
+    setIsRatingTeacherOpen(false);
+  };
 
   const switchStates = useSelector((state) => state.classes.switchStates || {});
   const isEnrolled = useSelector(
@@ -287,6 +299,13 @@ const CourseDetail = () => {
                   Rate This Course
                 </button>
               )}
+              ;
+              <button
+                className="py-2 px-3 text-sm font-medium rounded-lg border bg-white text-gray-800 shadow-sm hover:bg-gray-50"
+                onClick={() => handleOpenTeacherRating(course?.userId)}
+              >
+                Rate This Teacher
+              </button>
             </header>
             <div className="mx-auto bg-houseGreen text-white rounded-lg shadow-lg flex flex-col lg:flex-row p-8 space-y-8 lg:space-y-0 lg:space-x-8 ">
               <div className="flex flex-col lg:w-2/3">
@@ -427,6 +446,14 @@ const CourseDetail = () => {
           courseId={courseId}
           userId={userId}
           onClose={handleCloseRating}
+        />
+      )}
+
+      {isRatingTeacherOpen && (
+        <RatingTeacher
+          teacherId={selectedTeacherId}
+          userId={userId}
+          onClose={handleCloseTeacherRating}
         />
       )}
 

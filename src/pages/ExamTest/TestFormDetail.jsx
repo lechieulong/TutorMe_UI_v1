@@ -30,6 +30,7 @@ const TestFormDetail = ({
           {skills.map((skill) => (
             <button
               key={skill}
+              type="button"
               className={`p-2 border border-blue-300 rounded ${
                 selectedSkills.includes(skill)
                   ? "bg-green-500 text-white"

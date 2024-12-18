@@ -129,9 +129,8 @@ const TestSubmitted = ({ setIsViewExplain }) => {
   };
 
   const handleTestClick = (testId) => {
-    setSelectedTestId(testId); // Set the selected test ID
-
-    setActiveTab("Results"); // Show the results tab
+    setSelectedTestId(testId);
+    setActiveTab("Results");
   };
 
   return (
@@ -152,66 +151,70 @@ const TestSubmitted = ({ setIsViewExplain }) => {
                 </p>
               </header>
 
-            {loading ? (
-              <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-                <div className="w-16 h-16 border-4 border-t-transparent border-blue-500 rounded-full animate-spin"></div>
-              </div>
-            ) : error ? (
-              <div className="text-red-500 text-center">{error}</div>
-            ) : results.length === 0 ? (
-              <div className="text-gray-500 text-center">No results available.</div>
-            ) : (
-              <div>
-                <div className="overflow-auto h-[400px] shadow mb-4">
-                  <table className="min-w-full bg-white border border-gray-200 rounded-lg">
-                    <thead className="bg-green-500 sticky font-bold">
-                      <tr>
-                        <th className="px-2 py-3 text-left text-sm font-semibold">Test Name</th>
-                        <th className="px-2 py-3 text-left text-sm font-semibold">Start Time</th>
-                        <th className="px-2 py-3 text-left text-sm font-semibold">End Time</th>
-                        <th className="px-2 py-3 text-left text-sm font-semibold">Created At</th>
-                        <th className="px-2 py-3 text-left text-sm font-semibold">Last Updated</th>
-                      </tr>
-                    </thead>
-                    <tbody className="divide-y divide-gray-200">
-                      {results.map((result) => (
-                        <tr key={result.id} className="hover:bg-gray-100">
-                          <td className="px-2 py-1 text-gray-700">{result.testName}</td>
-                          <td className="px-2 py-1 text-gray-700 capitalize">
-                            {formatDateTime(result.startTime)}
-                          </td>
-                          <td className="px-2 py-1 text-gray-700 capitalize">
-                            {formatDateTime(result.endTime)}
-                          </td>
-                          <td className="px-2 py-1 text-gray-700 capitalize">
-                            {formatDateTime(result.createAt)}
-                          </td>
-                          <td className="px-2 py-1 text-gray-700 capitalize">
-                            {formatDateTime(result.updateAt)}
-                          </td>
-                          <td className="px-2 py-1 text-gray-700 capitalize cursor-pointer">
-                            {new Date(result.startTime) > new Date(new Date().toISOString().slice(0, 16)) ? (
-                              <FaRegEdit onClick={() => openUpdatePopup(result)} />
-                            ) : (
-                              <FaArrowRight onClick={() => handleTestClick(result.id.toString())} />
-                            )}
-                          </td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
+              {loading ? (
+                <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+                  <div className="w-16 h-16 border-4 border-t-transparent border-blue-500 rounded-full animate-spin"></div>
                 </div>
+              ) : error ? (
+                <div className="text-red-500 text-center">{error}</div>
+              ) : results.length === 0 ? (
+                <div className="text-gray-500 text-center">No results available.</div>
+              ) : (
+                <div>
+                  <div className="overflow-auto h-[400px] shadow mb-4">
+                    <table className="min-w-full bg-white border border-gray-200 rounded-lg">
+                      <thead className="bg-green-500 sticky font-bold">
+                        <tr>
+                          <th className="px-2 py-3 text-left text-sm font-semibold">Test Name</th>
+                          <th className="px-2 py-3 text-left text-sm font-semibold">Start Time</th>
+                          <th className="px-2 py-3 text-left text-sm font-semibold">End Time</th>
+                          <th className="px-2 py-3 text-left text-sm font-semibold">Created At</th>
+                          <th className="px-2 py-3 text-left text-sm font-semibold">Last Updated</th>
+                        </tr>
+                      </thead>
+                      <tbody className="divide-y divide-gray-200">
+                        {results.map((result) => (
+                          <tr key={result.id} className="hover:bg-gray-100">
+                            <td className="px-2 py-1 text-gray-700">{result.testName}</td>
+                            <td className="px-2 py-1 text-gray-700 capitalize">
+                              {formatDateTime(result.startTime)}
+                            </td>
+                            <td className="px-2 py-1 text-gray-700 capitalize">
+                              {formatDateTime(result.endTime)}
+                            </td>
+                            <td className="px-2 py-1 text-gray-700 capitalize">
+                              {formatDateTime(result.createAt)}
+                            </td>
+                            <td className="px-2 py-1 text-gray-700 capitalize">
+                              {formatDateTime(result.updateAt)}
+                            </td>
+                            <td className="px-2 py-1 text-gray-700 capitalize cursor-pointer">
+                              {new Date(result.startTime) > new Date(new Date().toISOString().slice(0, 16)) ? (
+                                <FaRegEdit onClick={() => openUpdatePopup(result)} />
+                              ) : (
+                                <FaArrowRight
+                                  onClick={(event) => {
+                                    event.stopPropagation(); // Prevent the row click event
+                                    handleTestClick(result.id.toString());
+                                  }}
+                                />
+                              )}
+                            </td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
 
                   {/* Pagination Controls */}
                   <div className="flex justify-between items-center">
                     <button
                       onClick={handlePreviousPage}
                       disabled={currentPage === 1}
-                      className={`px-4 py-2 rounded-md text-sm font-medium ${
-                        currentPage === 1
-                          ? "bg-gray-200 text-gray-500 cursor-not-allowed"
-                          : "bg-blue-500 text-white hover:bg-blue-600"
-                      }`}
+                      className={`px-4 py-2 rounded-md text-sm font-medium ${currentPage === 1
+                        ? "bg-gray-200 text-gray-500 cursor-not-allowed"
+                        : "bg-blue-500 text-white hover:bg-blue-600"
+                        }`}
                     >
                       Previous
                     </button>
@@ -221,11 +224,10 @@ const TestSubmitted = ({ setIsViewExplain }) => {
                     <button
                       onClick={handleNextPage}
                       disabled={currentPage === totalPages}
-                      className={`px-4 py-2 rounded-md text-sm font-medium ${
-                        currentPage === totalPages
-                          ? "bg-gray-200 text-gray-500 cursor-not-allowed"
-                          : "bg-blue-500 text-white hover:bg-blue-600"
-                      }`}
+                      className={`px-4 py-2 rounded-md text-sm font-medium ${currentPage === totalPages
+                        ? "bg-gray-200 text-gray-500 cursor-not-allowed"
+                        : "bg-blue-500 text-white hover:bg-blue-600"
+                        }`}
                     >
                       Next
                     </button>
@@ -299,7 +301,7 @@ const TestSubmitted = ({ setIsViewExplain }) => {
         </div>
       )}
       <ToastContainer autoClose={3000} newestOnTop closeOnClick />
-    </>
+    </div>
   );
 };
 

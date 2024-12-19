@@ -84,6 +84,8 @@ export const ACTIONS = {
   UPDATE_PROFILE: "updateprofile",
 
   GET_USER_BALANCE: "getuserbalance",
+  GET_USER_BALANCE_HISTORY: "getuserbalancehistory",
+
   //Event
   GET_EVENT_BY_USERID: "geteventbyuserid",
 

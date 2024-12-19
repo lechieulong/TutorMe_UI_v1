@@ -38,12 +38,16 @@ const SubjectListCard = ({ averageRating, ratingCount, image, userName }) => {
     >
       <div className="flex flex-col items-center">
         <img src={image} alt={userName} />
-        <div className="flex items-center">
-          <span className="ml-2">{averageRating?.toFixed(1) || 0}</span>
-          {renderStars(averageRating || 0)}
-        </div>
-        <div className="flex items-center">
-          <span className="ml-2">{ratingCount || 0}</span>
+        <div className="flex items-center space-x-2 mt-2">
+          {/* Average Rating and Stars */}
+          <div className="flex items-center">
+            <span className="ml-2">{averageRating?.toFixed(1) || 0}</span>
+            {renderStars(averageRating || 0)}
+          </div>
+          {/* Rating Count */}
+          <div className="flex items-center">
+            <span className="ml-2 text-gray-500">({ratingCount || 0})</span>
+          </div>
         </div>
       </div>
     </div>

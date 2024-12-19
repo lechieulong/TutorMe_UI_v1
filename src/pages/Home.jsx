@@ -47,8 +47,7 @@ const Home = () => {
         <LiveStreamList />
         <div className="ml-10 text-2xl font-bold">
           <h2 className="text-black">
-            Hot Teacher{" "}
-            <Link className="font-normal text-base opacity-40">more</Link>
+            A TEAM OF TEACHERS WITH FULL KNOWLEDGE, EXPERIENCE AND EXPERTISE.
           </h2>
         </div>
         <div className="p-5">

@@ -61,7 +61,7 @@ const Sidebar = () => {
                 }`
               }
             >
-              <FaThLarge />
+              <FaChartLine />
               <span className="hidden md:block ml-3">Dashboard</span>
             </NavLink>
           </li>
@@ -115,19 +115,6 @@ const Sidebar = () => {
             >
               <FaGift />
               <span className="ml-3">Gifts</span>
-            </NavLink>
-          </li>
-          <li>
-            <NavLink
-              to="analytics"
-              className={({ isActive }) =>
-                `flex items-center p-3 text-gray-700 hover:bg-gray-200 transition duration-200 ease-in-out ${
-                  isActive ? "bg-lightGreen" : ""
-                }`
-              }
-            >
-              <FaChartLine />
-              <span className="ml-3">Analytics</span>
             </NavLink>
           </li>
           <li>

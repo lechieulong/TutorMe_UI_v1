@@ -88,6 +88,16 @@ const TestForm = ({
         >
           {/* Test Name */}
           <div className="relative">
+            <div className="flex justify-between items-center mb-4  ">
+              <p className="font-bold text-xl">Test Form</p>
+              <button
+                type="button"
+                onClick={() => setIsCreateTest(false)}
+                className="border border-red-500"
+              >
+                Close{" "}
+              </button>
+            </div>
             <label className="block text-sm font-semibold text-gray-700">
               Test Name
             </label>

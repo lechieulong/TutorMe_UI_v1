@@ -10,13 +10,12 @@ import { UpdateTest } from "../../redux/ADMIN/TestExamSlice";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
-const TestSubmitted = ({ setIsViewExplain }) => {
-  const [activeTab, setActiveTab] = useState("Dashboard");
+const TestSubmitted = ({ setIsViewExplain, setActiveTab, activeTab }) => {
+  // const [activeTab, setActiveTab] = useState("Dashboard");
   const [results, setResults] = useState([]);
   const [count, setCount] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [viewExplain, setViewExplain] = useState(false);
   const [totalPages, setTotalPages] = useState(1);
   const dispatch = useDispatch();
   const { user } = useSelector((state) => state.user);
@@ -54,9 +53,9 @@ const TestSubmitted = ({ setIsViewExplain }) => {
   };
 
   const [formData, setFormData] = useState({
-    testName: '',
-    startTime: '',
-    endTime: '',
+    testName: "",
+    startTime: "",
+    endTime: "",
   });
 
   const handleChange = (e) => {
@@ -69,9 +68,9 @@ const TestSubmitted = ({ setIsViewExplain }) => {
 
   const validateForm = () => {
     const errors = {};
-    if (!formData.testName) errors.testName = 'Test Name is required';
-    if (!formData.startTime) errors.startTime = 'Start Time is required';
-    if (!formData.endTime) errors.endTime = 'End Time is required';
+    if (!formData.testName) errors.testName = "Test Name is required";
+    if (!formData.startTime) errors.startTime = "Start Time is required";
+    if (!formData.endTime) errors.endTime = "End Time is required";
     return errors;
   };
 
@@ -129,15 +128,20 @@ const TestSubmitted = ({ setIsViewExplain }) => {
   };
 
   const handleTestClick = (testId) => {
-    setSelectedTestId(testId);
+    console.log("haha", activeTab);
     setActiveTab("Results");
+    setSelectedTestId(testId);
   };
+
+  console.log("cc", activeTab);
 
   return (
     <div className="w-full">
       <div className="h-[400px]">
-        {activeTab === "Results" ? (
+        {activeTab == "Results" ? (
           <ResultList
+            activeTab={activeTab}
+            setActiveTab={setActiveTab}
             testId={selectedTestId}
             setIsViewExplain={setIsViewExplain}
           />
@@ -158,24 +162,38 @@ const TestSubmitted = ({ setIsViewExplain }) => {
               ) : error ? (
                 <div className="text-red-500 text-center">{error}</div>
               ) : results.length === 0 ? (
-                <div className="text-gray-500 text-center">No results available.</div>
+                <div className="text-gray-500 text-center">
+                  No results available.
+                </div>
               ) : (
                 <div>
                   <div className="overflow-auto h-[400px] shadow mb-4">
                     <table className="min-w-full bg-white border border-gray-200 rounded-lg">
                       <thead className="bg-green-500 sticky font-bold">
                         <tr>
-                          <th className="px-2 py-3 text-left text-sm font-semibold">Test Name</th>
-                          <th className="px-2 py-3 text-left text-sm font-semibold">Start Time</th>
-                          <th className="px-2 py-3 text-left text-sm font-semibold">End Time</th>
-                          <th className="px-2 py-3 text-left text-sm font-semibold">Created At</th>
-                          <th className="px-2 py-3 text-left text-sm font-semibold">Last Updated</th>
+                          <th className="px-2 py-3 text-left text-sm font-semibold">
+                            Test Name
+                          </th>
+                          <th className="px-2 py-3 text-left text-sm font-semibold">
+                            Start Time
+                          </th>
+                          <th className="px-2 py-3 text-left text-sm font-semibold">
+                            End Time
+                          </th>
+                          <th className="px-2 py-3 text-left text-sm font-semibold">
+                            Created At
+                          </th>
+                          <th className="px-2 py-3 text-left text-sm font-semibold">
+                            Last Updated
+                          </th>
                         </tr>
                       </thead>
                       <tbody className="divide-y divide-gray-200">
                         {results.map((result) => (
                           <tr key={result.id} className="hover:bg-gray-100">
-                            <td className="px-2 py-1 text-gray-700">{result.testName}</td>
+                            <td className="px-2 py-1 text-gray-700">
+                              {result.testName}
+                            </td>
                             <td className="px-2 py-1 text-gray-700 capitalize">
                               {formatDateTime(result.startTime)}
                             </td>
@@ -189,16 +207,15 @@ const TestSubmitted = ({ setIsViewExplain }) => {
                               {formatDateTime(result.updateAt)}
                             </td>
                             <td className="px-2 py-1 text-gray-700 capitalize cursor-pointer">
-                              {new Date(result.startTime) > new Date(new Date().toISOString().slice(0, 16)) ? (
+                              {/* {new Date(result.startTime) > new Date(new Date().toISOString().slice(0, 16)) ? (
                                 <FaRegEdit onClick={() => openUpdatePopup(result)} />
-                              ) : (
-                                <FaArrowRight
-                                  onClick={(event) => {
-                                    event.stopPropagation(); // Prevent the row click event
-                                    handleTestClick(result.id.toString());
-                                  }}
-                                />
-                              )}
+                              ) : ( */}
+                              <FaArrowRight
+                                onClick={(event) => {
+                                  event.stopPropagation(); // Prevent the row click event
+                                  handleTestClick(result.id.toString());
+                                }}
+                              />
                             </td>
                           </tr>
                         ))}
@@ -211,10 +228,11 @@ const TestSubmitted = ({ setIsViewExplain }) => {
                     <button
                       onClick={handlePreviousPage}
                       disabled={currentPage === 1}
-                      className={`px-4 py-2 rounded-md text-sm font-medium ${currentPage === 1
-                        ? "bg-gray-200 text-gray-500 cursor-not-allowed"
-                        : "bg-blue-500 text-white hover:bg-blue-600"
-                        }`}
+                      className={`px-4 py-2 rounded-md text-sm font-medium ${
+                        currentPage === 1
+                          ? "bg-gray-200 text-gray-500 cursor-not-allowed"
+                          : "bg-blue-500 text-white hover:bg-blue-600"
+                      }`}
                     >
                       Previous
                     </button>
@@ -224,10 +242,11 @@ const TestSubmitted = ({ setIsViewExplain }) => {
                     <button
                       onClick={handleNextPage}
                       disabled={currentPage === totalPages}
-                      className={`px-4 py-2 rounded-md text-sm font-medium ${currentPage === totalPages
-                        ? "bg-gray-200 text-gray-500 cursor-not-allowed"
-                        : "bg-blue-500 text-white hover:bg-blue-600"
-                        }`}
+                      className={`px-4 py-2 rounded-md text-sm font-medium ${
+                        currentPage === totalPages
+                          ? "bg-gray-200 text-gray-500 cursor-not-allowed"
+                          : "bg-blue-500 text-white hover:bg-blue-600"
+                      }`}
                     >
                       Next
                     </button>
@@ -245,7 +264,9 @@ const TestSubmitted = ({ setIsViewExplain }) => {
             <h2 className="text-2xl font-bold mb-4">Update Test</h2>
             <form onSubmit={handleSubmit}>
               <div className="mb-4">
-                <label className="block text-gray-700 text-sm font-bold mb-2">Test Name</label>
+                <label className="block text-gray-700 text-sm font-bold mb-2">
+                  Test Name
+                </label>
                 <input
                   type="text"
                   name="testName"
@@ -254,10 +275,14 @@ const TestSubmitted = ({ setIsViewExplain }) => {
                   className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
                   required
                 />
-                {formErrors.testName && <p className="text-red-500 text-xs">{formErrors.testName}</p>}
+                {formErrors.testName && (
+                  <p className="text-red-500 text-xs">{formErrors.testName}</p>
+                )}
               </div>
               <div className="mb-4">
-                <label className="block text-gray-700 text-sm font-bold mb-2">Start Time</label>
+                <label className="block text-gray-700 text-sm font-bold mb-2">
+                  Start Time
+                </label>
                 <input
                   type="datetime-local"
                   name="startTime"
@@ -267,10 +292,14 @@ const TestSubmitted = ({ setIsViewExplain }) => {
                   min={new Date().toISOString().slice(0, 16)}
                   required
                 />
-                {formErrors.startTime && <p className="text-red-500 text-xs">{formErrors.startTime}</p>}
+                {formErrors.startTime && (
+                  <p className="text-red-500 text-xs">{formErrors.startTime}</p>
+                )}
               </div>
               <div className="mb-4">
-                <label className="block text-gray-700 text-sm font-bold mb-2">End Time</label>
+                <label className="block text-gray-700 text-sm font-bold mb-2">
+                  End Time
+                </label>
                 <input
                   type="datetime-local"
                   name="endTime"
@@ -280,19 +309,23 @@ const TestSubmitted = ({ setIsViewExplain }) => {
                   min={new Date().toISOString().slice(0, 16)}
                   required
                 />
-                {formErrors.endTime && <p className="text-red-500 text-xs">{formErrors.endTime}</p>}
+                {formErrors.endTime && (
+                  <p className="text-red-500 text-xs">{formErrors.endTime}</p>
+                )}
               </div>
 
               <div className="flex justify-end">
                 <button
                   type="button"
                   onClick={closeUpdatePopup}
-                  className="bg-gray-400 text-white px-4 py-2 rounded mr-2">
+                  className="bg-gray-400 text-white px-4 py-2 rounded mr-2"
+                >
                   Cancel
                 </button>
                 <button
                   type="submit"
-                  className="bg-green-400 text-white px-4 py-2 rounded">
+                  className="bg-green-400 text-white px-4 py-2 rounded"
+                >
                   Submit
                 </button>
               </div>

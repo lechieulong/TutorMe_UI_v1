@@ -9,6 +9,8 @@ import TestForm from "../../ExamTest/TestForm";
 import Cookies from "js-cookie";
 import { Link } from "react-router-dom";
 import { toast, ToastContainer } from "react-toastify";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faClipboard } from "@fortawesome/free-solid-svg-icons";
 const CourseSkillCard = ({
   courseId,
   isEnrolled,
@@ -194,29 +196,44 @@ const CourseSkillCard = ({
                   isMentor={isMentor}
                 />
 
-                {mentorAndList && (
-                  <button
-                    type="button"
-                    onClick={() => handleCreateTest(skill.id)}
-                    className="py-2 px-3 text-sm font-medium rounded-lg border border-gray-200 bg-white text-gray-800 shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-gray-200 mt-4"
-                  >
-                    Create Test for {skill.description}
-                  </button>
-                )}
-                {(isEnrolled || mentorAndList || isMentor) && (
-                  <div className="flex space-x-4 mt-4">
-                    {testExams[skill.id]?.map((exam) => (
-                      <div key={exam.id}>
-                        <Link
-                          to={`/testDetail/${exam.id}`} // Link dẫn đến chi tiết bài kiểm tra
-                          className="py-2 px-3 text-sm font-medium rounded-lg border border-gray-200 bg-white text-gray-800 shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-gray-200"
+                <div className="px-10 bg-gray-50 py-6  rounded-lg shadow-md">
+                  <h3 className="text-2xl font-extrabold text-green-700 flex items-center mb-5">
+                    Final Test{" "}
+                    <FontAwesomeIcon
+                      icon={faClipboard}
+                      className="ml-2 text-green-600"
+                    />
+                  </h3>
+                  {(isEnrolled || mentorAndList || isMentor) && (
+                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mt-4">
+                      {testExams[skill.id]?.map((exam) => (
+                        <div
+                          key={exam.id}
+                          className="bg-white p-4 rounded-lg shadow-sm border border-gray-200 hover:shadow-md transition duration-300"
                         >
-                          {exam.testName}
-                        </Link>
-                      </div>
-                    ))}
-                  </div>
-                )}
+                          <Link
+                            to={`/testDetail/${exam.id}`}
+                            className="block py-2 px-4 text-sm font-semibold text-green-700 bg-green-100 rounded-lg hover:bg-green-200 hover:text-green-800 transition duration-300"
+                          >
+                            {exam.testName}
+                          </Link>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                  {mentorAndList && (
+                    <div className="mt-6">
+                      <button
+                        type="button"
+                        onClick={() => handleCreateTest(skill.id)}
+                        className="flex items-center justify-center py-2 px-4 text-sm font-medium text-white bg-green-500 rounded-lg shadow-md hover:bg-green-600 focus:outline-none focus:ring-2 focus:ring-green-300 transition duration-300"
+                      >
+                        <FontAwesomeIcon icon={faClipboard} className="mr-2" />
+                        Create Test for {skill.description}
+                      </button>
+                    </div>
+                  )}
+                </div>
               </div>
             ))}
           </div>

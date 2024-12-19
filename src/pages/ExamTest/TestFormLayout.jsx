@@ -21,14 +21,30 @@ const TestFormLayout = () => {
 
   const [activeTab, setActiveTab] = useState(initActiveTab);
 
+  console.log(activeTab, "ngoc");
+
   const isEnrolled = useSelector((state) => state.enrollment.isEnrolled);
 
   const renderComponent = () => {
     switch (activeTab) {
       case "QuestionBanks":
         return <QuestionBank />;
-      // case "Dashboard":
-      //   return <TestSubmitted setIsViewExplain={setIsViewExplain} />;
+      case "Dashboard":
+        return (
+          <TestSubmitted
+            setIsViewExplain={setIsViewExplain}
+            setActiveTab={setActiveTab}
+            activeTab={activeTab}
+          />
+        );
+      case "Results":
+        return (
+          <TestSubmitted
+            setIsViewExplain={setIsViewExplain}
+            setActiveTab={setActiveTab}
+            activeTab={activeTab}
+          />
+        );
       case "Settings":
         return <ContributionAttempt />;
       case "History":
@@ -116,10 +132,6 @@ const TestFormLayout = () => {
           )}
 
           <div className="">{renderComponent()}</div>
-
-          {activeTab === "Dashboard" && (
-            <TestSubmitted setIsViewExplain={setIsViewExplain} />
-          )}
         </div>
       </div>
     </div>

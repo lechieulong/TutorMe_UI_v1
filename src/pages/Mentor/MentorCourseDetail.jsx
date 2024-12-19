@@ -114,6 +114,12 @@ const MentorCourseDetail = () => {
     }
   }, [dispatch, userId, courseId]);
 
+  const handleDeleteClassSuccess = () => {
+    dispatch(fetchClasses(courseId));
+  };
+  const updateClassSuccessfull = () => {
+    dispatch(fetchClasses(courseId));
+  };
   useEffect(() => {
     const checkIfRated = async () => {
       if (!userId || !courseId) return;
@@ -401,6 +407,8 @@ const MentorCourseDetail = () => {
                           onSelect={() => setSelectedClassId(classItem.id)}
                           isActive={selectedClassId === classItem.id}
                           mentorAndList={mentorAndList}
+                          handleDeleteClassSuccess={handleDeleteClassSuccess}
+                          updateClassSuccessfull={updateClassSuccessfull}
                         />
                       ))}
                     </div>

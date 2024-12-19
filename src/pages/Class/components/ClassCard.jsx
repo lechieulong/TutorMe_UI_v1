@@ -26,7 +26,8 @@ const ClassCard = ({
   onSwitchChange,
   onSelect,
   isActive,
-  handleDeleteClassSuccess, // Passed down function to trigger reload in ClassList
+  handleDeleteClassSuccess,
+  updateClassSuccessfull, // Passed down function to trigger reload in ClassList
 }) => {
   const author = useAuthToken();
   const location = useLocation();
@@ -34,6 +35,7 @@ const ClassCard = ({
   const [isSwitchOn, setIsSwitchOn] = useState(false);
   const dispatch = useDispatch();
   const [isUpdateOpen, setIsUpdateOpen] = useState(false);
+
   useEffect(() => {
     const fetchEnabledStatus = async () => {
       try {
@@ -56,6 +58,10 @@ const ClassCard = ({
   if (!isSwitchOn && !mentorAndList) {
     return null;
   }
+  const handleUpdateClassSuccess = () => {
+    updateClassSuccessfull();
+    console.log("Lớp học đã được cập nhật thành công!");
+  };
 
   const handleSwitchChange = () => {
     const newStatus = !isSwitchOn;
@@ -102,7 +108,9 @@ const ClassCard = ({
     }
   };
 
-  const handleDeleteClass = async () => {
+  const handleDeleteClass = async (event) => {
+    event.stopPropagation(); // Ngừng sự kiện từ div chứa ClassCard
+
     const confirmationMessage =
       "Bạn có chắc muốn xóa lớp học này? Hành động này không thể hoàn tác.";
     if (window.confirm(confirmationMessage)) {
@@ -113,7 +121,6 @@ const ClassCard = ({
         if (response.status === 200) {
           alert("Lớp học đã được xóa thành công.");
           handleDeleteClassSuccess(); // Trigger reload in ClassList component
-          navigate("/somewhere"); // Redirect to another page after deleting
         } else {
           alert("Không thể xóa lớp học này.");
         }
@@ -122,6 +129,7 @@ const ClassCard = ({
       }
     }
   };
+
   const handleUpdateClass = () => {
     setIsUpdateOpen(true); // Open the popup
   };
@@ -160,7 +168,7 @@ const ClassCard = ({
                 onClick={handleDeleteClass}
                 className="text-red-500 text-sm font-semibold hover:text-red-700"
               >
-                Xóa
+                Delete
               </button>
               <button
                 onClick={handleUpdateClass}
@@ -176,8 +184,8 @@ const ClassCard = ({
         <UpdateClass
           classItem={classItem}
           courseId={classItem.courseId}
-          onClose={() => setIsUpdateOpen(false)} // Close popup on close
-          onCreateSuccess={handleDeleteClassSuccess} // Reload the class list on success
+          onClose={() => setIsUpdateOpen(false)} // Đóng popup khi đóng
+          onCreateSuccess={handleUpdateClassSuccess} // Gọi hàm khi cập nhật thành công
         />
       )}
     </div>

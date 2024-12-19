@@ -63,16 +63,16 @@ const UpdateClass = ({ classItem, courseId, onClose, onCreateSuccess }) => {
       endDate,
       isEnabled,
     };
+    console.log(updatedClass);
 
     try {
       // Gửi PUT request đến API để cập nhật lớp học
       const response = await axios.put(
-        `https://localhost:7030/api/class/${classItem.Id}`, // API endpoint
+        `https://localhost:7030/api/class/update/${Id}`, // Đúng với URL API
         updatedClass
       );
 
       if (response.data.isSuccess) {
-        // Nếu thành công, gọi onCreateSuccess và onClose
         onCreateSuccess();
         onClose();
       } else {
@@ -101,12 +101,6 @@ const UpdateClass = ({ classItem, courseId, onClose, onCreateSuccess }) => {
               required
               className="w-full border p-2 rounded"
             />
-            {/* <input
-              type="hidden"
-              value={Id}
-              onChange={(e) => setClassName(e.target.value)}
-              className="w-full border p-2 rounded"
-            /> */}
           </div>
           <div className="mb-4">
             <label className="block text-sm font-semibold mb-2">Mô Tả</label>
@@ -123,7 +117,7 @@ const UpdateClass = ({ classItem, courseId, onClose, onCreateSuccess }) => {
               Số Lượng Học Viên
             </label>
             <input
-              type="number"
+              type="text"
               value={count}
               onChange={(e) => setCount(e.target.value)}
               required

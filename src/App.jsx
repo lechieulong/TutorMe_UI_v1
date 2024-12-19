@@ -18,7 +18,7 @@ import ChangePassword from "./pages/User/ChangePassword";
 import BeTeacher from "./pages/User/Beteacher";
 import UpdateTeacherRequest from "./pages/User/UpdateTeacherRequest";
 import PurchaseHistory from "./pages/User/PurchaseHistory";
-
+import ReportOfCourse from "./pages/Course/ReportOfCourse";
 import Calendar from "./pages/Calendar/Calendar";
 import CoachingSchedule from "./pages/Teacher/CoachingSchedule";
 import ConfirmBook from "./pages/Schedule/ConfirmBook";
@@ -76,7 +76,10 @@ const App = () => {
           <Route path="/changepassword" element={<ChangePassword />} />
           <Route path="/reset-password" element={<ResetPassword />} />
           <Route path="/beteacher" element={<BeTeacher />} />
-          <Route path="/updateteacherrequest" element={<UpdateTeacherRequest />} />
+          <Route
+            path="/updateteacherrequest"
+            element={<UpdateTeacherRequest />}
+          />
           <Route path="/purchase-history" element={<PurchaseHistory />} />
 
           <Route path="/upmoney" element={<UpMoney />} />
@@ -122,6 +125,10 @@ const App = () => {
           <Route
             path="/courseDetail/:courseId/classOfCourse"
             element={<ClassOfCourse />}
+          />
+          <Route
+            path="/mentorCourseDetail/:courseId/reportOfCourse"
+            element={<ReportOfCourse />}
           />
           <Route path="/dynamicForm" element={<DynamicForm />} />
           <Route path="/skillCard" element={<CourseSkillCard />} />

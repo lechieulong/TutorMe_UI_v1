@@ -29,6 +29,7 @@ export const fetchUnenrolledClasses = createAsyncThunk(
           params: { courseId, userId },
         }
       );
+      console.log(courseId);
       return { courseId, classes: response.data }; // Trả về dữ liệu kèm courseId
     } catch (error) {
       return rejectWithValue(

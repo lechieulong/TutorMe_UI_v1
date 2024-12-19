@@ -3,6 +3,20 @@ import Modal from "react-modal";
 import { createStreamSession } from "./LiveStreamFrame";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faHeadset } from "@fortawesome/free-solid-svg-icons";
+import axios from "axios";
+import apiURLConfig from "../../redux/common/apiURLConfig";
+import {toast } from "react-toastify";
+
+const url = apiURLConfig.baseURL;
+export const getLive = async (roomid) => {
+  try {
+    const response = await axios.get(`${url}/Live/${roomid}`);
+    return response.data;
+  } catch (error) {
+    console.error("Error fetching Live:", error);
+    return [];
+  }
+};
 
 const FormWithModal = ({ LiveStreamId }) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -43,6 +57,17 @@ const FormWithModal = ({ LiveStreamId }) => {
       Type: value,
     }));
   };
+  const ckeckLive=async(roomid)=>{
+    var live=await getLive(roomid);
+    console.log(live);
+    if(live){
+      if(live.status==0){
+        toast.error("Your feature Live Stream have block");
+      }else{
+        setIsModalOpen(true);
+      }
+    }
+  }
 
   const handleCreate = () => {
     console.log("Dữ liệu tạo:", formData);
@@ -54,7 +79,7 @@ const FormWithModal = ({ LiveStreamId }) => {
   return (
     <div className="">
       <button
-        onClick={() => setIsModalOpen(true)}
+        onClick={() => ckeckLive(LiveStreamId)}
         type="button"
         className=" px-3 inline-flex items-center gap-x-2 text-sm font-medium rounded-lg border border-gray-200 bg-lightGreen text-gray-800 shadow-sm hover:bg-gray-50 focus:outline-none focus:bg-gray-50 disabled:opacity-50 disabled:pointer-events-none   dark:border-neutral-700 transition-hover transition-transform duration-500 dark:hover:scale-110"
       >

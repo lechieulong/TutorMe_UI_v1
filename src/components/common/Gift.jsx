@@ -1,84 +1,79 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { DotLottieReact } from '@lottiefiles/dotlottie-react';
-import { CheckBanlance,GiveMeMyMoney,GetBanlance } from './PayOS';
-import {toast } from "react-toastify";
+import { CheckBanlance, GiveMeMyMoney } from './PayOS';
+import { toast } from "react-toastify";
 import { convert32BytesToUUID } from './LiveStreamFrame';
 import apiURLConfig from "../../redux/common/apiURLConfig";
 import { FaGift } from 'react-icons/fa';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import {faChevronLeft, faChevronRight } from '@fortawesome/free-solid-svg-icons';
 
-const url= apiURLConfig.baseURL;
+const url = apiURLConfig.baseURL;
 
-async function sendGift(GiftId, GiftURL,UserName,userId, roomID,handleSendCommand) {
-  const user=convert32BytesToUUID(userId);
+// Gửi quà tặng
+async function sendGift(GiftId, GiftURL, UserName, userId, roomID, handleSendCommand) {
+  const user = convert32BytesToUUID(userId);
   try {
     const gift = await getGift(GiftId);
     if (await CheckBanlance(gift.price)) {
-      // Nếu số dư đủ, gửi lệnh để gửi quà
-      if(await handleSendCommand(UserName, GiftURL)){
-        await GiveMeMyMoney(user,gift.price*-1,`Buy_Gift ${gift.name} ${GiftId}`);
-        await GiveMeMyMoney(roomID,gift.price,`Receive_Gift ${gift.name} ${GiftId} ${user}`);
-        const formData={
+      if (await handleSendCommand(UserName, GiftURL)) {
+        await GiveMeMyMoney(user, gift.price * -1, `Buy_Gift ${gift.name} ${GiftId}`);
+        await GiveMeMyMoney(roomID, gift.price, `Receive_Gift ${gift.name} ${GiftId} ${user}`);
+        const formData = {
           userId: user,
           giftId: GiftId,
           receiverId: roomID,
-          amount: gift.price
-        } 
+          amount: gift.price,
+        };
         await AddUser_Gift(formData);
-
-      toast.success("Gift sent successfully.");
-      }else{
-        toast.error("Gift sent Fail.");
-      }
-      
-    } else {
-      // Hiện thông báo khi số dư không đủ
-      const userChoice = window.confirm("Số dư không đủ. Bạn có muốn nạp tiền không?");
-      
-      if (userChoice) {
-        // Redirect đến trang nạp tiền nếu người dùng nhấn 'Có'
-        window.location.href = "/Payment"; // Thay "/nap-tien" bằng URL trang nạp tiền của bạn
+        toast.success("Gift sent successfully.");
       } else {
-        // Thông báo giao dịch bị hủy bỏ
         toast.error("Gift sent Fail.");
       }
+    } else {
+      const userChoice = window.confirm("Số dư không đủ. Bạn có muốn nạp tiền không?");
+      if (userChoice) window.location.href = "/Payment";
+      else toast.error("Gift sent Fail.");
     }
   } catch (error) {
     console.error("Error sending gift:", error);
   }
 }
 
-const getGift= async (id)=>{
+// Lấy thông tin quà tặng
+const getGift = async (id) => {
   try {
     const response = await axios.get(`${url}/Gift/${id}`);
     return response.data;
   } catch (error) {
     console.error('Error fetching gifts:', error);
-    setError('Có lỗi xảy ra khi tải danh sách quà tặng.');
   }
-}
-const AddUser_Gift= async (formData)=>{
+};
+
+// Thêm thông tin User_Gift
+const AddUser_Gift = async (formData) => {
   try {
     const response = await axios.post(`${url}/User_Gift`, formData, {
-      headers: {
-        'Content-Type': 'application/json',
-      },
+      headers: { 'Content-Type': 'application/json' },
     });
     return response.data;
   } catch (error) {
-    console.error('Error fetching gifts:', error);
-    setError('Có lỗi xảy ra khi tải danh sách quà tặng.');
+    console.error('Error saving user gift:', error);
   }
-}
-const GiftList = ({UserName,userId,roomID,handleSendCommand} ) => {
+};
+
+const GiftList = ({ UserName, userId, roomID, handleSendCommand }) => {
   const [gifts, setGifts] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
-  const [isVisible, setIsVisible] = useState(true); // Trạng thái để kiểm soát hiển thị danh sách
+  const [visibleIndex, setVisibleIndex] = useState(0);
+  const visibleCount = 5; // Hiển thị 5 quà tại một thời điểm
+  const [isVisible, setIsVisible] = useState(false);
 
   const fetchGifts = async () => {
     setLoading(true);
-    setError(null); // Reset lỗi trước khi gọi API
+    setError(null);
     try {
       const response = await axios.get(`${url}/Gift`);
       setGifts(response.data);
@@ -90,47 +85,84 @@ const GiftList = ({UserName,userId,roomID,handleSendCommand} ) => {
     }
   };
 
-  const toggleGiftList = () => {
-    setIsVisible(!isVisible); // Đảo ngược trạng thái hiển thị
+  const handleNext = () => {
+    setVisibleIndex(Math.min(visibleIndex + visibleCount, gifts.length - visibleCount));
   };
-  useEffect(()=>{
-    fetchGifts();
-  },[])
 
+  const handlePrev = () => {
+    setVisibleIndex(Math.max(visibleIndex - visibleCount, 0));
+  };
+
+  const toggleGiftList = () => {
+    setIsVisible(!isVisible);
+    if (!isVisible) fetchGifts(); // Gọi API nếu mở lần đầu
+  };
+
+  useEffect(() => {
+    if (isVisible) fetchGifts();
+  }, [isVisible]);
+  
   return (
     <div>
-      <button onClick={toggleGiftList} className="bg-green-500 hover:bg-green-600 text-white font-semibold py-2 px-4 rounded-lg transition duration-200">
-        <FaGift/>
+      {/* Nút hiển thị danh sách gift */}
+      <button
+        onClick={toggleGiftList}
+        className="bg-green-500 hover:bg-green-600 text-white font-semibold py-2 px-4 rounded-lg transition duration-200"
+      >
+        <FaGift />
       </button>
-
-      {loading && <p>Loading...</p>}
-      {error && <p className="text-red-500">{error}</p>}
-
-      {/* Hiển thị danh sách quà tặng nếu isVisible là true */}
+  
       {isVisible && (
-        <ul className="flex flex-wrap mt-4">
-          {gifts.map(gift => (
-            <li key={gift.id} className="w-1/5 p-2 mb-2 relative">
-            <button
-              onClick={() =>
-                sendGift(gift.id, gift.url, UserName, userId, roomID, handleSendCommand)
-              }
-              className="block w-full h-full focus:outline-none bg-gradient-to-r from-blue-300 to-purple-300 bg-opacity-70 rounded-lg"
+        <div>
+          {loading && <p>Loading...</p>}
+          {error && <p className="text-red-500">{error}</p>}
+  
+          <div className="mt-4 relative overflow-hidden">
+            <div
+              className={`flex transition-transform duration-300 ease-in-out`}
             >
-              <DotLottieReact src={gift.url} loop autoplay />
-              <div className="absolute inset-0 flex flex-col justify-between items-center text-black bg-opacity-50 p-2">
-                {/* Hiển thị tên ở đầu giữa */}
-                <h3 className="font-bold text-center">{gift.name}</h3>
-                {/* Hiển thị giá ở góc trái bên dưới */}
-                <p className="self-start text-sm">{gift.price}</p>
-              </div>
+              {gifts.slice(visibleIndex, visibleIndex + visibleCount).map(gift => (
+                <div
+                  key={gift.id}
+                  className="w-1/5 relative flex-shrink-0 p-2"
+                >
+                  <button
+                    onClick={() =>
+                      sendGift(gift.id, gift.url, UserName, userId, roomID, handleSendCommand)
+                    }
+                    className="block w-full h-full focus:outline-none bg-gradient-to-r from-blue-300 to-purple-300 bg-opacity-70 rounded-lg"
+                  >
+                    <DotLottieReact src={gift.url} loop autoplay />
+                    <div className="absolute inset-0 flex flex-col justify-start items-start text-black bg-opacity-50 p-2">
+                      <p className="text-sm">$:{gift.price}</p>
+                    </div>
+                  </button>
+                </div>
+              ))}
+            </div>
+  
+            {/* Buttons điều hướng nằm giữa, phủ lên danh sách gift */}
+            <button
+              onClick={handlePrev}
+              className={`absolute left-0 top-1/2 transform -translate-y-1/2 bg-blue-500 hover:bg-blue-600 text-white py-2 px-3 rounded-lg ${visibleIndex === 0 ? 'opacity-50 cursor-not-allowed' : ''}`}
+              disabled={visibleIndex === 0}
+            >
+            <FontAwesomeIcon icon={faChevronLeft} />
+              
             </button>
-          </li>
-          ))}
-        </ul>
+            <button
+              onClick={handleNext}
+              className={`absolute right-0 top-1/2 transform -translate-y-1/2 bg-blue-500 hover:bg-blue-600 text-white py-2 px-3 rounded-lg ${visibleIndex + visibleCount >= gifts.length ? 'opacity-50 cursor-not-allowed' : ''}`}
+              disabled={visibleIndex + visibleCount >= gifts.length}
+            >
+              <FontAwesomeIcon icon={faChevronRight} />
+            </button>
+          </div>
+        </div>
       )}
     </div>
   );
+  
 };
 
 export default GiftList;

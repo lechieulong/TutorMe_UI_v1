@@ -4,23 +4,27 @@ import IdolListCard from "./IdolListCard"; // Sử dụng IdolListCard để hi�
 import { GetListIdIsLiveStream, getStreamSession } from "./LiveStreamFrame";
 import { GetUserByID } from "../../redux/users/UserSlice";
 import { useDispatch } from "react-redux";
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import {faChevronLeft, faChevronRight } from '@fortawesome/free-solid-svg-icons';
 
 const LiveStreamList = () => {
   const [idolData, setIdolData] = useState([]);
   const [searchTerm, setSearchTerm] = useState(""); // Lưu trữ từ khóa tìm kiếm
   const dispatch = useDispatch();
+  const [visibleIndex, setVisibleIndex] = useState(0);
+  const visibleCount = 6; 
 
   useEffect(() => {
     async function fetchData() {
       // Lấy danh sách liveId đang live
-      const liveIds = await GetListIdIsLiveStream();
+      const lives = await GetListIdIsLiveStream();
       // Lấy thông tin streamSession và user cho từng liveId
-      if (liveIds != null) {
+      if (lives != null) {
         const data = await Promise.all(
-          liveIds.map(async (liveid) => {
-            const streamSession = await getStreamSession(liveid);
-            const userInfo = await dispatch(GetUserByID(liveid));
-            return { ...streamSession, description: streamSession.name, ...userInfo.payload };
+          lives.map(async (live) => {
+            const streamSession = await getStreamSession(live.RoomId);
+            const userInfo = await dispatch(GetUserByID(live.RoomId));
+            return { ...streamSession, description: streamSession.name, ...userInfo.payload,usercount:live.UserCount };
           })
         );
         setIdolData(data);
@@ -29,6 +33,15 @@ const LiveStreamList = () => {
 
     fetchData();
   }, [dispatch]);
+
+  const handleNext = () => {
+    setVisibleIndex(Math.min(visibleIndex + visibleCount, filteredIdols.length - visibleCount));
+  };
+
+  const handlePrev = () => {
+    setVisibleIndex(Math.max(visibleIndex - visibleCount, 0));
+  };
+
 
   // Lọc dữ liệu idolData dựa trên từ khóa tìm kiếm
   const filteredIdols = idolData.filter((idol) => {
@@ -51,19 +64,43 @@ const LiveStreamList = () => {
         />
       </div>
 
-      {/* Hiển thị danh sách idol */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-5 gap-6">
-        {filteredIdols.map((idol, index) => (
-          <IdolListCard
-            key={index}
-            id={idol.id}
-            image={idol.imageURL}
-            title={idol.name}
-            description={idol.description}
-            profileImage={idol.imageURL}
-          />
-        ))}
-      </div>
+      <div>
+          <div className="mt-4 relative overflow-hidden">
+            <div
+              className={`flex transition-transform duration-300`}
+            >
+              {filteredIdols.slice(visibleIndex, visibleIndex + visibleCount).map(idol => (
+              <IdolListCard
+                key={idol.id}
+                id={idol.id}
+                image={idol.imageURL}
+                title={idol.name}
+                description={idol.description}
+                profileImage={idol.imageURL}
+                type={idol.type}
+                usercount={idol.usercount}
+              />
+              ))}
+            </div>
+  
+            {/* Buttons điều hướng nằm giữa, phủ lên danh sách gift */}
+            <button
+              onClick={handlePrev}
+              className={`absolute left-0 top-1/2 transform -translate-y-1/2 bg-blue-500 hover:bg-blue-600 text-white py-2 px-3 rounded-lg ${visibleIndex === 0 ? 'opacity-50 cursor-not-allowed' : ''}`}
+              disabled={visibleIndex === 0}
+            >
+            <FontAwesomeIcon icon={faChevronLeft} />
+              
+            </button>
+            <button
+              onClick={handleNext}
+              className={`absolute right-0 top-1/2 transform -translate-y-1/2 bg-blue-500 hover:bg-blue-600 text-white py-2 px-3 rounded-lg ${visibleIndex + visibleCount >= filteredIdols.length ? 'opacity-50 cursor-not-allowed' : ''}`}
+              disabled={visibleIndex + visibleCount >= filteredIdols.length}
+            >
+              <FontAwesomeIcon icon={faChevronRight} />
+            </button>
+          </div>
+        </div>
     </div>
   );
 };

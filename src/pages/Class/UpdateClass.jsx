@@ -17,7 +17,7 @@ const UpdateClass = ({ classItem, courseId, onClose, onCreateSuccess }) => {
     startDate: false,
     endDate: false,
   });
-  console.log(classItem);
+  console.log(classItem.id);
 
   useEffect(() => {
     if (classItem) {
@@ -51,6 +51,7 @@ const UpdateClass = ({ classItem, courseId, onClose, onCreateSuccess }) => {
     e.preventDefault();
 
     if (!validateFields()) return;
+    var Id = classItem.id;
 
     const updatedClass = {
       Id,

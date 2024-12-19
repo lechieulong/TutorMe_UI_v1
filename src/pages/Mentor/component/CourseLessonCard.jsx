@@ -138,7 +138,6 @@ const CourseLessonCard = ({
 
   const confirmDeleteLesson = (lessonId) => {
     // In ra lessonId để kiểm tra
-    console.log(lessonId);
 
     // Sử dụng window.confirm() để hỏi người dùng
     const isConfirmed = window.confirm(

@@ -52,13 +52,14 @@ export const fetchClassIds = createAsyncThunk(
 );
 export const enrollUser = createAsyncThunk(
   "enrollment/enrollUser",
-  async ({ courseId, userId, classId }, { rejectWithValue }) => {
+  async ({ courseId, userId, classId, enrollAt }, { rejectWithValue }) => {
     try {
       const token = Cookies.get("authToken");
       const enrollmentData = {
         courseId,
         userId,
         classId,
+        enrollAt,
       };
       await axios.post(`${apiURLConfig.baseURL}/enrollment`, enrollmentData, {
         headers: {

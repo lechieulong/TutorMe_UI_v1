@@ -196,8 +196,27 @@ export const updateCourseStatus = createAsyncThunk(
     }
   }
 );
+export const checkIfRatedTeacher = createAsyncThunk(
+  "course/checkIfRatedTeacher",
+  async ({ userId, learnerId }, { rejectWithValue }) => {
+    console.log(userId + "||" + learnerId);
+
+    try {
+      const response = await axios.get(
+        `https://localhost:7030/api/TeacherRatings/CheckIfRated`,
+        {
+          params: { userId, learnerId },
+        }
+      );
+      return response.data; // Trả về boolean từ API
+    } catch (error) {
+      return rejectWithValue(error.response.data || "Error checking rating");
+    }
+  }
+);
 
 const initialState = {
+  hasRatedTeacher: null,
   isMentor: false,
   isLoading: false,
   error: null,
@@ -339,6 +358,18 @@ const courseSlice = createSlice({
       })
       .addCase(updateCourseStatus.rejected, (state, action) => {
         state.notification = action.payload || "Đã xảy ra lỗi.";
+      })
+      .addCase(checkIfRatedTeacher.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(checkIfRatedTeacher.fulfilled, (state, action) => {
+        state.loading = false;
+        state.hasRatedTeacher = action.payload;
+      })
+      .addCase(checkIfRatedTeacher.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
       });
   },
 });

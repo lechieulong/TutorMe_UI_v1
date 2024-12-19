@@ -35,6 +35,7 @@ import { toast, ToastContainer } from "react-toastify";
 import { getUser } from "../../service/GetUser";
 import { LecturerOfCourse } from "../../redux/courses/CourseSlice";
 import { GetCourseById } from "../../redux/courses/CourseSlice";
+import { checkIfRatedTeacher } from "../../redux/courses/CourseSlice";
 import { CheckBanlance, GiveMeMyMoney } from "../../components/common/PayOS";
 import Comment from "../../components/common/Comment";
 import RatingTeacher from "../../components/common/RatingTeacher";
@@ -68,7 +69,9 @@ const CourseDetail = () => {
   const handleCloseTeacherRating = async () => {
     setIsRatingTeacherOpen(false);
   };
-
+  const hasRatedTeacher = useSelector(
+    (state) => state.enrollment.hasRatedTeacher || false
+  );
   const switchStates = useSelector((state) => state.classes.switchStates || {});
   const isEnrolled = useSelector(
     (state) => state.enrollment.isEnrolled || false
@@ -89,6 +92,7 @@ const CourseDetail = () => {
   const handleSubmitReport = () => {
     handleCloseReport();
   };
+
   useEffect(() => {
     const fetchCourseDetail = async () => {
       setIsLoading(true); // Bắt đầu hiển thị spinner
@@ -104,6 +108,20 @@ const CourseDetail = () => {
       fetchCourseDetail();
     }
   }, [dispatch, courseId]);
+
+  useEffect(() => {
+    setIsLoading(true);
+    try {
+      if (userId && course?.userId) {
+        // Kiểm tra chắc chắn course.userId và userId có giá trị
+        dispatch(
+          checkIfRatedTeacher({ userId: course.userId, learnerId: userId })
+        );
+      }
+    } finally {
+      setIsLoading(false);
+    }
+  }, [dispatch, userId, course?.userId]);
 
   useEffect(() => {
     setIsLoading(true);
@@ -207,9 +225,9 @@ const CourseDetail = () => {
           price,
           `Your course has been enrolled by ${userName}`
         );
-
+        const enrollAt = new Date().toISOString().split("T")[0];
         await dispatch(
-          enrollUser({ courseId, userId, classId: selectedClassId })
+          enrollUser({ courseId, userId, classId: selectedClassId, enrollAt })
         ).unwrap();
 
         toast.success("Đăng ký thành công!");
@@ -269,7 +287,6 @@ const CourseDetail = () => {
       </div>
     );
   }
-
   return (
     <MainLayout>
       <div className="flex flex-col w-screen">
@@ -286,7 +303,7 @@ const CourseDetail = () => {
                   Rate This Course
                 </button>
               )}
-              {!isMentor && isEnrolled && (
+              {!isMentor && isEnrolled && hasRatedTeacher && (
                 <button
                   className="py-2 px-3 text-sm font-medium rounded-lg border bg-white text-gray-800 shadow-sm hover:bg-gray-50"
                   onClick={() => handleOpenTeacherRating(course?.userId)}
@@ -371,50 +388,49 @@ const CourseDetail = () => {
               </div>
             </div>
             <section className="mb-4 mt-4">
-              {!isEnrolled ||
-                (isMentor && (
-                  <>
-                    <div className="flex justify-between items-center">
-                      <p className="text-xl font-bold">Classes</p>
+              {!isEnrolled && !isMentor && (
+                <>
+                  <div className="flex justify-between items-center">
+                    <p className="text-xl font-bold">Classes</p>
+                  </div>
+                  <div className="overflow-hidden">
+                    <div
+                      className="flex transition-transform"
+                      style={{
+                        transform: `translateX(-${currentSlide * 100}%)`,
+                      }}
+                    >
+                      {classes.map((classItem) => (
+                        <ClassCard
+                          key={classItem.id}
+                          classItem={classItem}
+                          switchState={switchStates[classItem.id] || false}
+                          onSelect={() => setSelectedClassId(classItem.id)}
+                          isActive={selectedClassId === classItem.id}
+                        />
+                      ))}
                     </div>
-                    <div className="overflow-hidden">
-                      <div
-                        className="flex transition-transform"
-                        style={{
-                          transform: `translateX(-${currentSlide * 100}%)`,
-                        }}
-                      >
-                        {classes.map((classItem) => (
-                          <ClassCard
-                            key={classItem.id}
-                            classItem={classItem}
-                            switchState={switchStates[classItem.id] || false}
-                            onSelect={() => setSelectedClassId(classItem.id)}
-                            isActive={selectedClassId === classItem.id}
-                          />
-                        ))}
-                      </div>
-                    </div>
-                    <div className="flex justify-between mt-2">
-                      <button
-                        onClick={handlePrev}
-                        disabled={currentSlide === 0}
-                        className="py-2 px-3 bg-gray-200 rounded-lg shadow-sm hover:bg-gray-300"
-                      >
-                        Prev
-                      </button>
-                      <button
-                        onClick={handleNext}
-                        disabled={
-                          currentSlide >= Math.ceil(classes.length / 4) - 1
-                        }
-                        className="py-2 px-3 bg-gray-200 rounded-lg shadow-sm hover:bg-gray-300"
-                      >
-                        Next
-                      </button>
-                    </div>
-                  </>
-                ))}
+                  </div>
+                  <div className="flex justify-between mt-2">
+                    <button
+                      onClick={handlePrev}
+                      disabled={currentSlide === 0}
+                      className="py-2 px-3 bg-gray-200 rounded-lg shadow-sm hover:bg-gray-300"
+                    >
+                      Prev
+                    </button>
+                    <button
+                      onClick={handleNext}
+                      disabled={
+                        currentSlide >= Math.ceil(classes.length / 4) - 1
+                      }
+                      className="py-2 px-3 bg-gray-200 rounded-lg shadow-sm hover:bg-gray-300"
+                    >
+                      Next
+                    </button>
+                  </div>
+                </>
+              )}
             </section>
             <div className="mt-4">
               <CourseSkillCard

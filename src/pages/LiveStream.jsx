@@ -1,6 +1,5 @@
 import LiveStreamFrame from "../components/common/LiveStreamFrame";
 import MainLayout from "../layout/MainLayout";
-import CreateTicketButton from "../components/common/Ticket";
 import LiveStreamList from "../components/common/LiveStreamList";
 import {
   GetListIdIsLiveStream,
@@ -23,9 +22,10 @@ const LiveStream = () => {
           if (await getStreamSession(roomIdFromUrl)) {
             setRoomID(roomIdFromUrl);
           }
-        } else if (Listid != null) {
-          setRoomID(Listid[0]);
-        }
+        } else if (Listid!=null) {
+          setRoomID(Listid[0].RoomId);
+        }    
+
       } catch (error) {
         console.error("Error fetching room data:", error);
       } finally {
@@ -69,7 +69,6 @@ const LiveStream = () => {
         <div className="flex justify-center items-center">
           {/* Div chứa LiveStreamFrame chiếm 80% chiều rộng */}
           <div className=" p-2  w-8/12">
-            <CreateTicketButton />
             <LiveStreamFrame height="500px" width="1000px" />
           </div>
         </div>

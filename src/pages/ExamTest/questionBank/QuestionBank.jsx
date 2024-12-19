@@ -150,8 +150,6 @@ const QuestionBank = () => {
     }
   };
 
-  console.log(questions);
-
   return (
     <div className="p-4 bg-gray-50">
       <ToastContainer autoClose={3000} newestOnTop closeOnClick />

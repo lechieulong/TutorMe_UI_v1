@@ -9,6 +9,8 @@ import Notification from "../../../components/common/Notification";
 import { FaAngleDown, FaAngleUp } from "react-icons/fa";
 import TestForm from "../../ExamTest/TestForm";
 import { Link, useParams } from "react-router-dom";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faClipboard } from "@fortawesome/free-solid-svg-icons";
 
 const CourseLessonCard = ({
   mentorAndList,
@@ -136,7 +138,6 @@ const CourseLessonCard = ({
 
   const confirmDeleteLesson = (lessonId) => {
     // In ra lessonId để kiểm tra
-    console.log(lessonId);
 
     // Sử dụng window.confirm() để hỏi người dùng
     const isConfirmed = window.confirm(
@@ -190,10 +191,10 @@ const CourseLessonCard = ({
                   courseLessons.map((courseLesson) => (
                     <div
                       key={courseLesson.id}
-                      className="border rounded-md p-2 mb-2 shadow-sm flex flex-col items-start relative"
+                      className="border rounded-md p-2 mb-2 bg-gray-50 shadow-sm flex flex-col items-start relative"
                     >
                       <div
-                        className="cursor-pointer flex items-center gap-2"
+                        className="cursor-pointer flex justify-between w-full items-center bg-green-600 rounded-lg p-2 text-white gap-2"
                         onClick={() => toggleCollapse(courseLesson.id)}
                       >
                         {collapsedLessons[courseLesson.id] ? (
@@ -201,76 +202,93 @@ const CourseLessonCard = ({
                         ) : (
                           <FaAngleUp className="text-gray-600" />
                         )}
-                        <h4 className="text-md font-semibold">
-                          {courseLesson.title}
-                        </h4>
-                      </div>
-                      {mentorAndList && (
-                        <div className="absolute top-2 right-2 flex gap-2">
-                          <>
-                            <button
-                              type="button"
-                              onClick={() => handleCreateTest(courseLesson.id)}
-                              className="py-2 px-3 text-sm font-medium rounded-lg border border-gray-200 bg-white text-gray-800 shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-gray-200"
-                            >
-                              Create Test
-                            </button>
-
-                            <button
-                              type="button"
-                              onClick={() => addDynamicForm(courseLesson.id)}
-                              className="py-2 px-3 text-sm font-medium rounded-lg border border-gray-200 bg-white text-gray-800 shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-gray-200"
-                            >
-                              Create Lesson Content
-                            </button>
-
-                            <button
-                              type="button"
-                              onClick={() =>
-                                confirmDeleteLesson(courseLesson.id)
-                              }
-                              className="py-2 px-3 text-sm font-medium rounded-lg border border-gray-200 bg-red-500 text-white shadow-sm hover:bg-red-600 focus:outline-none focus:ring-2 focus:ring-red-500"
-                            >
-                              Delete Lesson
-                            </button>
-                          </>
+                        <div className="flex w-11/12 justify-between items-center">
+                          <h4 className="text-md font-semibold">
+                            {courseLesson.title}
+                          </h4>
+                          <button
+                            type="button"
+                            onClick={() => confirmDeleteLesson(courseLesson.id)}
+                            className="py-2 px-3 text-sm font-medium rounded-lg border border-gray-200 bg-red-500 text-white shadow-sm hover:bg-red-600 focus:outline-none focus:ring-2 focus:ring-red-500"
+                          >
+                            Delete Lesson
+                          </button>
                         </div>
-                      )}
-                      {dynamicForms
-                        .filter((form) => form.lessonId === courseLesson.id)
-                        .map((form) => (
-                          <div key={form.id} className="mt-2 w-full">
-                            <CreateCourseLessonContent
-                              key={form.id}
-                              courseLessonId={courseLesson.id}
-                              onClose={() => removeDynamicForm(form.id)}
-                              onContentCreated={refreshCourseLessons}
-                            />
-                          </div>
-                        ))}
+                      </div>
 
                       {!collapsedLessons[courseLesson.id] &&
                         (isEnrolled || mentorAndList || isMentor) && (
-                          <div className="mt-2 w-full">
+                          <div className="mt-2 w-full ">
                             <CourseLessonContent
                               isEnrolled={isEnrolled}
                               courseLessontId={courseLesson.id}
                               key={courseLesson.id}
                             />
-                            {testExams
-                              .filter(
-                                (exam) => exam.lessonId === courseLesson.id
-                              )
-                              .map((exam) => (
-                                <div key={exam.id}>
-                                  <Link
-                                    to={`/testDetail/${exam.id}`} // Link dẫn đến chi tiết bài kiểm tra
-                                    className="py-2 px-3 text-sm font-medium rounded-lg border border-gray-200 bg-white text-gray-800 shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-gray-200"
+                            <div className="bg-green-50 p-6 rounded-lg shadow-lg">
+                              <h3 className="font-extrabold text-2xl text-green-700 py-3 mb-5 border-b-2 border-green-200">
+                                Practice Test
+                              </h3>
+                              {testExams
+                                .filter(
+                                  (exam) => exam.lessonId === courseLesson.id
+                                )
+                                .map((exam, index) => (
+                                  <div
+                                    key={exam.id}
+                                    className="mb-4 bg-white p-4 rounded-lg shadow-md border border-gray-100"
                                   >
-                                    {exam.testName}
-                                  </Link>
+                                    <p className="text-gray-600 text-sm font-semibold">
+                                      Test No. {index + 1}
+                                    </p>
+                                    <Link
+                                      to={`/testDetail/${exam.id}`}
+                                      className="inline-block mt-2 py-2 px-4 text-sm font-medium rounded-lg border border-green-300 bg-green-100 text-green-700 shadow-sm hover:bg-green-200 focus:outline-none focus:ring-2 focus:ring-green-300"
+                                    >
+                                      {exam.testName}
+                                    </Link>
+                                  </div>
+                                ))}
+
+                              {mentorAndList && (
+                                <div className="mt-6 flex justify-start gap-4">
+                                  <button
+                                    type="button"
+                                    onClick={() =>
+                                      handleCreateTest(courseLesson.id)
+                                    }
+                                    className="flex items-center py-2 px-4 text-sm font-medium rounded-lg border border-green-300 bg-green-700 text-white shadow-sm hover:bg-gray-50 hover:text-black focus:outline-none focus:ring-2 focus:ring-green-300"
+                                  >
+                                    <FontAwesomeIcon
+                                      icon={faClipboard}
+                                      className="mr-2"
+                                    />
+                                    Create Test
+                                  </button>
+                                </div>
+                              )}
+                            </div>
+
+                            {dynamicForms
+                              .filter(
+                                (form) => form.lessonId === courseLesson.id
+                              )
+                              .map((form) => (
+                                <div key={form.id} className="mt-2 w-full">
+                                  <CreateCourseLessonContent
+                                    key={form.id}
+                                    courseLessonId={courseLesson.id}
+                                    onClose={() => removeDynamicForm(form.id)}
+                                    onContentCreated={refreshCourseLessons}
+                                  />
                                 </div>
                               ))}
+                            <button
+                              type="button"
+                              onClick={() => addDynamicForm(courseLesson.id)}
+                              className="py-2 px-3 text-sm font-medium rounded-lg mt-6 border border-gray-200 bg-white text-gray-800 shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-gray-200"
+                            >
+                              Create Lesson Content
+                            </button>
                           </div>
                         )}
                     </div>

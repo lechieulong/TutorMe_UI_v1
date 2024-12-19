@@ -177,7 +177,7 @@ const CoursePartCard = ({ mentorAndList, skillId, isEnrolled, isMentor }) => {
                 : "opacity-100"
             }`}
             style={{
-              maxHeight: collapsedParts[coursePart.id] ? 0 : "60vh",
+              maxHeight: collapsedParts[coursePart.id] ? 0 : "80vh",
               overflowY: collapsedParts[coursePart.id] ? "hidden" : "auto",
               transitionProperty: "max-height, opacity",
             }}

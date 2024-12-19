@@ -21,6 +21,8 @@ const TestFormLayout = () => {
 
   const [activeTab, setActiveTab] = useState(initActiveTab);
 
+  console.log(activeTab, "ngoc");
+
   const isEnrolled = useSelector((state) => state.enrollment.isEnrolled);
 
   const renderComponent = () => {
@@ -117,8 +119,14 @@ const TestFormLayout = () => {
 
           <div className="">{renderComponent()}</div>
 
-          {activeTab === "Dashboard" && (
-            <TestSubmitted setIsViewExplain={setIsViewExplain} />
+          {activeTab === "Dashboard" || activeTab === "Results" ? (
+            <TestSubmitted
+              setIsViewExplain={setIsViewExplain}
+              setActiveTab={setActiveTab}
+              activeTab={activeTab}
+            />
+          ) : (
+            renderComponent()
           )}
         </div>
       </div>

@@ -101,7 +101,7 @@ const Header = () => {
             className="sm:order-1 flex-none text-xl font-semibold focus:outline-none focus:opacity-80"
             href="#"
           >
-            AIIELTS
+            <img src="https://hydra13.blob.core.windows.net/63a5630a-687a-4c38-98e2-f5ce440f3f09/logo_1.png" alt="profile" className="w-16 h-8"/>
           </a>
           <div className="sm:order-3 flex items-center gap-x-2">
             {authToken ? (
@@ -137,6 +137,7 @@ const Header = () => {
                 >
                   Stream now
                   <FontAwesomeIcon icon={faHeadset} />
+                  
                 </button> */}
                 {(userFrormToken?.role?.includes(Roles.ADMIN) ||
                   userFrormToken?.role?.includes(Roles.TEACHER)) && (

@@ -17,6 +17,7 @@ import ProfileEdit from "./pages/User/ProfileEdit";
 import ChangePassword from "./pages/User/ChangePassword";
 import BeTeacher from "./pages/User/Beteacher";
 import UpdateTeacherRequest from "./pages/User/UpdateTeacherRequest";
+import PurchaseHistory from "./pages/User/PurchaseHistory";
 import ReportOfCourse from "./pages/Course/ReportOfCourse";
 import Calendar from "./pages/Calendar/Calendar";
 import CoachingSchedule from "./pages/Teacher/CoachingSchedule";
@@ -79,6 +80,8 @@ const App = () => {
             path="/updateteacherrequest"
             element={<UpdateTeacherRequest />}
           />
+          <Route path="/purchase-history" element={<PurchaseHistory />} />
+
           <Route path="/upmoney" element={<UpMoney />} />
           {/* <Route path="/Payment" element={<PayOS />} /> */}
           {/* Test  common*/}

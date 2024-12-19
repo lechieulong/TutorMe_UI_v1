@@ -108,10 +108,10 @@ const ProfileEditSection = () => {
                                 <p className="text-gray-600 text-sm">@{userInfor?.email}</p>
                                 <div className="my-1">
                                     <span className="bg-gray-200 text-gray-700 py-1 px-2 rounded-full text-xs">{userInfor?.userName}</span>
-                                    <p className="text-gray-500 text-xs mt-1">Joined 09 Dec 2017</p>
+                                    {/* <p className="text-gray-500 text-xs mt-1">Joined 09 Dec 2017</p> */}
                                 </div>
                                 <label className="mt-2 px-3 py-1 bg-blue-600 text-white rounded-lg text-xs cursor-pointer">
-                                    <input type="file" className="hidden" onChange={(e) => handleFileChange(e)} />
+                                    <input type="file" className="hidden" onChange={(e) => handleFileChange(e)} accept="image/*"/>
                                     Change Photo
                                 </label>
                             </div>
@@ -135,7 +135,7 @@ const ProfileEditSection = () => {
                                                 type="text"
                                                 placeholder="Full Name"
                                             />
-                                            {formErrors.name && <p className="text-red-600 text-xs">{formErrors.name}</p>}
+                                            {formErrors.name && <p className="font-mono text-red-600 text-xs">{formErrors.name}</p>}
                                         </div>
                                         <div>
                                             <label className="block text-gray-700 text-sm">Date Of Birth</label>
@@ -146,7 +146,7 @@ const ProfileEditSection = () => {
                                                 className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-1 focus:ring-blue-500 text-sm"
                                                 type="date"
                                             />
-                                            {formErrors.dob && <p className="text-red-600 text-xs">{formErrors.dob}</p>}
+                                            {formErrors.dob && <p className="font-mono text-red-600 text-xs">{formErrors.dob}</p>}
                                         </div>
                                     </div>
                                     <div>
@@ -159,7 +159,7 @@ const ProfileEditSection = () => {
                                             type="text"
                                             placeholder="Phone Number"
                                         />
-                                        {formErrors.phoneNumber && <p className="text-red-600 text-xs">{formErrors.phoneNumber}</p>}
+                                        {formErrors.phoneNumber && <p className="font-mono text-red-600 text-xs">{formErrors.phoneNumber}</p>}
                                     </div>
                                     <div className="text-right">
                                         <button type="submit" className="px-4 py-2 bg-blue-600 text-white rounded-lg text-sm">Save Changes</button>

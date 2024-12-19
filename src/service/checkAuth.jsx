@@ -112,7 +112,6 @@ const AdminRoute = ({ children }) => {
             if (!userRoles.includes(Roles.ADMIN)) {
                 // Redirect if the user does not have the Admin role
                 navigate("/not-authorized");
-                return false;
             }
         } catch (error) {
             console.error("Invalid token:", error);

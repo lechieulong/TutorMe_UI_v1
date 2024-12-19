@@ -33,8 +33,8 @@ const PaymentResult = () => {
         try {
           const order = await getOrder_Backend(orderCode);
           order.paymentStatus='PAID ';
-          const update=await UpdateOrder_backend(order);
-          const update_balace= await GiveMeMyMoney(order.amount,"nap tien vao tai khoan");
+          await UpdateOrder_backend(order);
+          await GiveMeMyMoney(order.amount,"deposit money","Deposit");
           navigate('/');
           // Handle payment cancellation with order details
         } catch (error) {

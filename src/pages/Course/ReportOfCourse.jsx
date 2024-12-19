@@ -70,14 +70,6 @@ const ReportOfCourse = () => {
                   <h2 className="text-xl font-bold mb-4">
                     Danh sách Enrollments
                   </h2>
-                  <ul className="list-disc list-inside">
-                    {enrollments.map((enrollment) => (
-                      <li key={enrollment.id}>
-                        {enrollment.classId} -{" "}
-                        {enrollment.enrollAt || "Chưa enroll"}
-                      </li>
-                    ))}
-                  </ul>
                 </div>
                 {/* Biểu đồ Enrollment */}
                 <div className="mt-6">

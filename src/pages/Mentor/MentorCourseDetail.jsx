@@ -286,22 +286,14 @@ const MentorCourseDetail = () => {
             isEnrolled={isEnrolled}
           />
           <div className="flex-1 p-4 overflow-y-auto">
-            <header className="mb-4 flex justify-between items-center">
-              <h1 className="text-4xl font-bold text-black">{className}</h1>
-              {isEnrolled && !hasRated && (
-                <button
-                  className="py-2 px-3 text-sm font-medium rounded-lg border bg-white text-gray-800 shadow-sm hover:bg-gray-50"
-                  onClick={handleOpenRating}
-                >
-                  Rate This Course
-                </button>
-              )}
-            </header>
             <div className="mx-auto bg-houseGreen text-white rounded-lg shadow-lg flex flex-col lg:flex-row p-8 space-y-8 lg:space-y-0 lg:space-x-8 ">
               <div className="flex flex-col lg:w-2/3">
                 <h1 className="text-3xl font-bold mb-4">
                   {course?.courseName}
                 </h1>
+                <div className="mb-4 flex justify-between items-center">
+                  <h1 className="text-4xl font-bold text-black">{className}</h1>
+                </div>
                 <p className="mb-4 leading-relaxed">{course?.content}</p>
                 <div className="flex items-center text-sm space-x-4 mb-4">
                   <span>

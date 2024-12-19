@@ -1,15 +1,11 @@
 import React, { useState, useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { GetResultOfATest } from "../../redux/testExam/TestSlice"; // Import your API action
-import { toast } from "react-toastify";
-import { useParams, useNavigate } from "react-router-dom"; // Import useNavigate
-import { formatDateTime } from "../../utils/Validator";
 import { FaArrowLeft } from "react-icons/fa";
 import TestSubmitted from "./TestSubmitted";
 import TestExplain from "../TestExam/TestExplain";
 
-const ResultList = ({ testId, setIsViewExplain }) => {
-  const [activeTab, setActiveTab] = useState("Results");
+const ResultList = ({ testId, setIsViewExplain, activeTab, setActiveTab }) => {
   const [results, setResults] = useState([]);
   const [count, setCount] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -41,8 +37,6 @@ const ResultList = ({ testId, setIsViewExplain }) => {
   }, [testId]);
 
   const handleViewExplain = (result) => {
-    {
-    }
     setTotalPartsSubmit(result.totalParts);
     setSkillResultIds([result.id]);
     setTestIdExplain(result.testId);

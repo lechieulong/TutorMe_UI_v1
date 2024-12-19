@@ -38,6 +38,8 @@ import { GetCourseById } from "../../redux/courses/CourseSlice";
 import { CheckBanlance, GiveMeMyMoney } from "../../components/common/PayOS";
 import Comment from "../../components/common/Comment";
 import RatingTeacher from "../../components/common/RatingTeacher";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faChalkboardTeacher } from "@fortawesome/free-solid-svg-icons";
 const CourseDetail = () => {
   const navigate = useNavigate();
   const { className, courseId } = useParams();
@@ -276,100 +278,117 @@ const CourseDetail = () => {
         <div className="flex w-full">
           <MentorSidebar isEnrolled={isEnrolled} isMentor={isMentor} />
           <div className="flex-1 p-4 overflow-y-auto">
-            <header className="mb-4 flex">
-              <h1 className="text-4xl font-bold text-black">{className}</h1>
-              {isEnrolled && !hasRated && !isMentor && (
-                <button
-                  className="py-2 px-3 text-sm font-medium rounded-lg border bg-white text-gray-800 shadow-sm hover:bg-gray-50"
-                  onClick={handleOpenRating}
-                >
-                  Rate This Course
-                </button>
-              )}
-              {!isMentor && isEnrolled && (
-                <button
-                  className="py-2 px-3 text-sm font-medium rounded-lg border bg-white text-gray-800 shadow-sm hover:bg-gray-50"
-                  onClick={() => handleOpenTeacherRating(course?.userId)}
-                >
-                  Rate This Teacher
-                </button>
-              )}
-            </header>
-            <div className="mx-auto bg-houseGreen text-white rounded-lg shadow-lg flex flex-col lg:flex-row p-8 space-y-8 lg:space-y-0 lg:space-x-8 ">
-              <div className="flex flex-col lg:w-2/3">
+            <div className="mx-auto bg-houseGreen text-white  rounded-lg shadow-lg flex flex-between  p-8 space-y-8 lg:space-y-0 lg:space-x-8 py-7">
+              <div className="flex flex-col flex-1 gap-6  w-5/12 ">
                 <h1 className="text-3xl font-bold mb-4">
                   {course?.courseName}
                 </h1>
                 <p className="mb-4 leading-relaxed">{course?.content}</p>
-                <div className="flex items-center text-sm space-x-4 mb-4">
-                  <span>
-                    Lecturer:{" "}
-                    <Link
-                      to={`/coachingschedule/${course?.username}`}
-                      className="text-blue-300 underline"
-                    >
-                      {course?.teacherName}
-                    </Link>
-                  </span>
-                  <span className="flex items-center">
-                    {course?.enrollmentCount !== undefined
-                      ? `${course.enrollmentCount} students`
-                      : "No students"}
-                  </span>
 
-                  <div className="flex items-center">
-                    <span className="ml-2">
-                      {course?.averageRating?.toFixed(1)}
-                    </span>
-                    {renderStars(course?.averageRating || 0)}
+                <div className="flex gap-4">
+                  {isEnrolled && !hasRated && !isMentor && (
+                    <button
+                      className="py-2 px-3 text-sm font-medium rounded-lg border bg-green-400 text-gray-800 shadow-sm hover:bg-green-500"
+                      onClick={handleOpenRating}
+                    >
+                      Rate Course
+                    </button>
+                  )}
+                  {!isMentor && isEnrolled && (
+                    <button
+                      className="py-2 px-3 text-sm font-medium rounded-lg border bg-white text-gray-800 shadow-sm hover:bg-gray-300"
+                      onClick={() => handleOpenTeacherRating(course?.userId)}
+                    >
+                      <FontAwesomeIcon
+                        icon={faChalkboardTeacher}
+                        className="mr-4"
+                      />
+                      Rate Teacher
+                    </button>
+                  )}
+                </div>
+              </div>
+              <div className="bg-lightGreen p-4 rounded-lg w-6/12 flex flex-col items-center text-center shadow-md relative h-auto lg:h-[220px]">
+                <div className=" flex w-full   items-center justify-between px-6">
+                  <div className="flex gap-4">
+                    {!isEnrolled && !isMentor && (
+                      <button
+                        onClick={handleEnroll}
+                        className="p-2 bg-green-500"
+                      >
+                        Enroll now
+                      </button>
+                    )}
+
+                    <h2 className="text-3xl font-extrabold text-gray-800 tracking-tight sm:text-4xl lg:text-5xl bg-green-700 text-transparent bg-clip-text">
+                      {formatCurrency(course?.price)}
+                    </h2>
+                  </div>
+
+                  {isEnrolled && (
+                    <button
+                      onClick={handleOpenReport}
+                      className=" top-2 right-2 text-red-700 text-xl"
+                    >
+                      <FaFlag />
+                    </button>
+                  )}
+                </div>
+
+                <div className="flex justify-center w-full gap-36 text-sm text-black mb-6">
+                  <div className="flex flex-col gap-6 justify-center text-sm space-x-4 ">
+                    <div className="flex gap-4 items-center">
+                      <span className=" font-bold">Lecturer: </span>
+                      <Link
+                        to={`/coachingschedule/${course?.username}`}
+                        className="text-green-800 underline text-xl"
+                      >
+                        {course?.teacherName}
+                      </Link>
+                    </div>
+
+                    <div className="  ">
+                      <div className=" ">
+                        {course?.enrollmentCount !== undefined
+                          ? `${course.enrollmentCount} students`
+                          : "No students"}
+                      </div>
+
+                      <div className="flex justify-center  mt-4 items-center">
+                        <span className="mr-4">
+                          {course?.averageRating?.toFixed(1)}
+                        </span>
+                        {renderStars(course?.averageRating || 0)}
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="space-y-2">
+                    <li className="flex items-center space-x-2">
+                      <FaStopwatch className="text-houseGreen" />
+                      <span>{course?.hours} hours</span>
+                    </li>
+                    <li className="flex items-center space-x-2">
+                      <FaRegLightbulb className="text-houseGreen" />
+                      <span>1 overall test</span>
+                    </li>
+                    <li className="flex items-center space-x-2">
+                      <FaRegListAlt className="text-houseGreen" />
+                      <span>81 progress tests</span>
+                    </li>
+                    <li className="flex items-center space-x-2">
+                      <FaRegStickyNote className="text-houseGreen" />
+                      <span>{skillCount} Skills</span>
+                    </li>
+                    <li className="flex items-center space-x-2">
+                      <FaRegPlayCircle className="text-houseGreen" />
+                      <span>25 lessons</span>
+                    </li>
                   </div>
                 </div>
               </div>
-              <div className="bg-lightGreen p-4 rounded-lg w-full lg:w-1/3 flex flex-col items-center text-center shadow-md relative h-auto lg:h-[200px]">
-                {isEnrolled && (
-                  <button
-                    onClick={handleOpenReport}
-                    className="absolute top-2 right-2 text-red-700 text-xl"
-                  >
-                    <FaFlag />
-                  </button>
-                )}
-
-                <h2 className="text-2xl text-black font-bold mb-4">
-                  {formatCurrency(course?.price)}
-                </h2>
-                <ul className="flex flex-wrap justify-center items-center gap-4 text-sm text-black mb-6">
-                  <li className="flex items-center space-x-2">
-                    <FaStopwatch className="text-houseGreen" />
-                    <span>{course?.hours} hours</span>
-                  </li>
-                  <li className="flex items-center space-x-2">
-                    <FaRegLightbulb className="text-houseGreen" />
-                    <span>1 overall test</span>
-                  </li>
-                  <li className="flex items-center space-x-2">
-                    <FaRegListAlt className="text-houseGreen" />
-                    <span>81 progress tests</span>
-                  </li>
-                  <li className="flex items-center space-x-2">
-                    <FaRegStickyNote className="text-houseGreen" />
-                    <span>{skillCount} Skills</span>
-                  </li>
-                  <li className="flex items-center space-x-2">
-                    <FaRegPlayCircle className="text-houseGreen" />
-                    <span>25 lessons</span>
-                  </li>
-                </ul>
-                {!isEnrolled && !isMentor && (
-                  <button
-                    onClick={handleEnroll}
-                    className="bg-accentGreen hover:bg-accentGreen-dark text-white py-2 px-4 rounded-lg w-full flex items-center justify-center transition duration-300"
-                  >
-                    Enroll now
-                  </button>
-                )}
-              </div>
             </div>
+
             <section className="mb-4 mt-4">
               {!isEnrolled ||
                 (isMentor && (

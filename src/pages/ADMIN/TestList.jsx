@@ -70,7 +70,6 @@ const TestList = () => {
 
   const [formData, setFormData] = useState({
     testName: '',
-    testType: 0,
     startTime: '',
     endTime: '',
   });
@@ -94,7 +93,6 @@ const TestList = () => {
     setFormData({
       id: item.id,
       testName: item.testName,
-      testType: item.testType,
       startTime: item.startTime,
       endTime: item.endTime,
     });
@@ -128,7 +126,6 @@ const TestList = () => {
   const validateForm = () => {
     const errors = {};
     if (!formData.testName) errors.testName = 'Test Name is required';
-    if (!formData.testType) errors.testType = 'Test Type is required';
     if (!formData.startTime) errors.startTime = 'Start Time is required';
     if (!formData.endTime) errors.endTime = 'End Time is required';
     return errors;
@@ -228,22 +225,6 @@ const TestList = () => {
                 />
                 {formErrors.testName && <p className="text-red-500 text-xs">{formErrors.testName}</p>}
               </div>
-
-              <div className="mb-4">
-                <label className="block text-gray-700 text-sm font-bold mb-2">Test Type</label>
-                <select
-                  name="testType"
-                  value={formData.testType}
-                  onChange={handleChange}
-                  className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-                >
-                  <option value={1}>Practice</option>
-                  <option value={2}>Testing</option>
-                  <option value={3}>Register</option>
-                </select>
-                {formErrors.testType && <p className="text-red-500 text-xs">{formErrors.testType}</p>}
-              </div>
-
               <div className="mb-4">
                 <label className="block text-gray-700 text-sm font-bold mb-2">Start Time</label>
                 <input

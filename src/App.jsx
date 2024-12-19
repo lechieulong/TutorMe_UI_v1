@@ -17,6 +17,7 @@ import ProfileEdit from "./pages/User/ProfileEdit";
 import ChangePassword from "./pages/User/ChangePassword";
 import BeTeacher from "./pages/User/Beteacher";
 import UpdateTeacherRequest from "./pages/User/UpdateTeacherRequest";
+import PurchaseHistory from "./pages/User/PurchaseHistory";
 
 import Calendar from "./pages/Calendar/Calendar";
 import CoachingSchedule from "./pages/Teacher/CoachingSchedule";
@@ -75,10 +76,9 @@ const App = () => {
           <Route path="/changepassword" element={<ChangePassword />} />
           <Route path="/reset-password" element={<ResetPassword />} />
           <Route path="/beteacher" element={<BeTeacher />} />
-          <Route
-            path="/updateteacherrequest"
-            element={<UpdateTeacherRequest />}
-          />
+          <Route path="/updateteacherrequest" element={<UpdateTeacherRequest />} />
+          <Route path="/purchase-history" element={<PurchaseHistory />} />
+
           <Route path="/upmoney" element={<UpMoney />} />
           {/* <Route path="/Payment" element={<PayOS />} /> */}
           {/* Test  common*/}

@@ -33,6 +33,7 @@ const MentorSidebar = ({ mentorAndList, setSelectedComponent, isMentor }) => {
       fetchUser();
     }
   }, [authToken]);
+  console.log(mentorAndList + " | " + isMentor);
 
   return (
     <div>
@@ -118,38 +119,37 @@ const MentorSidebar = ({ mentorAndList, setSelectedComponent, isMentor }) => {
                 </li>
               )}
 
-              {mentorAndList ||
-                (isMentor && (
-                  <Link
-                    to={`/mentorCourseDetail/${courseId}/reportOfCourse`}
-                    className="flex items-center gap-x-3.5 py-2 px-2.5 text-sm text-gray-700 rounded-lg hover:bg-gray-100 focus:outline-none focus:bg-gray-100"
-                    state={{ courseId }}
-                    style={{
-                      backgroundColor:
-                        pathname ===
-                        `/mentorCourseDetail/${courseId}/reportOfCourse`
-                          ? "lightblue"
-                          : "transparent",
-                    }}
+              {(mentorAndList || isMentor) && (
+                <Link
+                  to={`/mentorCourseDetail/${courseId}/reportOfCourse`}
+                  className="flex items-center gap-x-3.5 py-2 px-2.5 text-sm text-gray-700 rounded-lg hover:bg-gray-100 focus:outline-none focus:bg-gray-100"
+                  state={{ courseId }}
+                  style={{
+                    backgroundColor:
+                      pathname ===
+                      `/mentorCourseDetail/${courseId}/reportOfCourse`
+                        ? "lightblue"
+                        : "transparent",
+                  }}
+                >
+                  <svg
+                    className="size-4"
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="24"
+                    height="24"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
                   >
-                    <svg
-                      className="size-4"
-                      xmlns="http://www.w3.org/2000/svg"
-                      width="24"
-                      height="24"
-                      viewBox="0 0 24 24"
-                      fill="none"
-                      stroke="currentColor"
-                      strokeWidth="2"
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                    >
-                      <path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z" />
-                      <path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 1 1 3-3h7z" />
-                    </svg>
-                    Report
-                  </Link>
-                ))}
+                    <path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z" />
+                    <path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 1 1 3-3h7z" />
+                  </svg>
+                  Report
+                </Link>
+              )}
             </>
           </ul>
         </nav>

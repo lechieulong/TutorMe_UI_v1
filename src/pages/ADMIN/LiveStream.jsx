@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
-import { getLives,EndLive } from "../../components/ADMIN/Lives";
-import {FaRegEyeSlash, FaFileExport, FaPlus,  } from "react-icons/fa";
+import { getLives, EndLive,unblockLive,blockLive } from "../../components/ADMIN/Lives";
+import { FaRegEyeSlash, FaFileExport, FaPlus } from "react-icons/fa";
 import { handleExport } from "../../components/ADMIN/CSV";
 
 const LivesPage = () => {
@@ -15,6 +15,10 @@ const LivesPage = () => {
     setLives(result.lives);
     setTotalPages(result.totalPages);
   };
+  const endliveStream = async (liveid) => {
+    await EndLive(liveid);
+    fetchProducts();
+  };
 
   useEffect(() => {
     fetchProducts();
@@ -25,6 +29,16 @@ const LivesPage = () => {
     setPage(1);
     fetchProducts();
   };
+  const toggleBlockUser=async (id,stastus)=>{
+    if(stastus==1){
+      await blockLive(id);
+      await endliveStream(id);
+      fetchProducts();
+    }else{
+      await unblockLive(id);
+      fetchProducts();
+    }
+  }
   return (
     <section className="bg-white p-6 rounded-lg shadow-md">
       <div className="flex justify-between items-center mb-4">
@@ -39,7 +53,7 @@ const LivesPage = () => {
               className="border border-gray-300 rounded-lg p-2 mr-2"
             />
             <button
-            onClick={() => handleExport(lives)} 
+              onClick={() => handleExport(lives)}
               type="button"
               className="border border-gray-300 rounded-lg p-2 flex items-center"
             >
@@ -53,9 +67,9 @@ const LivesPage = () => {
         <thead>
           <tr className="border-b">
             <th className="py-2">Name</th>
-            <th className="py-2">RoomId</th>
             <th className="py-2">Status</th>
-            <th className="py-2">StartTime</th>
+            <th className="py-2">Live Status</th>
+            <th className="py-2">Start Time</th>
             <th className="py-2">Type</th>
             <th className="py-2">Actions</th>
           </tr>
@@ -64,21 +78,78 @@ const LivesPage = () => {
           {lives.length > 0 ? (
             lives.map((live) => (
               <tr key={live.id} className="border-b">
-                <td className="py-2">{live.name}</td>
-                <td className="py-2">{live.liveStreamId}</td>
-                <td className="py-2">{live.status==1?"Live":"End Live"}</td>
+                <td className="py-2 flex items-center">
+                  <img
+                    src={live.user?.imageURL || "https://placehold.co/32x32"}
+                    alt={`Profile of ${live.user?.name}`}
+                    className="w-8 h-8 rounded-full mr-2"
+                  />
+                  <span className="font-medium">{live.user?.name}</span>
+                </td>
                 <td className="py-2">
-                  {new Date(live.startTime).toLocaleString()}
-                </td>  
-                <td className="py-2">{live.type==0?"Public":"Private"}</td>     
-                <td className="py-2 flex space-x-2">
-                  <button
-                    onClick={() => EndLive(live.liveStreamId)}
-                    className="px-2 py-1 bg-red-500 text-white rounded-lg flex items-center"
+                  <div
+                    className={`px-2 py-1 rounded-lg text-white ${
+                      live.status === 0 ? "bg-red-500" : "bg-green-500"
+                    }`}
                   >
-                    <FaRegEyeSlash className="mr-1" /> Stop Live
+                    {live.status === 0 ? "Block" : "Alive"}
+                  </div>
+                </td>
+                <td className={`px-1`}>
+                  <div
+                    className={`px-2 py-1 rounded-lg text-white ${
+                      live.streamSessions.length > 0 &&
+                      live.streamSessions[0].status === 1
+                        ? "bg-green-500"
+                        : "bg-red-500"
+                    }`}
+                  >
+                    {live.streamSessions.length > 0 &&
+                    live.streamSessions[0].status === 1
+                      ? "Live Now"
+                      : "Not Live"}
+                  </div>
+                </td>
+                <td className="py-2">
+                  {live.streamSessions.length > 0
+                    ? new Date(
+                        live.streamSessions[0].startTime
+                      ).toLocaleString()
+                    : "N/A"}
+                </td>
+                <td className="py-2">
+                  {live.streamSessions.length > 0
+                    ? live.streamSessions[0].type === 0
+                      ? "Public"
+                      : "Private"
+                    : "N/A"}
+                </td>
+                <td className="py-2 flex space-x-2">
+                  {/* Nút Block/Unblock */}
+                  <button
+                    onClick={() => toggleBlockUser(live.id, live.status)}
+                    className={`px-4 py-2 rounded-lg flex items-center justify-center min-w-[100px] ${
+                      live.status === 1
+                        ? "bg-red-500 text-white"
+                        : "bg-green-500 text-white"
+                    }`}
+                  >
+                    {live.status === 1 ? "Block" : "Unblock"}
                   </button>
-                </td>     
+
+                  {/* Nút Stop Live nếu đang live */}
+                  {live.streamSessions.length > 0 &&
+                    live.streamSessions[0].status === 1 && (
+                      <button
+                        onClick={() =>
+                          endliveStream(live.id)
+                        }
+                        className="px-4 py-2 bg-red-500 text-white rounded-lg flex items-center justify-center min-w-[100px]"
+                      >
+                        <FaRegEyeSlash className="mr-1" /> Stop Live
+                      </button>
+                    )}
+                </td>
               </tr>
             ))
           ) : (
@@ -94,7 +165,9 @@ const LivesPage = () => {
       <div className="flex justify-between items-center mt-4">
         <button
           className={`px-4 py-2 border rounded ${
-            page <= 1 ? "bg-gray-300 cursor-not-allowed" : "bg-blue-500 text-white"
+            page <= 1
+              ? "bg-gray-300 cursor-not-allowed"
+              : "bg-blue-500 text-white"
           }`}
           disabled={page <= 1}
           onClick={() => setPage((prev) => prev - 1)}

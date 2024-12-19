@@ -1,16 +1,15 @@
-/* eslint-disable react/prop-types */
-import React, { useState } from "react";
-import { useDispatch } from "react-redux";
-import { createClass } from "../../redux/classes/ClassSlice";
+import React, { useState, useEffect } from "react";
+import ReactDOM from "react-dom";
+import axios from "axios";
+import { Class } from "@mui/icons-material";
 
-const CreateClass = ({ courseId, onClose, onCreateSuccess }) => {
+const UpdateClass = ({ classItem, courseId, onClose, onCreateSuccess }) => {
   const [className, setClassName] = useState("");
   const [classDescription, setClassDescription] = useState("");
   const [count, setCount] = useState(0);
   const [startDate, setStartDate] = useState("");
   const [endDate, setEndDate] = useState("");
   const [isEnabled, setIsEnabled] = useState(true);
-  const dispatch = useDispatch();
   const [inputErrors, setInputErrors] = useState({
     className: false,
     classDescription: false,
@@ -18,6 +17,20 @@ const CreateClass = ({ courseId, onClose, onCreateSuccess }) => {
     startDate: false,
     endDate: false,
   });
+  console.log(classItem);
+
+  useEffect(() => {
+    if (classItem) {
+      setClassName(classItem.className || "");
+      setClassDescription(classItem.classDescription || "");
+      setCount(classItem.count || 0);
+      setStartDate(classItem.startDate || "");
+      setEndDate(classItem.endDate || "");
+      setIsEnabled(
+        classItem.isEnabled !== undefined ? classItem.isEnabled : true
+      );
+    }
+  }, [classItem]);
 
   const validateStartDate = () => {
     const today = new Date().toISOString().split("T")[0];
@@ -39,34 +52,42 @@ const CreateClass = ({ courseId, onClose, onCreateSuccess }) => {
 
     if (!validateFields()) return;
 
-    const startDateTime = new Date(startDate).toISOString().split("T")[0];
-    const endDateTime = new Date(endDate).toISOString().split("T")[0];
-
-    const newClass = {
+    const updatedClass = {
+      Id,
       className,
       classDescription,
       count,
       courseId,
-      startDate: startDateTime,
-      endDate: endDateTime,
+      startDate,
+      endDate,
       isEnabled,
     };
-    console.log(newClass);
 
     try {
-      await dispatch(createClass({ newClass })).unwrap();
-      onCreateSuccess(); // Gọi callback nếu có
-      onClose(); // Đóng form
+      // Gửi PUT request đến API để cập nhật lớp học
+      const response = await axios.put(
+        `https://localhost:7030/api/class/${classItem.Id}`, // API endpoint
+        updatedClass
+      );
+
+      if (response.data.isSuccess) {
+        // Nếu thành công, gọi onCreateSuccess và onClose
+        onCreateSuccess();
+        onClose();
+      } else {
+        alert("Cập nhật lớp học thất bại.");
+      }
     } catch (error) {
-      onCreateSuccess(); // Gọi callback nếu có
-      onClose(); // Đóng form
+      console.error("Lỗi khi cập nhật lớp học:", error);
+      alert("Đã xảy ra lỗi khi cập nhật lớp học.");
     }
   };
 
-  return (
+  // Render the UpdateClass modal using a Portal to make sure it appears on top of other components
+  return ReactDOM.createPortal(
     <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
-      <div className="bg-white p-6 rounded-lg shadow-lg w-1/3 relative">
-        <h2 className="text-2xl font-bold mb-4">Thêm Lớp Học Mới</h2>
+      <div className="bg-white p-6 rounded-lg shadow-lg w-1/3 relative z-60">
+        <h2 className="text-2xl font-bold mb-4">Cập Nhật Lớp Học</h2>
         <form onSubmit={handleSubmit}>
           <div className="mb-4">
             <label className="block text-sm font-semibold mb-2">
@@ -75,38 +96,27 @@ const CreateClass = ({ courseId, onClose, onCreateSuccess }) => {
             <input
               type="text"
               value={className}
-              onChange={(e) => {
-                setClassName(e.target.value);
-                setInputErrors((prev) => ({ ...prev, className: false }));
-              }}
+              onChange={(e) => setClassName(e.target.value)}
               required
-              className={`w-full border p-2 rounded focus:outline-none focus:border-blue-500 ${
-                inputErrors.className ? "border-red-500" : "border-gray-300"
-              }`}
+              className="w-full border p-2 rounded"
             />
+            {/* <input
+              type="hidden"
+              value={Id}
+              onChange={(e) => setClassName(e.target.value)}
+              className="w-full border p-2 rounded"
+            /> */}
           </div>
-
           <div className="mb-4">
             <label className="block text-sm font-semibold mb-2">Mô Tả</label>
             <textarea
               value={classDescription}
-              onChange={(e) => {
-                setClassDescription(e.target.value);
-                setInputErrors((prev) => ({
-                  ...prev,
-                  classDescription: false,
-                }));
-              }}
+              onChange={(e) => setClassDescription(e.target.value)}
               required
-              className={`w-full border p-2 rounded focus:outline-none focus:border-blue-500 ${
-                inputErrors.classDescription
-                  ? "border-red-500"
-                  : "border-gray-300"
-              }`}
+              className="w-full border p-2 rounded"
               rows="3"
             ></textarea>
           </div>
-
           <div className="mb-4">
             <label className="block text-sm font-semibold mb-2">
               Số Lượng Học Viên
@@ -114,17 +124,11 @@ const CreateClass = ({ courseId, onClose, onCreateSuccess }) => {
             <input
               type="number"
               value={count}
-              onChange={(e) => {
-                setCount(e.target.value);
-                setInputErrors((prev) => ({ ...prev, count: false }));
-              }}
+              onChange={(e) => setCount(e.target.value)}
               required
-              className={`w-full border p-2 rounded focus:outline-none focus:border-blue-500 ${
-                inputErrors.count ? "border-red-500" : "border-gray-300"
-              }`}
+              className="w-full border p-2 rounded"
             />
           </div>
-
           <div className="mb-4 grid grid-cols-2 gap-4">
             <div>
               <label className="block text-sm font-semibold mb-2">
@@ -138,9 +142,7 @@ const CreateClass = ({ courseId, onClose, onCreateSuccess }) => {
                   validateStartDate();
                 }}
                 required
-                className={`w-full border p-2 rounded focus:outline-none focus:border-blue-500 ${
-                  inputErrors.startDate ? "border-red-500" : "border-gray-300"
-                }`}
+                className="w-full border p-2 rounded"
               />
             </div>
             <div>
@@ -155,9 +157,7 @@ const CreateClass = ({ courseId, onClose, onCreateSuccess }) => {
                   validateEndDate();
                 }}
                 required
-                className={`w-full border p-2 rounded focus:outline-none focus:border-blue-500 ${
-                  inputErrors.endDate ? "border-red-500" : "border-gray-300"
-                }`}
+                className="w-full border p-2 rounded"
               />
             </div>
           </div>
@@ -175,20 +175,22 @@ const CreateClass = ({ courseId, onClose, onCreateSuccess }) => {
           <button
             type="button"
             onClick={onClose}
-            className="px-4 py-2 mr-4 bg-gray-400 text-white rounded hover:bg-gray-500"
+            className="px-4 py-2 mr-4 bg-gray-400 text-white rounded"
           >
             Cancel
           </button>
           <button
             type="submit"
+            onClick={handleSubmit}
             className="bg-blue-500 text-white p-2 rounded hover:bg-blue-600"
           >
-            Tạo Lớp Học
+            Update
           </button>
         </form>
       </div>
-    </div>
+    </div>,
+    document.body // Render the modal directly to the body to make it appear on top of all other components
   );
 };
 
-export default CreateClass;
+export default UpdateClass;

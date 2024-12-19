@@ -29,8 +29,22 @@ const TestFormLayout = () => {
     switch (activeTab) {
       case "QuestionBanks":
         return <QuestionBank />;
-      // case "Dashboard":
-      //   return <TestSubmitted setIsViewExplain={setIsViewExplain} />;
+      case "Dashboard":
+        return (
+          <TestSubmitted
+            setIsViewExplain={setIsViewExplain}
+            setActiveTab={setActiveTab}
+            activeTab={activeTab}
+          />
+        );
+      case "Results":
+        return (
+          <TestSubmitted
+            setIsViewExplain={setIsViewExplain}
+            setActiveTab={setActiveTab}
+            activeTab={activeTab}
+          />
+        );
       case "Settings":
         return <ContributionAttempt />;
       case "History":
@@ -118,16 +132,6 @@ const TestFormLayout = () => {
           )}
 
           <div className="">{renderComponent()}</div>
-
-          {activeTab === "Dashboard" || activeTab === "Results" ? (
-            <TestSubmitted
-              setIsViewExplain={setIsViewExplain}
-              setActiveTab={setActiveTab}
-              activeTab={activeTab}
-            />
-          ) : (
-            renderComponent()
-          )}
         </div>
       </div>
     </div>

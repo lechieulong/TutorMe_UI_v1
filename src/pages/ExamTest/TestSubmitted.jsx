@@ -29,8 +29,6 @@ const TestSubmitted = ({ setIsViewExplain, setActiveTab, activeTab }) => {
 
   const { updateStatus } = useSelector((state) => state.ADMIN_tests);
 
-  console.log(activeTab);
-
   const skillTypes = {
     0: "Reading",
     1: "Listening",

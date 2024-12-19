@@ -137,6 +137,7 @@ const Header = () => {
                 >
                   Stream now
                   <FontAwesomeIcon icon={faHeadset} />
+                  
                 </button> */}
                 {(userFrormToken?.role?.includes(Roles.ADMIN) ||
                   userFrormToken?.role?.includes(Roles.TEACHER)) && (

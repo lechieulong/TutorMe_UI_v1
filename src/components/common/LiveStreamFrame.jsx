@@ -15,6 +15,7 @@ import { ToastContainer } from "react-toastify";
 import { GetUserByID } from "../../redux/users/UserSlice";
 import { useDispatch } from "react-redux";
 import apiURLConfig from "../../redux/common/apiURLConfig";
+import { useLocation } from 'react-router-dom';
 // Truy cập các biến môi trường
 const appID = Number(import.meta.env.VITE_APP_ID);
 const serverSecret = import.meta.env.VITE_SERVER_SECRET;
@@ -98,7 +99,7 @@ export const UpdateStreamSession= async (LiveStreamId,type)=>{
 
 
 // Kết Thúc Phiên Live
-const EndStreamSession= async (LiveStreamId)=>{
+export const EndStreamSession= async (LiveStreamId)=>{
   const StreamSession= await getStreamSession(LiveStreamId);
   if(StreamSession==null){
     return;
@@ -212,9 +213,11 @@ export async function GetListIdIsLiveStream() {
         const sortedRooms = data.Data.UserCountList.sort(
           (a, b) => b.UserCount - a.UserCount
         );
-
         // Return the list of RoomIds in descending order of UserCount
-        return sortedRooms.map((room) => room.RoomId);
+        return sortedRooms.map((room) => ({
+          RoomId: room.RoomId,
+          UserCount: room.UserCount,
+        }));
       } else {
         console.error("API Error:", data.Message);
         return null;
@@ -227,6 +230,30 @@ export async function GetListIdIsLiveStream() {
   // Wait for fetchRoomData to complete and return the result
   return await fetchRoomData();
 }
+const stopCameraAndMic = async (role) => {
+  if(role==="Host"){
+    if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
+      try {
+        const stream = await navigator.mediaDevices.getUserMedia({ video: true, audio: true });
+        const tracks = stream.getTracks();
+  
+        const isCameraOrMicActive = tracks.some((track) => track.readyState === 'live');
+  
+        if (isCameraOrMicActive) {
+          tracks.forEach((track) => track.stop());
+          console.log("Camera và mic đã được tắt.");
+        } else {
+          console.log("Camera và mic không đang hoạt động.");
+        }
+      } catch (err) {
+        console.error("Không thể kiểm tra hoặc tắt camera và mic:", err);
+      }
+    } else {
+      console.error("Trình duyệt không hỗ trợ navigator.mediaDevices.");
+    }
+  }
+  
+};
 
 // Component khung phát sóng trực tiếp
 const LiveStreamFrame = ({ width, height, className }) => {
@@ -250,7 +277,7 @@ const LiveStreamFrame = ({ width, height, className }) => {
             setRoomID(roomIdFromUrl);
           }
         } else if (Listid!=null) {
-          setRoomID(Listid[0]);
+          setRoomID(Listid[0].RoomId);
         }    
 
       } catch (error) {
@@ -261,8 +288,14 @@ const LiveStreamFrame = ({ width, height, className }) => {
     };
 
     fetchRoomData();
+    return () => {
+      if(zp){
+        zp.destroy();
+        stopCameraAndMic(role_str);
+      }
+    };
   }, []);
-
+  
   useEffect(() => {
     const checkAccess = async () => {
         const StreamSession = await getStreamSession(roomID);
@@ -410,12 +443,6 @@ const LiveStreamFrame = ({ width, height, className }) => {
           let roomID = zp.getRoomID();
           // Store it in sessionStorage
           sessionStorage.setItem('roomID', roomID);
-        },
-        onLiveStart:(usere)=>{
-          if(role_str=='Host'){
-          createStreamSession(roomID,privacy=='Public'?0:1)
-          }
-          
         },
         onLiveEnd:(usere)=>{
          EndStreamSession(roomID);

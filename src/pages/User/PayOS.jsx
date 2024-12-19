@@ -157,68 +157,82 @@ import {
     };
     return (
       <MainLayout>
-      <Box
-        component={"div"}
-        className="flex flex-col !content-center flex-wrap gap-5"
-      >
-        {/* <Header /> */}
+        {/* Toàn bộ màn hình */}
         <Box
           component="div"
-          className="w-3/4 md:w-1/2"
-          sx={{ alignSelf: "center" }}
+          className="flex items-center justify-center min-h-screen bg-gray-100"
         >
-          <ToastContainer />
-          <Typography component="h4" variant="h4" className="!font-bold">
-            New Transaction
-          </Typography>
-          <Box component="div" sx={{ marginTop: "20px", marginBottom: "20px" }}>
-            <Typography>Amount:</Typography>
-            <Box component="div" sx={{ width: "100%", marginTop: "10px" }}>
+          {/* Form Container */}
+          <Box
+            component="div"
+            className="w-full max-w-lg p-6 bg-gradient-to-br from-white to-gray-100 border-2 border-gray-300 rounded-lg shadow-xl"
+          >
+            <ToastContainer />
+            <Box
+  component="div"
+  className="w-full py-4 bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 shadow-lg rounded-t-lg text-center"
+>
+  <Typography
+    component="h4"
+    variant="h4"
+    className="text-white font-extrabold"
+  >
+    New Transaction
+  </Typography>
+</Box>
+    
+            {/* Amount Input */}
+            <Box component="div" className="mb-5">
+              
+              <div className="mt-5">
               <TextField
                 id="outlined-basic"
-                label="input Amount"
+                label="Enter Amount"
                 variant="outlined"
                 defaultValue="10000"
                 inputRef={priceRef}
                 fullWidth
-              />
+                className="!border-gray-300"/>
+              </div>
             </Box>
-          </Box>
-          <Box component="div" sx={{ marginBottom: "20px" }}>
-            <Typography>Decription:</Typography>
-            <Box component="div" sx={{ width: "100%", marginTop: "10px" }}>
+    
+            {/* Description Input */}
+            <Box component="div" className="mb-5">
+            <div className="mt-2">
               <TextField
                 id="outlined-basic"
-                label="Decription"
+                label="Enter Description"
                 variant="outlined"
-                defaultValue="deposit money into account"
+                defaultValue="Deposit money into account"
                 inputRef={descriptionRef}
                 fullWidth
+                className="!border-gray-300"
               />
+              </div>
+            </Box>
+    
+            {/* Submit Button */}
+            <Box component="div" className="flex justify-center">
+              <Button
+                variant="contained"
+                onClick={() =>
+                  createPaymentLinkHandle(redirectPaymentLink, setRedirectLoading)
+                }
+                disabled={redirectLoading}
+                className="!bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 !normal-case text-white py-2 px-6 rounded-lg shadow-lg hover:opacity-90"
+              >
+                {redirectLoading ? (
+                  <>
+                    Processing &nbsp;
+                    <CircularProgress className="!text-white" size={20} />
+                  </>
+                ) : (
+                  "Proceed to Payment"
+                )}
+              </Button>
             </Box>
           </Box>
-          <Box component="div" className="flex flex-col gap-3 items-center">
-            <Button
-              variant="contained"
-              onClick={() =>
-                createPaymentLinkHandle(redirectPaymentLink, setRedirectLoading)
-              }
-              disabled={redirectLoading}
-              className="!bg-[#5D5FEF] !normal-case"
-            >
-              Payment
-              {redirectLoading ? (
-                <>
-                  {" "}
-                  &nbsp; <CircularProgress className="!text-white" size={20} />
-                </>
-              ) : (
-                ""
-              )}
-            </Button>       
-          </Box>
         </Box>
-      </Box>
       </MainLayout>
     );
   }

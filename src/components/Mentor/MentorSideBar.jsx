@@ -33,6 +33,7 @@ const MentorSidebar = ({ mentorAndList, setSelectedComponent, isMentor }) => {
       fetchUser();
     }
   }, [authToken]);
+  console.log(mentorAndList + " | " + isMentor);
 
   return (
     <div>
@@ -118,7 +119,7 @@ const MentorSidebar = ({ mentorAndList, setSelectedComponent, isMentor }) => {
                 </li>
               )}
 
-              {mentorAndList && (
+              {(mentorAndList || isMentor) && (
                 <Link
                   to={`/mentorCourseDetail/${courseId}/reportOfCourse`}
                   className="flex items-center gap-x-3.5 py-2 px-2.5 text-sm text-gray-700 rounded-lg hover:bg-gray-100 focus:outline-none focus:bg-gray-100"

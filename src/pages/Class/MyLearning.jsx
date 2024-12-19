@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef } from "react";
+import React, { useEffect, useState } from "react";
 import axios from "axios";
 import MainLayout from "../../layout/MainLayout";
 import { FaGraduationCap } from "react-icons/fa";
@@ -9,7 +9,6 @@ const MyLearning = () => {
   const [courses, setCourses] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [activeLink, setActiveLink] = useState("mylearning");
   const [user, setUser] = useState(null);
 
   useEffect(() => {
@@ -80,6 +79,11 @@ const MyLearning = () => {
         {error && (
           <p className="font-mono text-xs text-red-500 text-center mt-2">
             {error}
+          </p>
+        )}
+        {courses && courses.length === 0 && !loading && (
+          <p className="font-mono text-xs text-red-500 text-center mt-2">
+            Bạn chưa tham gia khóa học nào.
           </p>
         )}
         <div className="relative flex items-center">

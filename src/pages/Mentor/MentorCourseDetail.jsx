@@ -114,6 +114,12 @@ const MentorCourseDetail = () => {
     }
   }, [dispatch, userId, courseId]);
 
+  const handleDeleteClassSuccess = () => {
+    dispatch(fetchClasses(courseId));
+  };
+  const updateClassSuccessfull = () => {
+    dispatch(fetchClasses(courseId));
+  };
   useEffect(() => {
     const checkIfRated = async () => {
       if (!userId || !courseId) return;
@@ -281,10 +287,7 @@ const MentorCourseDetail = () => {
           status={confirmStatus}
         />
         <div className="flex w-full">
-          <MentorSidebar
-            mentorAndList={mentorAndList}
-            isEnrolled={isEnrolled}
-          />
+          <MentorSidebar mentorAndList={true} isMentor={true} />
           <div className="flex-1 p-4 overflow-y-auto">
             <div className="mx-auto bg-houseGreen text-white rounded-lg shadow-lg flex flex-col lg:flex-row p-8 space-y-8 lg:space-y-0 lg:space-x-8 ">
               <div className="flex flex-col lg:w-2/3">
@@ -393,6 +396,8 @@ const MentorCourseDetail = () => {
                           onSelect={() => setSelectedClassId(classItem.id)}
                           isActive={selectedClassId === classItem.id}
                           mentorAndList={mentorAndList}
+                          handleDeleteClassSuccess={handleDeleteClassSuccess}
+                          updateClassSuccessfull={updateClassSuccessfull}
                         />
                       ))}
                     </div>

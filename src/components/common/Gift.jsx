@@ -18,8 +18,8 @@ async function sendGift(GiftId, GiftURL, UserName, userId, roomID, handleSendCom
     const gift = await getGift(GiftId);
     if (await CheckBanlance(gift.price)) {
       if (await handleSendCommand(UserName, GiftURL)) {
-        await GiveMeMyMoney(user, gift.price * -1, `Buy_Gift ${gift.name} ${GiftId}`);
-        await GiveMeMyMoney(roomID, gift.price, `Receive_Gift ${gift.name} ${GiftId} ${user}`);
+        await GiveMeMyMoney(user, gift.price * -1, `${gift.name} ${user} ${roomID}`,"Buy_Gift");
+        await GiveMeMyMoney(roomID, gift.price, `${gift.name} ${user} ${roomID}`,"Receive_Gift");
         const formData = {
           userId: user,
           giftId: GiftId,

@@ -21,6 +21,7 @@ const ClassToEnroll = ({ courseId, userId, onClose, onEnrollSuccess }) => {
     (state) => state.classes.unenrolledClassesByCourse[courseId] || []
   );
   const [selectedClassId, setSelectedClassId] = useState(null);
+  console.log(userId);
 
   useEffect(() => {
     if (courseId && userId) {
@@ -31,10 +32,6 @@ const ClassToEnroll = ({ courseId, userId, onClose, onEnrollSuccess }) => {
   const handleClassClick = (classId) => {
     setSelectedClassId((prev) => (prev === classId ? null : classId));
   };
-
-  if (status === "loading") {
-    return <p>Loading classes...</p>;
-  }
 
   const handleEnroll = async () => {
     if (authToken == null) {
@@ -87,9 +84,10 @@ const ClassToEnroll = ({ courseId, userId, onClose, onEnrollSuccess }) => {
           `Lớp của bạn đã được đăng ký bởi ${userId}`
         );
 
+        const enrollAt = new Date().toISOString().split("T")[0];
         // Đăng ký người dùng vào lớp
         await dispatch(
-          enrollUser({ courseId, userId, classId: selectedClassId })
+          enrollUser({ courseId, userId, classId: selectedClassId, enrollAt })
         ).unwrap();
 
         // Thông báo thành công

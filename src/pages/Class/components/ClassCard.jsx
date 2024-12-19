@@ -7,7 +7,7 @@ import Switch from "@mui/material/Switch";
 import { updateEnabledStatus } from "../../../redux/classes/ClassSlice";
 import { useDispatch } from "react-redux";
 import useAuthToken from "../../../hooks/useAuthToken";
-import CreateClass from "../CreateClass";
+import UpdateClass from "../UpdateClass";
 const GreenSwitch = styled(Switch)(({ theme }) => ({
   "& .MuiSwitch-switchBase.Mui-checked": {
     color: "#007549",
@@ -33,6 +33,7 @@ const ClassCard = ({
   const navigate = useNavigate();
   const [isSwitchOn, setIsSwitchOn] = useState(false);
   const dispatch = useDispatch();
+  const [isUpdateOpen, setIsUpdateOpen] = useState(false);
   useEffect(() => {
     const fetchEnabledStatus = async () => {
       try {
@@ -121,33 +122,8 @@ const ClassCard = ({
       }
     }
   };
-  const handleUpdateClass = async () => {
-    try {
-      const response = await axios.get(
-        `https://localhost:7030/api/class/${classItem.id}`
-      );
-
-      if (response?.data?.isSuccess) {
-        const classData = response.data?.result;
-
-        // Truyền dữ liệu vào CreateClass
-        onSelect &&
-          onSelect({
-            className: classData.className,
-            classDescription: classData.description,
-            count: classData.enrollmentCount,
-            startDate: classData.startDate,
-            endDate: classData.endDate,
-            isEnabled: classData.isEnabled,
-            type: "update",
-          });
-      } else {
-        alert("Không thể lấy thông tin lớp học.");
-      }
-    } catch (error) {
-      console.error("Gặp lỗi khi lấy thông tin lớp học:", error);
-      alert("Không thể lấy thông tin lớp học.");
-    }
+  const handleUpdateClass = () => {
+    setIsUpdateOpen(true); // Open the popup
   };
   const cardClassName = location.pathname.includes("/classOfCourse")
     ? "flex-shrink-0 w-full sm:w-1/1 md:w-1/2 lg:w-1/2 p-2 cursor-pointer"
@@ -196,6 +172,14 @@ const ClassCard = ({
           </div>
         )}
       </div>
+      {isUpdateOpen && (
+        <UpdateClass
+          classItem={classItem}
+          courseId={classItem.courseId}
+          onClose={() => setIsUpdateOpen(false)} // Close popup on close
+          onCreateSuccess={handleDeleteClassSuccess} // Reload the class list on success
+        />
+      )}
     </div>
   );
 };

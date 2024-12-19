@@ -147,7 +147,7 @@ const ClassOfCourseList = () => {
       {isPopupOpen && (
         <ClassToEnroll
           courseId={courseId}
-          userlearnerId={userId}
+          userId={userId}
           onClose={handleClosePopup} // Đóng popup sau khi đăng ký
           onEnrollSuccess={handleEnrollSuccess} // Chỉ xử lý enroll
         />

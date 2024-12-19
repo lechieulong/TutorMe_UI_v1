@@ -17,7 +17,7 @@ import ProfileEdit from "./pages/User/ProfileEdit";
 import ChangePassword from "./pages/User/ChangePassword";
 import BeTeacher from "./pages/User/Beteacher";
 import UpdateTeacherRequest from "./pages/User/UpdateTeacherRequest";
-
+import ReportOfCourse from "./pages/Course/ReportOfCourse";
 import Calendar from "./pages/Calendar/Calendar";
 import CoachingSchedule from "./pages/Teacher/CoachingSchedule";
 import ConfirmBook from "./pages/Schedule/ConfirmBook";
@@ -122,6 +122,10 @@ const App = () => {
           <Route
             path="/courseDetail/:courseId/classOfCourse"
             element={<ClassOfCourse />}
+          />
+          <Route
+            path="/mentorCourseDetail/:courseId/reportOfCourse"
+            element={<ReportOfCourse />}
           />
           <Route path="/dynamicForm" element={<DynamicForm />} />
           <Route path="/skillCard" element={<CourseSkillCard />} />

@@ -34,20 +34,28 @@ const SubjectListCard = ({ averageRating, ratingCount, image, userName }) => {
   return (
     <div
       onClick={handleClick}
-      className="cursor-pointer bg-white border border-gray-200 rounded-lg w-full sm:max-w-[140px] md:max-w-[180px] lg:max-w-[260px] shadow-md overflow-hidden p-4 transition-shadow duration-300 ease-in-out hover:shadow-2xl"
+      className="bg-white border border-gray-200 rounded-lg w-full max-w-sm shadow-md overflow-hidden cursor-pointer transition-shadow duration-300 ease-in-out hover:shadow-2xl"
     >
-      <div className="flex flex-col items-center">
-        <img src={image} alt={userName} />
-        <div className="flex items-center">
-          <span className="ml-2">{averageRating?.toFixed(1) || 0}</span>
+      <img src={image} alt={userName} className="w-full h-48 object-cover" />
+      <div className="p-4 flex flex-col items-center">
+        <h3 className="text-black text-xl font-semibold">{userName}</h3>
+        <div className="flex items-center mt-2">
+          <span className="text-yellow-500 text-lg font-medium mr-2">
+            {averageRating?.toFixed(1) || 0}
+          </span>
           {renderStars(averageRating || 0)}
         </div>
-        <div className="flex items-center">
-          <span className="ml-2">{ratingCount || 0}</span>
-        </div>
+        <p className="text-gray-600 mt-2">{ratingCount || 0} đánh giá</p>
       </div>
     </div>
   );
+};
+
+SubjectListCard.propTypes = {
+  averageRating: PropTypes.number.isRequired,
+  ratingCount: PropTypes.number.isRequired,
+  image: PropTypes.string.isRequired,
+  userName: PropTypes.string.isRequired,
 };
 
 export default SubjectListCard;

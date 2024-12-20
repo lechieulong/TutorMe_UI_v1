@@ -118,12 +118,7 @@ export const LecturerOfCourse = createAsyncThunk(
       );
 
       return !!response?.data?.result; // Chỉ lấy kết quả boolean từ API
-    } catch (error) {
-      return rejectWithValue(
-        error.response?.data?.message ||
-          "Failed to check lecturer of the course."
-      );
-    }
+    } catch (error) {}
   }
 );
 
@@ -180,22 +175,30 @@ export const fetchCourseLessons = createAsyncThunk(
 );
 export const updateCourseStatus = createAsyncThunk(
   "courses/updateStatus",
-  async ({ courseId, isEnabled }, { rejectWithValue }) => {
+  async ({ courseId, courseEnabled }, { rejectWithValue }) => {
     try {
-      await axios.put(
+      const response = await axios.put(
         `${apiURLConfig.baseURL}/Courses/${courseId}/update-status`,
-        isEnabled, // Gửi trực tiếp giá trị boolean
+        courseEnabled, // Gửi trực tiếp giá trị boolean
         {
           headers: { "Content-Type": "application/json" },
         }
       );
 
-      return { courseId, isEnabled }; // Trả về courseId và trạng thái mới
+      const { courseEnabled: updatedCourseEnabled } = response.data; // Lấy giá trị courseEnabled từ response
+      return { courseId, courseEnabled: updatedCourseEnabled }; // Trả về courseId và trạng thái courseEnabled từ response
     } catch (error) {
-      return rejectWithValue("Cập nhật trạng thái khóa học thất bại.");
+      if (error.response) {
+        if (error.response.status === 400) {
+          return rejectWithValue("Cannot enable course without any classes.");
+        }
+      } else {
+        return rejectWithValue("Lỗi kết nối với server.");
+      }
     }
   }
 );
+
 export const checkIfRatedTeacher = createAsyncThunk(
   "course/checkIfRatedTeacher",
   async ({ userId, learnerId }, { rejectWithValue }) => {
@@ -203,7 +206,7 @@ export const checkIfRatedTeacher = createAsyncThunk(
 
     try {
       const response = await axios.get(
-        `https://localhost:7030/api/TeacherRatings/CheckIfRated`,
+        `${apiURLConfig}/TeacherRatings/CheckIfRated`,
         {
           params: { userId, learnerId },
         }
@@ -216,6 +219,7 @@ export const checkIfRatedTeacher = createAsyncThunk(
 );
 
 const initialState = {
+  courseEnabled: {},
   hasRatedTeacher: null,
   isMentor: false,
   isLoading: false,
@@ -346,18 +350,17 @@ const courseSlice = createSlice({
         state.error = action.payload;
       })
       //Handle switch course
+      .addCase(updateCourseStatus.pending, (state) => {
+        state.loading = true;
+      })
       .addCase(updateCourseStatus.fulfilled, (state, action) => {
-        const { courseId, newStatus } = action.payload;
-        const course = state.courses.find((c) => c.id === courseId);
-        if (course) {
-          course.isSwitchOn = newStatus;
-        }
-        state.notification = `Khóa học đã được ${
-          newStatus ? "hiển thị" : "ẩn"
-        } thành công.`;
+        const { courseId, courseEnabled } = action.payload;
+        state.courseEnabled[courseId] = courseEnabled; // Cập nhật trạng thái courseEnabled cho khóa học tương ứng
+        state.loading = false;
       })
       .addCase(updateCourseStatus.rejected, (state, action) => {
-        state.notification = action.payload || "Đã xảy ra lỗi.";
+        state.loading = false;
+        state.error = action.payload;
       })
       .addCase(checkIfRatedTeacher.pending, (state) => {
         state.loading = true;

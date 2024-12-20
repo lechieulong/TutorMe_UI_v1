@@ -8,7 +8,7 @@ export const fetchTestExamsInLesson = createAsyncThunk(
   async (lessonId, { rejectWithValue }) => {
     try {
       const response = await axios.get(
-        `https://localhost:7030/api/CourseLessons/GetTestExamByLessonId/${lessonId}`
+        `${apiURLConfig}/CourseLessons/GetTestExamByLessonId/${lessonId}`
       );
       if (Array.isArray(response.data) && response.data.length > 0) {
         return response.data;

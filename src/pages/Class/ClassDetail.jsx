@@ -7,6 +7,7 @@ import TestForm from "../ExamTest/TestForm";
 import CreateClassFile from "./CreateClassFile";
 import { Link } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import apiURLConfig from "../../redux/common/apiURLConfig";
 import {
   faFileExcel,
   faFileWord,
@@ -27,9 +28,7 @@ const ClassDetail = () => {
   const [testExams, setTestExams] = useState([]);
   const fetchClassDetail = async () => {
     try {
-      const response = await axios.get(
-        `https://localhost:7030/api/class/${classId}`
-      );
+      const response = await axios.get(`${apiURLConfig}/class/${classId}`);
       if (response.data.isSuccess) {
         setClassDetail(response.data.result);
       } else {
@@ -65,7 +64,7 @@ const ClassDetail = () => {
   const fetchClassFiles = async () => {
     try {
       const response = await axios.get(
-        `https://localhost:7030/api/ClassFile/class/${classId}`
+        `${apiURLConfig}/ClassFile/class/${classId}`
       );
       if (response.data) {
         setClassFiles(response.data);
@@ -81,7 +80,7 @@ const ClassDetail = () => {
   const handleCreateTest = async () => {
     try {
       const response = await axios.get(
-        `https://localhost:7030/api/CourseSkills/Course/${courseId}`
+        `${apiURLConfig}/CourseSkills/Course/${courseId}`
       );
       if (response.data?.length > 0) {
         const descriptions = response.data.map(
@@ -100,7 +99,7 @@ const ClassDetail = () => {
   const handleFileSubmit = async (fileData) => {
     try {
       // API call to upload the file
-      await axios.post("https://localhost:7030/api/ClassFile", fileData);
+      await axios.post(`${apiURLConfig}/ClassFile`, fileData);
       handleFileCreated();
     } catch (err) {
       console.error("File upload failed:", err);
@@ -115,7 +114,7 @@ const ClassDetail = () => {
   const fetchTestExams = async () => {
     try {
       const response = await axios.get(
-        `https://localhost:7030/api/class/GetTestExamsByClassId/${classId}`
+        `${apiURLConfig}/class/GetTestExamsByClassId/${classId}`
       );
       console.log(response);
 

@@ -33,7 +33,7 @@ export const fetchClassIds = createAsyncThunk(
     try {
       const token = Cookies.get("authToken"); // Điều chỉnh phương thức xác thực nếu cần
       const response = await axios.get(
-        `https://localhost:7030/api/Enrollment/classIds`, // Sử dụng API endpoint chính xác
+        `${apiURLConfig}/Enrollment/classIds`, // Sử dụng API endpoint chính xác
         {
           params: { courseId, userId }, // Truyền tham số qua query string
           headers: {

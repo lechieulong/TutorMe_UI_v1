@@ -7,7 +7,7 @@ export const fetchCoursesTimelineDetail = createAsyncThunk(
   async (courseTimelineId) => {
     try {
       const response = await axios.get(
-        `https://localhost:7030/api/Course/${courseTimelineId}`
+        `${apiURLConfig}/Course/${courseTimelineId}`
       );
       return response.data;
     } catch (error) {

@@ -112,6 +112,7 @@ export const ACTIONS = {
   LOCK_USER: "lockuser",
   UNLOCK_USER: "unlockuser",
   IMPORT_USER: "importuser",
+  ANALYSIS: "analysis",
 };
 
 export const STATUS = {

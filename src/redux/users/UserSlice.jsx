@@ -87,7 +87,7 @@ export const SearchTeacher = createAsyncThunk(
                 `${apiURLConfig.baseURL}/user/search/${searchText}`,
                 searchText
             );
-            return response.result.result;
+            return response.data;
         } catch (error) {
             return rejectWithValue(
                 error.response?.data?.message || "Failed to get teachers."

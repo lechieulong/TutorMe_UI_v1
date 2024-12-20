@@ -154,7 +154,7 @@ const Header = () => {
                   <Link to={`/user/${user?.userName}`}>
                     <img
                       className="inline-block w-[38px] h-[38px] rounded-full transition-transform duration-300 transform hover:scale-110 hover:bg-gray-50 focus:outline-none focus:bg-gray-50"
-                      src={user?.imageURL || defaulAvatar}
+                      src={user?.imageURL || "https://hydra13.blob.core.windows.net/2aa17120-4bef-478a-8ea9-cb0788def29e/default-avatar.jpg"}
                       alt="Avatar"
                     />
                   </Link>

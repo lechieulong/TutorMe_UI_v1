@@ -21,8 +21,8 @@ export const isHaveTicket = async (RoomId, UserId) => {
 const BuyTicket = async (TicketId,UserId,liveStreamId,Price) => {
   try{
     if(await CheckBanlance(Price)){
-      await GiveMeMyMoney(UserId,Price*-1,`Buy_Ticket ${TicketId}`);
-      await GiveMeMyMoney(liveStreamId,Price,`Ticket ${TicketId} ${UserId}`);
+      await GiveMeMyMoney(UserId,Price*-1,`Buy_Ticket ${TicketId}`,"Buy_Ticket");
+      await GiveMeMyMoney(liveStreamId,Price,`Ticket ${TicketId} ${UserId}`,"sell_Ticket");
       var formData={
       TicketId:TicketId,
       UserId:UserId,}

@@ -1,7 +1,6 @@
 import React from 'react';
 
 const UnlockModal = ({ isOpen, onClose, onUnlock, user }) => {
-    console.log("User:", user);
     const handleUnlock = () => {
         if (user) {
             onUnlock(user); // Pass the user object to the unlock function

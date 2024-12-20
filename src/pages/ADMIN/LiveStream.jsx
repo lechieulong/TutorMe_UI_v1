@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { getLives, EndLive,unblockLive,blockLive } from "../../components/ADMIN/Lives";
 import { FaRegEyeSlash, FaFileExport, FaPlus } from "react-icons/fa";
 import { handleExport } from "../../components/ADMIN/CSV";
+import { getStreamSession } from "../../components/common/LiveStreamFrame";
 
 const LivesPage = () => {
   const [lives, setLives] = useState([]);
@@ -32,7 +33,12 @@ const LivesPage = () => {
   const toggleBlockUser=async (id,stastus)=>{
     if(stastus==1){
       await blockLive(id);
-      await endliveStream(id);
+      const sesion= await getStreamSession(id);
+      console.log(sesion);
+      if(sesion!=null&&sesion.status===1){
+        await endliveStream(id);
+      }
+      
       fetchProducts();
     }else{
       await unblockLive(id);

@@ -184,11 +184,6 @@ const CoachingSchedule = () => {
                                         />
                                     </a>
                                 ))}
-                                <a href={`/teachers`} className="inline-block">
-                                    <p className="border bg-blue-400 rounded-full w-10 h-10 flex items-center justify-center text-sm">
-                                        more
-                                    </p>
-                                </a>
                             </>
                         ) : (
                             <p className="text-gray-600">No teachers available.</p>

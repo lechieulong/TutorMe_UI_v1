@@ -2,8 +2,10 @@ import React, { useState, useEffect } from "react";
 import MainLayout from "../../layout/MainLayout";
 import { useParams } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faBolt } from "@fortawesome/free-solid-svg-icons";
+import { faBolt, faChevronCircleLeft } from "@fortawesome/free-solid-svg-icons";
 import { useDispatch } from "react-redux";
+import { useNavigate } from "react-router-dom";
+
 import {
   getParts,
   getSkillById,
@@ -16,6 +18,7 @@ import SantaClausImage from "../../assets/santa-claus.jpg"; // Include a Santa i
 const TestSetting = () => {
   const dispatch = useDispatch();
   const { skillId, testId } = useParams();
+  const navigate = useNavigate();
 
   const [parts, setParts] = useState(null);
   const [testTypeForSpeak, setTestTypeForSpeak] = useState(null);
@@ -59,6 +62,10 @@ const TestSetting = () => {
     if (result.payload) {
       setSkillType(result.payload.type);
     }
+  };
+
+  const handleGoBack = () => {
+    navigate(-1); // This will navigate to the previous page
   };
 
   const getTestAsync = async (testId) => {
@@ -145,6 +152,16 @@ const TestSetting = () => {
               <div className="absolute bottom-4 right-4 bg-green-500 text-white py-2 px-4 rounded-full">
                 <FontAwesomeIcon icon={faBolt} />
               </div>
+              <button
+                onClick={handleGoBack}
+                className="   text-gray-800 mb-2 rounded-lg flex items-center border-gray-200 justify-center gap-2 transition-all duration-300 ease-in-out transform hover:border-green-600 hover:text-gray-700 hover:scale-105 focus:outline-none"
+              >
+                <FontAwesomeIcon
+                  icon={faChevronCircleLeft}
+                  className="mr-2 text-green-700 text-2xl"
+                />
+                back
+              </button>
               <h2 className="text-3xl font-semibold text-center text-red-600 mb-4">
                 Christmas Test Mode Selection 🎄
               </h2>

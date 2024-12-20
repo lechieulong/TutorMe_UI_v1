@@ -44,19 +44,31 @@ const Home = () => {
       <br />
       {/* Livestream and Subjects Section */}
       <div className="bg-white">
-        <LiveStreamList />
-        <div className="ml-10 text-2xl font-bold">
-          <h2 className="text-black">
-            Hot Teacher{" "}
-            <Link className="font-normal text-base opacity-40">more</Link>
-          </h2>
+      <div className="flex justify-center items-center rounded-lg p-4">
+          <div className="text-center">
+            <h2 className="text-lg font-bold bg-lightGreen p-3 text-black rounded-lg">
+              LIVESTREAMS SESSION SHARE PROFOUND KNOWLEDGE
+            </h2>
+          </div>
         </div>
-        <div className="p-5">
-          <div className="container mx-auto px-4">
-            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-5 gap-6">
+        <LiveStreamList />
+        <hr className="mt-10 mx-5"/>
+        <div className="flex justify-center items-center m-5 bg-lightGreen rounded-lg p-4">
+          <div className="text-center">
+            <h2 className="text-xl font-bold text-black">
+              A TEAM OF TEACHERS WITH FULL KNOWLEDGE, EXPERIENCE AND EXPERTISE.
+            </h2>
+          </div>
+        </div>
+
+        <div className="flex justify-center items-center p-5">
+          <div className="container mx-auto px-5">
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-6 gap-6">
               {topRatedTeachers.map((teacher) => (
                 <SubjectListCard
                   key={teacher.userName}
+                  userName={teacher.userName}
+                  fullName={teacher.fullName}
                   image={teacher.imageURL}
                   averageRating={teacher.averageRating}
                   ratingCount={teacher.ratingCount}
@@ -65,6 +77,7 @@ const Home = () => {
             </div>
           </div>
         </div>
+
       </div>
       <br />
       {/* Footer Section */}

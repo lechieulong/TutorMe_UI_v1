@@ -114,17 +114,17 @@ export async function getOrder_Backend(orderId){
       return error.response.data;
     }
 }
-export async function GiveMeMyMoney(UserId,money,Message){
-  const data = `userid=${UserId}&money=${money}&message=${Message}`;
+export async function GiveMeMyMoney(UserId,money,Message,Type){
+  const data = `userid=${UserId}&money=${money}&message=${Message}&type=${Type}`;
   const checksumKey = `${import.meta.env.VITE_Checksum_Key}`;
   const signature = CryptoJS.HmacSHA256(data, checksumKey).toString(CryptoJS.enc.Hex);
   const model={
     UserId:UserId,
     Balance:money,
     Message:Message,
+    Type:Type,
     signature:signature
   }
-  console.log(model);
   try {
       const res = await axios({
         method: "PUT",

@@ -5,7 +5,7 @@ import apiURLConfig from "../common/apiURLConfig";
 import Cookies from "js-cookie";
 
 
-// Action get user by ID
+// Action get balance by user
 export const GetUserBalanceByUserID = createAsyncThunk(
     `${SLICE_NAMES.USERBALANCE}/${ACTIONS.GET_USER_BALANCE}`,
     async (userId, { rejectWithValue }) => {
@@ -28,10 +28,36 @@ export const GetUserBalanceByUserID = createAsyncThunk(
     }
 );
 
+// Action get balance history by user
+export const GetUserBalanceHistoryByUserID = createAsyncThunk(
+    `${SLICE_NAMES.USERBALANCE}/${ACTIONS.GET_USER_BALANCE_HISTORY}`,
+    async (_, { rejectWithValue }) => {
+        try {
+            const token = Cookies.get("authToken");
+            const response = await axios.get(
+                `${apiURLConfig.baseURL}/AccountBalance/Get-balance-history-by-userid`,
+                {
+                    headers: {
+                        Authorization: `Bearer ${token}`, // Include the token in headers
+                    },
+                }
+            );
+            return response.data;
+        } catch (error) {
+            return rejectWithValue(
+                error.response?.data?.message || "Failed to load balance history!"
+            );
+        }
+    }
+);
+
 const initialState = {
     user_balance: null,
+    balance_history: null,
     getBalanceStatus: STATUS.IDLE,
+    getBalanceHistoryStatus: STATUS.IDLE,
     getBalanceError: null,
+    getBalanceHistoryError: null,
 };
 
 const UserBalanceSlice = createSlice({
@@ -53,6 +79,20 @@ const UserBalanceSlice = createSlice({
             .addCase(GetUserBalanceByUserID.rejected, (state, action) => {
                 state.getBalanceStatus = STATUS.FAILED;
                 state.getBalanceError = action.payload || action.error.message;
+            })
+
+            // Handle get User balance balance by UserID
+            .addCase(GetUserBalanceHistoryByUserID.pending, (state) => {
+                state.getBalanceHistoryStatus = STATUS.PENDING;
+                state.getBalanceHistoryError = null;
+            })
+            .addCase(GetUserBalanceHistoryByUserID.fulfilled, (state, action) => {
+                state.getBalanceHistoryStatus = STATUS.SUCCESS;
+                state.balance_history = action.payload;
+            })
+            .addCase(GetUserBalanceHistoryByUserID.rejected, (state, action) => {
+                state.getBalanceHistoryStatus = STATUS.FAILED;
+                state.getBalanceHistoryError = action.payload || action.error.message;
             })
     },
 });

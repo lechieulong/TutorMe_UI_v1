@@ -84,6 +84,8 @@ export const ACTIONS = {
   UPDATE_PROFILE: "updateprofile",
 
   GET_USER_BALANCE: "getuserbalance",
+  GET_USER_BALANCE_HISTORY: "getuserbalancehistory",
+
   //Event
   GET_EVENT_BY_USERID: "geteventbyuserid",
 
@@ -102,14 +104,15 @@ export const ACTIONS = {
   //ADMIN
   GET_ALL_USERS: "getallusers",
   GET_ALL_TESTS: "getalltests",
-  DELETE_TEST: "deletetest",
-  UPDATE_TEST: "updatetest",
+  DELETE_TEST_ADMIN: "deleteTestadmin",
+  UPDATE_TEST_ADMIN: "updateTestAdmin",
   GET_ALL_REQUESTS: "getallrequests",
   PROCESS_TEACHER_REQUEST: "processteacherrequest",
   GET_REQUEST_DETAILS: "getrequestdetails",
   LOCK_USER: "lockuser",
   UNLOCK_USER: "unlockuser",
   IMPORT_USER: "importuser",
+  ANALYSIS: "analysis",
 };
 
 export const STATUS = {

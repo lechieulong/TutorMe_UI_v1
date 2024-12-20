@@ -22,6 +22,7 @@ const TestForm = ({
   courseId,
   setIsCreateTest,
   testType,
+  setActiveTab,
 }) => {
   const {
     register,
@@ -49,7 +50,10 @@ const TestForm = ({
 
       // check if
       const result = await dispatch(createTest(payload)).unwrap();
+      console.log("hahha");
+
       toast.success("Create test successfully.");
+      setActiveTab("Tests");
 
       setTestInfo(result);
     } catch (error) {
@@ -63,8 +67,6 @@ const TestForm = ({
 
   return (
     <div className="w-full">
-      <ToastContainer autoClose={3000} newestOnTop closeOnClick />
-
       {isSubmitted && testInfo ? (
         !showTestFormDetail ? (
           <TestInfoCard

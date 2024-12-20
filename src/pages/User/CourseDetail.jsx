@@ -495,7 +495,7 @@ const CourseDetail = () => {
         onClose={() => setIsConfirmOpen(false)}
         onConfirm={confirmAction}
         message={confirmMessage}
-        status={confirmStatus}``
+        status={confirmStatus}
       />
     </MainLayout>
   );

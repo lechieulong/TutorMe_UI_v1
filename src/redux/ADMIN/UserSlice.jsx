@@ -104,8 +104,33 @@ export const Admin_ImportUser = createAsyncThunk(
     }
 );
 
+// Action to analysis data
+export const Admin_Analysis = createAsyncThunk(
+    `${SLICE_NAMES.USER}/${ACTIONS.ANALYSIS}`,
+    async (_, { rejectWithValue }) => {
+        try {
+            const token = Cookies.get("authToken");
+            const response = await axios.get(
+                `${apiURLConfig.baseURL}/user/Analysis`,
+                {
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                    }
+                }
+            );
+            return response.data;
+        } catch (error) {
+            return rejectWithValue(
+                error.response?.data?.message || "Failed to analysis."
+            );
+        }
+    }
+);
+
+
 const initialState = {
     users: [],
+    analysis: null,
     importedResponse: null,
     totalUsers: null,
     totalPages: null,
@@ -141,6 +166,20 @@ const UserSlice = createSlice({
             })
             .addCase(Admin_GetUsers.rejected, (state, action) => {
                 state.getuserstatus = STATUS.FAILED;
+                state.error = action.payload || action.error.message;
+            })
+
+            // Handle get analysis
+            .addCase(Admin_Analysis.pending, (state) => {
+                state.status = STATUS.PENDING;
+                state.error = null;
+            })
+            .addCase(Admin_Analysis.fulfilled, (state, action) => {
+                state.status = STATUS.SUCCESS;
+                state.analysis = action.payload;
+            })
+            .addCase(Admin_Analysis.rejected, (state, action) => {
+                state.status = STATUS.FAILED;
                 state.error = action.payload || action.error.message;
             })
 

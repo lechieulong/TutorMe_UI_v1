@@ -149,7 +149,7 @@ const AvailableTime = () => {
             <div className="bg-white p-4 rounded shadow mb-4">
                 <div className="flex items-center space-x-2 mb-2">
                     <img
-                        src={userInfor?.imageURL || defaulAvatar}
+                        src={userInfor?.imageURL || "https://hydra13.blob.core.windows.net/2aa17120-4bef-478a-8ea9-cb0788def29e/default-avatar.jpg"}
                         alt={`${userInfor?.name} profile`}
                         className="rounded-full w-10 h-10"
                     />

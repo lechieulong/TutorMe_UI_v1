@@ -1,28 +1,47 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 import Card from '../../components/ADMIN/Card';
 import ChartCard from '../../components/ADMIN/ChartCard';
 import DashboardHeader from '../../components/ADMIN/DashboardHeader';
 import ChartHeader from './Chart/ChartHeader';
-import { FaUsers, FaDollarSign, FaUserFriends, FaChartLine } from 'react-icons/fa';
+import { FaUsers, FaDollarSign, FaUserFriends, FaChartLine, FaBook, FaFingerprint  } from 'react-icons/fa';
 import BarChart from './Chart/BarChart';
 import PieChart from './Chart/PieChart';
 import LineChart from './Chart/LineChart';
 import DoughnutChart from './Chart/DoughnutChart';
+import { Admin_Analysis } from '../../redux/ADMIN/UserSlice';
 
 const Dashboard = () => {
+    const dispatch = useDispatch();
+    const { analysis, status, error } = useSelector((state) => state.ADMIN_userslice);
     // Sample data for cards
-    const cardData = [
-        { title: 'Total Users', value: 1200, icon: FaUsers, subtitle: 'Last 30 days' },
-        { title: 'Balance', value: '$35,000', icon: FaDollarSign, subtitle: 'Last 30 days' },
-        { title: 'Teachers', value: 300, icon: FaUserFriends, subtitle: 'Last 30 days' },
-        { title: 'Performance', value: '85%', icon: FaChartLine, subtitle: 'Last 30 days' },
-    ];
+    const [cardData, setCardData] = useState([
+        { title: 'Total Users', value: 0, icon: FaUsers, subtitle: 'Total' },
+        { title: 'Courses', value: 0, icon: FaBook, subtitle: 'Total' },
+        { title: 'Teachers', value: 0, icon: FaUserFriends, subtitle: 'Total' },
+        { title: 'Enrollments', value: 0, icon: FaFingerprint, subtitle: 'Total' },
+    ]);
+
+    useEffect(() => {
+        dispatch(Admin_Analysis());
+        console.log("analysis: ", analysis);
+        console.log("status: ", status);
+        console.log("error: ", error);
+    }, [dispatch]);
+
+    useEffect(() => {
+        if (analysis) {
+            setCardData([
+                { title: 'Total Users', value: analysis.totalUser, icon: FaUsers, subtitle: 'Total' },
+                { title: 'Courses', value: analysis.courses, icon: FaBook, subtitle: 'Total' },
+                { title: 'Teachers', value: analysis.totalTeachers, icon: FaUserFriends, subtitle: 'Total' },
+                { title: 'Enrollments', value: analysis.totalEnrollments, icon: FaFingerprint, subtitle: 'Total' },
+            ]);
+        }
+    }, [analysis]);
 
     return (
         <div className="min-h-screen">
-            {/* Sticky header */}
-            {/* <DashboardHeader /> */}
-
             {/* Card section */}
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
                 {cardData.map((data, index) => (
@@ -40,7 +59,7 @@ const Dashboard = () => {
             {/* Chart section */}
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mt-8">
                 <div className="bg-white p-6 rounded-lg shadow-md">
-                    <ChartHeader />
+                    {/* <ChartHeader /> */}
                     <h2 className="text-xl font-semibold text-gray-800 mb-4">
                         User Growth: <span className="text-green-500 font-bold">120</span>
                     </h2>

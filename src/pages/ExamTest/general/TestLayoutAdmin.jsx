@@ -4,19 +4,23 @@ import TestList from "../../ADMIN/TestList";
 import { ToastContainer } from "react-toastify";
 
 const TestLayoutAdmin = () => {
-  const [activeTab, setActiveTab] = useState("Reading");
+  const [activeTab, setActiveTab] = useState("Tests");
+  const [isCreateTest, setIsCreateTest] = useState(true);
 
   const renderComponent = () => {
     switch (activeTab) {
       case "Tests":
-        return <TestList />;
+        return <>{isCreateTest && <TestList />}</>;
       case "CreateTest":
         return (
-          <TestForm
-            pageType={"admin"}
-            testType={3}
-            setActiveTab={setActiveTab}
-          />
+          <>
+            <TestForm
+              pageType={"admin"}
+              testType={3}
+              setActiveTab={setActiveTab}
+              setIsCreateTest={setIsCreateTest}
+            />
+          </>
         );
       default:
         return null;

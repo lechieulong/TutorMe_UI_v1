@@ -159,7 +159,7 @@ const CreateTest = ({
 
     if (pageType === "admin") {
       toast.success("Skill created successfully!");
-      navigate("/admin/app/testsource");
+      setIsCreateTest(false);
     } else if (
       pageType === "class" ||
       pageType === "lesson" ||
@@ -170,7 +170,6 @@ const CreateTest = ({
       setIsCreateTest(false);
       window.location.reload();
     } else {
-      toast.success("Skill created successfully!");
       window.location.reload();
     }
   });
@@ -182,8 +181,6 @@ const CreateTest = ({
 
   return (
     <>
-      <ToastContainer autoClose={2000} newestOnTop closeOnClick />
-
       <form onSubmit={handleFinish}>
         <div className="mt-16">
           <ul className="relative flex flex-row justify-between gap-x-2">

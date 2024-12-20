@@ -11,12 +11,13 @@ import TestForm from "../../ExamTest/TestForm";
 import { Link, useParams } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faClipboard } from "@fortawesome/free-solid-svg-icons";
-
+import apiURLConfig from "../../../redux/common/apiURLConfig";
 const CourseLessonCard = ({
   mentorAndList,
   coursePartId,
   isEnrolled,
   isMentor,
+  isDelete,
 }) => {
   const [collapsedLessons, setCollapsedLessons] = useState({});
   const [courseLessons, setCourseLessons] = useState([]);
@@ -44,7 +45,7 @@ const CourseLessonCard = ({
   const fetchCourseLessons = async () => {
     try {
       const response = await axios.get(
-        `https://localhost:7030/api/CourseLessons/CoursePart/${coursePartId}`,
+        `${apiURLConfig}/CourseLessons/CoursePart/${coursePartId}`,
         { headers: { Authorization: `Bearer ${token}` } }
       );
       setCourseLessons(response.data.courseLessons);
@@ -98,7 +99,7 @@ const CourseLessonCard = ({
   const handleCreateTest = async (lessonId) => {
     try {
       const response = await axios.get(
-        `https://localhost:7030/api/CourseSkills/DescriptionByCourseLesson/${lessonId}`,
+        `${apiURLConfig}/CourseSkills/DescriptionByCourseLesson/${lessonId}`,
         { headers: { Authorization: `Bearer ${token}` } }
       );
       setIsCreateTest(true);
@@ -112,12 +113,12 @@ const CourseLessonCard = ({
   const fetchTestExams = async (lessonId) => {
     try {
       const response = await axios.get(
-        `https://localhost:7030/api/CourseLessons/GetTestExamByLessonId/${lessonId}`
+        `${apiURLConfig}/CourseLessons/GetTestExamByLessonId/${lessonId}`
       );
       if (Array.isArray(response.data) && response.data.length > 0) {
         setTestExams(response.data);
       } else {
-        console.error("No TestExams found for the lesson.");
+        console.log();
       }
     } catch (err) {
       console.error("Error fetching test exams:", err);
@@ -147,7 +148,7 @@ const CourseLessonCard = ({
     if (isConfirmed) {
       // Nếu người dùng xác nhận, thực hiện xóa
       axios
-        .delete(`https://localhost:7030/api/CourseLessons/${lessonId}`, {
+        .delete(`${apiURLConfig}/CourseLessons/${lessonId}`, {
           headers: { Authorization: `Bearer ${token}` },
         })
         .then(() => {
@@ -206,13 +207,17 @@ const CourseLessonCard = ({
                           <h4 className="text-md font-semibold">
                             {courseLesson.title}
                           </h4>
-                          <button
-                            type="button"
-                            onClick={() => confirmDeleteLesson(courseLesson.id)}
-                            className="py-2 px-3 text-sm font-medium rounded-lg border border-gray-200 bg-red-500 text-white shadow-sm hover:bg-red-600 focus:outline-none focus:ring-2 focus:ring-red-500"
-                          >
-                            Delete Lesson
-                          </button>
+                          {isDelete && (
+                            <button
+                              type="button"
+                              onClick={() =>
+                                confirmDeleteLesson(courseLesson.id)
+                              }
+                              className="py-2 px-3 text-sm font-medium rounded-lg border border-gray-200 bg-red-500 text-white shadow-sm hover:bg-red-600 focus:outline-none focus:ring-2 focus:ring-red-500"
+                            >
+                              Delete Lesson
+                            </button>
+                          )}
                         </div>
                       </div>
 

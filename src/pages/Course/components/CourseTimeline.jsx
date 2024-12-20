@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
-
+import apiURLConfig from "../../../redux/common/apiURLConfig";
 const CourseTimeline = ({ courseId, onUpdateStatus, categories, onError }) => {
   const [timelines, setTimelines] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -10,7 +10,7 @@ const CourseTimeline = ({ courseId, onUpdateStatus, categories, onError }) => {
     const fetchTimelines = async () => {
       try {
         const response = await axios.get(
-          `https://localhost:7030/api/CourseTimeline/Course/${courseId}`
+          `${apiURLConfig}/CourseTimeline/Course/${courseId}`
         );
         setTimelines(response.data);
         setError(null); // Reset error if successful
@@ -35,7 +35,7 @@ const CourseTimeline = ({ courseId, onUpdateStatus, categories, onError }) => {
     if (window.confirm(confirmationMessage)) {
       try {
         await axios.put(
-          `https://localhost:7030/api/CourseTimeline/${timelineId}/enabled`,
+          `${apiURLConfig}/CourseTimeline/${timelineId}/enabled`,
           newStatus,
           {
             headers: { "Content-Type": "application/json" },

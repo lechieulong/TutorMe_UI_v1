@@ -3,7 +3,7 @@ import axios from "axios";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import "tailwindcss/tailwind.css";
-
+import apiURLConfig from "../../../redux/common/apiURLConfig";
 const ButtonAddCourseTimeline = ({ courseId, onTimelineAdded }) => {
   const [showForm, setShowForm] = useState(false); // Trạng thái mở/đóng form
   const [formData, setFormData] = useState({
@@ -32,7 +32,7 @@ const ButtonAddCourseTimeline = ({ courseId, onTimelineAdded }) => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      await axios.post("https://localhost:7030/api/CourseTimeline", [
+      await axios.post(`${apiURLConfig}/CourseTimeline`, [
         {
           courseId: courseId,
           eventDate: formData.eventDate.toISOString(), // Đảm bảo định dạng ngày

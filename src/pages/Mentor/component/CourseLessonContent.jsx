@@ -2,7 +2,7 @@
 import { useState, useEffect } from "react";
 import axios from "axios";
 import AudioPlayer from "../../TestExam/AudioPlayer";
-
+import apiURLConfig from "../../../redux/common/apiURLConfig";
 const CourseLessonContent = ({ courseLessontId }) => {
   const [courseLessonContents, setCourseLessonContents] = useState([]);
   const [error, setError] = useState(null);
@@ -12,7 +12,7 @@ const CourseLessonContent = ({ courseLessontId }) => {
     const fetchCourseLessonContents = async () => {
       try {
         const response = await axios.get(
-          `https://localhost:7030/api/CourseLessonContent/lesson/${courseLessontId}`
+          `${apiURLConfig}/CourseLessonContent/lesson/${courseLessontId}`
         );
         const sortedContents = response.data.sort((a, b) => a.order - b.order);
         setCourseLessonContents(sortedContents);

@@ -4,7 +4,7 @@ import axios from "axios";
 import MainLayout from "../../layout/MainLayout";
 import MentorSidebar from "../../components/Mentor/MentorSideBar";
 import LineChart from "../ADMIN/Chart/LineChart";
-
+import apiURLConfig from "../../redux/common/apiURLConfig";
 const ReportOfCourse = () => {
   const { courseId } = useParams(); // Lấy courseId từ URL
   const [enrollments, setEnrollments] = useState([]); // Lưu trữ dữ liệu enrollments
@@ -16,7 +16,7 @@ const ReportOfCourse = () => {
     const fetchEnrollments = async () => {
       try {
         const response = await axios.get(
-          `https://localhost:7030/api/Enrollment/Course/${courseId}`
+          `${apiURLConfig}/Enrollment/Course/${courseId}`
         );
         const enrollmentsData = response.data;
 

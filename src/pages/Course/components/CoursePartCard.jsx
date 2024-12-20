@@ -8,8 +8,14 @@ import { deleteCoursePart } from "../../../redux/courses/CoursePartSlice";
 import { FaAngleDown, FaAngleUp } from "react-icons/fa";
 import Confirm from "../../../components/common/Confirm";
 import Notification from "../../../components/common/Notification";
-
-const CoursePartCard = ({ mentorAndList, skillId, isEnrolled, isMentor }) => {
+import apiURLConfig from "../../../redux/common/apiURLConfig";
+const CoursePartCard = ({
+  mentorAndList,
+  skillId,
+  isEnrolled,
+  isMentor,
+  isDelete,
+}) => {
   const [isLoading, setIsLoading] = useState(false);
   const dispatch = useDispatch();
   const [courseParts, setCourseParts] = useState([]);
@@ -25,7 +31,7 @@ const CoursePartCard = ({ mentorAndList, skillId, isEnrolled, isMentor }) => {
     setIsLoading(true);
     try {
       const response = await axios.get(
-        `https://localhost:7030/api/CourseParts/ByCourseSkill/${skillId}`
+        `${apiURLConfig}/CourseParts/ByCourseSkill/${skillId}`
       );
       const sortedCourseParts = response.data.sort((a, b) => a.order - b.order);
       setCourseParts(sortedCourseParts);
@@ -133,13 +139,16 @@ const CoursePartCard = ({ mentorAndList, skillId, isEnrolled, isMentor }) => {
           <div className="flex gap-2 justify-end">
             {mentorAndList && (
               <>
-                <button
-                  type="button"
-                  onClick={() => handleDeleteConfirm(coursePart.id)}
-                  className="py-2 px-3 text-sm font-medium rounded-lg border border-gray-200 bg-red-500 text-white shadow-sm hover:bg-red-600 focus:outline-none"
-                >
-                  Delete Course Part
-                </button>
+                {isDelete && (
+                  <button
+                    type="button"
+                    onClick={() => handleDeleteConfirm(coursePart.id)}
+                    className="py-2 px-3 text-sm font-medium rounded-lg border border-gray-200 bg-red-500 text-white shadow-sm hover:bg-red-600 focus:outline-none"
+                  >
+                    Delete Course Part
+                  </button>
+                )}
+
                 <button
                   type="button"
                   onClick={() => handleCreateLessonClick(coursePart.id)}
@@ -188,6 +197,7 @@ const CoursePartCard = ({ mentorAndList, skillId, isEnrolled, isMentor }) => {
               coursePartId={coursePart.id}
               isEnrolled={isEnrolled}
               isMentor={isMentor}
+              isDelete={isDelete}
             />
           </div>
         </div>

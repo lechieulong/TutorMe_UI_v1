@@ -1,5 +1,5 @@
 /* eslint-disable react/prop-types */
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
@@ -12,6 +12,7 @@ import { useDispatch } from "react-redux";
 import { toast, ToastContainer } from "react-toastify";
 import CreateTest from "./CreateTest";
 import TestInfoCard from "./general/TestInfoCard";
+import { getUser } from "../../service/GetUser";
 
 const TestForm = ({
   classId,
@@ -35,9 +36,10 @@ const TestForm = ({
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [testInfo, setTestInfo] = useState(null);
   const [showTestFormDetail, setShowTestFormDetail] = useState(false);
-
+  const [user, setUser] = useState(null);
   const onSubmit = async (data) => {
     setIsSubmitted(true);
+    const selectedTestType = testType || data.testType;
     try {
       const payload = {
         ...data,
@@ -45,12 +47,12 @@ const TestForm = ({
         lessonId,
         skillIdCourse,
         courseId,
-        testType,
+        testType: selectedTestType,
+        testType: selectedTestType,
       };
 
       // check if
       const result = await dispatch(createTest(payload)).unwrap();
-      console.log("hahha");
 
       toast.success("Create test successfully.");
 
@@ -60,6 +62,11 @@ const TestForm = ({
       setIsSubmitted(false); // Reset submission state on failure
     }
   };
+
+  useEffect(() => {
+    const userFromToken = getUser();
+    setUser(userFromToken);
+  });
 
   const currentDateTime = new Date().toISOString().slice(0, 16);
   const startTime = watch("startTime");
@@ -216,6 +223,35 @@ const TestForm = ({
               </span>
             )}
           </div>
+          {user?.role?.includes(Roles.ADMIN) && (
+            <div className="relative mt-4">
+              <label className="block text-sm font-semibold text-gray-700">
+                Test Type
+              </label>
+              <div className="mt-2">
+                <select
+                  {...register("testType", {
+                    required: "Test Type is required",
+                  })}
+                  className={`w-full px-4 py-3 border ${
+                    errors.testType ? "border-red-500" : "border-gray-300"
+                  } rounded-lg shadow-sm focus:ring-2 focus:ring-blue-500 sm:text-base`}
+                  disabled={isSubmitted}
+                >
+                  <option value="" disabled>
+                    Select a test type
+                  </option>
+                  <option value={3}>Normal test</option>
+                  <option value={4}>Register</option>
+                </select>
+              </div>
+              {errors.testType && (
+                <span className="text-red-500 text-sm">
+                  {errors.testType.message}
+                </span>
+              )}
+            </div>
+          )}
 
           {/* Submit Button */}
           <button

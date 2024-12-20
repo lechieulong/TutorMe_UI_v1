@@ -87,6 +87,7 @@ const MentorCourseDetail = () => {
       fetchCourseDetail();
     }
   }, [dispatch, courseId]);
+  console.log(userId);
 
   useEffect(() => {
     initializeUser();
@@ -197,7 +198,6 @@ const MentorCourseDetail = () => {
 
     setIsConfirmOpen(true);
   };
-
   const handlePrev = () => setCurrentSlide((prev) => Math.max(prev - 1, 0));
   const handleNext = () =>
     setCurrentSlide((prev) =>
@@ -226,6 +226,9 @@ const MentorCourseDetail = () => {
       setNotificationUpdated(true);
     }
   }, [mentorAndList, isMentor, notificationUpdated]);
+  console.log(mentorAndList);
+  console.log(userId);
+  console.log(courseId);
 
   return (
     <MainLayout>

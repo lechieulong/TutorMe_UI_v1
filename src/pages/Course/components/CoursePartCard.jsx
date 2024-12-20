@@ -8,7 +8,7 @@ import { deleteCoursePart } from "../../../redux/courses/CoursePartSlice";
 import { FaAngleDown, FaAngleUp } from "react-icons/fa";
 import Confirm from "../../../components/common/Confirm";
 import Notification from "../../../components/common/Notification";
-
+import apiURLConfig from "../../../redux/common/apiURLConfig";
 const CoursePartCard = ({
   mentorAndList,
   skillId,
@@ -31,7 +31,7 @@ const CoursePartCard = ({
     setIsLoading(true);
     try {
       const response = await axios.get(
-        `https://localhost:7030/api/CourseParts/ByCourseSkill/${skillId}`
+        `${apiURLConfig}/CourseParts/ByCourseSkill/${skillId}`
       );
       const sortedCourseParts = response.data.sort((a, b) => a.order - b.order);
       setCourseParts(sortedCourseParts);

@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import ReactDOM from "react-dom";
 import axios from "axios";
-
+import apiURLConfig from "../../redux/common/apiURLConfig";
 const UpdateClass = ({ classItem, courseId, onClose, onCreateSuccess }) => {
   const [className, setClassName] = useState("");
   const [classDescription, setClassDescription] = useState("");
@@ -47,7 +47,7 @@ const UpdateClass = ({ classItem, courseId, onClose, onCreateSuccess }) => {
     try {
       // Gửi PUT request đến API để cập nhật lớp học
       const response = await axios.put(
-        `https://localhost:7030/api/class/update/${Id}`, // Đúng với URL API
+        `${apiURLConfig}/class/update/${Id}`, // Đúng với URL API
         updatedClass
       );
 

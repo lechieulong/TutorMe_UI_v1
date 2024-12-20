@@ -4,7 +4,7 @@ import { getUser } from "../../../service/GetUser";
 import { Checkbox, FormControlLabel } from "@mui/material";
 import Notification from "../../../components/common/Notification";
 import Confirm from "../../../components/common/Confirm";
-
+import apiURLConfig from "../../../redux/common/apiURLConfig";
 const SkillMapping = {
   Reading: "0",
   Listening: "1",
@@ -31,7 +31,7 @@ const CreateCourse = ({ onClose, onCreateSuccess }) => {
       formData.append("file", file);
 
       const response = await axios.post(
-        `https://localhost:7030/api/upload-course-file?type=course&id=${courseId}`,
+        `${apiURLConfig}/upload-course-file?type=course&id=${courseId}`,
         formData,
         {
           headers: {
@@ -96,55 +96,6 @@ const CreateCourse = ({ onClose, onCreateSuccess }) => {
       return { ...prevCourse, categories: newCategories };
     });
   };
-
-  // const handleSubmit = (e) => {
-  //   e.preventDefault();
-
-  //   if (course.hours < 0 || course.days < 0 || course.price < 0) {
-  //     setNotification("Số giờ, số ngày và giá không được phép âm.");
-  //     return;
-  //   }
-
-  //   // Định dạng ngày hiện tại thành dd/mm/yyyy
-  //   const formatDate = (date) => {
-  //     const day = String(date.getDate()).padStart(2, "0");
-  //     const month = String(date.getMonth() + 1).padStart(2, "0");
-  //     const year = date.getFullYear();
-  //     return `${day}/${month}/${year}`;
-  //   };
-
-  //   const today = formatDate(new Date());
-
-  //   // Thêm createdAt và updatedAt vào dữ liệu
-  //   const courseWithTimestamps = {
-  //     ...course,
-  //     createdAt: today,
-  //     updatedAt: today,
-  //   };
-  //   console.log(courseWithTimestamps);
-
-  //   setConfirmMessage("Are you sure you want to create new course?");
-  //   setConfirmAction(() => async () => {
-  //     try {
-  //       await axios.post(
-  //         "https://localhost:7030/api/Courses",
-  //         courseWithTimestamps
-  //       );
-  //       setNotification("Create new course success!");
-  //       onCreateSuccess();
-  //       onClose();
-  //     } catch (error) {
-  //       console.error("Fail to create new course!", error.response?.data);
-  //       setNotification(
-  //         "Fail to create new course!" +
-  //           (error.response?.data.message || error.message)
-  //       );
-  //     } finally {
-  //       setIsConfirmOpen(false);
-  //     }
-  //   });
-  //   setIsConfirmOpen(true);
-  // };
   const handleSubmit = async (e) => {
     e.preventDefault();
 
@@ -186,10 +137,7 @@ const CreateCourse = ({ onClose, onCreateSuccess }) => {
       setConfirmMessage("Are you sure you want to create new course?");
       setConfirmAction(() => async () => {
         try {
-          await axios.post(
-            "https://localhost:7030/api/Courses",
-            courseWithTimestamps
-          );
+          await axios.post(`${apiURLConfig}/Courses`, courseWithTimestamps);
           setNotification("Create new course success!");
           onCreateSuccess();
           onClose();

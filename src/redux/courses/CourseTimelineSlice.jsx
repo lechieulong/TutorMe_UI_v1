@@ -6,9 +6,7 @@ export const fetchCoursesTimeline = createAsyncThunk(
   `${SLICE_NAMES.COURSESTIMELINE}/${ACTIONS.GET_COURSES}`,
   async (courseId) => {
     try {
-      const response = await axios.get(
-        `https://localhost:7030/api/Course/${courseId}`
-      );
+      const response = await axios.get(`${apiURLConfig}/Course/${courseId}`);
       return response.data;
     } catch (error) {
       throw Error(error.message);

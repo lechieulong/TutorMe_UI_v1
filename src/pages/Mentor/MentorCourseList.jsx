@@ -17,6 +17,7 @@ import { getUser } from "../../service/GetUser";
 import CreateCourse from "../Course/components/CreateCourse";
 import { GetCreatedCourses } from "../../redux/courses/CourseSlice";
 import { toast, ToastContainer } from "react-toastify";
+import apiURLConfig from "../../redux/common/apiURLConfig";
 const MentorCourseList = () => {
   const dispatch = useDispatch();
   const {
@@ -86,7 +87,7 @@ const MentorCourseList = () => {
       message: "Are you sure you want to delete this?",
       onConfirm: async () => {
         try {
-          await axios.delete(`https://localhost:7030/api/Courses/${courseId}`);
+          await axios.delete(`${apiURLConfig}/Courses/${courseId}`);
           dispatch(GetCreatedCourses());
           toast.success("Delete course success!");
         } catch (error) {

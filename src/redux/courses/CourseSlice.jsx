@@ -192,7 +192,6 @@ export const updateCourseStatus = createAsyncThunk(
         if (error.response.status === 400) {
           return rejectWithValue("Cannot enable course without any classes.");
         }
-        return rejectWithValue("Cập nhật trạng thái khóa học thất bại.");
       } else {
         return rejectWithValue("Lỗi kết nối với server.");
       }
@@ -207,7 +206,7 @@ export const checkIfRatedTeacher = createAsyncThunk(
 
     try {
       const response = await axios.get(
-        `https://localhost:7030/api/TeacherRatings/CheckIfRated`,
+        `${apiURLConfig}/TeacherRatings/CheckIfRated`,
         {
           params: { userId, learnerId },
         }

@@ -12,6 +12,7 @@ import { toast, ToastContainer } from "react-toastify";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faClipboard } from "@fortawesome/free-solid-svg-icons";
 import { useDispatch } from "react-redux";
+import apiURLConfig from "../../../redux/common/apiURLConfig";
 const CourseSkillCard = ({
   courseId,
   isEnrolled,
@@ -42,7 +43,8 @@ const CourseSkillCard = ({
     setIsLoading(true);
     try {
       const response = await axios.get(
-        `https://localhost:7030/api/CourseSkills/Course/${courseId}`
+        `${apiURLConfig}/CourseSkills/Course/${courseId}`
+        // `${apiURLConfig}/CourseSkills/Course/${courseId}`
       );
       setSkills(response.data);
       if (onSkillCountUpdate) {
@@ -64,9 +66,11 @@ const CourseSkillCard = ({
     setIsLoading(true);
     try {
       const response = await axios.get(
-        `https://localhost:7030/api/CourseSkills/GetTestExamsBySkillIdCourse?skillIdCourse=${skillId}`,
+        `${apiURLConfig}/CourseSkills/GetTestExamsBySkillIdCourse?skillIdCourse=${skillId}`,
         { headers: { Authorization: `Bearer ${token}` } }
       );
+      console.log(response);
+
       setTestExams((prevExams) => ({
         ...prevExams,
         [skillId]: response.data, // Store test exams for the skill
@@ -80,7 +84,7 @@ const CourseSkillCard = ({
     setIsLoading(true);
     try {
       const response = await axios.get(
-        `https://localhost:7030/api/CourseSkills/DescriptionBySkill/${skillId}`,
+        `${apiURLConfig}/CourseSkills/DescriptionBySkill/${skillId}`,
         { headers: { Authorization: `Bearer ${token}` } }
       );
 
@@ -123,7 +127,7 @@ const CourseSkillCard = ({
   const handleNavigate = async (skillId, examId) => {
     try {
       const response = await axios.get(
-        `https://localhost:7030/api/CourseSkills/DescriptionBySkill/${skillId}`,
+        `${apiURLConfig}/CourseSkills/DescriptionBySkill/${skillId}`,
         { headers: { Authorization: `Bearer ${token}` } }
       );
 
@@ -146,6 +150,9 @@ const CourseSkillCard = ({
         <div className="w-16 h-16 border-4 border-t-transparent border-blue-500 rounded-full animate-spin"></div>
       </div>
     );
+  }
+  if (!skills) {
+    return <p>Loading </p>;
   }
 
   return (

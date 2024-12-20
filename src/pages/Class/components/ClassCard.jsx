@@ -10,6 +10,7 @@ import useAuthToken from "../../../hooks/useAuthToken";
 import UpdateClass from "../UpdateClass";
 import { faMultiply } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import apiURLConfig from "../../../redux/common/apiURLConfig";
 const GreenSwitch = styled(Switch)(({ theme }) => ({
   "& .MuiSwitch-switchBase.Mui-checked": {
     color: "#007549",
@@ -42,7 +43,7 @@ const ClassCard = ({
     const fetchEnabledStatus = async () => {
       try {
         const response = await axios.get(
-          `https://localhost:7030/api/class/${classItem.id}/enabled`
+          `${apiURLConfig}/class/${classItem.id}/enabled`
         );
         if (typeof response.data.isEnabled === "boolean") {
           setIsSwitchOn(response.data.isEnabled);
@@ -121,7 +122,7 @@ const ClassCard = ({
     if (window.confirm(confirmationMessage)) {
       try {
         const response = await axios.delete(
-          `https://localhost:7030/api/class/${classItem.id}`
+          `${apiURLConfig}/class/${classItem.id}`
         );
         if (response.status === 200) {
           alert("Class has been deleted successfully.");

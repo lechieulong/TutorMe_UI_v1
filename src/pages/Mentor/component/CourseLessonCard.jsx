@@ -11,7 +11,7 @@ import TestForm from "../../ExamTest/TestForm";
 import { Link, useParams } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faClipboard } from "@fortawesome/free-solid-svg-icons";
-
+import apiURLConfig from "../../../redux/common/apiURLConfig";
 const CourseLessonCard = ({
   mentorAndList,
   coursePartId,
@@ -45,7 +45,7 @@ const CourseLessonCard = ({
   const fetchCourseLessons = async () => {
     try {
       const response = await axios.get(
-        `https://localhost:7030/api/CourseLessons/CoursePart/${coursePartId}`,
+        `${apiURLConfig}/CourseLessons/CoursePart/${coursePartId}`,
         { headers: { Authorization: `Bearer ${token}` } }
       );
       setCourseLessons(response.data.courseLessons);
@@ -99,7 +99,7 @@ const CourseLessonCard = ({
   const handleCreateTest = async (lessonId) => {
     try {
       const response = await axios.get(
-        `https://localhost:7030/api/CourseSkills/DescriptionByCourseLesson/${lessonId}`,
+        `${apiURLConfig}/CourseSkills/DescriptionByCourseLesson/${lessonId}`,
         { headers: { Authorization: `Bearer ${token}` } }
       );
       setIsCreateTest(true);
@@ -113,7 +113,7 @@ const CourseLessonCard = ({
   const fetchTestExams = async (lessonId) => {
     try {
       const response = await axios.get(
-        `https://localhost:7030/api/CourseLessons/GetTestExamByLessonId/${lessonId}`
+        `${apiURLConfig}/CourseLessons/GetTestExamByLessonId/${lessonId}`
       );
       if (Array.isArray(response.data) && response.data.length > 0) {
         setTestExams(response.data);
@@ -148,7 +148,7 @@ const CourseLessonCard = ({
     if (isConfirmed) {
       // Nếu người dùng xác nhận, thực hiện xóa
       axios
-        .delete(`https://localhost:7030/api/CourseLessons/${lessonId}`, {
+        .delete(`${apiURLConfig}/CourseLessons/${lessonId}`, {
           headers: { Authorization: `Bearer ${token}` },
         })
         .then(() => {

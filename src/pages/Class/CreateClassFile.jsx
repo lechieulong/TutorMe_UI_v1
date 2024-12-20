@@ -6,7 +6,7 @@ import axios from "axios";
 import InputFileUpload from "../../components/common/InputFileUpload";
 import Notification from "../../components/common/Notification";
 import Confirm from "../../components/common/Confirm";
-
+import apiURLConfig from "../../redux/common/apiURLConfig";
 const CreateClassFile = ({ onCreated, onClose, classId }) => {
   const location = useLocation();
   const dispatch = useDispatch();
@@ -46,10 +46,7 @@ const CreateClassFile = ({ onCreated, onClose, classId }) => {
         description,
       };
 
-      const response = await axios.post(
-        "https://localhost:7030/api/ClassFile",
-        payload
-      );
+      const response = await axios.post(`${apiURLConfig}/ClassFile`, payload);
       console.log("Response:", response.data);
 
       setNotificationMessage("Class file created successfully.");

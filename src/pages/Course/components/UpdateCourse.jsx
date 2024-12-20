@@ -4,7 +4,7 @@ import { getUser } from "../../../service/GetUser";
 import { Checkbox, FormControlLabel } from "@mui/material";
 import Notification from "../../../components/common/Notification";
 import Confirm from "../../../components/common/Confirm";
-
+import apiURLConfig from "../../../redux/common/apiURLConfig";
 const SkillMapping = {
   Reading: "0",
   Listening: "1",
@@ -84,10 +84,7 @@ const UpdateCourse = ({ onClose, onCreateSuccess }) => {
     setConfirmMessage("Are you sure you want to create new course?");
     setConfirmAction(() => async () => {
       try {
-        await axios.post(
-          "https://localhost:7030/api/Courses",
-          courseWithTimestamps
-        );
+        await axios.post(`${apiURLConfig}/Courses`, courseWithTimestamps);
         setNotification("Create new course success!");
         onCreateSuccess();
         onClose();

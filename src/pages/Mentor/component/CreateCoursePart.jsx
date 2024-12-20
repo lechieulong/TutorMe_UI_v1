@@ -2,6 +2,7 @@ import { useState } from "react";
 import axios from "axios";
 import Confirm from "../../../components/common/Confirm";
 import { toast, ToastContainer } from "react-toastify";
+import apiURLConfig from "../../../redux/common/apiURLConfig";
 const CreateCoursePart = ({ courseSkillId, onClose, onCreated }) => {
   const [coursePart, setCoursePart] = useState({
     courseSkillId: courseSkillId || "",
@@ -25,7 +26,7 @@ const CreateCoursePart = ({ courseSkillId, onClose, onCreated }) => {
   const confirmActionHandler = async () => {
     setLoading(true);
     try {
-      await axios.post("https://localhost:7030/api/CourseParts", coursePart);
+      await axios.post(`${apiURLConfig}/CourseParts`, coursePart);
       toast.success("Create Course's part success");
       onCreated();
       onClose();

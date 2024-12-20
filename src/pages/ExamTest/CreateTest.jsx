@@ -27,7 +27,7 @@ const CreateTest = ({
 
   const steps = [
     {
-      label: "Update Test Info",
+      label: "Create skill form ",
       content: (
         <TestFormDetail
           control={control}
@@ -181,9 +181,15 @@ const CreateTest = ({
   };
 
   return (
-    <>
+    <div className="bg-warmNeutral p-3">
       <ToastContainer autoClose={2000} newestOnTop closeOnClick />
-
+      <button
+        onClick={() => window.location.reload()}
+        type="button"
+        className="border border-red-500"
+      >
+        Close{" "}
+      </button>
       <form onSubmit={handleFinish}>
         <div className="mt-16">
           <ul className="relative flex flex-row justify-between gap-x-2">
@@ -243,7 +249,7 @@ const CreateTest = ({
                 type="submit"
                 className="py-2 px-4 rounded bg-green-500 text-white"
               >
-                Submit Test
+                Submit
               </button>
             )}
           </div>
@@ -275,7 +281,7 @@ const CreateTest = ({
           ))}
         </ul>
       </Modal>
-    </>
+    </div>
   );
 };
 

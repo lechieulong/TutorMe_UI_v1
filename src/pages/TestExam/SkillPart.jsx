@@ -20,7 +20,7 @@ import TestLayout from "./TestLayout";
 import { getUser } from "../../service/GetUser";
 import { Roles } from "../../utils/config";
 import { formatDate } from "../../utils/formatDate";
-
+import { useLocation } from "react-router-dom";
 const SkillPart = () => {
   const [test, setTest] = useState(null);
   const [skills, setSkills] = useState([]);
@@ -28,6 +28,10 @@ const SkillPart = () => {
   const [user, setUser] = useState(null);
   const [takeFullTest, setTakeFullTest] = useState(false);
   const [disableFinalTest, setDisableFinalTest] = useState(false);
+
+  const location = useLocation();
+  const { categories } = location.state || {}; // Access categories from state
+  console.log(categories);
 
   const navigate = useNavigate();
   const dispatch = useDispatch();
@@ -148,7 +152,7 @@ const SkillPart = () => {
                 {skills.length === 0 ? (
                   <>
                     {createSkill ? (
-                      <CreateTest testId={testId} />
+                      <CreateTest testId={testId} skills={categories} />
                     ) : (
                       <>
                         {(user?.role?.includes(Roles.ADMIN) &&

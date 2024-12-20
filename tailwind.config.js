@@ -15,7 +15,7 @@ export default {
         lightGreen: "#D4E9E2", // Light green
         houseGreen: "#1E3932", // House green
         black: "#000000", // Black
-        warmNeutral: "#F2F0EB", // Warm neutral
+        warmNeutral: "#faf9f7", // Warm neutral
         coolNeutral: "#EFEFF0", // Cool neutral
         white: "#FFFFFF", // White
         customText: "#FEF6c7", //

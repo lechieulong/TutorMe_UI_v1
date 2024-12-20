@@ -7,7 +7,7 @@ import Confirm from "../../../components/common/Confirm";
 import Notification from "../../../components/common/Notification";
 import TestForm from "../../ExamTest/TestForm";
 import Cookies from "js-cookie";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { toast, ToastContainer } from "react-toastify";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faClipboard } from "@fortawesome/free-solid-svg-icons";
@@ -116,6 +116,27 @@ const CourseSkillCard = ({
       setIsLoading(false);
     }
   };
+  const navigate = useNavigate();
+
+  const handleNavigate = async (skillId, examId) => {
+    try {
+      const response = await axios.get(
+        `https://localhost:7030/api/CourseSkills/DescriptionBySkill/${skillId}`,
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+
+      const updatedCategories = [response.data.description];
+      setCategories(updatedCategories);
+
+      // Navigate with updated categories
+      navigate(`/testDetail/${examId}`, {
+        state: { categories: updatedCategories },
+      });
+    } catch (error) {
+      console.error("Error fetching categories:", error);
+      toast.error("Failed to load categories");
+    }
+  };
 
   {
     isLoading && (
@@ -124,6 +145,7 @@ const CourseSkillCard = ({
       </div>
     );
   }
+
   return (
     <div>
       {!isCreateTest ? (
@@ -215,12 +237,14 @@ const CourseSkillCard = ({
                               key={exam.id}
                               className="bg-white p-4 rounded-lg shadow-sm border border-gray-200 hover:shadow-md transition duration-300"
                             >
-                              <Link
-                                to={`/testDetail/${exam.id}`}
-                                className="block py-2 px-4 text-sm font-semibold text-green-700 bg-green-100 rounded-lg hover:bg-green-200 hover:text-green-800 transition duration-300"
+                              <button
+                                onClick={() =>
+                                  handleNavigate(skill.id, exam.id)
+                                }
+                                className="block w-full py-2 px-4 text-sm font-semibold text-green-700 bg-green-100 rounded-lg hover:bg-green-200 hover:text-green-800 transition duration-300"
                               >
                                 {exam.testName}
-                              </Link>
+                              </button>
                             </div>
                           )
                         )

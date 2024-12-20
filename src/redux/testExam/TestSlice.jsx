@@ -418,7 +418,7 @@ export const getTestBySectionCourseId = createAsyncThunk(
 
 // Action to update a test
 export const updateTest = createAsyncThunk(
-  `${SLICE_NAMES.TEST}/${ACTIONS.UPDATE_TEST}`,
+  `${SLICE_NAMES.TEST}/${ACTIONS.UPDATE_TEST_ADMIN}`,
   async ({ id, testData }, { rejectWithValue }) => {
     try {
       const response = await axios.put(`${API_BASE_URL}/test/${id}`, testData);

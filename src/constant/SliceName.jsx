@@ -103,7 +103,7 @@ export const ACTIONS = {
   GET_ALL_USERS: "getallusers",
   GET_ALL_TESTS: "getalltests",
   DELETE_TEST: "deletetest",
-  UPDATE_TEST: "updatetest",
+  UPDATE_TEST_ADMIN: "updateTestAdmin",
   GET_ALL_REQUESTS: "getallrequests",
   PROCESS_TEACHER_REQUEST: "processteacherrequest",
   GET_REQUEST_DETAILS: "getrequestdetails",

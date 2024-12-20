@@ -53,7 +53,6 @@ const TestForm = ({
       console.log("hahha");
 
       toast.success("Create test successfully.");
-      setActiveTab("Tests");
 
       setTestInfo(result);
     } catch (error) {

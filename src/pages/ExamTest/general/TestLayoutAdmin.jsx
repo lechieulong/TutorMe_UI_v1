@@ -17,7 +17,6 @@ const TestLayoutAdmin = () => {
             <TestForm
               pageType={"admin"}
               testType={3}
-              setActiveTab={setActiveTab}
               setIsCreateTest={setIsCreateTest}
             />
           </>
@@ -57,8 +56,8 @@ const TestLayoutAdmin = () => {
           </button>
         </ul>
       </div>
+
       <div className="p-7">{renderComponent()}</div>
-      <ToastContainer autoClose={3000} newestOnTop closeOnClick />
     </div>
   );
 };

@@ -6,7 +6,7 @@ import { useNavigate } from "react-router-dom";
 import TestFormDetail from "./TestFormDetail";
 import PreviewTest from "./PreviewTest";
 import Modal from "react-modal"; // Import react-modal
-import { toast, ToastContainer } from "react-toastify";
+import { toast } from "react-toastify";
 
 const CreateTest = ({
   testId,
@@ -166,15 +166,14 @@ const CreateTest = ({
       pageType === "finalTest"
     ) {
       toast.success("Skill created successfully!");
-      // Reload the browser
-      setIsCreateTest(false);
-      window.location.reload();
+      navigate(`/testDetail/${testId}`);
     } else {
-      window.location.reload();
+      toast.success("Skill created successfully!");
+      setIsCreateTest(false);
+      navigate(`/testDetail/${testId}`);
     }
   });
 
-  // Close the modal
   const closeModal = () => {
     setModalIsOpen(false);
   };

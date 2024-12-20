@@ -90,8 +90,7 @@ const TestExplain = ({ totalPartsSubmit, skillResultIds, testId, skillId }) => {
         getExplainTest({
           testId,
           userId: user.id,
-          skillId: skillId || null, // Ensure null is passed if skillId is undefined
-          totalPartsSubmit,
+          skillResultIds,
         })
       );
 

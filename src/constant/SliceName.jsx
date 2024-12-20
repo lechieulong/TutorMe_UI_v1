@@ -104,7 +104,7 @@ export const ACTIONS = {
   //ADMIN
   GET_ALL_USERS: "getallusers",
   GET_ALL_TESTS: "getalltests",
-  DELETE_TEST: "deletetest",
+  DELETE_TEST_ADMIN: "deleteTestadmin",
   UPDATE_TEST_ADMIN: "updateTestAdmin",
   GET_ALL_REQUESTS: "getallrequests",
   PROCESS_TEACHER_REQUEST: "processteacherrequest",

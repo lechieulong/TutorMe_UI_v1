@@ -43,8 +43,6 @@ const CreateTest = ({
   const validateFormData = (data) => {
     const errors = [];
 
-    console.log("Data", data);
-
     if (!data || !data.skills) {
       errors.push("The data structure is missing or skills are undefined.");
       return { isValid: false, errors };
@@ -155,23 +153,29 @@ const CreateTest = ({
       return;
     }
 
-    dispatch(addSkills({ skillsData: data, testId }));
+    dispatch(addSkills({ skillsData: data, testId })).then((value) => {
+      if (value.type == "test/addSkills/rejected") {
+        toast.error("Failed to create test");
+      } else {
+        toast.success("Create skill success ");
+      }
+    });
 
-    if (pageType === "admin") {
-      toast.success("Skill created successfully!");
-      setIsCreateTest(false);
-    } else if (
-      pageType === "class" ||
-      pageType === "lesson" ||
-      pageType === "finalTest"
-    ) {
-      toast.success("Skill created successfully!");
-      navigate(`/testDetail/${testId}`);
-    } else {
-      toast.success("Skill created successfully!");
-      setIsCreateTest(false);
-      navigate(`/testDetail/${testId}`);
-    }
+    // if (pageType === "admin") {
+    //   toast.success("Skill created successfully!");
+    //   setIsCreateTest(false);
+    // } else if (
+    //   pageType === "class" ||
+    //   pageType === "lesson" ||
+    //   pageType === "finalTest"
+    // ) {
+    //   toast.success("Skill created successfully!");
+    //   navigate(`/testDetail/${testId}`);
+    // } else {
+    //   toast.success("Skill created successfully!");
+    //   setIsCreateTest(false);
+    //   // navigate(`/testDetail/${testId}`);
+    // }
   });
 
   const closeModal = () => {

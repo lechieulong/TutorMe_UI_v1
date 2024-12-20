@@ -50,7 +50,6 @@ const fetchStreamSessions = async () => {
 
 // Tạo Phiên Live
 export const createStreamSession= async (LiveStreamId,Name,Type,Status)=>{
-  console.log(LiveStreamId,Type)
   const fomdata={
     name:Name,
     Status:Status,

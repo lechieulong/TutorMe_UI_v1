@@ -48,6 +48,7 @@ const TestForm = ({
         skillIdCourse,
         courseId,
         testType: selectedTestType,
+        testType: selectedTestType,
       };
 
       // check if

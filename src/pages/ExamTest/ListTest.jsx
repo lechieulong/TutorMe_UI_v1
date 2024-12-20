@@ -41,7 +41,7 @@ const ListTest = () => {
             icon={faClipboardList}
             className="text-green-600 text-2xl"
           />
-          <h1 className="text-3xl font-bold text-green-600">Test Management</h1>
+          <h1 className="text-3xl font-bold text-green-600">Tests </h1>
         </header>
 
         <section className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">

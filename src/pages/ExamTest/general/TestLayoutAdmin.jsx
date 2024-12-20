@@ -1,21 +1,22 @@
 import React, { useState } from "react";
 import TestForm from "../TestForm";
+import TestList from "../../ADMIN/TestList";
+import { ToastContainer } from "react-toastify";
 
 const TestLayoutAdmin = () => {
-  const [activeTab, setActiveTab] = useState("Reading");
+  const [activeTab, setActiveTab] = useState("Tests");
+  const [isCreateTest, setIsCreateTest] = useState(true);
 
   const renderComponent = () => {
     switch (activeTab) {
-      case "Reading":
-        return <p>Hello</p>;
-      case "Listening":
-        return <p>Hello</p>;
-      case "Writing":
-        return <p>Hello</p>;
-      case "Speaking":
-        return <p>Hello</p>;
+      case "Tests":
+        return <>{isCreateTest && <TestList />}</>;
       case "CreateTest":
-        return <TestForm pageType={"admin"} testType={3} />;
+        return (
+          <>
+            <TestForm pageType={"admin"} setIsCreateTest={setIsCreateTest} />
+          </>
+        );
       default:
         return null;
     }
@@ -28,68 +29,30 @@ const TestLayoutAdmin = () => {
           <li className="me-2">
             <button
               type="button"
-              onClick={() => setActiveTab("Reading")}
-              className={`inline-flex items-center justify-center p-4 border-b-2 rounded-t-lg ${
-                activeTab === "Reading"
-                  ? "text-accentGreen-600 border-accentGreen" // Active state
+              onClick={() => setActiveTab("Tests")}
+              className={`inline-flex items-center justify-center px-6 border border-green-700  hover:border-green-800  rounded-t-lg ${
+                activeTab === "Tests"
+                  ? "text-accentGreen-600 border-accentGreen bg-green-700 text-white" // Active state
                   : "hover:text-gray-600 hover:border-gray-300"
               } dark:hover:text-gray-300`}
             >
-              Reading
+              Test
             </button>
           </li>
-          <li className="me-2">
-            <button
-              type="button"
-              onClick={() => setActiveTab("Listening")}
-              className={`inline-flex items-center justify-center p-4 border-b-2 rounded-t-lg ${
-                activeTab === "Listening"
-                  ? "text-accentGreen-600 border-accentGreen" // Active state
-                  : "hover:text-gray-600 hover:border-gray-300"
-              } dark:hover:text-gray-300`}
-            >
-              Listening
-            </button>
-          </li>
-          <li className="me-2">
-            <button
-              type="button"
-              onClick={() => setActiveTab("Writing")}
-              className={`inline-flex items-center justify-center p-4 border-b-2 rounded-t-lg ${
-                activeTab === "Writing"
-                  ? "text-accentGreen-600 border-accentGreen" // Active state
-                  : "hover:text-gray-600 hover:border-gray-300"
-              } dark:hover:text-gray-300`}
-            >
-              Writing
-            </button>
-          </li>
-          <li className="me-2">
-            <button
-              type="button"
-              onClick={() => setActiveTab("Speaking")}
-              className={`inline-flex items-center justify-center p-4 border-b-2 rounded-t-lg ${
-                activeTab === "Speaking"
-                  ? "text-accentGreen-600 border-accentGreen" // Active state
-                  : "hover:text-gray-600 hover:border-gray-300"
-              } dark:hover:text-gray-300`}
-            >
-              Speaking
-            </button>
-          </li>
+          <button
+            type="button"
+            onClick={() => setActiveTab("CreateTest")}
+            className={`inline-flex items-center justify-center border-1 border-green-700  px-6 text-black   rounded-t-lg ${
+              activeTab === "CreateTest"
+                ? "text-accentGreen-600 border-accentGreen bg-green-700 text-white " // Active state
+                : "hover:text-green-70 "
+            } dark:hover:text-gray-300`}
+          >
+            Create test
+          </button>
         </ul>
-        <button
-          type="button"
-          onClick={() => setActiveTab("CreateTest")}
-          className={`inline-flex items-center justify-center p-4 border-b-2 rounded-t-lg ${
-            activeTab === "CreateTest"
-              ? "text-accentGreen-600 border-accentGreen" // Active state
-              : "hover:text-gray-600 hover:border-gray-300"
-          } dark:hover:text-gray-300`}
-        >
-          Create test
-        </button>
       </div>
+
       <div className="p-7">{renderComponent()}</div>
     </div>
   );

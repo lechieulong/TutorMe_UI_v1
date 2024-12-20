@@ -19,6 +19,7 @@ function PaymentMethod() {
     date,
     startTime,
     endTime,
+    content,
     price,
     status,
   } = location.state || {};
@@ -45,12 +46,14 @@ function PaymentMethod() {
       await GiveMeMyMoney(
         user.id,
         price * -1,
-        `Book schedule with teacher ${teacherName}`
+        `Book schedule with teacher ${teacherName}`,
+        'Schedule'
       );
       await GiveMeMyMoney(
         teacherId,
         price,
-        `Your schedule has been booked by ${user.name}`
+        `Your schedule has been booked by ${user.name}`,
+        'Schedule'
       );
 
       try {
@@ -109,16 +112,18 @@ function PaymentMethod() {
                 <span>{teacherName || "N/A"}</span>
               </div>
               <div className="flex justify-between">
+                <span className="font-semibold text-gray-700">
+                  Content:
+                </span>
+                <span>{content || "N/A"}</span>
+              </div>
+              <div className="flex justify-between">
                 <span className="font-semibold text-gray-700">Date:</span>
                 <span>{formatDOB(date) || "N/A"}</span>
               </div>
               <div className="flex justify-between">
-                <span className="font-semibold text-gray-700">Start Time:</span>
-                <span>{startTime || "N/A"}</span>
-              </div>
-              <div className="flex justify-between">
-                <span className="font-semibold text-gray-700">End Time:</span>
-                <span>{endTime || "N/A"}</span>
+                <span className="font-semibold text-gray-700">Time:</span>
+                <span>{startTime || "N/A"} - {endTime || "N/A"}</span>
               </div>
               <div className="flex justify-between">
                 <span className="font-semibold text-gray-700">Total:</span>

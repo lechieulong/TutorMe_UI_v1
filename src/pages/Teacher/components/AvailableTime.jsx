@@ -44,9 +44,10 @@ const AvailableTime = () => {
     const [formErrors, setFormErrors] = useState({});
 
     const [formData, setFormData] = useState({
+        content: '',
         startTime: '',
         price: 0,
-        minute: 0, // default to available
+        minute: 0,
         link: '',
         id: '', // schedule Id for update
         teacherId: '',
@@ -64,6 +65,7 @@ const AvailableTime = () => {
 
     const validateForm = () => {
         const errors = {};
+        if (!formData.content) errors.content = "Content is required";
         if (!formData.startTime) errors.startTime = "Start Time is required";
         if (!formData.minutes) {
             errors.minutes = "Minutes is required";
@@ -92,6 +94,7 @@ const AvailableTime = () => {
     const openUpdatePopup = (item) => {
         setSelectedSchedule(item);
         setFormData({
+            content: item.content,
             startTime: item.startTime,
             price: item.price,
             minutes: item.minutes,
@@ -149,7 +152,7 @@ const AvailableTime = () => {
             <div className="bg-white p-4 rounded shadow mb-4">
                 <div className="flex items-center space-x-2 mb-2">
                     <img
-                        src={userInfor?.imageURL || defaulAvatar}
+                        src={userInfor?.imageURL || "https://hydra13.blob.core.windows.net/2aa17120-4bef-478a-8ea9-cb0788def29e/default-avatar.jpg"}
                         alt={`${userInfor?.name} profile`}
                         className="rounded-full w-10 h-10"
                     />
@@ -185,6 +188,9 @@ const AvailableTime = () => {
                                                             // Nếu status = 1, chỉ hiển thị thông tin mà không có Link
                                                             <div className="w-full text-left p-2">
                                                                 <p className="text-sm font-bold text-gray-700">
+                                                                    {item.content}
+                                                                </p>
+                                                                <p className="text-sm text-gray-500">
                                                                     {new Date(item.startTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: false })} - {new Date(item.endTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: false })}
                                                                 </p>
                                                                 <p className="text-xs text-green-500">{formatCurrency(item.price)}</p>
@@ -200,6 +206,9 @@ const AvailableTime = () => {
                                                                 </button>
                                                                 <div className="w-full text-left focus:outline-none p-2">
                                                                     <p className="text-sm font-bold text-gray-700">
+                                                                        {item.content}
+                                                                    </p>
+                                                                    <p className="text-sm text-gray-500">
                                                                         {new Date(item.startTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: false })} - {new Date(item.endTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: false })}
                                                                     </p>
                                                                     <p className="text-xs text-green-500">{formatCurrency(item.price)}</p>
@@ -214,11 +223,15 @@ const AvailableTime = () => {
                                                                     date: new Date(item.startTime).toLocaleDateString(),
                                                                     startTime: new Date(item.startTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: false }),
                                                                     endTime: new Date(item.endTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: false }),
+                                                                    content: item.content,
                                                                     price: item.price,
                                                                     status: item.status
                                                                 }}
                                                                 className="w-full text-left focus:outline-none p-2">
                                                                 <p className="text-sm font-bold text-gray-700">
+                                                                    {item.content}
+                                                                </p>
+                                                                <p className="text-sm text-gray-500">
                                                                     {new Date(item.startTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: false })} - {new Date(item.endTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: false })}
                                                                 </p>
                                                                 <p className="text-xs text-green-500">{formatCurrency(item.price)}</p>
@@ -250,6 +263,9 @@ const AvailableTime = () => {
                                                                 // Nếu status = 1, chỉ hiển thị thông tin mà không có Link
                                                                 <div className="w-full text-left p-2">
                                                                     <p className="text-sm font-bold text-gray-700">
+                                                                        {item.content}
+                                                                    </p>
+                                                                    <p className="text-sm text-gray-500">
                                                                         {new Date(item.startTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: false })} - {new Date(item.endTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: false })}
                                                                     </p>
                                                                     <p className="text-xs text-green-500">{formatCurrency(item.price)}</p>
@@ -266,6 +282,9 @@ const AvailableTime = () => {
                                                                     </button>
                                                                     <div className="w-full text-left focus:outline-none p-2">
                                                                         <p className="text-sm font-bold text-gray-700">
+                                                                            {item.content}
+                                                                        </p>
+                                                                        <p className="text-sm text-gray-500">
                                                                             {new Date(item.startTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: false })} - {new Date(item.endTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: false })}
                                                                         </p>
                                                                         <p className="text-xs text-green-500">{formatCurrency(item.price)}</p>
@@ -280,11 +299,15 @@ const AvailableTime = () => {
                                                                         date: new Date(item.startTime).toLocaleDateString(),
                                                                         startTime: new Date(item.startTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: false }),
                                                                         endTime: new Date(item.endTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: false }),
+                                                                        content: item.content,
                                                                         price: item.price,
                                                                         status: item.status
                                                                     }}
                                                                     className="w-full text-left focus:outline-none p-2">
                                                                     <p className="text-sm font-bold text-gray-700">
+                                                                        {item.content}
+                                                                    </p>
+                                                                    <p className="text-sm text-gray-500">
                                                                         {new Date(item.startTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: false })} - {new Date(item.endTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: false })}
                                                                     </p>
                                                                     <p className="text-xs text-green-500">{formatCurrency(item.price)}</p>
@@ -344,6 +367,18 @@ const AvailableTime = () => {
                         <div className="bg-white rounded-lg p-8 max-w-lg w-full">
                             <h2 className="text-2xl font-bold mb-4">Update Schedule</h2>
                             <form onSubmit={handleSubmit}>
+                                <div className="mb-4">
+                                    <label className="block text-gray-700 text-sm font-bold mb-2">Content</label>
+                                    <input
+                                        type="text"
+                                        name="content"
+                                        value={formData.content}
+                                        onChange={handleChange}
+                                        className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                                        required
+                                    />
+                                    {formErrors.startTime && <p className="text-red-500 text-xs">{formErrors.content}</p>}
+                                </div>
                                 <div className="mb-4">
                                     <label className="block text-gray-700 text-sm font-bold mb-2">Start Time</label>
                                     <input

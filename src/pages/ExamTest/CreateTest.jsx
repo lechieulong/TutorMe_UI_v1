@@ -6,7 +6,7 @@ import { useNavigate } from "react-router-dom";
 import TestFormDetail from "./TestFormDetail";
 import PreviewTest from "./PreviewTest";
 import Modal from "react-modal"; // Import react-modal
-import { toast, ToastContainer } from "react-toastify";
+import { toast } from "react-toastify";
 
 const CreateTest = ({
   testId,
@@ -27,7 +27,7 @@ const CreateTest = ({
 
   const steps = [
     {
-      label: "Update Test Info",
+      label: "Create skill form ",
       content: (
         <TestFormDetail
           control={control}
@@ -42,8 +42,6 @@ const CreateTest = ({
   ];
   const validateFormData = (data) => {
     const errors = [];
-
-    console.log("Data", data);
 
     if (!data || !data.skills) {
       errors.push("The data structure is missing or skills are undefined.");
@@ -155,35 +153,53 @@ const CreateTest = ({
       return;
     }
 
-    dispatch(addSkills({ skillsData: data, testId }));
+    dispatch(addSkills({ skillsData: data, testId })).then((value) => {
+      if (value.type == "test/addSkills/rejected") {
+        toast.error("Failed to create test");
+      } else {
+        toast.success("Create skill success ");
+        if (
+          pageType == "admin" ||
+          pageType == "lesson" ||
+          pageType == "finalTest"
+        ) {
+          setIsCreateTest(false);
+        } else {
+          window.location.reload();
+        }
+      }
+    });
 
-    if (pageType === "admin") {
-      toast.success("Skill created successfully!");
-      navigate("/admin/app/testsource");
-    } else if (
-      pageType === "class" ||
-      pageType === "lesson" ||
-      pageType === "finalTest"
-    ) {
-      toast.success("Skill created successfully!");
-      // Reload the browser
-      setIsCreateTest(false);
-      window.location.reload();
-    } else {
-      toast.success("Skill created successfully!");
-      window.location.reload();
-    }
+    // if (pageType === "admin") {
+    //   toast.success("Skill created successfully!");
+    //   setIsCreateTest(false);
+    // } else if (
+    //   pageType === "class" ||
+    //   pageType === "lesson" ||
+    //   pageType === "finalTest"
+    // ) {
+    //   toast.success("Skill created successfully!");
+    //   navigate(`/testDetail/${testId}`);
+    // } else {
+    //   toast.success("Skill created successfully!");
+    //   setIsCreateTest(false);
+    //   // navigate(`/testDetail/${testId}`);
+    // }
   });
 
-  // Close the modal
   const closeModal = () => {
     setModalIsOpen(false);
   };
 
   return (
-    <>
-      <ToastContainer autoClose={2000} newestOnTop closeOnClick />
-
+    <div className="bg-warmNeutral p-3">
+      <button
+        onClick={() => window.location.reload()}
+        type="button"
+        className="border border-red-500"
+      >
+        Close{" "}
+      </button>
       <form onSubmit={handleFinish}>
         <div className="mt-16">
           <ul className="relative flex flex-row justify-between gap-x-2">
@@ -243,7 +259,7 @@ const CreateTest = ({
                 type="submit"
                 className="py-2 px-4 rounded bg-green-500 text-white"
               >
-                Submit Test
+                Submit
               </button>
             )}
           </div>
@@ -275,7 +291,7 @@ const CreateTest = ({
           ))}
         </ul>
       </Modal>
-    </>
+    </div>
   );
 };
 

@@ -9,6 +9,8 @@ import {
   faCalendarAlt,
   faClock,
   faPlay,
+  faArrowLeft,
+  faChevronCircleLeft,
 } from "@fortawesome/free-solid-svg-icons";
 import { toast, ToastContainer } from "react-toastify";
 import { useEffect, useState } from "react";
@@ -20,7 +22,7 @@ import TestLayout from "./TestLayout";
 import { getUser } from "../../service/GetUser";
 import { Roles } from "../../utils/config";
 import { formatDate } from "../../utils/formatDate";
-
+import { useLocation } from "react-router-dom";
 const SkillPart = () => {
   const [test, setTest] = useState(null);
   const [skills, setSkills] = useState([]);
@@ -28,6 +30,10 @@ const SkillPart = () => {
   const [user, setUser] = useState(null);
   const [takeFullTest, setTakeFullTest] = useState(false);
   const [disableFinalTest, setDisableFinalTest] = useState(false);
+
+  const location = useLocation();
+  const { categories } = location.state || {}; // Access categories from state
+  console.log(categories);
 
   const navigate = useNavigate();
   const dispatch = useDispatch();
@@ -38,6 +44,11 @@ const SkillPart = () => {
     1: { name: "Listening", icon: faHeadphones },
     2: { name: "Writing", icon: faPen },
     3: { name: "Speaking", icon: faMicrophone },
+  };
+
+  // Function to handle going back
+  const handleGoBack = () => {
+    navigate(-1); // This will navigate to the previous page
   };
 
   useEffect(() => {
@@ -105,6 +116,16 @@ const SkillPart = () => {
           {test ? (
             <>
               <div className="py-10 px-20">
+                <button
+                  onClick={handleGoBack}
+                  className="   text-gray-800 mb-2 rounded-lg flex items-center border-gray-200 justify-center gap-2 transition-all duration-300 ease-in-out transform hover:border-green-600 hover:text-gray-700 hover:scale-105 focus:outline-none"
+                >
+                  <FontAwesomeIcon
+                    icon={faChevronCircleLeft}
+                    className="mr-2 text-green-700 text-2xl"
+                  />
+                  back
+                </button>
                 <div className="bg-white  border rounded-xl h-56 shadow-sm sm:flex dark:bg-neutral-900 dark:border-neutral-700 dark:shadow-neutral-700/70">
                   <div className="shrink-0 relative w-full rounded-t-xl overflow-hidden sm:rounded-s-xl sm:max-w-60 md:rounded-se-none md:max-w-xs">
                     <img
@@ -148,7 +169,7 @@ const SkillPart = () => {
                 {skills.length === 0 ? (
                   <>
                     {createSkill ? (
-                      <CreateTest testId={testId} />
+                      <CreateTest testId={testId} skills={categories} />
                     ) : (
                       <>
                         {(user?.role?.includes(Roles.ADMIN) &&

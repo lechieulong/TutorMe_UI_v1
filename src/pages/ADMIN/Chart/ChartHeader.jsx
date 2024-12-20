@@ -35,20 +35,6 @@ function ChartHeader() {
                     onChange={handleEndDateChange} 
                 />
                 <button 
-                    className="flex items-center space-x-2 text-green-400"
-                    onClick={handleRefreshData}
-                >
-                    <FaSyncAlt className="text-lg" />
-                    <span>This month</span>
-                </button>
-                <button 
-                    className="flex items-center space-x-2 text-yellow-400"
-                    onClick={handleRefreshData}
-                >
-                    <FaSyncAlt className="text-lg" />
-                    <span>This year</span>
-                </button>
-                <button 
                     className="flex items-center space-x-2 text-gray-600"
                     onClick={handleRefreshData}
                 >

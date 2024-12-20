@@ -1,5 +1,6 @@
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
+  faChevronCircleLeft,
   faClock,
   faLanguage,
   faPaperPlane,
@@ -8,7 +9,7 @@ import {
 import { useState, useEffect } from "react";
 import Modal from "react-modal";
 import NoteCard from "./NoteCard";
-import { Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 const Header = ({
   practiceTestData,
@@ -27,6 +28,7 @@ const Header = ({
 
   const openWarningModal = () => setIsModalOpen(true);
   const closeWarningModal = () => setIsModalOpen(false);
+  const navigate = useNavigate();
 
   const handleConfirmNextSkill = () => {
     handleSubmit(); // Wait for submission to complete
@@ -40,7 +42,9 @@ const Header = ({
       remainingSeconds < 10 ? `0${remainingSeconds}` : remainingSeconds
     }`;
   };
-
+  const handleGoBack = () => {
+    navigate(-1); // This will navigate to the previous page
+  };
   useEffect(() => {
     if (Object.keys(testData).length > 0) {
       const currentSkillData = Object.values(testData)[currentSkillIndex];
@@ -67,9 +71,23 @@ const Header = ({
 
   return (
     <div className="flex justify-between  items-center p-4 bg-green-600 shadow-lg rounded-lg">
-      <p className="text-lg font-semibold text-white flex items-center gap-2">
-        IELTS <FontAwesomeIcon icon={faLanguage} />
-      </p>
+      {practiceTestData?.testType == 1 ? (
+        <button
+          type="button"
+          onClick={handleGoBack}
+          className="   text-gray-800  rounded-lg flex items-center border-gray-200 justify-center gap-2 transition-all duration-300 ease-in-out transform hover:border-green-600 hover:text-gray-700 hover:scale-100 focus:outline-none"
+        >
+          <FontAwesomeIcon
+            icon={faChevronCircleLeft}
+            className="mr-2 text-green-700 text-2xl"
+          />
+          back
+        </button>
+      ) : (
+        <p className="text-lg font-semibold text-white flex items-center gap-2">
+          IELTS <FontAwesomeIcon icon={faLanguage} />
+        </p>
+      )}
 
       {practiceTestData?.testType == 1 ? (
         <p className="text-white font-bold text-2xl">Practice Mode </p>

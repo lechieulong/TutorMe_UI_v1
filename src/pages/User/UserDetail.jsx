@@ -51,7 +51,7 @@ const UserDetail = () => {
             <div className="flex flex-col lg:flex-row items-start">
               <div className="lg:w-1/4 flex flex-col items-center mb-6 lg:mb-0 lg:mr-6">
                 <img
-                  src={user?.imageURL || defaulAvatar}
+                  src={user?.imageURL || "https://hydra13.blob.core.windows.net/2aa17120-4bef-478a-8ea9-cb0788def29e/default-avatar.jpg"}
                   alt="Avatar"
                   className="w-36 h-36 rounded-full object-cover border-4 border-white mb-4"
                   loading="lazy"

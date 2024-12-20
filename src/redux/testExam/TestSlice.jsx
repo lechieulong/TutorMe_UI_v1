@@ -387,11 +387,15 @@ export const createTest = createAsyncThunk(
       const response = await axios.post(`${API_BASE_URL}/test`, testData, {
         headers: {
           Authorization: `Bearer ${token}`,
-          "Content-Type": "application/json", //
+          "Content-Type": "application/json",
         },
       });
+
       return response.data;
     } catch (error) {
+      // Log the error to ensure you see the full error structure
+      console.error("Create test error:", error);
+
       return rejectWithValue(
         error.response?.data?.message || "Failed to create test"
       );
@@ -418,7 +422,7 @@ export const getTestBySectionCourseId = createAsyncThunk(
 
 // Action to update a test
 export const updateTest = createAsyncThunk(
-  `${SLICE_NAMES.TEST}/${ACTIONS.UPDATE_TEST}`,
+  `${SLICE_NAMES.TEST}/${ACTIONS.UPDATE_TEST_ADMIN}`,
   async ({ id, testData }, { rejectWithValue }) => {
     try {
       const response = await axios.put(`${API_BASE_URL}/test/${id}`, testData);

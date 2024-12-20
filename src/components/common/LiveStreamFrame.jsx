@@ -15,7 +15,6 @@ import { ToastContainer } from "react-toastify";
 import { GetUserByID } from "../../redux/users/UserSlice";
 import { useDispatch } from "react-redux";
 import apiURLConfig from "../../redux/common/apiURLConfig";
-import { useLocation } from 'react-router-dom';
 // Truy cập các biến môi trường
 const appID = Number(import.meta.env.VITE_APP_ID);
 const serverSecret = import.meta.env.VITE_SERVER_SECRET;
@@ -51,7 +50,6 @@ const fetchStreamSessions = async () => {
 
 // Tạo Phiên Live
 export const createStreamSession= async (LiveStreamId,Name,Type,Status)=>{
-  console.log(LiveStreamId,Type)
   const fomdata={
     name:Name,
     Status:Status,

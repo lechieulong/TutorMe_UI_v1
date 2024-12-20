@@ -488,9 +488,9 @@ const AnswerViewExplain = ({ partData, currentSkillKey }) => {
                                 </select>
                               </div>
                             ))}
-                            <p className=" text-yellow-700">
+                            {/* <p className=" text-yellow-700">
                               Correct Answers: {question.questionName}
-                            </p>
+                            </p> */}
                           </div>
                         ))}
                       </div>

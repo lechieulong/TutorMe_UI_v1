@@ -53,34 +53,16 @@ const TestExplain = ({ totalPartsSubmit, skillResultIds, testId, skillId }) => {
 
     return value;
   };
-  // const fetchTestData = async () => {
-  //   try {
-  //     setLoading(true);
-  //     const fetchedTestData = await new Promise((resolve) => {
-  //       setTimeout(() => resolve(mockTestData), 1000);
-  //     });
-  //     setTestData(fetchedTestData);
-  //   } catch (error) {
-  //     console.error("Error fetching test data:", error);
-  //   } finally {
-  //     setLoading(false);
-  //   }
-  // };
-
-  const fetchSkillData = async () => {
-    try {
-      setLoading(true);
-      const result = await dispatch(getSkill(skillId));
-      if (result.payload) {
-        const skillData = result.payload;
-        setTestData(skillData);
+  const handlePreviousSkill = useCallback(() => {
+    setCurrentSkillIndex((prevIndex) => {
+      const nextIndex = prevIndex - 1;
+      if (nextIndex >= 0) {
+        return nextIndex;
       }
-    } catch (error) {
-      console.error("Error fetching test data:", error);
-    } finally {
-      setLoading(false);
-    }
-  };
+      return prevIndex;
+    });
+  }, []);
+
   const getTestResult = async () => {
     try {
       setLoading(true);
@@ -270,6 +252,7 @@ const TestExplain = ({ totalPartsSubmit, skillResultIds, testId, skillId }) => {
                 testData={testData}
                 currentSkillIndex={currentSkillIndex}
                 handleNextSkill={handleNextSkill}
+                handlePreviousSkill={handlePreviousSkill}
               />
               <TestViewExplain
                 skillData={currentSkillData}

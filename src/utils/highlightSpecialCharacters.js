@@ -1,41 +1,43 @@
-export const highlightSpecialCharacters = (text) => {
+export const highlightSpecialCharacters = (text ) => {
   if (!text) return "";
 
-  // Replace special characters with highlighted spans
-  const regexSpecialChars = /[^\w\s]/g;
-  text = text.replace(
-    regexSpecialChars,
-    (match) => `<span class="text-red-500 ">${match}</span>`
-  );
+    // Step 1: Highlight Questions
+    text = text.replace(
+      /\*\*Question:\s*(.*?)\*\*/g,
+      (match, question) =>
+        `<div class="mt-2">
+          <h2 class="text-lg font-bold text-blue-700">Question:</h2>
+          <p class="text-gray-800">${question}</p>
+        </div>`
+    );
 
-  // Add a line break before "Question" and style it
-  const regexQuestion = /\bQuestion\b/g;
-  text = text.replace(
-    regexQuestion,
-    (match) =>
-      `<br /><span class="font-bold text-blue-600 text-lg mt-4">Question</span>`
-  );
+    // Step 2: Highlight Correct Answers
+    text = text.replace(
+      /\*\*Correct Answers:\s*(.*?)\*\*/g,
+      (match, correctAnswers) =>
+        `<div class="mt-2">
+          <h3 class="text-md font-semibold text-green-700">Correct Answers:</h3>
+          <p class="text-green-600 bg-green-100 px-4 py-2 rounded-md">${correctAnswers}</p>
+        </div>`
+    );
 
-  // Style "Correct Answer" and "Explanation"
-  const regexCorrectAnswer = /\bCorrect Answer\b/g;
-  text = text.replace(
-    regexCorrectAnswer,
-    (match) =>
-      `<br /><span class="font-semibold text-green-600 text-lg mt-4">Correct Answer:</span>`
-  );
+    // Step 3: Highlight Explanation Sections
+    text = text.replace(
+      /\*\*\s*Explanation:\s*\*/g,
+      `<h3 class="mt-2 text-md font-bold text-yellow-700">Explanation:</h3>`
+    );
 
-  const regexExplanation = /\bExplanation\b/g;
-  text = text.replace(
-    regexExplanation,
-    (match) =>
-      `<br /><span class="font-semibold text-gray-800 text-lg mt-4 leading-7">Explanation:</span>`
-  );
+    // Step 4: Style Explanation Details
+    text = text.replace(
+      /\*\s*(.*?)\:/g,
+      (match, detail) =>
+        `<div class="">
+          <span class="font-semibold text-purple-700">${detail}:</span>
+        </div>`
+    );
 
-  // Add space after each section for readability
-  text = text.replace(
-    /(Question::|Correct Answer::|Explanation::)/g,
-    "$1<br />"
-  );
+    // Step 5: Breaklines for Clarity
+    text = text.replace(/(?:\n\s*)+/g, "<br />");
 
-  return text;
+    return text;
 };

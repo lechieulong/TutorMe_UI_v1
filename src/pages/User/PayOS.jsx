@@ -30,8 +30,8 @@ import {
       src: 'https://cdn.payos.vn/payos-checkout/v1/stable/payos-initialize.js',
       checkForExisting: true,
     });
-    const RETURN_URL = `${url}/PayOS/PaymentResult`;
-    const CANCEL_URL = `${url}/PayOS/PaymentResult`;
+    const RETURN_URL = `${window.location.href}result`;
+    const CANCEL_URL = RETURN_URL;
     console.log(window.location.href);
   
     const createPaymentLinkHandle = async function (

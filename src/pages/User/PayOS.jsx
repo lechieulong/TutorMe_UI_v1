@@ -14,9 +14,11 @@ import {
   import CryptoJS from 'crypto-js';
   import { getUser } from '../../service/GetUser';
   import MainLayout from '../../layout/MainLayout';
+  import apiURLConfig from "../../redux/common/apiURLConfig";
   
   export default function PayOS() {
     const navigate = useNavigate();
+    const url = apiURLConfig.baseURL;
     const [openUICustomLoading, setOpenUICustomLoading] = useState(false);
     const [redirectLoading, setRedirectLoading] = useState(false);
     const [openDialogLoading, setOpenDialogLoading] = useState(false);
@@ -28,8 +30,9 @@ import {
       src: 'https://cdn.payos.vn/payos-checkout/v1/stable/payos-initialize.js',
       checkForExisting: true,
     });
-    const RETURN_URL = `${window.location.href}result/`;
-    const CANCEL_URL = `${window.location.href}result/`;
+    const RETURN_URL = `${url}/PayOS/PaymentResult`;
+    const CANCEL_URL = `${url}/PayOS/PaymentResult`;
+    console.log(window.location.href);
   
     const createPaymentLinkHandle = async function (
       callbackFunction,
@@ -62,7 +65,7 @@ import {
       const buyerAddress="";
       const items =[];
       const cancelUrl =RETURN_URL;
-      const returnUrl = CANCEL_URL;
+      const returnUrl = RETURN_URL;
       const data = `amount=${amount}&cancelUrl=${cancelUrl}&description=${description}&orderCode=${orderCode}&returnUrl=${returnUrl}`;
       const checksumKey = `${import.meta.env.VITE_Checksum_Key}`;
       const signature = CryptoJS.HmacSHA256(data, checksumKey).toString(CryptoJS.enc.Hex);

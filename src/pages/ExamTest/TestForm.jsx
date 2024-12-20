@@ -38,6 +38,8 @@ const TestForm = ({
 
   const onSubmit = async (data) => {
     setIsSubmitted(true);
+    console.log(data);
+    const selectedTestType = testType || data.testType;
     try {
       const payload = {
         ...data,
@@ -45,12 +47,11 @@ const TestForm = ({
         lessonId,
         skillIdCourse,
         courseId,
-        testType,
+        testType: selectedTestType,
       };
 
       // check if
       const result = await dispatch(createTest(payload)).unwrap();
-      console.log("hahha");
 
       toast.success("Create test successfully.");
 
@@ -213,6 +214,34 @@ const TestForm = ({
             {errors.endTime && (
               <span className="text-red-500 text-sm">
                 {errors.endTime.message}
+              </span>
+            )}
+          </div>
+
+          <div className="relative mt-4">
+            <label className="block text-sm font-semibold text-gray-700">
+              Test Type
+            </label>
+            <div className="mt-2">
+              <select
+                {...register("testType", {
+                  required: "Test Type is required",
+                })}
+                className={`w-full px-4 py-3 border ${
+                  errors.testType ? "border-red-500" : "border-gray-300"
+                } rounded-lg shadow-sm focus:ring-2 focus:ring-blue-500 sm:text-base`}
+                disabled={isSubmitted}
+              >
+                <option value="" disabled>
+                  Select a test type
+                </option>
+                <option value={3}>Normal test</option>
+                <option value={4}>Register</option>
+              </select>
+            </div>
+            {errors.testType && (
+              <span className="text-red-500 text-sm">
+                {errors.testType.message}
               </span>
             )}
           </div>

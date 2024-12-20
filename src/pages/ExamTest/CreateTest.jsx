@@ -158,6 +158,15 @@ const CreateTest = ({
         toast.error("Failed to create test");
       } else {
         toast.success("Create skill success ");
+        if (
+          pageType == "admin" ||
+          pageType == "lesson" ||
+          pageType == "finalTest"
+        ) {
+          setIsCreateTest(false);
+        } else {
+          window.location.reload();
+        }
       }
     });
 
@@ -184,7 +193,6 @@ const CreateTest = ({
 
   return (
     <div className="bg-warmNeutral p-3">
-      <ToastContainer autoClose={2000} newestOnTop closeOnClick />
       <button
         onClick={() => window.location.reload()}
         type="button"

@@ -9,7 +9,6 @@ const Writing = ({
 }) => {
   const [text, setText] = useState("");
 
-  // Populate text state from userAnswers when userAnswers or partData changes
   useEffect(() => {
     const answerText =
       userAnswers[partData.sections[0]?.questions[0]?.id]?.answers[0]

@@ -14,11 +14,7 @@ const TestLayoutAdmin = () => {
       case "CreateTest":
         return (
           <>
-            <TestForm
-              pageType={"admin"}
-              testType={3}
-              setIsCreateTest={setIsCreateTest}
-            />
+            <TestForm pageType={"admin"} setIsCreateTest={setIsCreateTest} />
           </>
         );
       default:

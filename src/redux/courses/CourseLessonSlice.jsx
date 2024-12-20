@@ -1,7 +1,7 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import axios from "axios";
 import Cookies from "js-cookie";
-
+import apiURLConfig from "../common/apiURLConfig";
 // Định nghĩa initialState
 const initialState = {
   courseLessons: [],
@@ -18,7 +18,7 @@ export const fetchCourseLessons = createAsyncThunk(
     try {
       // Constructing the API URL with dynamic coursePartId
       const response = await axios.get(
-        `https://localhost:7030/api/CourseLessons/CoursePart/${coursePartId}`, // Using coursePartId dynamically
+        `${apiURLConfig}/CourseLessons/CoursePart/${coursePartId}`, // Using coursePartId dynamically
         { headers: { Authorization: `Bearer ${token}` } }
       );
 

@@ -5,9 +5,9 @@ import Cookies from "js-cookie";
 import { getUser } from "../../service/GetUser";
 import apiURLConfig from "../common/apiURLConfig";
 
-const API_BASE_URL = "https://localhost:7030/api";
+// const API_BASE_URL = "https://localhost:7030/api";
 
-// const API_BASE_URL = "https://aiilapi.azurewebsites.net/api";
+const API_BASE_URL = "https://aiilapi.azurewebsites.net/api";
 export const fetchTests = createAsyncThunk(
   `${SLICE_NAMES.TEST}/${ACTIONS.FETCH_TESTS}`,
   async ({ pageNumber = 1, pageSize = 10 }, { rejectWithValue }) => {
@@ -249,16 +249,12 @@ export const getTesting = createAsyncThunk(
 
 export const getExplainTest = createAsyncThunk(
   `${SLICE_NAMES.TEST}/${ACTIONS.GET_EXPLAIN_TEST}`,
-  async (
-    { testId, userId, skillId, totalPartsSubmit },
-    { rejectWithValue }
-  ) => {
+  async ({ testId, userId, skillResultIds }, { rejectWithValue }) => {
     try {
       const response = await axios.post(`${API_BASE_URL}/test/testExplain`, {
         userId,
         testId,
-        skillId,
-        totalPartsSubmit,
+        skillResultIds,
       });
       return response.data;
     } catch (error) {

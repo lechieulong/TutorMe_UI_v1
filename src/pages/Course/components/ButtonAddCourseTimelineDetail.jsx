@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import axios from "axios";
 import "tailwindcss/tailwind.css";
-
+import apiURLConfig from "../../../redux/common/apiURLConfig";
 const ButtonAddCourseTimelineDetail = ({ courseId, onDetailAdded }) => {
   const [showForm, setShowForm] = useState(false);
   const [formData, setFormData] = useState({
@@ -17,7 +17,7 @@ const ButtonAddCourseTimelineDetail = ({ courseId, onDetailAdded }) => {
     const fetchOptions = async () => {
       try {
         const response = await axios.get(
-          `https://localhost:7030/api/CourseTimeline/Course/${courseId}`
+          `${apiURLConfig}/CourseTimeline/Course/${courseId}`
         );
 
         if (response.data && response.data.length > 0) {
@@ -50,7 +50,7 @@ const ButtonAddCourseTimelineDetail = ({ courseId, onDetailAdded }) => {
         isEnabled: true,
       });
 
-      await axios.post(`https://localhost:7030/api/CourseTimelineDetail`, [
+      await axios.post(`${apiURLConfig}/CourseTimelineDetail`, [
         {
           courseTimelineId: formData.selectedOption,
           title: formData.title,

@@ -13,6 +13,7 @@ import { toast, ToastContainer } from "react-toastify";
 import CreateTest from "./CreateTest";
 import TestInfoCard from "./general/TestInfoCard";
 import { getUser } from "../../service/GetUser";
+import { Roles } from "../../utils/config";
 
 const TestForm = ({
   classId,
@@ -39,26 +40,24 @@ const TestForm = ({
   const [user, setUser] = useState(null);
   const onSubmit = async (data) => {
     setIsSubmitted(true);
+
     const selectedTestType = testType || data.testType;
+
+    const payload = {
+      ...data,
+      classId,
+      lessonId,
+      skillIdCourse,
+      courseId,
+      testType: selectedTestType,
+    };
+
     try {
-      const payload = {
-        ...data,
-        classId,
-        lessonId,
-        skillIdCourse,
-        courseId,
-        testType: selectedTestType,
-        testType: selectedTestType,
-      };
-
-      // check if
-      const result = await dispatch(createTest(payload)).unwrap();
-
+      const result = await dispatch(createTest(payload)).unwrap(); // Use `.unwrap()` to get the payload directly
       toast.success("Create test successfully.");
-
-      setTestInfo(result);
+      setTestInfo(result); // Set the test info on success
     } catch (error) {
-      toast.error("Failed to create test. Please try again.");
+      toast.error(error.message || "Failed to create test. Please try again.");
       setIsSubmitted(false); // Reset submission state on failure
     }
   };
@@ -66,7 +65,7 @@ const TestForm = ({
   useEffect(() => {
     const userFromToken = getUser();
     setUser(userFromToken);
-  });
+  }, []);
 
   const currentDateTime = new Date().toISOString().slice(0, 16);
   const startTime = watch("startTime");

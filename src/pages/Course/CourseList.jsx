@@ -9,6 +9,7 @@ import Calendar from "../../components/common/linkToCalendar";
 import { Link } from "react-router-dom";
 import useAuthToken from "../../hooks/useAuthToken";
 import { getUser } from "../../service/GetUser";
+import { ClipLoader } from 'react-spinners';
 
 const CourseList = () => {
   const [user, setUser] = useState(null);
@@ -73,8 +74,8 @@ const CourseList = () => {
     );
   }, [dispatch, currentPage, selectedSkill]);
 
-  if (status === STATUS.PENDING) return <p>Loading...</p>;
-  if (status === STATUS.FAILED) return <p>Error: {error}</p>;
+  // if (status === STATUS.PENDING) return <p>Loading...</p>;
+  // if (status === STATUS.FAILED) return <p>Error: {error}</p>;
 
   return (
     <MainLayout>
@@ -105,16 +106,23 @@ const CourseList = () => {
           />
           <Link
             to="/mentorCourseList"
-            className={`py-2 px-3 inline-flex items-center gap-x-2 text-sm font-medium rounded-lg border border-gray-200 bg-white text-gray-800 shadow-sm hover:bg-gray-50 focus:outline-none focus:bg-gray-50 ${
-              !user?.role?.includes("TEACHER") ? "hidden opacity-50" : ""
-            }`}
+            className={`py-2 px-3 inline-flex items-center gap-x-2 text-sm font-medium rounded-lg border border-gray-200 bg-white text-gray-800 shadow-sm hover:bg-gray-50 focus:outline-none focus:bg-gray-50 ${!user?.role?.includes("TEACHER") ? "hidden opacity-50" : ""
+              }`}
           >
             My Course
           </Link>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-10">
-          {courses.map((course) => (
+          {status === STATUS.PENDING ? (
+            <div className="col-span-full flex justify-center items-center">
+              <ClipLoader color="#000000" size={50} />
+            </div>
+          ) : status === STATUS.FAILED ? (
+            <div className="col-span-full flex justify-center items-center">
+              Error: {error}
+            </div>
+          ) : courses.map((course) => (
             <CourseCard
               key={course.id}
               imageUrl={course.imageUrl}
@@ -137,9 +145,8 @@ const CourseList = () => {
                 onClick={handlePrevPage}
                 disabled={currentPage === 1}
                 aria-label="Previous Page"
-                className={`px-3 py-1.5 mx-1 text-sm font-medium ${
-                  currentPage === 1 ? "bg-gray-300" : "bg-blue-600"
-                } text-white border border-blue-600 rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-400`}
+                className={`px-3 py-1.5 mx-1 text-sm font-medium ${currentPage === 1 ? "bg-gray-300" : "bg-blue-600"
+                  } text-white border border-blue-600 rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-400`}
               >
                 Previous
               </button>
@@ -150,9 +157,8 @@ const CourseList = () => {
                 onClick={handleNextPage}
                 disabled={currentPage === totalPages}
                 aria-label="Next Page"
-                className={`px-3 py-1.5 mx-1 text-sm font-medium ${
-                  currentPage === totalPages ? "bg-gray-300" : "bg-blue-600"
-                } text-white border border-blue-600 rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-400`}
+                className={`px-3 py-1.5 mx-1 text-sm font-medium ${currentPage === totalPages ? "bg-gray-300" : "bg-blue-600"
+                  } text-white border border-blue-600 rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-400`}
               >
                 Next
               </button>

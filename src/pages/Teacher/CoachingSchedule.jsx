@@ -61,6 +61,7 @@ const CoachingSchedule = () => {
     const now = new Date().toISOString().slice(0, 16);
 
     const [formData, setFormData] = useState({
+        content: "",
         startTime: "",
         minutes: "",
         price: "",
@@ -81,6 +82,7 @@ const CoachingSchedule = () => {
 
     const validateForm = () => {
         const errors = {};
+        if (!formData.content) errors.content = "Content is required";
         if (!formData.startTime) errors.startTime = "Start Time is required";
         if (!formData.minutes) {
             errors.minutes = "Minutes is required";
@@ -109,6 +111,7 @@ const CoachingSchedule = () => {
             try {
                 await dispatch(SetSchedule(formData)).unwrap(); // Unwrap to get the response
                 setFormData({
+                    content: "",
                     startTime: "",
                     minutes: "",
                     price: "",
@@ -161,10 +164,8 @@ const CoachingSchedule = () => {
                                     <a href={`/coachingschedule/${user?.userName}`} className="bg-red-500 text-white px-4 py-2 rounded">Yours</a>
                                 </>
                             )}
-                            {/* <button className="bg-red-500 text-white px-4 py-2 rounded">Teacher</button> */}
                             {userFromToken && (
                                 <>
-                                    {/* <Link to={`/coachingschedule/${user?.userName}`} className="bg-red-500 text-white px-4 py-2 rounded">Yours</Link> */}
                                     <Link to="/coachingschedule/bookedschedule" className="bg-yellow-300 text-white px-4 py-2 rounded">Scheduled</Link>
                                 </>
                             )}
@@ -242,6 +243,18 @@ const CoachingSchedule = () => {
                             <div className="bg-white rounded-lg p-8 max-w-lg w-full">
                                 <h2 className="text-2xl font-bold mb-4">Set Schedule</h2>
                                 <form onSubmit={handleSubmit}>
+                                    <div className="mb-4">
+                                        <label className="block text-gray-700 text-sm font-bold mb-2">Content</label>
+                                        <input
+                                            type="text"
+                                            name="content"
+                                            value={formData.content}
+                                            onChange={handleChange}
+                                            className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                                            required
+                                        />
+                                        {formErrors.startTime && <p className="text-red-500 text-xs">{formErrors.content}</p>}
+                                    </div>
                                     <div className="mb-4">
                                         <label className="block text-gray-700 text-sm font-bold mb-2">Start Time</label>
                                         <input

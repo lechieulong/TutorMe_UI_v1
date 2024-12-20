@@ -2,63 +2,86 @@ import React, { useState, useEffect } from 'react';
 import { SearchTeacher } from '../../../redux/users/UserSlice';
 import { useDispatch, useSelector } from "react-redux";
 import debounce from 'lodash.debounce';
+import { FaSearch } from "react-icons/fa";
 
 const Search = ({ onSearch }) => {
     const dispatch = useDispatch();
     const [searchTerm, setSearchTerm] = useState('');
-    const teachers = useSelector(state => state.user.searchTeacher); // Adjust according to your state structure
+    const teachers = useSelector(state => state.user.searchTeachers);
 
-    // Debounce function to reduce the frequency of API calls
     const debouncedSearch = debounce((searchTerm) => {
         if (searchTerm) {
             dispatch(SearchTeacher(searchTerm));
         }
-    }, 300); // 300ms debounce delay
+    }, 300);
 
-    // Handle side effect when searchTerm changes
     useEffect(() => {
         debouncedSearch(searchTerm);
         return () => {
-            debouncedSearch.cancel(); // Cleanup debounce on unmount
+            debouncedSearch.cancel();
         };
     }, [searchTerm, dispatch]);
 
     const handleSubmit = (e) => {
         e.preventDefault();
-        onSearch(searchTerm); // Optional callback if needed
+        onSearch(searchTerm);
+    };
+
+    const clearSearch = () => {
+        setSearchTerm('');
     };
 
     return (
-        <div className="right-0 transform w-full max-w-md inline-block">
+        <div className="relative w-full max-w-md inline-block mx-auto">
             <div className="relative">
-                <form onSubmit={handleSubmit} className="flex items-center">
+                <form onSubmit={handleSubmit} className="flex items-center relative">
                     <input
                         type="text"
                         name="searchTerm"
                         className="w-[90%] border border-gray-300 rounded-full py-2 pl-4 pr-10 text-sm"
-                        placeholder="Search...(Sorry! Not available now)"
+                        placeholder="Search..."
                         value={searchTerm}
                         onChange={(e) => setSearchTerm(e.target.value)}
                     />
-                    <i className="fas fa-search absolute right-3 top-2.5 text-gray-500"></i>
+                    {searchTerm && (
+                        <button
+                            type="button"
+                            onClick={clearSearch}
+                            className="absolute p-1 right-12 top-1/2 transform opacity-50 -translate-y-1/2 text-gray-500 hover:text-red-500 focus:outline-none rounded-full"
+                        >
+                            &times;
+                        </button>
+                    )}
+                    <i className="fas fa-search absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500"></i>
                 </form>
             </div>
 
-            {teachers && teachers.length > 0 && (
-                <div className="mt-2 bg-white border border-gray-300 rounded-lg shadow-lg">
-                    <div className="px-4 py-2 text-gray-500">Teachers</div>
-                    <ul className="py-2">
+            {searchTerm && teachers && teachers.length > 0 && (
+                <div className="absolute left-0 top-full mt-1 bg-white border border-gray-300 rounded-lg shadow-md z-50 w-[90%]">
+                    <ul className="py-1">
                         {teachers.map((teacher) => (
-                            <li key={teacher.userName} className="flex items-center px-4 py-2 hover:bg-gray-100 cursor-pointer">
-                                <img src={teacher.imageURL || "https://placehold.co/40"} alt={`Profile of ${teacher.userName}`} className="w-10 h-10 rounded-full mr-3" />
-                                <div>
-                                    <div className="font-semibold">{teacher.userName}</div>
-                                    <div className="text-sm text-gray-500">{teacher.name}</div>
-                                </div>
-                            </li>
+                            <a
+                                href={`/coachingschedule/${teacher?.userName}`}
+                                key={teacher.userName}
+                                className="block"
+                            >
+                                <li className="flex items-center px-3 py-1 hover:bg-gray-100 cursor-pointer">
+                                    <div className="p-1 bg-gray-300 opacity-50 rounded-full mr-2">
+                                        <FaSearch className="text-sm" />
+                                    </div>
+                                    <img
+                                        src={teacher.imageURL || "https://placehold.co/30"}
+                                        alt={`Profile of ${teacher.userName}`}
+                                        className="w-8 h-8 rounded-full mr-2"
+                                    />
+                                    <div>
+                                        <div className="text-sm font-medium">{teacher.userName}</div>
+                                        <div className="text-xs text-gray-500">{teacher.name}</div>
+                                    </div>
+                                </li>
+                            </a>
                         ))}
                     </ul>
-                    <div className="px-4 py-2 text-blue-500 hover:underline cursor-pointer">View all results for "{searchTerm}"</div>
                 </div>
             )}
         </div>

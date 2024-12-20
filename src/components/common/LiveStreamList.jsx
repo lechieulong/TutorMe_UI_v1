@@ -63,9 +63,8 @@ const LiveStreamList = () => {
           className="w-full p-2 border rounded-lg"
         />
       </div>
-
       <div>
-          <div className="mt-4 relative overflow-hidden">
+          <div className="mt-4 px-8 relative overflow-hidden">
             <div
               className={`flex transition-transform duration-300`}
             >

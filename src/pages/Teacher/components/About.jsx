@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useParams } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { Profile } from '../../../redux/users/UserSlice';
+import { FaRegAddressCard } from "react-icons/fa";
 
 const About = () => {
     const dispatch = useDispatch();
@@ -27,8 +28,9 @@ const About = () => {
                         />
                         <div>
                             <p className="font-semibold">{userInfor?.name || "User Name"}</p>
-                            <p className="text-gray-500 text-xs">
-                                Be teacher · Aug 10, 2024<i className="fas fa-globe"></i>
+                            <p className="text-gray-500 text-xs flex items-center space-x-1">
+                                <FaRegAddressCard />
+                                <span>{userEducation?.userEducationDto?.career}</span>
                             </p>
                         </div>
                     </div>
@@ -42,7 +44,7 @@ const About = () => {
                     </div>
                 </div>
 
-                <div className="bg-white p-4 rounded shadow">
+                {/* <div className="bg-white p-4 rounded shadow">
                     <div className="flex items-center space-x-2 mb-2">
                         <img src={userInfor?.imageURL || "https://placehold.co/40x40"} alt="User profile" className="rounded-full w-10 h-10" />
                         <input
@@ -65,7 +67,7 @@ const About = () => {
                             <span>Audio</span>
                         </button>
                     </div>
-                </div>
+                </div> */}
             </div>
 
             <aside className="w-1/3">

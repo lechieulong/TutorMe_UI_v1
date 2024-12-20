@@ -16,7 +16,7 @@ const IdolListCard = ({
       className="w-1/6  border-2 border-blue-500 m-[5px] p-[5px] rounded-xl   shadow-md   overflow-hidden h-full relative bg-gradient-to-r from-green-500 to-green-200 box-border"
     >
       <img
-        src={image}
+        src={image || "https://hydra13.blob.core.windows.net/2aa17120-4bef-478a-8ea9-cb0788def29e/default-avatar.jpg"}
         alt={title}
         className="w-full h-48 object-cover border rounded-[12px] "
       />

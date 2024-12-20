@@ -218,7 +218,14 @@ const TestLayout = ({
           })
         ).then((result) => {
           if (result.meta.requestStatus === "fulfilled") {
-            setSkillResultIds((prev) => [...prev, result.payload.id]);
+            setSkillResultIds((prev) => [
+              ...prev,
+              {
+                id: result.payload.id,
+                skillId: result.payload.skillId,
+                totalParts: result.payload.totalParts,
+              },
+            ]);
           } else {
             console.error(
               "Error submitting reading test:",
@@ -252,7 +259,14 @@ const TestLayout = ({
           })
         ).then((result) => {
           if (result.meta.requestStatus === "fulfilled") {
-            setSkillResultIds((prev) => [...prev, result.payload.id]);
+            setSkillResultIds((prev) => [
+              ...prev,
+              {
+                id: result.payload.id,
+                skillId: result.payload.skillId,
+                totalParts: result.payload.totalParts,
+              },
+            ]);
           } else {
             console.error(
               "Error submitting reading test:",
@@ -288,7 +302,14 @@ const TestLayout = ({
             );
 
             if (result.meta.requestStatus === "fulfilled") {
-              setSkillResultIds((prev) => [...prev, result.payload.id]);
+              setSkillResultIds((prev) => [
+                ...prev,
+                {
+                  id: result.payload.id,
+                  skillId: result.payload.skillId,
+                  totalParts: result.payload.totalParts,
+                },
+              ]);
             } else {
               console.error(
                 "Error submitting writing test:",
@@ -333,7 +354,14 @@ const TestLayout = ({
             console.log("hahha");
 
             if (result.meta.requestStatus === "fulfilled") {
-              setSkillResultIds((prev) => [...prev, result.payload.id]);
+              setSkillResultIds((prev) => [
+                ...prev,
+                {
+                  id: result.payload.id,
+                  skillId: result.payload.skillId,
+                  totalParts: result.payload.totalParts,
+                },
+              ]);
             } else {
               console.error(
                 "Error submitting writing test:",
@@ -361,7 +389,7 @@ const TestLayout = ({
     <>
       {submitted ? (
         <TestExplain
-          totalPartsSubmit={totalPartsSubmit}
+          // totalPartsSubmit={totalPartsSubmit}
           skillResultIds={skillResultIds}
           testId={testId}
           skillId={practiceTestData?.skillId}

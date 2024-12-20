@@ -46,13 +46,13 @@ function PaymentMethod() {
       await GiveMeMyMoney(
         user.id,
         price * -1,
-        `Book schedule with teacher ${teacherName}`,
+        `Book schedule with teacher ${teacherName} (${user.email})`,
         'Schedule'
       );
       await GiveMeMyMoney(
         teacherId,
         price,
-        `Your schedule has been booked by ${user.name}`,
+        `Your schedule has been booked by ${user.name} (${user.email})`,
         'Schedule'
       );
 

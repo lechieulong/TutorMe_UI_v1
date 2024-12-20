@@ -16,7 +16,7 @@ import { STATUS } from "../../constant/SliceName";
 import { getUser } from "../../service/GetUser";
 import CreateCourse from "../Course/components/CreateCourse";
 import { GetCreatedCourses } from "../../redux/courses/CourseSlice";
-
+import { toast, ToastContainer } from "react-toastify";
 const MentorCourseList = () => {
   const dispatch = useDispatch();
   const {
@@ -24,8 +24,6 @@ const MentorCourseList = () => {
     status,
     error,
   } = useSelector((state) => state.courses);
-
-  const [user, setUser] = useState(null);
   const [selectedSkill, setSelectedSkill] = useState("All");
   const [currentPage, setCurrentPage] = useState(1);
   const [searchTerm, setSearchTerm] = useState("");
@@ -40,7 +38,6 @@ const MentorCourseList = () => {
 
   useEffect(() => {
     const userFromToken = getUser();
-    setUser(userFromToken);
     if (userFromToken) {
       dispatch(GetCreatedCourses());
     }
@@ -91,9 +88,9 @@ const MentorCourseList = () => {
         try {
           await axios.delete(`https://localhost:7030/api/Courses/${courseId}`);
           dispatch(GetCreatedCourses());
-          setNotification("Khóa học đã được xóa thành công.");
+          toast.success("Delete course success!");
         } catch (error) {
-          setNotification("Xóa khóa học thất bại.");
+          toast.error("Delete course failed!");
         }
         setIsConfirmOpen(false);
       },
@@ -236,6 +233,7 @@ const MentorCourseList = () => {
             </div>
           </div>
         )}
+        <ToastContainer autoClose={3000} newestOnTop closeOnClick />
       </div>
     </MainLayout>
   );

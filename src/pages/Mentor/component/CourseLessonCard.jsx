@@ -17,6 +17,7 @@ const CourseLessonCard = ({
   coursePartId,
   isEnrolled,
   isMentor,
+  isDelete,
 }) => {
   const [collapsedLessons, setCollapsedLessons] = useState({});
   const [courseLessons, setCourseLessons] = useState([]);
@@ -117,7 +118,7 @@ const CourseLessonCard = ({
       if (Array.isArray(response.data) && response.data.length > 0) {
         setTestExams(response.data);
       } else {
-        console.error("No TestExams found for the lesson.");
+        console.log();
       }
     } catch (err) {
       console.error("Error fetching test exams:", err);
@@ -206,13 +207,17 @@ const CourseLessonCard = ({
                           <h4 className="text-md font-semibold">
                             {courseLesson.title}
                           </h4>
-                          <button
-                            type="button"
-                            onClick={() => confirmDeleteLesson(courseLesson.id)}
-                            className="py-2 px-3 text-sm font-medium rounded-lg border border-gray-200 bg-red-500 text-white shadow-sm hover:bg-red-600 focus:outline-none focus:ring-2 focus:ring-red-500"
-                          >
-                            Delete Lesson
-                          </button>
+                          {isDelete && (
+                            <button
+                              type="button"
+                              onClick={() =>
+                                confirmDeleteLesson(courseLesson.id)
+                              }
+                              className="py-2 px-3 text-sm font-medium rounded-lg border border-gray-200 bg-red-500 text-white shadow-sm hover:bg-red-600 focus:outline-none focus:ring-2 focus:ring-red-500"
+                            >
+                              Delete Lesson
+                            </button>
+                          )}
                         </div>
                       </div>
 

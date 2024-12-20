@@ -8,6 +8,8 @@ import { updateEnabledStatus } from "../../../redux/classes/ClassSlice";
 import { useDispatch } from "react-redux";
 import useAuthToken from "../../../hooks/useAuthToken";
 import UpdateClass from "../UpdateClass";
+import { faMultiply } from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 const GreenSwitch = styled(Switch)(({ theme }) => ({
   "& .MuiSwitch-switchBase.Mui-checked": {
     color: "#007549",
@@ -45,10 +47,10 @@ const ClassCard = ({
         if (typeof response.data.isEnabled === "boolean") {
           setIsSwitchOn(response.data.isEnabled);
         } else {
-          console.error("Phản hồi từ API không hợp lệ");
+          console.error("Invalid response from API");
         }
       } catch (error) {
-        console.error("Không thể tải trạng thái enabled của lớp học", error);
+        console.error("Failed to fetch enabled status of the class", error);
       }
     };
 
@@ -58,31 +60,34 @@ const ClassCard = ({
   if (!isSwitchOn && !mentorAndList) {
     return null;
   }
+
   const handleUpdateClassSuccess = () => {
     updateClassSuccessfull();
-    console.log("Lớp học đã được cập nhật thành công!");
+    console.log("Class has been updated successfully!");
   };
 
   const handleSwitchChange = () => {
     const newStatus = !isSwitchOn;
     const confirmationMessage = newStatus
-      ? "Bạn có chắc muốn bật hiển thị lớp học này không?"
-      : "Bạn có chắc muốn tắt hiển thị lớp học này không?";
+      ? "Are you sure you want to enable this class?"
+      : "Are you sure you want to disable this class?";
 
     if (window.confirm(confirmationMessage)) {
-      // Gọi action Redux để cập nhật trạng thái
+      // Dispatch Redux action to update status
       dispatch(
         updateEnabledStatus({ classId: classItem.id, isEnabled: newStatus })
       )
         .then(() => {
-          setIsSwitchOn(newStatus); // Cập nhật trạng thái trong component
-          alert(`Lớp học đã được ${newStatus ? "hiển thị" : "ẩn"} thành công.`);
-          // Gọi callback để xử lý cập nhật danh sách nếu cần
+          setIsSwitchOn(newStatus); // Update status in component
+          alert(
+            `Class has been ${newStatus ? "enabled" : "disabled"} successfully.`
+          );
+          // Call callback to handle list update if necessary
           onSwitchChange && onSwitchChange(classItem.id, newStatus);
         })
         .catch((error) => {
-          console.error("Cập nhật trạng thái lớp học thất bại", error);
-          alert("Đã xảy ra lỗi khi cập nhật trạng thái lớp học.");
+          console.error("Failed to update class status", error);
+          alert("An error occurred while updating class status.");
         });
     }
   };
@@ -96,7 +101,7 @@ const ClassCard = ({
     }
 
     if (!isSwitchOn) {
-      alert("Lớp học này hiện không khả dụng.");
+      alert("This class is currently unavailable.");
       onSelect && onSelect(false);
     } else {
       onSelect && onSelect(classItem.id);
@@ -109,23 +114,23 @@ const ClassCard = ({
   };
 
   const handleDeleteClass = async (event) => {
-    event.stopPropagation(); // Ngừng sự kiện từ div chứa ClassCard
+    event.stopPropagation(); // Prevent event from being triggered by the parent div
 
     const confirmationMessage =
-      "Bạn có chắc muốn xóa lớp học này? Hành động này không thể hoàn tác.";
+      "Are you sure you want to delete this class? This action cannot be undone.";
     if (window.confirm(confirmationMessage)) {
       try {
         const response = await axios.delete(
           `https://localhost:7030/api/class/${classItem.id}`
         );
         if (response.status === 200) {
-          alert("Lớp học đã được xóa thành công.");
+          alert("Class has been deleted successfully.");
           handleDeleteClassSuccess(); // Trigger reload in ClassList component
         } else {
-          alert("Không thể xóa lớp học này.");
+          alert("Unable to delete this class.");
         }
       } catch (error) {
-        console.error("Xóa lớp học thất bại", error);
+        console.error("Failed to delete class", error);
       }
     }
   };
@@ -133,10 +138,12 @@ const ClassCard = ({
   const handleUpdateClass = () => {
     setIsUpdateOpen(true); // Open the popup
   };
+
   const cardClassName = location.pathname.includes("/classOfCourse")
     ? "flex-shrink-0 w-full sm:w-1/1 md:w-1/2 lg:w-1/2 p-2 cursor-pointer"
     : "flex-shrink-0 w-full sm:w-1/2 md:w-1/3 lg:w-1/4 p-2 cursor-pointer";
 
+  const isDelete = classItem?.enrollmentCount > 0 ? false : true;
   return (
     <div className={cardClassName} onClick={handleCardClick}>
       <div
@@ -149,10 +156,16 @@ const ClassCard = ({
             {classItem.className}
           </h5>
           <p className="text-sm text-gray-500 mt-1">
-            Người ghi danh: {classItem.enrollmentCount}
+            Enrolled: {classItem.enrollmentCount}
           </p>
-          <p className="text-sm text-gray-500 mt-1">
-            Ngày bắt đầu: {classItem.startDate}
+
+          {/* Class Description with Ellipsis */}
+          <p
+            className="text-sm text-gray-500 mt-1 h-16 overflow-hidden text-ellipsis hover:text-gray-800"
+            style={{ maxWidth: "250px" }}
+            title={classItem.classDescription} // Tooltip on hover
+          >
+            {classItem.classDescription}
           </p>
         </div>
 
@@ -165,17 +178,19 @@ const ClassCard = ({
             />
             <div>
               <button
-                onClick={handleDeleteClass}
-                className="text-red-500 text-sm font-semibold hover:text-red-700"
-              >
-                Delete
-              </button>
-              <button
                 onClick={handleUpdateClass}
                 className="text-red-500 text-sm font-semibold hover:text-red-700"
               >
                 Update
               </button>
+              {isDelete && (
+                <button
+                  onClick={handleDeleteClass}
+                  className="text-red-500 text-sm font-semibold hover:text-red-700 "
+                >
+                  <FontAwesomeIcon icon={faMultiply} className="text-xl" />
+                </button>
+              )}
             </div>
           </div>
         )}
@@ -184,8 +199,8 @@ const ClassCard = ({
         <UpdateClass
           classItem={classItem}
           courseId={classItem.courseId}
-          onClose={() => setIsUpdateOpen(false)} // Đóng popup khi đóng
-          onCreateSuccess={handleUpdateClassSuccess} // Gọi hàm khi cập nhật thành công
+          onClose={() => setIsUpdateOpen(false)} // Close popup when closed
+          onCreateSuccess={handleUpdateClassSuccess} // Call function when update is successful
         />
       )}
     </div>

@@ -1,28 +1,16 @@
 import { useState } from "react";
 import axios from "axios";
 import Confirm from "../../../components/common/Confirm";
-import Notification from "../../../components/common/Notification";
-
-const CreateCoursePart = ({
-  courseSkillId,
-  onClose,
-  onCreated,
-  mentorAndList,
-}) => {
-  console.log("Props in CreateCoursePart:", { courseSkillId, mentorAndList });
-
+import { toast, ToastContainer } from "react-toastify";
+const CreateCoursePart = ({ courseSkillId, onClose, onCreated }) => {
   const [coursePart, setCoursePart] = useState({
     courseSkillId: courseSkillId || "",
     title: "",
-    contentType: "",
-    contentUrl: "",
     order: 0,
   });
 
-  const [error, setError] = useState(null);
   const [loading, setLoading] = useState(false);
   const [confirmOpen, setConfirmOpen] = useState(false);
-  const [notification, setNotification] = useState("");
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -31,7 +19,6 @@ const CreateCoursePart = ({
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setError(null);
     setConfirmOpen(true); // Mở modal Confirm trước khi tạo
   };
 
@@ -39,12 +26,13 @@ const CreateCoursePart = ({
     setLoading(true);
     try {
       await axios.post("https://localhost:7030/api/CourseParts", coursePart);
-      setNotification("Course Part created successfully!");
+      toast.success("Create Course's part success");
       onCreated();
       onClose();
     } catch (err) {
-      setError(err.response?.data?.message || "Failed to create course part");
-      setNotification("Failed to create course part.");
+      const message =
+        err.response?.data?.message || "Failed to create course part.";
+      toast.error(message);
     } finally {
       setLoading(false);
       setConfirmOpen(false);
@@ -72,39 +60,6 @@ const CreateCoursePart = ({
             className="mt-1 block w-full border border-gray-300 rounded-md p-2"
           />
         </div>
-        <div className="mb-4">
-          <label className="block text-gray-700">Content Type</label>
-          <input
-            type="text"
-            name="contentType"
-            value={coursePart.contentType}
-            onChange={handleChange}
-            required
-            className="mt-1 block w-full border border-gray-300 rounded-md p-2"
-          />
-        </div>
-        <div className="mb-4">
-          <label className="block text-gray-700">Content URL</label>
-          <input
-            type="text"
-            name="contentUrl"
-            value={coursePart.contentUrl}
-            onChange={handleChange}
-            className="mt-1 block w-full border border-gray-300 rounded-md p-2"
-          />
-        </div>
-        <div className="mb-4">
-          <label className="block text-gray-700">Order</label>
-          <input
-            type="number"
-            name="order"
-            value={coursePart.order}
-            onChange={handleChange}
-            min="0"
-            required
-            className="mt-1 block w-full border border-gray-300 rounded-md p-2"
-          />
-        </div>
 
         <div className="flex justify-between items-center mt-4">
           <button
@@ -122,7 +77,6 @@ const CreateCoursePart = ({
             Cancel
           </button>
         </div>
-        {error && <p className="text-red-500 mt-4">{error}</p>}
       </form>
 
       <Confirm
@@ -133,12 +87,7 @@ const CreateCoursePart = ({
         shoud="yes"
         message="Are you sure you want to create this Course Part?"
       />
-
-      <Notification
-        message={notification}
-        onClose={() => setNotification("")}
-        shoud={error ? "no" : "yes"}
-      />
+      <ToastContainer autoClose={3000} newestOnTop closeOnClick />
     </div>
   );
 };

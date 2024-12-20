@@ -1,10 +1,12 @@
 import React, { useEffect } from 'react';
 import { useSearchParams,useNavigate  } from 'react-router-dom';
 import { getOrder_Backend ,UpdateOrder_backend,GiveMeMyMoney,CheckBanlance} from '../../components/common/PayOS';
+import { getUser } from '../../service/GetUser';
 
 const PaymentResult = () => {
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
+  const user = getUser();
 
   // Extract URL parameters
   const code = searchParams.get('code');
@@ -34,7 +36,7 @@ const PaymentResult = () => {
           const order = await getOrder_Backend(orderCode);
           order.paymentStatus='PAID ';
           await UpdateOrder_backend(order);
-          await GiveMeMyMoney(order.amount,"deposit money","Deposit");
+          await GiveMeMyMoney(user?.sub,order.amount,"deposit money","Deposit");
           navigate('/');
           // Handle payment cancellation with order details
         } catch (error) {

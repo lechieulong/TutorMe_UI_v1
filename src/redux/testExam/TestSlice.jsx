@@ -249,16 +249,12 @@ export const getTesting = createAsyncThunk(
 
 export const getExplainTest = createAsyncThunk(
   `${SLICE_NAMES.TEST}/${ACTIONS.GET_EXPLAIN_TEST}`,
-  async (
-    { testId, userId, skillId, totalPartsSubmit },
-    { rejectWithValue }
-  ) => {
+  async ({ testId, userId, skillResultIds }, { rejectWithValue }) => {
     try {
       const response = await axios.post(`${API_BASE_URL}/test/testExplain`, {
         userId,
         testId,
-        skillId,
-        totalPartsSubmit,
+        skillResultIds,
       });
       return response.data;
     } catch (error) {

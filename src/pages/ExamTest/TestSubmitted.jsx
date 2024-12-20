@@ -128,7 +128,6 @@ const TestSubmitted = ({ setIsViewExplain, setActiveTab, activeTab }) => {
   };
 
   const handleTestClick = (testId) => {
-    console.log("haha", activeTab);
     setActiveTab("Results");
     setSelectedTestId(testId);
   };

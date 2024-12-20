@@ -130,11 +130,7 @@ const ResultList = ({ testId, setIsViewExplain, activeTab, setActiveTab }) => {
           )}
         </div>
       ) : (
-        <TestExplain
-          totalPartsSubmit={totalPartsSubmit}
-          skillResultIds={skillResultIds}
-          testId={testId}
-        />
+        <TestExplain skillResultIds={skillResultIds} testId={testId} />
       )}
     </>
   );

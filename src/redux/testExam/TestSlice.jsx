@@ -56,8 +56,10 @@ export const submitAnswerTest = createAsyncThunk(
           totalParts,
         },
         {
-          Authorization: `Bearer ${token}`,
+          withCredentials: true,
+          // Authorization: `Bearer ${token}`,
           headers: {
+            Authorization: `Bearer ${token}`,
             "Content-Type": "application/json",
           },
         }

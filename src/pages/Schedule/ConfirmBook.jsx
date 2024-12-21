@@ -46,13 +46,13 @@ function PaymentMethod() {
       await GiveMeMyMoney(
         user.id,
         price * -1,
-        `Book schedule with teacher ${teacherName}`,
+        `Book schedule with teacher ${teacherName} (${user.email})`,
         'Schedule'
       );
       await GiveMeMyMoney(
         teacherId,
         price,
-        `Your schedule has been booked by ${user.name}`,
+        `Your schedule has been booked by ${user.name} (${user.email})`,
         'Schedule'
       );
 
@@ -85,7 +85,6 @@ function PaymentMethod() {
 
   return (
     <MainLayout>
-      <ToastContainer autoClose={3000} newestOnTop closeOnClick />
       <div className="flex flex-col items-center justify-center min-h-screen bg-gray-100">
         <div className="w-full max-w-2xl bg-white shadow-md rounded-md">
           <div className="bg-gray-800 text-white py-4 rounded-t-md">

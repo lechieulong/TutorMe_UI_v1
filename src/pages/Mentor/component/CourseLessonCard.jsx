@@ -70,7 +70,7 @@ const CourseLessonCard = ({
       setLoading(false);
     } catch (err) {
       setLoading(false);
-      setError("Failed to load course lessons.");
+      setError("Don't have any course's lesson");
     }
   };
 

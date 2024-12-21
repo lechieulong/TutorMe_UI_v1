@@ -156,7 +156,7 @@ const CourseDetail = () => {
       setIsLoading(true);
       try {
         const response = await axios.get(
-          `${apiURLConfig}/CourseRating/${courseId}/ratings`,
+          `${apiURLConfig.baseURL}/CourseRating/${courseId}/ratings`,
           { params: { userId } }
         );
         setHasRated(response?.data?.length > 0);
@@ -277,7 +277,7 @@ const CourseDetail = () => {
     setIsLoading(true);
     try {
       const response = await axios.get(
-        `${apiURLConfig}/CourseRating/${courseId}/ratings`,
+        `${apiURLConfig.baseURL}/CourseRating/${courseId}/ratings`,
         { params: { userId } }
       );
       setHasRated(response?.data?.length > 0);

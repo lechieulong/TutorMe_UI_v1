@@ -26,13 +26,15 @@ const MyLearning = () => {
       try {
         // Fetch Enrollment Data
         const enrollmentResponse = await axios.get(
-          `${apiURLConfig}/Enrollment/User/${user.sub}`
+          `${apiURLConfig.baseURL}/Enrollment/User/${user.sub}`
         );
 
         const enrolledCourses = enrollmentResponse.data || [];
         const courseInfoPromises = enrolledCourses.map((enrollment) =>
           axios
-            .get(`${apiURLConfig}/Courses/course-info/${enrollment.courseId}`)
+            .get(
+              `${apiURLConfig.baseURL}/Courses/course-info/${enrollment.courseId}`
+            )
             .then((response) => ({
               ...response.data.result, // Kết hợp thông tin course
               classId: enrollment.classId, // Thêm classId từ Enrollment

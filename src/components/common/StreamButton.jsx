@@ -69,9 +69,9 @@ const FormWithModal = ({ LiveStreamId }) => {
     }
   };
 
-  const handleCreate = () => {
+  const handleCreate = async() => {
     console.log("Dữ liệu tạo:", formData);
-    createStreamSession(LiveStreamId, formData.name, formData.Type, 1);
+    await createStreamSession(LiveStreamId, formData.name, formData.Type, 1);
     setIsModalOpen(false);
     window.location.href = `/live-stream?roomID=${LiveStreamId}`;
   };

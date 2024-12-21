@@ -43,7 +43,7 @@ const CourseSkillCard = ({
     setIsLoading(true);
     try {
       const response = await axios.get(
-        `${apiURLConfig}/CourseSkills/Course/${courseId}`
+        `${apiURLConfig.baseURL}/CourseSkills/Course/${courseId}`
         // `${apiURLConfig}/CourseSkills/Course/${courseId}`
       );
       setSkills(response.data);
@@ -66,10 +66,9 @@ const CourseSkillCard = ({
     setIsLoading(true);
     try {
       const response = await axios.get(
-        `${apiURLConfig}/CourseSkills/GetTestExamsBySkillIdCourse?skillIdCourse=${skillId}`,
+        `${apiURLConfig.baseURL}/CourseSkills/GetTestExamsBySkillIdCourse?skillIdCourse=${skillId}`,
         { headers: { Authorization: `Bearer ${token}` } }
       );
-      console.log(response);
 
       setTestExams((prevExams) => ({
         ...prevExams,
@@ -226,6 +225,7 @@ const CourseSkillCard = ({
                   isEnrolled={isEnrolled}
                   isMentor={isMentor}
                   isDelete={isDelete}
+                  courseSkillId={skill.id}
                 />
 
                 <div className="px-10 bg-gray-50 py-6  rounded-lg shadow-md">
@@ -253,7 +253,7 @@ const CourseSkillCard = ({
                                 }
                                 className="block w-full py-2 px-4 text-sm font-semibold text-green-700 bg-green-100 rounded-lg hover:bg-green-200 hover:text-green-800 transition duration-300"
                               >
-                                {exam.testName}
+                                Final Test: {exam.testName}
                               </button>
                             </div>
                           )

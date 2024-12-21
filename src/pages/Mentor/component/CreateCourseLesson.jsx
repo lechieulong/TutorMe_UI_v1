@@ -28,7 +28,7 @@ const CreateCourseLesson = ({ coursePartId, onClose, onCreated }) => {
   const confirmActionHandler = async () => {
     setLoading(true);
     try {
-      await axios.post(`${apiURLConfig}/CourseLessons`, lesson);
+      await axios.post(`${apiURLConfig.baseURL}/CourseLessons`, lesson);
       setNotification("Course Lesson created successfully!");
       onCreated();
       onClose();

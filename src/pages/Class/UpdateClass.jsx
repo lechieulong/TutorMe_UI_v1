@@ -47,7 +47,7 @@ const UpdateClass = ({ classItem, courseId, onClose, onCreateSuccess }) => {
     try {
       // Gửi PUT request đến API để cập nhật lớp học
       const response = await axios.put(
-        `${apiURLConfig}/class/update/${Id}`, // Đúng với URL API
+        `${apiURLConfig.baseURL}/class/update/${Id}`, // Đúng với URL API
         updatedClass
       );
 

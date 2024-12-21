@@ -21,7 +21,7 @@ export const uploadCourseFile = createAsyncThunk(
       formData.append("file", file);
 
       const response = await axios.post(
-        `${apiURLConfig}/upload-course-file?type=${type}&id=${id}`,
+        `${apiURLConfig.baseURL}/upload-course-file?type=${type}&id=${id}`,
         formData,
         {
           headers: {
@@ -55,7 +55,7 @@ export const createCourseLessonContentSlice = createAsyncThunk(
         formData.append("file", contentData.file);
 
         const uploadResponse = await axios.post(
-          `${apiURLConfig}/upload-course-file?type=courselessoncontent&id=${courseLessonId}`,
+          `${apiURLConfig.baseURL}/upload-course-file?type=courselessoncontent&id=${courseLessonId}`,
           formData,
           {
             headers: {
@@ -79,7 +79,7 @@ export const createCourseLessonContentSlice = createAsyncThunk(
       };
 
       await axios.post(
-        `${apiURLConfig}/CourseLessonContent`,
+        `${apiURLConfig.baseURL}/CourseLessonContent`,
         lessonContentData,
         {
           headers: {

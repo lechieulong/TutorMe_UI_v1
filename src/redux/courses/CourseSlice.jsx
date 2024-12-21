@@ -173,20 +173,32 @@ export const fetchCourseLessons = createAsyncThunk(
     }
   }
 );
+
 export const updateCourseStatus = createAsyncThunk(
   "courses/updateStatus",
-  async ({ courseId, courseEnabled }, { rejectWithValue }) => {
+  async ({ courseId, isEnabled }, { rejectWithValue }) => {
     try {
       const response = await axios.put(
         `${apiURLConfig.baseURL}/Courses/${courseId}/update-status`,
-        courseEnabled, // Gửi trực tiếp giá trị boolean
+        isEnabled, // Gửi trực tiếp giá trị boolean
         {
-          headers: { "Content-Type": "application/json" },
+          headers: { "Content-Type": "application/json" }, // Header đúng
         }
       );
 
-      const { courseEnabled: updatedCourseEnabled } = response.data; // Lấy giá trị courseEnabled từ response
-      return { courseId, courseEnabled: updatedCourseEnabled }; // Trả về courseId và trạng thái courseEnabled từ response
+      console.log(response.data); // In toàn bộ response data để kiểm tra cấu trúc
+
+      // Kiểm tra xem liệu response có chứa IsEnabled không
+      const IsEnabled = response.data.IsEnabled || response.data.isEnabled;
+
+      // Nếu không tìm thấy IsEnabled, trả về lỗi hoặc mặc định
+      if (IsEnabled === undefined) {
+        return rejectWithValue("Dữ liệu trả về không hợp lệ.");
+      }
+
+      console.log(IsEnabled); // Kiểm tra giá trị của IsEnabled
+
+      return { courseId, IsEnabled }; // Trả về courseId và IsEnabled
     } catch (error) {
       if (error.response) {
         if (error.response.status === 400) {

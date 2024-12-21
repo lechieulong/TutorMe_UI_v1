@@ -58,27 +58,42 @@ const CourseCard = ({
     }
   };
 
-  const handleSwitchChange = () => {
-    const newStatus = !isSwitchOn;
+  const handleSwitchChange = async () => {
+    const newStatus = !isSwitchOn; // Calculate the new status of the switch
 
-    // Cập nhật hành động xác nhận và mở modal
-    setConfirmationAction(() => () => {
-      dispatch(updateCourseStatus({ courseId, isEnabled: newStatus })) // Chuyển đúng tham số
-        .then(() => {
-          setIsSwitchOn(newStatus); // Cập nhật trạng thái trong component
+    // Update confirmation action and open modal
+    setConfirmationAction(() => async () => {
+      try {
+        // Send request to update the course status
+        const result = await dispatch(
+          updateCourseStatus({ courseId, isEnabled: newStatus })
+        );
+
+        // Check if the API returns the IsEnabled value
+        if (result.payload && result.payload.IsEnabled !== undefined) {
+          const updatedStatus = result.payload.IsEnabled; // Get the value from API
+          setIsSwitchOn(updatedStatus); // Update the status in the component
           setNotification(
-            `Khóa học đã được ${newStatus ? "hiển thị" : "ẩn"} thành công.`
+            `The course has been ${
+              updatedStatus ? "enabled" : "disabled"
+            } successfully.`
           );
           setShould("yes");
-          onSwitchChange && onSwitchChange(courseId, newStatus);
-        })
-        .catch(() => {
-          setNotification("Đã xảy ra lỗi khi cập nhật trạng thái lớp học.");
+          onSwitchChange && onSwitchChange(courseId, updatedStatus);
+        } else {
+          setNotification("No classes found, so the course cannot be enabled.");
+          setIsSwitchOn(false); // Reset to default state if there's an error
           setShould("no");
-        });
+        }
+      } catch (error) {
+        // Handle error in case of connection failure or other errors
+        setNotification(error.message || "Connection error with the server.");
+        setIsSwitchOn(false);
+        setShould("no");
+      }
     });
 
-    // Mở modal xác nhận
+    // Open confirmation modal
     setShowConfirm(true);
   };
 

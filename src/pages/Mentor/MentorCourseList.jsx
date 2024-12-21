@@ -173,10 +173,6 @@ const MentorCourseList = () => {
           )}
         </div>
 
-        {error && (
-          <div className="text-red-500 text-center mb-4">Error: {error}</div>
-        )}
-
         {paginatedCourses.length > 0 ? (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mt-6">
             {paginatedCourses.map((course) => (

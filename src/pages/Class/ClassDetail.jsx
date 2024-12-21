@@ -28,7 +28,9 @@ const ClassDetail = () => {
   const [testExams, setTestExams] = useState([]);
   const fetchClassDetail = async () => {
     try {
-      const response = await axios.get(`${apiURLConfig}/class/${classId}`);
+      const response = await axios.get(
+        `${apiURLConfig.baseURL}/class/${classId}`
+      );
       if (response.data.isSuccess) {
         setClassDetail(response.data.result);
       } else {
@@ -64,7 +66,7 @@ const ClassDetail = () => {
   const fetchClassFiles = async () => {
     try {
       const response = await axios.get(
-        `${apiURLConfig}/ClassFile/class/${classId}`
+        `${apiURLConfig.baseURL}/ClassFile/class/${classId}`
       );
       if (response.data) {
         setClassFiles(response.data);
@@ -80,7 +82,7 @@ const ClassDetail = () => {
   const handleCreateTest = async () => {
     try {
       const response = await axios.get(
-        `${apiURLConfig}/CourseSkills/Course/${courseId}`
+        `${apiURLConfig.baseURL}/CourseSkills/Course/${courseId}`
       );
       if (response.data?.length > 0) {
         const descriptions = response.data.map(
@@ -99,7 +101,7 @@ const ClassDetail = () => {
   const handleFileSubmit = async (fileData) => {
     try {
       // API call to upload the file
-      await axios.post(`${apiURLConfig}/ClassFile`, fileData);
+      await axios.post(`${apiURLConfig.baseURL}/ClassFile`, fileData);
       handleFileCreated();
     } catch (err) {
       console.error("File upload failed:", err);
@@ -114,7 +116,7 @@ const ClassDetail = () => {
   const fetchTestExams = async () => {
     try {
       const response = await axios.get(
-        `${apiURLConfig}/class/GetTestExamsByClassId/${classId}`
+        `${apiURLConfig.baseURL}/class/GetTestExamsByClassId/${classId}`
       );
       console.log(response);
 
@@ -141,6 +143,7 @@ const ClassDetail = () => {
   if (error) {
     return <div>{error}</div>;
   }
+  console.log(mentorAndList);
 
   return (
     <MainLayout>
@@ -166,14 +169,7 @@ const ClassDetail = () => {
                   <span className="font-semibold">Description: </span>
                   {classDetail.classDescription}
                 </p>
-                <p className="text-gray-600 mb-4">
-                  <span className="font-semibold">Start Date: </span>
-                  {new Date(classDetail.startDate).toLocaleDateString()}
-                </p>
-                <p className="text-gray-600 mb-4">
-                  <span className="font-semibold">End Date: </span>
-                  {new Date(classDetail.endDate).toLocaleDateString()}
-                </p>
+
                 {mentorAndList && (
                   <div className="flex gap-4">
                     <button

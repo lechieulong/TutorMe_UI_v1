@@ -5,6 +5,7 @@ import { Checkbox, FormControlLabel } from "@mui/material";
 import Notification from "../../../components/common/Notification";
 import Confirm from "../../../components/common/Confirm";
 import apiURLConfig from "../../../redux/common/apiURLConfig";
+
 const SkillMapping = {
   Reading: "0",
   Listening: "1",
@@ -31,7 +32,7 @@ const CreateCourse = ({ onClose, onCreateSuccess }) => {
       formData.append("file", file);
 
       const response = await axios.post(
-        `${apiURLConfig}/upload-course-file?type=course&id=${courseId}`,
+        `${apiURLConfig.baseURL}/upload-course-file?type=course&id=${course.courseId}`,
         formData,
         {
           headers: {
@@ -137,7 +138,10 @@ const CreateCourse = ({ onClose, onCreateSuccess }) => {
       setConfirmMessage("Are you sure you want to create new course?");
       setConfirmAction(() => async () => {
         try {
-          await axios.post(`${apiURLConfig}/Courses`, courseWithTimestamps);
+          await axios.post(
+            `${apiURLConfig.baseURL}/Courses`,
+            courseWithTimestamps
+          );
           setNotification("Create new course success!");
           onCreateSuccess();
           onClose();

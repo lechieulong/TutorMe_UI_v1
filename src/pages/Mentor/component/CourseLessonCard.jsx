@@ -45,7 +45,7 @@ const CourseLessonCard = ({
   const fetchCourseLessons = async () => {
     try {
       const response = await axios.get(
-        `${apiURLConfig}/CourseLessons/CoursePart/${coursePartId}`,
+        `${apiURLConfig.baseURL}/CourseLessons/CoursePart/${coursePartId}`,
         { headers: { Authorization: `Bearer ${token}` } }
       );
       setCourseLessons(response.data.courseLessons);
@@ -63,8 +63,6 @@ const CourseLessonCard = ({
 
       setLoading(false);
     } catch (err) {
-      setError("Failed to fetch course lessons");
-      setNotification("Failed to fetch course lessons.");
       setLoading(false);
     }
   };
@@ -99,7 +97,7 @@ const CourseLessonCard = ({
   const handleCreateTest = async (lessonId) => {
     try {
       const response = await axios.get(
-        `${apiURLConfig}/CourseSkills/DescriptionByCourseLesson/${lessonId}`,
+        `${apiURLConfig.baseURL}/CourseSkills/DescriptionByCourseLesson/${lessonId}`,
         { headers: { Authorization: `Bearer ${token}` } }
       );
       setIsCreateTest(true);
@@ -113,7 +111,7 @@ const CourseLessonCard = ({
   const fetchTestExams = async (lessonId) => {
     try {
       const response = await axios.get(
-        `${apiURLConfig}/CourseLessons/GetTestExamByLessonId/${lessonId}`
+        `${apiURLConfig.baseURL}/CourseLessons/GetTestExamByLessonId/${lessonId}`
       );
       if (Array.isArray(response.data) && response.data.length > 0) {
         setTestExams(response.data);
@@ -148,7 +146,7 @@ const CourseLessonCard = ({
     if (isConfirmed) {
       // Nếu người dùng xác nhận, thực hiện xóa
       axios
-        .delete(`${apiURLConfig}/CourseLessons/${lessonId}`, {
+        .delete(`${apiURLConfig.baseURL}/CourseLessons/${lessonId}`, {
           headers: { Authorization: `Bearer ${token}` },
         })
         .then(() => {
@@ -187,7 +185,7 @@ const CourseLessonCard = ({
             <div className="mt-4 overflow-hidden transition-all duration-1000 ease-in-out">
               <div>
                 {courseLessons.length === 0 ? (
-                  <p>No lessons found for this course part.</p>
+                  <p>Don't have any course's lesson</p>
                 ) : (
                   courseLessons.map((courseLesson) => (
                     <div

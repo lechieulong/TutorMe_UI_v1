@@ -113,7 +113,7 @@ const MentorCourseDetail = () => {
     const checkIfMentor = async () => {
       try {
         const { data } = await axios.get(
-          `${apiURLConfig}/Courses/check-lecturer?courseId=${courseId}&userId=${userId}`
+          `${apiURLConfig.baseURL}/Courses/check-lecturer?courseId=${courseId}&userId=${userId}`
         );
         setIsMentor(!!data.result);
       } catch {
@@ -226,10 +226,6 @@ const MentorCourseDetail = () => {
       setNotificationUpdated(true);
     }
   }, [mentorAndList, isMentor, notificationUpdated]);
-  console.log(mentorAndList);
-  console.log(userId);
-  console.log(courseId);
-
   return (
     <MainLayout>
       <div className="flex flex-col w-screen">

@@ -34,4 +34,4 @@ jobs:
           app-name: "AIILPREP"  # Replace with your Azure Web App name
           slot-name: "production"  # Replace with your slot name if using deployment slots
           publish-profile: ${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE }}
-          package: ./dish  # Make sure this points to your build output folder
+          package: ./dist  # Make sure this points to your build output folder

@@ -10,6 +10,7 @@ import Register from "./pages/Authentication/Register";
 import ForgotPassword from "./pages/Authentication/ForgotPassword";
 import ResetPassword from "./pages/Authentication/ResetPassword";
 import UpMoney from "./pages/User/UpMoney";
+import { ToastContainer } from "react-toastify";
 
 import UserDetail from "./pages/User/UserDetail";
 import TeacherProfile from "./pages/Teacher/TeacherProfile";
@@ -64,6 +65,7 @@ import Demo from "./Demo";
 const App = () => {
   return (
     <div className=" min-h-screen ">
+      <ToastContainer/>
       <Router>
         <Routes>
           <Route path="/terms" element={<Term />} />

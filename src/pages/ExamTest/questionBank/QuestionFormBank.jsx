@@ -12,7 +12,7 @@ import {
   updateQuestion,
 } from "../../../redux/testExam/TestSlice";
 import { useDispatch } from "react-redux";
-import { toast, ToastContainer } from "react-toastify";
+import { toast } from "react-toastify";
 
 const QuestionFormBank = ({ setIsModalOpen, editQuestion }) => {
   const dispatch = useDispatch();
@@ -129,8 +129,6 @@ const QuestionFormBank = ({ setIsModalOpen, editQuestion }) => {
 
   return (
     <>
-      <ToastContainer autoClose={3000} newestOnTop closeOnClick />
-
       <button
         className="border border-red-300 mb-2"
         type="button"

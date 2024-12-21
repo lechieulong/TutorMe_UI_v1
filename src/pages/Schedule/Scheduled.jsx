@@ -90,9 +90,13 @@ const CoachingSchedule = () => {
     const sortedTableData = useMemo(() => {
         const sorted = [...filteredTableData]; // Make a copy of filteredTableData to sort
         const { key, direction } = sortConfig;
+    
         return sorted.sort((a, b) => {
-            if (a[key] < b[key]) return direction === 'asc' ? -1 : 1;
-            if (a[key] > b[key]) return direction === 'asc' ? 1 : -1;
+            const aValue = key === 'bookedDate' ? new Date(a[key]) : a[key];
+            const bValue = key === 'bookedDate' ? new Date(b[key]) : b[key];
+    
+            if (aValue < bValue) return direction === 'asc' ? -1 : 1;
+            if (aValue > bValue) return direction === 'asc' ? 1 : -1;
             return 0;
         });
     }, [filteredTableData, sortConfig]);

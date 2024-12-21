@@ -7,7 +7,7 @@ import { FaRegEdit, FaArrowRight } from "react-icons/fa";
 import ResultList from "./ResultList";
 import TestExplain from "../TestExam/TestExplain";
 import { UpdateTest } from "../../redux/ADMIN/TestExamSlice";
-import { ToastContainer, toast } from "react-toastify";
+import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
 const TestSubmitted = ({ setIsViewExplain, setActiveTab, activeTab }) => {
@@ -332,7 +332,6 @@ const TestSubmitted = ({ setIsViewExplain, setActiveTab, activeTab }) => {
           </div>
         </div>
       )}
-      <ToastContainer autoClose={3000} newestOnTop closeOnClick />
     </div>
   );
 };

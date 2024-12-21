@@ -69,9 +69,9 @@ const FormWithModal = ({ LiveStreamId }) => {
     }
   };
 
-  const handleCreate = () => {
+  const handleCreate = async() => {
     console.log("Dữ liệu tạo:", formData);
-    createStreamSession(LiveStreamId, formData.name, formData.Type, 1);
+    await createStreamSession(LiveStreamId, formData.name, formData.Type, 1);
     setIsModalOpen(false);
     window.location.href = `/live-stream?roomID=${LiveStreamId}`;
   };
@@ -139,7 +139,7 @@ const FormWithModal = ({ LiveStreamId }) => {
                 onClick={() => setIsModalOpen(false)}
                 className="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600"
               >
-                Đóng
+                Close
               </button>
               <button
                 type="button"

@@ -56,9 +56,9 @@ export const submitAnswerTest = createAsyncThunk(
           totalParts,
         },
         {
-          withCredentials: true,
-          Authorization: `Bearer ${token}`,
+          // Authorization: `Bearer ${token}`,
           headers: {
+            Authorization: `Bearer ${token}`,
             "Content-Type": "application/json",
           },
         }
@@ -692,7 +692,6 @@ const TestSlice = createSlice({
       })
       .addCase(fetchTests.fulfilled, (state, action) => {
         state.status = STATUS.SUCCESS;
-        state.tests = action.payload;
       })
       .addCase(fetchTests.rejected, (state, action) => {
         state.status = STATUS.FAILED;

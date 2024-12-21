@@ -106,7 +106,7 @@ const CourseSkillCard = ({
   const handlePartCreated = () => {
     setIsLoading(true);
     try {
-      // dispatch(fetchSkills());
+      fetchSkills();
       closeCreateForm();
     } finally {
       setIsLoading(false);

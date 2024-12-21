@@ -26,7 +26,7 @@ const CreateCoursePart = ({ courseSkillId, onClose, onCreated }) => {
   const confirmActionHandler = async () => {
     setLoading(true);
     try {
-      await axios.post(`${apiURLConfig}/CourseParts`, coursePart);
+      await axios.post(`${apiURLConfig.baseURL}/CourseParts`, coursePart);
       toast.success("Create Course's part success");
       onCreated();
       onClose();

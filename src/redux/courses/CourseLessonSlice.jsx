@@ -36,11 +36,11 @@ export const fetchCourseLessons = createAsyncThunk(
         };
       } else {
         // If the response does not have the expected data structure, throw an error
-        return rejectWithValue("No course lessons found in the response");
+        return rejectWithValue("Don't have any course's lesson");
       }
     } catch (err) {
       // Handle errors and reject with the error message
-      console.error("Failed to fetch course lessons:", err);
+      console.error("Don't have any course's lesson");
       return rejectWithValue("Failed to fetch course lessons");
     }
   }

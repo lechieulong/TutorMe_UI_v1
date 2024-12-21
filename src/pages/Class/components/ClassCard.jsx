@@ -43,7 +43,7 @@ const ClassCard = ({
     const fetchEnabledStatus = async () => {
       try {
         const response = await axios.get(
-          `${apiURLConfig}/class/${classItem.id}/enabled`
+          `${apiURLConfig.baseURL}/class/${classItem.id}/enabled`
         );
         if (typeof response.data.isEnabled === "boolean") {
           setIsSwitchOn(response.data.isEnabled);
@@ -122,7 +122,7 @@ const ClassCard = ({
     if (window.confirm(confirmationMessage)) {
       try {
         const response = await axios.delete(
-          `${apiURLConfig}/class/${classItem.id}`
+          `${apiURLConfig.baseURL}/class/${classItem.id}`
         );
         if (response.status === 200) {
           alert("Class has been deleted successfully.");

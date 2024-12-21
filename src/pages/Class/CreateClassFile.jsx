@@ -46,7 +46,10 @@ const CreateClassFile = ({ onCreated, onClose, classId }) => {
         description,
       };
 
-      const response = await axios.post(`${apiURLConfig}/ClassFile`, payload);
+      const response = await axios.post(
+        `${apiURLConfig.baseURL}/ClassFile`,
+        payload
+      );
       console.log("Response:", response.data);
 
       setNotificationMessage("Class file created successfully.");

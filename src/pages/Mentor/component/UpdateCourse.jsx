@@ -84,7 +84,10 @@ const UpdateCourse = ({ onClose, onCreateSuccess }) => {
     setConfirmMessage("Are you sure you want to create new course?");
     setConfirmAction(() => async () => {
       try {
-        await axios.post(`${apiURLConfig}/Courses`, courseWithTimestamps);
+        await axios.post(
+          `${apiURLConfig.baseURL}/Courses`,
+          courseWithTimestamps
+        );
         setNotification("Create new course success!");
         onCreateSuccess();
         onClose();

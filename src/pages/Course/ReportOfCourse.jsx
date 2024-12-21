@@ -16,7 +16,7 @@ const ReportOfCourse = () => {
     const fetchEnrollments = async () => {
       try {
         const response = await axios.get(
-          `${apiURLConfig}/Enrollment/Course/${courseId}`
+          `${apiURLConfig.baseURL}/Enrollment/Course/${courseId}`
         );
         const enrollmentsData = response.data;
 

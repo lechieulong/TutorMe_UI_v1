@@ -83,7 +83,7 @@ const CourseSkillCard = ({
     setIsLoading(true);
     try {
       const response = await axios.get(
-        `${apiURLConfig}/CourseSkills/DescriptionBySkill/${skillId}`,
+        `${apiURLConfig.baseURL}/CourseSkills/DescriptionBySkill/${skillId}`,
         { headers: { Authorization: `Bearer ${token}` } }
       );
 
@@ -126,7 +126,7 @@ const CourseSkillCard = ({
   const handleNavigate = async (skillId, examId) => {
     try {
       const response = await axios.get(
-        `${apiURLConfig}/CourseSkills/DescriptionBySkill/${skillId}`,
+        `${apiURLConfig.baseURL}/CourseSkills/DescriptionBySkill/${skillId}`,
         { headers: { Authorization: `Bearer ${token}` } }
       );
 

@@ -9,12 +9,15 @@ const Rating = ({ courseId, userId, onClose }) => {
   const handleSubmit = async () => {
     try {
       const RatedAt = new Date().toISOString().split("T")[0];
-      await axios.post(`${apiURLConfig}/CourseRating/${courseId}/rate`, {
-        UserId: userId,
-        RatingValue: ratingValue,
-        Review: review,
-        RatedAt: RatedAt,
-      });
+      await axios.post(
+        `${apiURLConfig.baseURL}/CourseRating/${courseId}/rate`,
+        {
+          UserId: userId,
+          RatingValue: ratingValue,
+          Review: review,
+          RatedAt: RatedAt,
+        }
+      );
       alert("Rating submitted successfully!");
       onClose();
     } catch (err) {

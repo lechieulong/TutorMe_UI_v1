@@ -9,7 +9,7 @@ const EnrollmentCourseList = ({ courseId, userId, onClose }) => {
   const handleSubmit = async () => {
     try {
       const RatedAt = new Date().toISOString().split("T")[0];
-      await axios.post(`${apiURLConfig}/${courseId}/rate`, {
+      await axios.post(`${apiURLConfig.baseURL}/${courseId}/rate`, {
         UserId: userId,
         RatingValue: ratingValue,
         Review: review,

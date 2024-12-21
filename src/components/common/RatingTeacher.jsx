@@ -10,13 +10,16 @@ const RatingTeacher = ({ teacherId, userId, onClose }) => {
   const handleSubmit = async () => {
     try {
       const RatedAt = new Date().toISOString().split("T")[0];
-      const response = await axios.post(`${apiURLConfig}/TeacherRatings`, {
-        UserId: teacherId,
-        LearnerID: userId,
-        RatingValue: ratingValue,
-        Review: review,
-        RatedAt,
-      });
+      const response = await axios.post(
+        `${apiURLConfig.baseURL}/TeacherRatings`,
+        {
+          UserId: teacherId,
+          LearnerID: userId,
+          RatingValue: ratingValue,
+          Review: review,
+          RatedAt,
+        }
+      );
 
       if (response.status === 201) {
         alert("Rating submitted successfully!");

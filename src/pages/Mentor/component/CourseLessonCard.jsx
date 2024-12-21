@@ -48,22 +48,29 @@ const CourseLessonCard = ({
         `${apiURLConfig.baseURL}/CourseLessons/CoursePart/${coursePartId}`,
         { headers: { Authorization: `Bearer ${token}` } }
       );
-      setCourseLessons(response.data.courseLessons);
 
-      const initialCollapsedState = response.data.courseLessons.reduce(
+      // Sắp xếp theo Order sau khi nhận được dữ liệu
+      const sortedLessons = response.data.courseLessons.sort(
+        (a, b) => a.order - b.order
+      );
+
+      setCourseLessons(sortedLessons);
+
+      const initialCollapsedState = sortedLessons.reduce(
         (acc, lesson) => ({ ...acc, [lesson.id]: !mentorAndList }),
         {}
       );
       setCollapsedLessons(initialCollapsedState);
 
       // Sau khi load các bài học, gọi fetchTestExams cho mỗi lesson
-      response.data.courseLessons.forEach((lesson) => {
+      sortedLessons.forEach((lesson) => {
         fetchTestExams(lesson.id);
       });
 
       setLoading(false);
     } catch (err) {
       setLoading(false);
+      setError("Failed to load course lessons.");
     }
   };
 

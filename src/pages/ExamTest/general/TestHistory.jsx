@@ -2,7 +2,6 @@ import React, { useState, useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { useParams } from "react-router-dom";
 import { getTestHistory } from "../../../redux/testExam/TestSlice";
-import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { formatDateTime } from "../../../utils/Validator";
 
@@ -65,11 +64,14 @@ const TestHistory = () => {
                 {history.map((test, index) => (
                   <tr
                     key={test.id}
-                    className={`${index % 2 === 0 ? "bg-green-50" : "bg-white"
-                      } hover:bg-green-100`}
+                    className={`${
+                      index % 2 === 0 ? "bg-green-50" : "bg-white"
+                    } hover:bg-green-100`}
                   >
                     <td className="px-2 py-1">{test.testName}</td>
-                    <td className="px-2 py-1">{formatDateTime(Date(test.testDate))}</td>
+                    <td className="px-2 py-1">
+                      {formatDateTime(Date(test.testDate))}
+                    </td>
                     <td className="px-2 py-1">{skillTypes[test.skillType]}</td>
                     <td className="px-2 py-1">{test.numberOfCorrect}</td>
                     <td className="px-2 py-1">{test.totalQuestion}</td>
@@ -85,7 +87,6 @@ const TestHistory = () => {
           </footer>
         </div>
       </div>
-      <ToastContainer autoClose={3000} newestOnTop closeOnClick />
     </div>
   );
 };

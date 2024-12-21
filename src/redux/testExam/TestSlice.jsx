@@ -691,7 +691,6 @@ const TestSlice = createSlice({
       })
       .addCase(fetchTests.fulfilled, (state, action) => {
         state.status = STATUS.SUCCESS;
-        state.tests = action.payload;
       })
       .addCase(fetchTests.rejected, (state, action) => {
         state.status = STATUS.FAILED;

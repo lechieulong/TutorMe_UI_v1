@@ -13,7 +13,7 @@ import {
   getAllQuestionsById,
   deleteQuestion,
 } from "../../../redux/testExam/TestSlice";
-import { toast, ToastContainer } from "react-toastify";
+import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
 const QuestionBank = () => {
@@ -152,8 +152,6 @@ const QuestionBank = () => {
 
   return (
     <div className="p-4 bg-gray-50">
-      <ToastContainer autoClose={3000} newestOnTop closeOnClick />
-
       {isModalOpen ? (
         <QuestionFormBank
           setIsModalOpen={setIsModalOpen}

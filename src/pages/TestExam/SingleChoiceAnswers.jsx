@@ -10,9 +10,11 @@ const SingleChoiceAnswers = ({
   sectionType,
 }) => (
   <div className="flex flex-col gap-2">
+    <p className="text-green-900 font-medium">
+      {question.questionOrder} {question.questionName}
+    </p>
     {question.answers.map((answer, index) => (
       <div className="flex gap-2 justify-start" key={answer.id}>
-        <p className="font-semibold">{renderLetter(index + 1)}</p>
         <label className="flex items-center space-x-2">
           <input
             type="radio"
@@ -35,7 +37,7 @@ const SingleChoiceAnswers = ({
             }
             className="h-4 w-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
           />
-          <span className="text-gray-800">{answer.answerText}</span>
+          <p className="text-gray-800 text-[15px]">{answer.answerText}</p>
         </label>
       </div>
     ))}

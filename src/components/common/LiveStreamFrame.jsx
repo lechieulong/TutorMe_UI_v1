@@ -11,7 +11,6 @@ import { ZIM } from 'zego-zim-web';
 import GiftNotification from "./ShowGift";
 import { isHaveTicket } from "./Ticket";
 import CreateTicketButton from "./Ticket";
-import { ToastContainer } from "react-toastify";
 import { GetUserByID } from "../../redux/users/UserSlice";
 import { useDispatch } from "react-redux";
 import apiURLConfig from "../../redux/common/apiURLConfig";
@@ -380,7 +379,7 @@ const LiveStreamFrame = ({ width, height, className }) => {
       <div
         className={`relative border-4 border-blue-500 rounded-lg overflow-hidden ${className}`}
         style={{ width, height }}
-      >
+      > 
         {/* Background */}
         <div className="absolute inset-0 bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500"></div>
     
@@ -526,7 +525,7 @@ const LiveStreamFrame = ({ width, height, className }) => {
   return (
     <div className={`relative border-4 border-blue-500 rounded-lg overflow-hidden  inset-0 bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 ${className}`}>
     {user!=null&&window.location.pathname.includes("/live-stream")&&(user?.role.includes("TEACHER")||user?.role.includes("ADMIN"))&&<CreateTicketButton roomID={roomID} role={role_str} privacy={privacy} setPrivacy={setPrivacy} handleUpdateCommand={handleUpdateCommand}/>} 
-    <div  className={`relative border-blue-500 rounded-lg overflow-hidden ${className}`} style={{ width, height }}> <ToastContainer/>       
+    <div  className={`relative border-blue-500 rounded-lg overflow-hidden ${className}`} style={{ width, height }}>      
      <div className="absolute inset-0 bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500" style={{ position: "relative" }}>
         <div id="meetingContainer" className={`bg-black ${className}`} style={{ width, height }}></div>
      </div>

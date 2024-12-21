@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import Modal from 'react-modal';
 import axios from 'axios';
 import { getUser } from '../../service/GetUser';
@@ -59,25 +59,24 @@ const AddUser_Ticket = async (formData) => {
   }
 }
 const GetTicket = async (RoomId) => {
-  console.log(RoomId);
   try {
     const response = await axios.get(`${url}/Ticket/${RoomId}`);
     return response.data;
   } catch (error) {
     console.error('Error Check Ticket:', error);
-    return false;
+    return null;
   }
 };
 
 const CreateTicketButton = ({ roomID, role,privacy,setPrivacy,handleUpdateCommand}) => {
   const [isPopupOpen, setIsPopupOpen] = useState(false);
   const [formData, setFormData] = useState({
-    id:'',
-    subjectName: '',
+    id:"",
+    subjectName: "",
     liveStreamId: roomID,
-    price: '',
-    startTime: '',
-    endTime: '',
+    price: "",
+    startTime: "",
+    endTime: "",
   });
   const [ticketInfo, setTicketInfo] = useState({
     id:'',
@@ -88,11 +87,20 @@ const CreateTicketButton = ({ roomID, role,privacy,setPrivacy,handleUpdateComman
     endTime: '',
   }); // Thêm state để lưu thông tin vé
 
-  const openPopup = () => {
+  const openPopup =() => {
     setIsPopupOpen(true);
   };
+  useEffect(()=>{
+if(privacy=="Private"&&role=="Host"){
+  setIsPopupOpen(true);
+}
+},[privacy])
 
-  const closePopup = () => {
+  const closePopup = async() => {
+    var ticker= await GetTicket(roomID);
+    if(ticker===""){
+    await handlePrivacyChange("Public");
+    }
     setIsPopupOpen(false);
   };
 
@@ -124,21 +132,23 @@ const CreateTicketButton = ({ roomID, role,privacy,setPrivacy,handleUpdateComman
   };
   const handleTicket = async () => {
     const Ticket = await GetTicket(roomID);
-    const { id,subjectName,price, startTime, endTime } = Ticket;
-    setFormData((prevInfo) => ({
-      ...prevInfo,
-      id,
-      subjectName,
-      liveStreamId:roomID,
-      price,
-      startTime,
-      endTime,
-    }));
-    openPopup(); 
+    if(Ticket!=""){
+      const { id,subjectName,price, startTime, endTime } = Ticket;
+      setFormData((prevInfo) => ({
+        ...prevInfo,
+        id,
+        subjectName,
+        liveStreamId:roomID,
+        price,
+        startTime,
+        endTime,
+      }));
+    }
 };
 
   const handleBuyTicket = async () => {
     const Ticket = await GetTicket(roomID);
+    if(Ticket!=""){
       const { id,subjectName,price, startTime, endTime } = Ticket;
       setTicketInfo((prevInfo) => ({
         ...prevInfo,
@@ -150,6 +160,11 @@ const CreateTicketButton = ({ roomID, role,privacy,setPrivacy,handleUpdateComman
         endTime,
       }));
       openPopup(); 
+    }else{
+      console.log("No tickets available yet, please try again later");
+      toast.error("No tickets available yet, please try again later");
+    }
+      
   };
 
   return (

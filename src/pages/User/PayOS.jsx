@@ -6,7 +6,6 @@ import {
     CircularProgress,
   } from "@mui/material";
   import React, { useEffect, useRef, useState } from "react";
-  import { ToastContainer, toast } from "react-toastify";
   import "react-toastify/dist/ReactToastify.css";
   import { useNavigate } from "react-router-dom";
   import { createPaymentLink,CreateOrder_backend } from "../../components/common/PayOS";
@@ -170,7 +169,6 @@ import {
             component="div"
             className="w-full max-w-lg p-6 bg-gradient-to-br from-white to-gray-100 border-2 border-gray-300 rounded-lg shadow-xl"
           >
-            <ToastContainer />
             <Box
   component="div"
   className="w-full py-4 bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 shadow-lg rounded-t-lg text-center"

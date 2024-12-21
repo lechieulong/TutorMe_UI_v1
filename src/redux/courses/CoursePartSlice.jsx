@@ -16,7 +16,7 @@ export const deleteCoursePart = createAsyncThunk(
   async (coursePartId, { rejectWithValue }) => {
     try {
       const response = await axios.delete(
-        `${apiURLConfig}/CourseParts/${coursePartId}`
+        `${apiURLConfig.baseURL}/CourseParts/${coursePartId}`
       );
       return coursePartId; // Trả về ID sau khi xóa thành công
     } catch (error) {

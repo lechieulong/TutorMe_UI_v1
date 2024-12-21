@@ -18,7 +18,7 @@ export const fetchCourseLessons = createAsyncThunk(
     try {
       // Constructing the API URL with dynamic coursePartId
       const response = await axios.get(
-        `${apiURLConfig}/CourseLessons/CoursePart/${coursePartId}`, // Using coursePartId dynamically
+        `${apiURLConfig.baseURL}/CourseLessons/CoursePart/${coursePartId}`, // Using coursePartId dynamically
         { headers: { Authorization: `Bearer ${token}` } }
       );
 

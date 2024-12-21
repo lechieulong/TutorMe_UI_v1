@@ -87,7 +87,7 @@ const MentorCourseList = () => {
       message: "Are you sure you want to delete this?",
       onConfirm: async () => {
         try {
-          await axios.delete(`${apiURLConfig}/Courses/${courseId}`);
+          await axios.delete(`${apiURLConfig.baseURL}/Courses/${courseId}`);
           dispatch(GetCreatedCourses());
           toast.success("Delete course success!");
         } catch (error) {

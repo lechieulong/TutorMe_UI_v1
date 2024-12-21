@@ -5,7 +5,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faHeadset } from "@fortawesome/free-solid-svg-icons";
 import axios from "axios";
 import apiURLConfig from "../../redux/common/apiURLConfig";
-import {toast } from "react-toastify";
+import { toast } from "react-toastify";
 
 const url = apiURLConfig.baseURL;
 export const getLive = async (roomid) => {
@@ -57,17 +57,17 @@ const FormWithModal = ({ LiveStreamId }) => {
       Type: value,
     }));
   };
-  const ckeckLive=async(roomid)=>{
-    var live=await getLive(roomid);
+  const ckeckLive = async (roomid) => {
+    var live = await getLive(roomid);
     console.log(live);
-    if(live){
-      if(live.status==0){
+    if (live) {
+      if (live.status == 0) {
         toast.error("Your feature Live Stream have block");
-      }else{
+      } else {
         setIsModalOpen(true);
       }
     }
-  }
+  };
 
   const handleCreate = () => {
     console.log("Dữ liệu tạo:", formData);

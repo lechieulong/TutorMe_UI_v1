@@ -12,7 +12,7 @@ import ClassToEnroll from "../Class/components/ClassToEnroll";
 import { useLocation } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faChalkboard } from "@fortawesome/free-solid-svg-icons";
-import { toast, ToastContainer } from "react-toastify";
+import { toast } from "react-toastify";
 const ClassOfCourseList = () => {
   const location = useLocation();
   const { mentorAndList, isMentor } = location.state || {};
@@ -77,7 +77,6 @@ const ClassOfCourseList = () => {
 
   return (
     <MainLayout>
-      <ToastContainer autoClose={3000} newestOnTop closeOnClick />
       <div className="flex flex-col w-screen min-h-screen bg-gray-50">
         <div className="flex flex-1 w-full">
           <MentorSidebar mentorAndList={true} />

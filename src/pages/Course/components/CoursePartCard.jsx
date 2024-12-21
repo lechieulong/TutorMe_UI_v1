@@ -16,6 +16,7 @@ const CoursePartCard = ({
   isMentor,
   isDelete,
   courseSkillId,
+  onLoadingChange,
 }) => {
   const [isLoading, setIsLoading] = useState(false);
   const dispatch = useDispatch();
@@ -31,7 +32,7 @@ const CoursePartCard = ({
   const [newTitle, setNewTitle] = useState({}); // Trạng thái lưu trữ giá trị mới của tiêu đề
 
   const fetchCourseParts = useCallback(async () => {
-    setIsLoading(true);
+    onLoadingChange(true); // Gọi callback để thay đổi trạng thái loading ở ngoài component
     try {
       const response = await axios.get(
         `${apiURLConfig.baseURL}/CourseParts/ByCourseSkill/${skillId}`
@@ -50,16 +51,17 @@ const CoursePartCard = ({
       }, {});
       setComponentKeys(initialKeys);
     } finally {
-      setIsLoading(false);
+      onLoadingChange(false); // Gọi callback khi hoàn thành
     }
   }, [skillId]);
 
   useEffect(() => {
-    setIsLoading(true);
+    onLoadingChange(true); // Gọi callback để thay đổi trạng thái loading ở ngoài component
+
     try {
       fetchCourseParts();
     } finally {
-      setIsLoading(false);
+      onLoadingChange(false); // Gọi callback khi hoàn thành
     }
   }, [skillId, fetchCourseParts]);
 
@@ -80,7 +82,6 @@ const CoursePartCard = ({
       [partId]: false,
     }));
   };
-  console.log(courseSkillId);
 
   const handleFormClose = (partId) => {
     setShowLessonForm((prev) => ({
@@ -108,21 +109,22 @@ const CoursePartCard = ({
 
   const handleDelete = async () => {
     if (partToDelete) {
-      dispatch(deleteCoursePart(partToDelete))
-        .unwrap()
-        .then(() => {
-          setCourseParts((prev) =>
-            prev.filter((part) => part.id !== partToDelete)
-          );
-          setNotification("Course part deleted successfully.");
-          setPartToDelete(null);
-          setConfirmOpen(false);
-        })
-        .catch((error) => {
-          console.error("Error deleting course part:", error);
-          setNotification("Failed to delete course part.");
-          setConfirmOpen(false);
-        });
+      onLoadingChange(true); // Bật trạng thái loading trước khi thực hiện xóa
+      try {
+        await dispatch(deleteCoursePart(partToDelete)).unwrap();
+        setCourseParts((prev) =>
+          prev.filter((part) => part.id !== partToDelete)
+        );
+        setNotification("Course part deleted successfully.");
+        setPartToDelete(null);
+        setConfirmOpen(false);
+      } catch (error) {
+        console.error("Error deleting course part:", error);
+        setNotification("Failed to delete course part.");
+        setConfirmOpen(false);
+      } finally {
+        onLoadingChange(false); // Tắt trạng thái loading sau khi xóa
+      }
     }
   };
 
@@ -140,7 +142,7 @@ const CoursePartCard = ({
         title: newTitle[coursePartId],
         courseSkillId: courseSkillId,
       };
-
+      onLoadingChange(true);
       try {
         await axios.put(
           `${apiURLConfig.baseURL}/CourseParts/${coursePartId}`,
@@ -157,6 +159,8 @@ const CoursePartCard = ({
       } catch (error) {
         console.error("Error updating course part:", error);
         // Xử lý lỗi nếu cần
+      } finally {
+        onLoadingChange(false);
       }
     }
   };

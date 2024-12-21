@@ -292,13 +292,15 @@ const CourseLessonCard = ({
                                   />
                                 </div>
                               ))}
-                            <button
-                              type="button"
-                              onClick={() => addDynamicForm(courseLesson.id)}
-                              className="py-2 px-3 text-sm font-medium rounded-lg mt-6 border border-gray-200 bg-white text-gray-800 shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-gray-200"
-                            >
-                              Create Lesson Content
-                            </button>
+                            {mentorAndList && (
+                              <button
+                                type="button"
+                                onClick={() => addDynamicForm(courseLesson.id)}
+                                className="py-2 px-3 text-sm font-medium rounded-lg mt-6 border border-gray-200 bg-white text-gray-800 shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-gray-200"
+                              >
+                                Create Lesson Content
+                              </button>
+                            )}
                           </div>
                         )}
                     </div>

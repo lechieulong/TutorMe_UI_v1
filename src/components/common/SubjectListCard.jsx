@@ -2,7 +2,13 @@ import PropTypes from "prop-types";
 import { FaRegStar, FaStarHalfAlt, FaStar } from "react-icons/fa";
 import { useNavigate } from "react-router-dom"; // Hook dùng để điều hướng trong React Router v6
 
-const SubjectListCard = ({ averageRating, ratingCount, image, userName, fullName }) => {
+const SubjectListCard = ({
+  averageRating,
+  ratingCount,
+  image,
+  userName,
+  fullName,
+}) => {
   const navigate = useNavigate(); // Hook điều hướng
 
   const handleClick = () => {
@@ -36,7 +42,14 @@ const SubjectListCard = ({ averageRating, ratingCount, image, userName, fullName
       onClick={handleClick}
       className="bg-white border border-gray-200 rounded-lg w-full max-w-xs shadow-md overflow-hidden cursor-pointer transition-shadow duration-300 ease-in-out hover:shadow-2xl"
     >
-      <img src={image || "https://hydra13.blob.core.windows.net/2aa17120-4bef-478a-8ea9-cb0788def29e/default-avatar.jpg"} alt={userName} className="w-full h-48 object-cover" />
+      <img
+        src={
+          image ||
+          "https://hydra13.blob.core.windows.net/2aa17120-4bef-478a-8ea9-cb0788def29e/default-avatar.jpg"
+        }
+        alt={userName}
+        className="w-full h-48 object-cover"
+      />
       <div className="p-4 flex flex-col items-center">
         <h3 className="text-black text-xl font-semibold">{fullName}</h3>
         <div className="flex items-center mt-2">

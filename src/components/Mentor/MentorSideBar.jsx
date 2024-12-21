@@ -37,8 +37,8 @@ const MentorSidebar = ({ mentorAndList, setSelectedComponent, isMentor }) => {
     navigate(path, { state: { ...state, from: pathname } }); // Save the current page path
   };
 
-  // Function to check if we're on the courseDetail or mentorCourseDetail page
-  const isCurrentPage = (path) => pathname.includes(path);
+  // Function to check if we're on the exact page
+  const isCurrentPage = (path) => pathname === path;
 
   return (
     <div>
@@ -62,7 +62,6 @@ const MentorSidebar = ({ mentorAndList, setSelectedComponent, isMentor }) => {
             >
               <button
                 onClick={() => {
-                  // Kiểm tra nếu mentorAndList là true
                   if (mentorAndList) {
                     handleNavigate(`/mentorCourseDetail/${courseId}`, {
                       state: { userId, mentorAndList },
@@ -76,7 +75,8 @@ const MentorSidebar = ({ mentorAndList, setSelectedComponent, isMentor }) => {
                   }
                 }}
                 className={`py-4 px-1 inline-flex items-center gap-x-2 text-sm whitespace-nowrap text-gray-500 hover:text-blue-600 focus:outline-none focus:text-blue-600 ${
-                  isCurrentPage(`/courseDetail/${courseId}`)
+                  isCurrentPage(`/courseDetail/${courseId}`) ||
+                  isCurrentPage(`/mentorCourseDetail/${courseId}`)
                     ? "font-semibold border-blue-600 text-blue-600"
                     : "border-transparent"
                 }`}

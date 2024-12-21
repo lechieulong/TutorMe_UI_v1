@@ -237,8 +237,6 @@ const Users = () => {
         totalPages={totalPages}
         onPageChange={setCurrentPage} // Set the current page directly
       />
-
-      <ToastContainer autoClose={3000} newestOnTop closeOnClick />
     </section>
   );
 };

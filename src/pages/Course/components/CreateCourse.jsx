@@ -4,6 +4,7 @@ import { getUser } from "../../../service/GetUser";
 import { Checkbox, FormControlLabel } from "@mui/material";
 import Notification from "../../../components/common/Notification";
 import Confirm from "../../../components/common/Confirm";
+import apiURLConfig from "../../../redux/common/apiURLConfig";
 
 const SkillMapping = {
   Reading: "0",
@@ -21,8 +22,50 @@ const CreateCourse = ({ onClose, onCreateSuccess }) => {
     categories: [],
     price: 0,
     userId: "",
-    imageUrl: "default_image_url.jpg",
+    imageUrl: "",
   });
+
+  const uploadCourseFile = async (course, file) => {
+    try {
+      const { courseId } = course; // Trích xuất courseId từ course
+      const formData = new FormData();
+      formData.append("file", file);
+
+      const response = await axios.post(
+        `${apiURLConfig.baseURL}/upload-course-file?type=course&id=${course.courseId}`,
+        formData,
+        {
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
+        }
+      );
+
+      const fileName = response.data.fileName || file.name;
+      const fileEndpoint = `https://thientvhde160268.blob.core.windows.net/course/${courseId}/${fileName}`;
+
+      return { fileUrl: fileEndpoint };
+    } catch (error) {
+      throw new Error(
+        error.response?.data || "Failed to upload file. Please try again."
+      );
+    }
+  };
+
+  const handleImageChange = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onload = () => {
+        setCourse((prevCourse) => ({
+          ...prevCourse,
+          selectedImage: file,
+          imageUrl: reader.result, // Hiển thị ảnh ngay lập tức
+        }));
+      };
+      reader.readAsDataURL(file);
+    }
+  };
 
   const [notification, setNotification] = useState("");
   const [isConfirmOpen, setIsConfirmOpen] = useState(false);
@@ -54,8 +97,7 @@ const CreateCourse = ({ onClose, onCreateSuccess }) => {
       return { ...prevCourse, categories: newCategories };
     });
   };
-
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
 
     if (course.hours < 0 || course.days < 0 || course.price < 0) {
@@ -63,45 +105,61 @@ const CreateCourse = ({ onClose, onCreateSuccess }) => {
       return;
     }
 
-    // Định dạng ngày hiện tại thành dd/mm/yyyy
-    const formatDate = (date) => {
-      const day = String(date.getDate()).padStart(2, "0");
-      const month = String(date.getMonth() + 1).padStart(2, "0");
-      const year = date.getFullYear();
-      return `${day}/${month}/${year}`;
-    };
-
-    const today = formatDate(new Date());
-
-    // Thêm createdAt và updatedAt vào dữ liệu
-    const courseWithTimestamps = {
-      ...course,
-      createdAt: today,
-      updatedAt: today,
-    };
-    console.log(courseWithTimestamps);
-
-    setConfirmMessage("Are you sure you want to create new course?");
-    setConfirmAction(() => async () => {
-      try {
-        await axios.post(
-          "https://localhost:7030/api/Courses",
-          courseWithTimestamps
+    try {
+      // Upload ảnh lên Azure nếu đã chọn ảnh
+      if (course.selectedImage) {
+        const uploadResult = await uploadCourseFile(
+          course,
+          course.selectedImage
         );
-        setNotification("Create new course success!");
-        onCreateSuccess();
-        onClose();
-      } catch (error) {
-        console.error("Fail to create new course!", error.response?.data);
-        setNotification(
-          "Fail to create new course!" +
-            (error.response?.data.message || error.message)
-        );
-      } finally {
-        setIsConfirmOpen(false);
+        setCourse((prevCourse) => ({
+          ...prevCourse,
+          imageUrl: uploadResult.fileUrl, // Cập nhật imageUrl với đường dẫn từ Azure
+        }));
       }
-    });
-    setIsConfirmOpen(true);
+
+      // Định dạng ngày hiện tại thành dd/mm/yyyy
+      const formatDate = (date) => {
+        const day = String(date.getDate()).padStart(2, "0");
+        const month = String(date.getMonth() + 1).padStart(2, "0");
+        const year = date.getFullYear();
+        return `${day}/${month}/${year}`;
+      };
+
+      const today = formatDate(new Date());
+
+      // Thêm createdAt và updatedAt vào dữ liệu
+      const courseWithTimestamps = {
+        ...course,
+        createdAt: today,
+        updatedAt: today,
+      };
+
+      setConfirmMessage("Are you sure you want to create new course?");
+      setConfirmAction(() => async () => {
+        try {
+          await axios.post(
+            `${apiURLConfig.baseURL}/Courses`,
+            courseWithTimestamps
+          );
+          setNotification("Create new course success!");
+          onCreateSuccess();
+          onClose();
+        } catch (error) {
+          console.error("Fail to create new course!", error.response?.data);
+          setNotification(
+            "Fail to create new course!" +
+              (error.response?.data.message || error.message)
+          );
+        } finally {
+          setIsConfirmOpen(false);
+        }
+      });
+      setIsConfirmOpen(true);
+    } catch (error) {
+      console.error("Upload image failed:", error);
+      setNotification("Failed to upload image. Please try again.");
+    }
   };
 
   return (
@@ -166,6 +224,24 @@ const CreateCourse = ({ onClose, onCreateSuccess }) => {
               required
               className="mt-1 block w-full border border-gray-300 rounded-md p-2"
             />
+            <div className="mb-4">
+              <label className="block text-gray-700">Image</label>
+              <div className="flex items-center gap-4 mt-2">
+                {course.imageUrl && (
+                  <img
+                    src={course.imageUrl}
+                    alt="Preview"
+                    className="w-20 h-20 object-cover rounded-md border border-gray-300"
+                  />
+                )}
+                <input
+                  type="file"
+                  accept="image/*"
+                  onChange={handleImageChange}
+                  className="block w-full text-sm text-gray-900 border border-gray-300 rounded-md cursor-pointer bg-gray-50"
+                />
+              </div>
+            </div>
           </div>
           <div className="mb-4">
             <label className="block text-gray-700">Skill</label>

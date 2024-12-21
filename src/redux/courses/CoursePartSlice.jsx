@@ -1,6 +1,6 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import axios from "axios";
-
+import apiURLConfig from "../common/apiURLConfig";
 // Định nghĩa initialState
 const initialState = {
   coursePart: [],
@@ -16,7 +16,7 @@ export const deleteCoursePart = createAsyncThunk(
   async (coursePartId, { rejectWithValue }) => {
     try {
       const response = await axios.delete(
-        `https://localhost:7030/api/CourseParts/${coursePartId}`
+        `${apiURLConfig.baseURL}/CourseParts/${coursePartId}`
       );
       return coursePartId; // Trả về ID sau khi xóa thành công
     } catch (error) {

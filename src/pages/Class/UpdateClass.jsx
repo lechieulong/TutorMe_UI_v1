@@ -1,49 +1,30 @@
 import React, { useState, useEffect } from "react";
 import ReactDOM from "react-dom";
 import axios from "axios";
-import { Class } from "@mui/icons-material";
-
+import apiURLConfig from "../../redux/common/apiURLConfig";
 const UpdateClass = ({ classItem, courseId, onClose, onCreateSuccess }) => {
   const [className, setClassName] = useState("");
   const [classDescription, setClassDescription] = useState("");
   const [count, setCount] = useState(0);
-  const [startDate, setStartDate] = useState("");
-  const [endDate, setEndDate] = useState("");
   const [isEnabled, setIsEnabled] = useState(true);
   const [inputErrors, setInputErrors] = useState({
     className: false,
     classDescription: false,
     count: false,
-    startDate: false,
-    endDate: false,
   });
-  console.log(classItem.id);
 
   useEffect(() => {
     if (classItem) {
       setClassName(classItem.className || "");
       setClassDescription(classItem.classDescription || "");
       setCount(classItem.count || 0);
-      setStartDate(classItem.startDate || "");
-      setEndDate(classItem.endDate || "");
       setIsEnabled(
         classItem.isEnabled !== undefined ? classItem.isEnabled : true
       );
     }
   }, [classItem]);
 
-  const validateStartDate = () => {
-    const today = new Date().toISOString().split("T")[0];
-    setInputErrors((prev) => ({ ...prev, startDate: startDate < today }));
-  };
-
-  const validateEndDate = () => {
-    setInputErrors((prev) => ({ ...prev, endDate: endDate < startDate }));
-  };
-
   const validateFields = () => {
-    validateStartDate();
-    validateEndDate();
     return !Object.values(inputErrors).some((error) => error);
   };
 
@@ -59,8 +40,6 @@ const UpdateClass = ({ classItem, courseId, onClose, onCreateSuccess }) => {
       classDescription,
       count,
       courseId,
-      startDate,
-      endDate,
       isEnabled,
     };
     console.log(updatedClass);
@@ -68,7 +47,7 @@ const UpdateClass = ({ classItem, courseId, onClose, onCreateSuccess }) => {
     try {
       // Gửi PUT request đến API để cập nhật lớp học
       const response = await axios.put(
-        `https://localhost:7030/api/class/update/${Id}`, // Đúng với URL API
+        `${apiURLConfig.baseURL}/class/update/${Id}`, // Đúng với URL API
         updatedClass
       );
 
@@ -113,59 +92,13 @@ const UpdateClass = ({ classItem, courseId, onClose, onCreateSuccess }) => {
             ></textarea>
           </div>
           <div className="mb-4">
-            <label className="block text-sm font-semibold mb-2">
-              Số Lượng Học Viên
-            </label>
             <input
-              type="text"
+              type="hidden"
               value={count}
               onChange={(e) => setCount(e.target.value)}
               required
               className="w-full border p-2 rounded"
             />
-          </div>
-          <div className="mb-4 grid grid-cols-2 gap-4">
-            <div>
-              <label className="block text-sm font-semibold mb-2">
-                Ngày Bắt Đầu
-              </label>
-              <input
-                type="date"
-                value={startDate}
-                onChange={(e) => {
-                  setStartDate(e.target.value);
-                  validateStartDate();
-                }}
-                required
-                className="w-full border p-2 rounded"
-              />
-            </div>
-            <div>
-              <label className="block text-sm font-semibold mb-2">
-                Ngày Kết Thúc
-              </label>
-              <input
-                type="date"
-                value={endDate}
-                onChange={(e) => {
-                  setEndDate(e.target.value);
-                  validateEndDate();
-                }}
-                required
-                className="w-full border p-2 rounded"
-              />
-            </div>
-          </div>
-          <div className="mb-4">
-            <label className="inline-flex items-center">
-              <input
-                type="checkbox"
-                checked={isEnabled}
-                onChange={(e) => setIsEnabled(e.target.checked)}
-                className="mr-2"
-              />
-              <span className="text-sm font-semibold">Kích Hoạt</span>
-            </label>
           </div>
           <button
             type="button"

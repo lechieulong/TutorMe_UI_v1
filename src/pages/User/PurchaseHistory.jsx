@@ -7,8 +7,6 @@ import { useNavigate } from "react-router-dom";
 import { GetUserBalanceHistoryByUserID } from '../../redux/users/BalanceSlice';
 import { useDispatch, useSelector } from 'react-redux';
 import { formatDateTime, formatCurrency } from '../../utils/Validator';
-
-// Optional: Import a spinner component from a library like react-spinners
 import { ClipLoader } from 'react-spinners';
 
 const PurchaseHistory = () => {

@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { FaStar } from "react-icons/fa";
 import axios from "axios";
-
+import apiURLConfig from "../../redux/common/apiURLConfig";
 const RatingTeacher = ({ teacherId, userId, onClose }) => {
   const [ratingValue, setRatingValue] = useState(0);
   const [review, setReview] = useState("");
@@ -11,7 +11,7 @@ const RatingTeacher = ({ teacherId, userId, onClose }) => {
     try {
       const RatedAt = new Date().toISOString().split("T")[0];
       const response = await axios.post(
-        `https://localhost:7030/api/TeacherRatings`,
+        `${apiURLConfig.baseURL}/TeacherRatings`,
         {
           UserId: teacherId,
           LearnerID: userId,

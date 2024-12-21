@@ -11,12 +11,13 @@ import TestForm from "../../ExamTest/TestForm";
 import { Link, useParams } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faClipboard } from "@fortawesome/free-solid-svg-icons";
-
+import apiURLConfig from "../../../redux/common/apiURLConfig";
 const CourseLessonCard = ({
   mentorAndList,
   coursePartId,
   isEnrolled,
   isMentor,
+  isDelete,
 }) => {
   const [collapsedLessons, setCollapsedLessons] = useState({});
   const [courseLessons, setCourseLessons] = useState([]);
@@ -44,27 +45,32 @@ const CourseLessonCard = ({
   const fetchCourseLessons = async () => {
     try {
       const response = await axios.get(
-        `https://localhost:7030/api/CourseLessons/CoursePart/${coursePartId}`,
+        `${apiURLConfig.baseURL}/CourseLessons/CoursePart/${coursePartId}`,
         { headers: { Authorization: `Bearer ${token}` } }
       );
-      setCourseLessons(response.data.courseLessons);
 
-      const initialCollapsedState = response.data.courseLessons.reduce(
+      // Sắp xếp theo Order sau khi nhận được dữ liệu
+      const sortedLessons = response.data.courseLessons.sort(
+        (a, b) => a.order - b.order
+      );
+
+      setCourseLessons(sortedLessons);
+
+      const initialCollapsedState = sortedLessons.reduce(
         (acc, lesson) => ({ ...acc, [lesson.id]: !mentorAndList }),
         {}
       );
       setCollapsedLessons(initialCollapsedState);
 
       // Sau khi load các bài học, gọi fetchTestExams cho mỗi lesson
-      response.data.courseLessons.forEach((lesson) => {
+      sortedLessons.forEach((lesson) => {
         fetchTestExams(lesson.id);
       });
 
       setLoading(false);
     } catch (err) {
-      setError("Failed to fetch course lessons");
-      setNotification("Failed to fetch course lessons.");
       setLoading(false);
+      setError("Failed to load course lessons.");
     }
   };
 
@@ -98,7 +104,7 @@ const CourseLessonCard = ({
   const handleCreateTest = async (lessonId) => {
     try {
       const response = await axios.get(
-        `https://localhost:7030/api/CourseSkills/DescriptionByCourseLesson/${lessonId}`,
+        `${apiURLConfig.baseURL}/CourseSkills/DescriptionByCourseLesson/${lessonId}`,
         { headers: { Authorization: `Bearer ${token}` } }
       );
       setIsCreateTest(true);
@@ -112,12 +118,12 @@ const CourseLessonCard = ({
   const fetchTestExams = async (lessonId) => {
     try {
       const response = await axios.get(
-        `https://localhost:7030/api/CourseLessons/GetTestExamByLessonId/${lessonId}`
+        `${apiURLConfig.baseURL}/CourseLessons/GetTestExamByLessonId/${lessonId}`
       );
       if (Array.isArray(response.data) && response.data.length > 0) {
         setTestExams(response.data);
       } else {
-        console.error("No TestExams found for the lesson.");
+        console.log();
       }
     } catch (err) {
       console.error("Error fetching test exams:", err);
@@ -147,7 +153,7 @@ const CourseLessonCard = ({
     if (isConfirmed) {
       // Nếu người dùng xác nhận, thực hiện xóa
       axios
-        .delete(`https://localhost:7030/api/CourseLessons/${lessonId}`, {
+        .delete(`${apiURLConfig.baseURL}/CourseLessons/${lessonId}`, {
           headers: { Authorization: `Bearer ${token}` },
         })
         .then(() => {
@@ -186,7 +192,7 @@ const CourseLessonCard = ({
             <div className="mt-4 overflow-hidden transition-all duration-1000 ease-in-out">
               <div>
                 {courseLessons.length === 0 ? (
-                  <p>No lessons found for this course part.</p>
+                  <p>Don't have any course's lesson</p>
                 ) : (
                   courseLessons.map((courseLesson) => (
                     <div
@@ -206,13 +212,17 @@ const CourseLessonCard = ({
                           <h4 className="text-md font-semibold">
                             {courseLesson.title}
                           </h4>
-                          <button
-                            type="button"
-                            onClick={() => confirmDeleteLesson(courseLesson.id)}
-                            className="py-2 px-3 text-sm font-medium rounded-lg border border-gray-200 bg-red-500 text-white shadow-sm hover:bg-red-600 focus:outline-none focus:ring-2 focus:ring-red-500"
-                          >
-                            Delete Lesson
-                          </button>
+                          {isDelete && (
+                            <button
+                              type="button"
+                              onClick={() =>
+                                confirmDeleteLesson(courseLesson.id)
+                              }
+                              className="py-2 px-3 text-sm font-medium rounded-lg border border-gray-200 bg-red-500 text-white shadow-sm hover:bg-red-600 focus:outline-none focus:ring-2 focus:ring-red-500"
+                            >
+                              Delete Lesson
+                            </button>
+                          )}
                         </div>
                       </div>
 

@@ -11,12 +11,15 @@ import { Link, useNavigate } from "react-router-dom";
 import { toast, ToastContainer } from "react-toastify";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faClipboard } from "@fortawesome/free-solid-svg-icons";
+import { useDispatch } from "react-redux";
+import apiURLConfig from "../../../redux/common/apiURLConfig";
 const CourseSkillCard = ({
   courseId,
   isEnrolled,
   onSkillCountUpdate,
   mentorAndList,
   isMentor,
+  isDelete,
 }) => {
   const [skills, setSkills] = useState([]);
   const [activeTab, setActiveTab] = useState(null);
@@ -29,7 +32,7 @@ const CourseSkillCard = ({
   const [testExams, setTestExams] = useState({}); // Store tests for each skill
   const [isLoading, setIsLoading] = useState(false);
   const token = Cookies.get("authToken");
-
+  const dispatch = useDispatch();
   useEffect(() => {
     fetchSkills();
   }, [courseId]);
@@ -40,7 +43,8 @@ const CourseSkillCard = ({
     setIsLoading(true);
     try {
       const response = await axios.get(
-        `https://localhost:7030/api/CourseSkills/Course/${courseId}`
+        `${apiURLConfig.baseURL}/CourseSkills/Course/${courseId}`
+        // `${apiURLConfig}/CourseSkills/Course/${courseId}`
       );
       setSkills(response.data);
       if (onSkillCountUpdate) {
@@ -62,9 +66,10 @@ const CourseSkillCard = ({
     setIsLoading(true);
     try {
       const response = await axios.get(
-        `https://localhost:7030/api/CourseSkills/GetTestExamsBySkillIdCourse?skillIdCourse=${skillId}`,
+        `${apiURLConfig.baseURL}/CourseSkills/GetTestExamsBySkillIdCourse?skillIdCourse=${skillId}`,
         { headers: { Authorization: `Bearer ${token}` } }
       );
+
       setTestExams((prevExams) => ({
         ...prevExams,
         [skillId]: response.data, // Store test exams for the skill
@@ -78,7 +83,7 @@ const CourseSkillCard = ({
     setIsLoading(true);
     try {
       const response = await axios.get(
-        `https://localhost:7030/api/CourseSkills/DescriptionBySkill/${skillId}`,
+        `${apiURLConfig.baseURL}/CourseSkills/DescriptionBySkill/${skillId}`,
         { headers: { Authorization: `Bearer ${token}` } }
       );
 
@@ -101,7 +106,7 @@ const CourseSkillCard = ({
   const handlePartCreated = () => {
     setIsLoading(true);
     try {
-      fetchSkills();
+      // dispatch(fetchSkills());
       closeCreateForm();
     } finally {
       setIsLoading(false);
@@ -121,7 +126,7 @@ const CourseSkillCard = ({
   const handleNavigate = async (skillId, examId) => {
     try {
       const response = await axios.get(
-        `https://localhost:7030/api/CourseSkills/DescriptionBySkill/${skillId}`,
+        `${apiURLConfig.baseURL}/CourseSkills/DescriptionBySkill/${skillId}`,
         { headers: { Authorization: `Bearer ${token}` } }
       );
 
@@ -144,6 +149,9 @@ const CourseSkillCard = ({
         <div className="w-16 h-16 border-4 border-t-transparent border-blue-500 rounded-full animate-spin"></div>
       </div>
     );
+  }
+  if (!skills) {
+    return <p>Loading </p>;
   }
 
   return (
@@ -216,6 +224,8 @@ const CourseSkillCard = ({
                   skillId={skill.id}
                   isEnrolled={isEnrolled}
                   isMentor={isMentor}
+                  isDelete={isDelete}
+                  courseSkillId={skill.id}
                 />
 
                 <div className="px-10 bg-gray-50 py-6  rounded-lg shadow-md">
@@ -243,7 +253,7 @@ const CourseSkillCard = ({
                                 }
                                 className="block w-full py-2 px-4 text-sm font-semibold text-green-700 bg-green-100 rounded-lg hover:bg-green-200 hover:text-green-800 transition duration-300"
                               >
-                                {exam.testName}
+                                Final Test: {exam.testName}
                               </button>
                             </div>
                           )

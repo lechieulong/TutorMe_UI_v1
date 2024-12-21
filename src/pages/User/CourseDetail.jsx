@@ -8,6 +8,7 @@ import CourseSkillCard from "../Mentor/component/CourseSkillCard";
 import { FaFlag } from "react-icons/fa";
 import Report from "../../components/common/Report";
 import useAuthToken from "../../hooks/useAuthToken";
+import apiURLConfig from "../../redux/common/apiURLConfig";
 import {
   CheckUserEnrollment,
   enrollUser,
@@ -155,7 +156,7 @@ const CourseDetail = () => {
       setIsLoading(true);
       try {
         const response = await axios.get(
-          `https://localhost:7030/api/CourseRating/${courseId}/ratings`,
+          `${apiURLConfig.baseURL}/CourseRating/${courseId}/ratings`,
           { params: { userId } }
         );
         setHasRated(response?.data?.length > 0);
@@ -220,12 +221,14 @@ const CourseDetail = () => {
         await GiveMeMyMoney(
           userId,
           price * -1,
-          `Enroll in course ${course?.name}`
+          `Enroll in course ${course?.name}`,
+          `${courseId}`
         );
         await GiveMeMyMoney(
           course?.userId,
           price,
-          `Your course has been enrolled by ${userName}`
+          `Your course has been enrolled by ${userName}`,
+          `${courseId}`
         );
         const enrollAt = new Date().toISOString().split("T")[0];
         await dispatch(
@@ -274,7 +277,7 @@ const CourseDetail = () => {
     setIsLoading(true);
     try {
       const response = await axios.get(
-        `https://localhost:7030/api/CourseRating/${courseId}/ratings`,
+        `${apiURLConfig.baseURL}/CourseRating/${courseId}/ratings`,
         { params: { userId } }
       );
       setHasRated(response?.data?.length > 0);

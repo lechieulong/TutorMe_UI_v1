@@ -8,8 +8,15 @@ import { deleteCoursePart } from "../../../redux/courses/CoursePartSlice";
 import { FaAngleDown, FaAngleUp } from "react-icons/fa";
 import Confirm from "../../../components/common/Confirm";
 import Notification from "../../../components/common/Notification";
-
-const CoursePartCard = ({ mentorAndList, skillId, isEnrolled, isMentor }) => {
+import apiURLConfig from "../../../redux/common/apiURLConfig";
+const CoursePartCard = ({
+  mentorAndList,
+  skillId,
+  isEnrolled,
+  isMentor,
+  isDelete,
+  courseSkillId,
+}) => {
   const [isLoading, setIsLoading] = useState(false);
   const dispatch = useDispatch();
   const [courseParts, setCourseParts] = useState([]);
@@ -20,12 +27,14 @@ const CoursePartCard = ({ mentorAndList, skillId, isEnrolled, isMentor }) => {
   const [partToDelete, setPartToDelete] = useState(null);
   const [notification, setNotification] = useState("");
   const [should, setShould] = useState("");
+  const [isEditing, setIsEditing] = useState({}); // Trạng thái lưu trữ thông tin đang chỉnh sửa
+  const [newTitle, setNewTitle] = useState({}); // Trạng thái lưu trữ giá trị mới của tiêu đề
 
   const fetchCourseParts = useCallback(async () => {
     setIsLoading(true);
     try {
       const response = await axios.get(
-        `https://localhost:7030/api/CourseParts/ByCourseSkill/${skillId}`
+        `${apiURLConfig.baseURL}/CourseParts/ByCourseSkill/${skillId}`
       );
       const sortedCourseParts = response.data.sort((a, b) => a.order - b.order);
       setCourseParts(sortedCourseParts);
@@ -71,6 +80,7 @@ const CoursePartCard = ({ mentorAndList, skillId, isEnrolled, isMentor }) => {
       [partId]: false,
     }));
   };
+  console.log(courseSkillId);
 
   const handleFormClose = (partId) => {
     setShowLessonForm((prev) => ({
@@ -123,6 +133,34 @@ const CoursePartCard = ({ mentorAndList, skillId, isEnrolled, isMentor }) => {
       </div>
     );
   }
+
+  const handleUpdateCoursePart = async (coursePartId) => {
+    if (newTitle[coursePartId]) {
+      const coursePartDto = {
+        title: newTitle[coursePartId],
+        courseSkillId: courseSkillId,
+      };
+
+      try {
+        await axios.put(
+          `${apiURLConfig.baseURL}/CourseParts/${coursePartId}`,
+          coursePartDto,
+          {
+            headers: {
+              "Content-Type": "application/json",
+            },
+          }
+        );
+        setIsEditing((prev) => ({ ...prev, [coursePartId]: false })); // Dừng chế độ chỉnh sửa sau khi cập nhật
+        fetchCourseParts();
+        // Xử lý thông báo thành công hoặc lỗi tại đây
+      } catch (error) {
+        console.error("Error updating course part:", error);
+        // Xử lý lỗi nếu cần
+      }
+    }
+  };
+
   return (
     <div className="p-4 mb-4">
       {courseParts.map((coursePart) => (
@@ -133,12 +171,23 @@ const CoursePartCard = ({ mentorAndList, skillId, isEnrolled, isMentor }) => {
           <div className="flex gap-2 justify-end">
             {mentorAndList && (
               <>
+                {isDelete && (
+                  <button
+                    type="button"
+                    onClick={() => handleDeleteConfirm(coursePart.id)}
+                    className="py-2 px-3 text-sm font-medium rounded-lg border border-gray-200 bg-red-500 text-white shadow-sm hover:bg-red-600 focus:outline-none"
+                  >
+                    Delete Course Part
+                  </button>
+                )}
                 <button
                   type="button"
-                  onClick={() => handleDeleteConfirm(coursePart.id)}
-                  className="py-2 px-3 text-sm font-medium rounded-lg border border-gray-200 bg-red-500 text-white shadow-sm hover:bg-red-600 focus:outline-none"
+                  onClick={() =>
+                    setIsEditing((prev) => ({ ...prev, [coursePart.id]: true }))
+                  }
+                  className="py-2 px-3 text-sm font-medium rounded-lg border border-gray-200 bg-green-500 text-white shadow-sm hover:bg-green-600 focus:outline-none"
                 >
-                  Delete Course Part
+                  Update Course Part
                 </button>
                 <button
                   type="button"
@@ -160,9 +209,32 @@ const CoursePartCard = ({ mentorAndList, skillId, isEnrolled, isMentor }) => {
             ) : (
               <FaAngleUp className="text-gray-500" />
             )}
-            <h3 className="text-lg font-semibold">{coursePart.title}</h3>
+            {isEditing[coursePart.id] ? (
+              <input
+                type="text"
+                value={newTitle[coursePart.id] || coursePart.title}
+                onChange={(e) =>
+                  setNewTitle((prev) => ({
+                    ...prev,
+                    [coursePart.id]: e.target.value,
+                  }))
+                }
+                className="border rounded-md p-2"
+              />
+            ) : (
+              <h3 className="text-lg font-semibold">{coursePart.title}</h3>
+            )}
           </div>
 
+          {isEditing[coursePart.id] && (
+            <button
+              type="button"
+              onClick={() => handleUpdateCoursePart(coursePart.id)}
+              className="py-2 px-3 text-sm font-medium rounded-lg border border-gray-200 bg-blue-500 text-white shadow-sm hover:bg-blue-600 focus:outline-none"
+            >
+              Update
+            </button>
+          )}
           {showLessonForm[coursePart.id] && (
             <CreateCourseLesson
               coursePartId={coursePart.id}
@@ -188,6 +260,7 @@ const CoursePartCard = ({ mentorAndList, skillId, isEnrolled, isMentor }) => {
               coursePartId={coursePart.id}
               isEnrolled={isEnrolled}
               isMentor={isMentor}
+              isDelete={isDelete}
             />
           </div>
         </div>
@@ -198,7 +271,7 @@ const CoursePartCard = ({ mentorAndList, skillId, isEnrolled, isMentor }) => {
         onClose={() => setConfirmOpen(false)}
         onConfirm={handleDelete}
         status="Delete Course Part"
-        shoud={should} // Sử dụng giá trị động từ state
+        shoud={should}
         message="Are you sure you want to delete this course part?"
       />
 

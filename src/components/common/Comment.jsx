@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { FaStar } from "react-icons/fa";
-
+import apiURLConfig from "../../redux/common/apiURLConfig";
 const StarRating = ({ rating }) => {
   const stars = [];
   for (let i = 0; i < 5; i++) {
@@ -25,7 +25,7 @@ const Comment = ({ courseId, onLoadingChange }) => {
       onLoadingChange?.(true); // Notify parent that loading has started
       try {
         const response = await axios.get(
-          `https://localhost:7030/api/CourseRating/${courseId}`
+          `${apiURLConfig.baseURL}/CourseRating/${courseId}`
         );
         setRatings(response.data);
       } finally {

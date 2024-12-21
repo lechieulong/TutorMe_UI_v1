@@ -5,24 +5,23 @@ import MentorSidebar from "../../components/Mentor/MentorSideBar";
 import MainLayout from "../../layout/MainLayout";
 import ClassCard from "../Class/components/ClassCard";
 import CourseSkillCard from "./component/CourseSkillCard";
-import { FaFlag } from "react-icons/fa";
-import Report from "../../components/common/Report";
 import useAuthToken from "../../hooks/useAuthToken";
-import {
-  CheckUserEnrollment,
-  enrollUser,
-} from "../../redux/Enrollment/EnrollmentSlice";
 import { fetchClasses } from "../../redux/classes/ClassSlice";
-import {
-  fetchSkills,
-  fetchSkillDescription,
-} from "../../redux/courses/CourseSkillSlice";
 import CreateClass from "../Class/CreateClass";
-import Rating from "../../components/common/Rating";
 import Notification from "../../components/common/Notification";
 import Confirm from "../../components/common/Confirm";
 import axios from "axios";
 import { formatCurrency } from "../../utils/Validator";
+import { getUser } from "../../service/GetUser";
+import { LecturerOfCourse } from "../../redux/courses/CourseSlice";
+import { GetCourseById } from "../../redux/courses/CourseSlice";
+import { CheckBanlance, GiveMeMyMoney } from "../../components/common/PayOS";
+import Comment from "../../components/common/Comment";
+import apiURLConfig from "../../redux/common/apiURLConfig";
+import {
+  fetchSkills,
+  fetchSkillDescription,
+} from "../../redux/courses/CourseSkillSlice";
 import {
   FaRegStar,
   FaStarHalfAlt,
@@ -33,11 +32,10 @@ import {
   FaRegStickyNote,
   FaRegPlayCircle,
 } from "react-icons/fa";
-import { getUser } from "../../service/GetUser";
-import { LecturerOfCourse } from "../../redux/courses/CourseSlice";
-import { GetCourseById } from "../../redux/courses/CourseSlice";
-import { CheckBanlance, GiveMeMyMoney } from "../../components/common/PayOS";
-import Comment from "../../components/common/Comment";
+import {
+  CheckUserEnrollment,
+  enrollUser,
+} from "../../redux/Enrollment/EnrollmentSlice";
 const MentorCourseDetail = () => {
   const navigate = useNavigate();
   const { className, courseId } = useParams();
@@ -48,8 +46,6 @@ const MentorCourseDetail = () => {
   const [currentSlide, setCurrentSlide] = useState(0);
   const [selectedClassId, setSelectedClassId] = useState(null);
   const [isCreateClassOpen, setIsCreateClassOpen] = useState(false);
-  const [isRatingOpen, setIsRatingOpen] = useState(false);
-  const [hasRated, setHasRated] = useState(false);
   const [notification, setNotification] = useState("");
   const [isConfirmOpen, setIsConfirmOpen] = useState(false);
   const [confirmMessage, setConfirmMessage] = useState("");
@@ -58,8 +54,8 @@ const MentorCourseDetail = () => {
   const [isMentor, setIsMentor] = useState(false);
   const [course, setCourse] = useState(null);
   const [notificationUpdated, setNotificationUpdated] = useState(false);
-  const [isReportOpen, setIsReportOpen] = useState(false);
   const dispatch = useDispatch();
+
   const { classes } = useSelector((state) => ({
     classes: state.classes.classes[courseId] || [], // Lấy danh sách lớp học theo courseId
   }));
@@ -67,7 +63,8 @@ const MentorCourseDetail = () => {
   const isEnrolled = useSelector(
     (state) => state.enrollment.isEnrolled || false
   );
-  const isReviewPath = location.pathname.includes("/review");
+  const isDelete = course?.enrollmentCount > 0 ? false : true;
+
   const { fromMentorCourseList = false } = location.state || {};
   const mentorAndList = isMentor && fromMentorCourseList;
   const authToken = useAuthToken();
@@ -76,15 +73,6 @@ const MentorCourseDetail = () => {
     setUserId(userFromToken?.sub);
     setUsername(userFromToken?.name);
   }, []);
-  const handleOpenReport = () => {
-    setIsReportOpen(true);
-  };
-  const handleCloseReport = () => {
-    setIsReportOpen(false);
-  };
-  const handleSubmitReport = () => {
-    handleCloseReport();
-  };
   useEffect(() => {
     const fetchCourseDetail = async () => {
       try {
@@ -99,6 +87,7 @@ const MentorCourseDetail = () => {
       fetchCourseDetail();
     }
   }, [dispatch, courseId]);
+  console.log(userId);
 
   useEffect(() => {
     initializeUser();
@@ -121,27 +110,10 @@ const MentorCourseDetail = () => {
     dispatch(fetchClasses(courseId));
   };
   useEffect(() => {
-    const checkIfRated = async () => {
-      if (!userId || !courseId) return;
-
-      try {
-        const response = await axios.get(
-          `https://localhost:7030/api/CourseRating/${courseId}/ratings`,
-          { params: { userId } }
-        );
-        setHasRated(response?.data?.length > 0);
-      } catch {
-        setHasRated(false);
-      }
-    };
-    checkIfRated();
-  }, [userId, courseId]);
-
-  useEffect(() => {
     const checkIfMentor = async () => {
       try {
         const { data } = await axios.get(
-          `https://localhost:7030/api/Courses/check-lecturer?courseId=${courseId}&userId=${userId}`
+          `${apiURLConfig.baseURL}/Courses/check-lecturer?courseId=${courseId}&userId=${userId}`
         );
         setIsMentor(!!data.result);
       } catch {
@@ -226,7 +198,6 @@ const MentorCourseDetail = () => {
 
     setIsConfirmOpen(true);
   };
-
   const handlePrev = () => setCurrentSlide((prev) => Math.max(prev - 1, 0));
   const handleNext = () =>
     setCurrentSlide((prev) =>
@@ -249,27 +220,12 @@ const MentorCourseDetail = () => {
     dispatch(GetCourseById(courseId));
   }, [dispatch, userId, courseId]);
 
-  const handleOpenRating = () => setIsRatingOpen(true);
-  const handleCloseRating = async () => {
-    setIsRatingOpen(false);
-    try {
-      const response = await axios.get(
-        `https://localhost:7030/api/CourseRating/${courseId}/ratings`,
-        { params: { userId } }
-      );
-      setHasRated(response?.data?.length > 0);
-    } catch {
-      console.log();
-    }
-  };
-
   useEffect(() => {
     if ((mentorAndList || isMentor) && !notificationUpdated) {
       setNotification("This is your course!");
       setNotificationUpdated(true);
     }
   }, [mentorAndList, isMentor, notificationUpdated]);
-
   return (
     <MainLayout>
       <div className="flex flex-col w-screen">
@@ -323,15 +279,6 @@ const MentorCourseDetail = () => {
                 </div>
               </div>
               <div className="bg-lightGreen p-4 rounded-lg w-full lg:w-1/3 flex flex-col items-center text-center shadow-md relative h-auto lg:h-[200px]">
-                {isEnrolled && (
-                  <button
-                    onClick={handleOpenReport}
-                    className="absolute top-2 right-2 text-red-700 text-xl"
-                  >
-                    <FaFlag />
-                  </button>
-                )}
-
                 <h2 className="text-2xl text-black font-bold mb-4">
                   {formatCurrency(course?.price)}
                 </h2>
@@ -398,6 +345,7 @@ const MentorCourseDetail = () => {
                           mentorAndList={mentorAndList}
                           handleDeleteClassSuccess={handleDeleteClassSuccess}
                           updateClassSuccessfull={updateClassSuccessfull}
+                          isDelete={isDelete}
                         />
                       ))}
                     </div>
@@ -425,39 +373,24 @@ const MentorCourseDetail = () => {
             </section>
             <div className="mt-4">
               <CourseSkillCard
-                isReviewPath={isReviewPath}
                 courseId={courseId}
                 isEnrolled={isEnrolled}
                 mentorAndList={mentorAndList}
                 onCreateTestClick={handleCreateTestClick}
                 onSkillCountUpdate={setSkillCount}
                 isMentor={isMentor}
+                isDelete={isDelete}
               />
               <Comment courseId={courseId} />
             </div>
           </div>
         </div>
       </div>
-      {isRatingOpen && (
-        <Rating
-          courseId={courseId}
-          userId={userId}
-          onClose={handleCloseRating}
-        />
-      )}
       {isCreateClassOpen && (
         <CreateClass
           courseId={courseId}
           onClose={handleCloseCreateClass}
           onCreateSuccess={() => dispatch(fetchClasses(courseId))}
-        />
-      )}
-      {isReportOpen && (
-        <Report
-          userId={userId}
-          courseId={courseId}
-          onSubmit={handleSubmitReport}
-          onClose={handleCloseReport} // Truyền hàm đóng qua props
         />
       )}
     </MainLayout>

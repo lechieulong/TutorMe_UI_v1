@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import axios from "axios";
 import Confirm from "../../../components/common/Confirm";
 import Notification from "../../../components/common/Notification";
-
+import apiURLConfig from "../../../redux/common/apiURLConfig";
 const CreateCourseLesson = ({ coursePartId, onClose, onCreated }) => {
   const [lesson, setLesson] = useState({
     coursePartId: coursePartId || "",
@@ -28,7 +28,7 @@ const CreateCourseLesson = ({ coursePartId, onClose, onCreated }) => {
   const confirmActionHandler = async () => {
     setLoading(true);
     try {
-      await axios.post("https://localhost:7030/api/CourseLessons", lesson);
+      await axios.post(`${apiURLConfig.baseURL}/CourseLessons`, lesson);
       setNotification("Course Lesson created successfully!");
       onCreated();
       onClose();

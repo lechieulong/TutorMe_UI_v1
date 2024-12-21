@@ -4,7 +4,7 @@ import MainLayout from "../../layout/MainLayout";
 import { FaGraduationCap } from "react-icons/fa";
 import { getUser } from "../../service/GetUser";
 import CourseCard from "../Course/components/CourseCard";
-
+import apiURLConfig from "../../redux/common/apiURLConfig";
 const MyLearning = () => {
   const [courses, setCourses] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -26,14 +26,14 @@ const MyLearning = () => {
       try {
         // Fetch Enrollment Data
         const enrollmentResponse = await axios.get(
-          `https://localhost:7030/api/Enrollment/User/${user.sub}`
+          `${apiURLConfig.baseURL}/Enrollment/User/${user.sub}`
         );
 
         const enrolledCourses = enrollmentResponse.data || [];
         const courseInfoPromises = enrolledCourses.map((enrollment) =>
           axios
             .get(
-              `https://localhost:7030/api/Courses/course-info/${enrollment.courseId}`
+              `${apiURLConfig.baseURL}/Courses/course-info/${enrollment.courseId}`
             )
             .then((response) => ({
               ...response.data.result, // Kết hợp thông tin course

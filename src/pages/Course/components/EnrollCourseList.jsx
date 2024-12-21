@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { FaStar } from "react-icons/fa";
 import axios from "axios";
-
+import apiURLConfig from "../../../redux/common/apiURLConfig";
 const EnrollmentCourseList = ({ courseId, userId, onClose }) => {
   const [ratingValue, setRatingValue] = useState(0);
   const [review, setReview] = useState("");
@@ -9,15 +9,12 @@ const EnrollmentCourseList = ({ courseId, userId, onClose }) => {
   const handleSubmit = async () => {
     try {
       const RatedAt = new Date().toISOString().split("T")[0];
-      await axios.post(
-        `https://localhost:7030/api/CourseRating/${courseId}/rate`,
-        {
-          UserId: userId,
-          RatingValue: ratingValue,
-          Review: review,
-          RatedAt: RatedAt,
-        }
-      );
+      await axios.post(`${apiURLConfig.baseURL}/${courseId}/rate`, {
+        UserId: userId,
+        RatingValue: ratingValue,
+        Review: review,
+        RatedAt: RatedAt,
+      });
       alert("Rating submitted successfully!");
       onClose();
     } catch (err) {

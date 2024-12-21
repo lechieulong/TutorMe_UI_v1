@@ -1,14 +1,14 @@
 // redux/slices/testExamsSlice.js
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import axios from "axios";
-
+import apiURLConfig from "../common/apiURLConfig";
 // Thunk để lấy dữ liệu test exams
 export const fetchTestExamsInLesson = createAsyncThunk(
   "testExams/fetchTestExams",
   async (lessonId, { rejectWithValue }) => {
     try {
       const response = await axios.get(
-        `https://localhost:7030/api/CourseLessons/GetTestExamByLessonId/${lessonId}`
+        `${apiURLConfig.baseURL}/CourseLessons/GetTestExamByLessonId/${lessonId}`
       );
       if (Array.isArray(response.data) && response.data.length > 0) {
         return response.data;

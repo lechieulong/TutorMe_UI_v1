@@ -31,7 +31,6 @@ const ClassCardOfCourse = ({
       });
     }
   };
-
   return (
     <div className="bg-green-50" onClick={handleCardClick}>
       <div

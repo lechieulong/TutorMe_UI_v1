@@ -7,30 +7,15 @@ const CreateClass = ({ courseId, onClose, onCreateSuccess }) => {
   const [className, setClassName] = useState("");
   const [classDescription, setClassDescription] = useState("");
   const [count, setCount] = useState(0);
-  const [startDate, setStartDate] = useState("");
-  const [endDate, setEndDate] = useState("");
   const [isEnabled, setIsEnabled] = useState(true);
   const dispatch = useDispatch();
   const [inputErrors, setInputErrors] = useState({
     className: false,
     classDescription: false,
     count: false,
-    startDate: false,
-    endDate: false,
   });
 
-  const validateStartDate = () => {
-    const today = new Date().toISOString().split("T")[0];
-    setInputErrors((prev) => ({ ...prev, startDate: startDate < today }));
-  };
-
-  const validateEndDate = () => {
-    setInputErrors((prev) => ({ ...prev, endDate: endDate < startDate }));
-  };
-
   const validateFields = () => {
-    validateStartDate();
-    validateEndDate();
     return !Object.values(inputErrors).some((error) => error);
   };
 
@@ -39,38 +24,31 @@ const CreateClass = ({ courseId, onClose, onCreateSuccess }) => {
 
     if (!validateFields()) return;
 
-    const startDateTime = new Date(startDate).toISOString().split("T")[0];
-    const endDateTime = new Date(endDate).toISOString().split("T")[0];
-
     const newClass = {
       className,
       classDescription,
       count,
       courseId,
-      startDate: startDateTime,
-      endDate: endDateTime,
       isEnabled,
     };
-    console.log(newClass);
-
     try {
       await dispatch(createClass({ newClass })).unwrap();
-      onCreateSuccess(); // Gọi callback nếu có
-      onClose(); // Đóng form
+      onCreateSuccess(); // Call callback if provided
+      onClose(); // Close form
     } catch (error) {
-      onCreateSuccess(); // Gọi callback nếu có
-      onClose(); // Đóng form
+      onCreateSuccess(); // Call callback if provided
+      onClose(); // Close form
     }
   };
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
       <div className="bg-white p-6 rounded-lg shadow-lg w-1/3 relative">
-        <h2 className="text-2xl font-bold mb-4">Thêm Lớp Học Mới</h2>
+        <h2 className="text-2xl font-bold mb-4">Create New Class</h2>
         <form onSubmit={handleSubmit}>
           <div className="mb-4">
             <label className="block text-sm font-semibold mb-2">
-              Tên Lớp Học
+              Class Name
             </label>
             <input
               type="text"
@@ -87,7 +65,9 @@ const CreateClass = ({ courseId, onClose, onCreateSuccess }) => {
           </div>
 
           <div className="mb-4">
-            <label className="block text-sm font-semibold mb-2">Mô Tả</label>
+            <label className="block text-sm font-semibold mb-2">
+              Description
+            </label>
             <textarea
               value={classDescription}
               onChange={(e) => {
@@ -109,7 +89,7 @@ const CreateClass = ({ courseId, onClose, onCreateSuccess }) => {
 
           <div className="mb-4">
             <label className="block text-sm font-semibold mb-2">
-              Số Lượng Học Viên
+              Student Count
             </label>
             <input
               type="number"
@@ -125,42 +105,7 @@ const CreateClass = ({ courseId, onClose, onCreateSuccess }) => {
             />
           </div>
 
-          <div className="mb-4 grid grid-cols-2 gap-4">
-            <div>
-              <label className="block text-sm font-semibold mb-2">
-                Ngày Bắt Đầu
-              </label>
-              <input
-                type="date"
-                value={startDate}
-                onChange={(e) => {
-                  setStartDate(e.target.value);
-                  validateStartDate();
-                }}
-                required
-                className={`w-full border p-2 rounded focus:outline-none focus:border-blue-500 ${
-                  inputErrors.startDate ? "border-red-500" : "border-gray-300"
-                }`}
-              />
-            </div>
-            <div>
-              <label className="block text-sm font-semibold mb-2">
-                Ngày Kết Thúc
-              </label>
-              <input
-                type="date"
-                value={endDate}
-                onChange={(e) => {
-                  setEndDate(e.target.value);
-                  validateEndDate();
-                }}
-                required
-                className={`w-full border p-2 rounded focus:outline-none focus:border-blue-500 ${
-                  inputErrors.endDate ? "border-red-500" : "border-gray-300"
-                }`}
-              />
-            </div>
-          </div>
+          <div className="mb-4 grid grid-cols-2 gap-4"></div>
           <div className="mb-4">
             <label className="inline-flex items-center">
               <input
@@ -169,7 +114,7 @@ const CreateClass = ({ courseId, onClose, onCreateSuccess }) => {
                 onChange={(e) => setIsEnabled(e.target.checked)}
                 className="mr-2"
               />
-              <span className="text-sm font-semibold">Kích Hoạt</span>
+              <span className="text-sm font-semibold">Activate</span>
             </label>
           </div>
           <button
@@ -183,7 +128,7 @@ const CreateClass = ({ courseId, onClose, onCreateSuccess }) => {
             type="submit"
             className="bg-blue-500 text-white p-2 rounded hover:bg-blue-600"
           >
-            Tạo Lớp Học
+            Create Class
           </button>
         </form>
       </div>

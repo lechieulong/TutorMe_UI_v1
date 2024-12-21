@@ -57,7 +57,9 @@ const TestFormLayout = () => {
     <div>
       {!isViewExplain && <Header />}
       <div className="flex w-screen  ">
-        {!isViewExplain && <MentorSidebar isEnrolled={isEnrolled} />}
+        {!isViewExplain && (
+          <MentorSidebar isEnrolled={isEnrolled} isMentor={true} />
+        )}
 
         <div
           className={`w-full ${

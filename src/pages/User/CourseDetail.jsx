@@ -221,12 +221,14 @@ const CourseDetail = () => {
         await GiveMeMyMoney(
           userId,
           price * -1,
-          `Enroll in course ${course?.name}`
+          `Enroll in course ${course?.name}`,
+          `${courseId}`
         );
         await GiveMeMyMoney(
           course?.userId,
           price,
-          `Your course has been enrolled by ${userName}`
+          `Your course has been enrolled by ${userName}`,
+          `${courseId}`
         );
         const enrollAt = new Date().toISOString().split("T")[0];
         await dispatch(

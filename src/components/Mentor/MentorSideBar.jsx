@@ -17,6 +17,7 @@ const MentorSidebar = ({ mentorAndList, setSelectedComponent, isMentor }) => {
     const userFromToken = getUser();
     setUserId(userFromToken?.sub);
   }, []);
+  console.log(mentorAndList);
 
   useEffect(() => {
     initializeUser();
@@ -91,6 +92,7 @@ const MentorSidebar = ({ mentorAndList, setSelectedComponent, isMentor }) => {
                   onClick={() => {
                     handleNavigate(`/courseDetail/${courseId}/classOfCourse`, {
                       isMentor,
+                      mentorAndList,
                     });
                   }}
                   className={`py-4 px-1 inline-flex items-center gap-x-2 text-sm whitespace-nowrap text-gray-500 hover:text-blue-600 focus:outline-none focus:text-blue-600 ${

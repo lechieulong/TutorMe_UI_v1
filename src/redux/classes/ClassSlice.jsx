@@ -23,9 +23,12 @@ export const fetchUnenrolledClasses = createAsyncThunk(
   "unenrolledClasses/fetchUnenrolledClasses",
   async ({ courseId, userId }, { rejectWithValue }) => {
     try {
-      const response = await axios.get(`${apiURLConfig}/class/unenrolled`, {
-        params: { courseId, userId },
-      });
+      const response = await axios.get(
+        `${apiURLConfig.baseURL}/class/unenrolled`,
+        {
+          params: { courseId, userId },
+        }
+      );
       console.log(courseId);
       return { courseId, classes: response.data }; // Trả về dữ liệu kèm courseId
     } catch (error) {
@@ -40,8 +43,8 @@ export const fetchEnabledStatus = createAsyncThunk(
   "class/fetchEnabledStatus",
   async (classId, { rejectWithValue }) => {
     try {
-      const response = await axios.get(
-        `${apiURLConfig}/class/${classId}/enabled`
+      const response = await axios.put(
+        `${apiURLConfig.baseURL}/class/${classId}/enabled`
       );
       return { classId, isEnabled: response.data.isEnabled };
     } catch (error) {
@@ -56,7 +59,7 @@ export const updateEnabledStatus = createAsyncThunk(
   async ({ classId, newStatus }, { rejectWithValue }) => {
     try {
       const response = await axios.put(
-        `${apiURLConfig}/class/${classId}/enabled`,
+        `${apiURLConfig.baseURL}/class/${classId}/enabled`,
         newStatus, // Truyền trực tiếp giá trị boolean
         {
           headers: { "Content-Type": "application/json" },
@@ -111,7 +114,7 @@ export const uploadClassFile = createAsyncThunk(
       formData.append("file", file);
 
       const response = await axios.post(
-        `${apiURLConfig}/upload-course-file?type=class&id=${classId}`,
+        `${apiURLConfig.baseURL}/upload-course-file?type=class&id=${classId}`,
         formData,
         {
           headers: {

@@ -25,7 +25,7 @@ const Comment = ({ courseId, onLoadingChange }) => {
       onLoadingChange?.(true); // Notify parent that loading has started
       try {
         const response = await axios.get(
-          `${apiURLConfig}/CourseRating/${courseId}`
+          `${apiURLConfig.baseURL}/CourseRating/${courseId}`
         );
         setRatings(response.data);
       } finally {

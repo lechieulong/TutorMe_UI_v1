@@ -77,11 +77,17 @@ const ClassToEnroll = ({ courseId, userId, onClose, onEnrollSuccess }) => {
     setConfirmAction(() => async () => {
       try {
         // Thanh toán tiền
-        await GiveMeMyMoney(userId, price * -1, `Đăng ký lớp ${className}`);
+        await GiveMeMyMoney(
+          userId,
+          price * -1,
+          `Đăng ký lớp ${className}`,
+          `${courseId}`
+        );
         await GiveMeMyMoney(
           teacherID,
           price,
-          `Lớp của bạn đã được đăng ký bởi ${userId}`
+          `Lớp của bạn đã được đăng ký bởi ${userId}`,
+          `${courseId}`
         );
 
         const enrollAt = new Date().toISOString().split("T")[0];

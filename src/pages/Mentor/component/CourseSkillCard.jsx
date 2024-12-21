@@ -7,11 +7,10 @@ import Confirm from "../../../components/common/Confirm";
 import Notification from "../../../components/common/Notification";
 import TestForm from "../../ExamTest/TestForm";
 import Cookies from "js-cookie";
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { toast, ToastContainer } from "react-toastify";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faClipboard } from "@fortawesome/free-solid-svg-icons";
-import { useDispatch } from "react-redux";
 import apiURLConfig from "../../../redux/common/apiURLConfig";
 const CourseSkillCard = ({
   courseId,
@@ -20,7 +19,9 @@ const CourseSkillCard = ({
   mentorAndList,
   isMentor,
   isDelete,
+  onLoadingChange,
 }) => {
+  const [isLoading, setIsLoading] = useState(false);
   const [skills, setSkills] = useState([]);
   const [activeTab, setActiveTab] = useState(null);
   const [showCreateForm, setShowCreateForm] = useState(false);
@@ -30,9 +31,7 @@ const CourseSkillCard = ({
   const [categories, setCategories] = useState([]);
   const [skillId, setSkillId] = useState(null);
   const [testExams, setTestExams] = useState({}); // Store tests for each skill
-  const [isLoading, setIsLoading] = useState(false);
   const token = Cookies.get("authToken");
-  const dispatch = useDispatch();
   useEffect(() => {
     fetchSkills();
   }, [courseId]);
@@ -40,11 +39,12 @@ const CourseSkillCard = ({
   // Fetch skills and associated test exams
   const fetchSkills = async () => {
     if (!courseId) return;
-    setIsLoading(true);
+
+    onLoadingChange(true); // Set loading state to true
+
     try {
       const response = await axios.get(
         `${apiURLConfig.baseURL}/CourseSkills/Course/${courseId}`
-        // `${apiURLConfig}/CourseSkills/Course/${courseId}`
       );
       setSkills(response.data);
       if (onSkillCountUpdate) {
@@ -56,14 +56,17 @@ const CourseSkillCard = ({
       response.data.forEach((skill) => {
         fetchTestExams(skill.id);
       });
+    } catch (error) {
+      console.log("Error fetching skills:", error);
     } finally {
-      setIsLoading(false);
+      onLoadingChange(false); // Set loading state to false once done
     }
   };
 
   // Fetch test exams for a specific skill
   const fetchTestExams = async (skillId) => {
-    setIsLoading(true);
+    // Set loading to true before starting the fetch
+    onLoadingChange(true);
     try {
       const response = await axios.get(
         `${apiURLConfig.baseURL}/CourseSkills/GetTestExamsBySkillIdCourse?skillIdCourse=${skillId}`,
@@ -74,13 +77,17 @@ const CourseSkillCard = ({
         ...prevExams,
         [skillId]: response.data, // Store test exams for the skill
       }));
+    } catch (error) {
+      console.log("Error fetching test exams:", error);
     } finally {
-      setIsLoading(false);
+      // Set loading to false once the fetch is complete
+      onLoadingChange(false);
     }
   };
 
   const handleCreateTest = async (skillId) => {
-    setIsLoading(true);
+    onLoadingChange(true); // Bắt đầu loading khi fetch description
+
     try {
       const response = await axios.get(
         `${apiURLConfig.baseURL}/CourseSkills/DescriptionBySkill/${skillId}`,
@@ -90,8 +97,10 @@ const CourseSkillCard = ({
       setIsCreateTest(true);
       setCategories([response.data.description]);
       setSkillId(skillId);
+    } catch (error) {
+      console.log("Error fetching skill description:", error);
     } finally {
-      setIsLoading(false);
+      onLoadingChange(false); // Kết thúc loading sau khi fetch xong
     }
   };
 
@@ -104,26 +113,26 @@ const CourseSkillCard = ({
   };
 
   const handlePartCreated = () => {
-    setIsLoading(true);
     try {
       fetchSkills();
       closeCreateForm();
-    } finally {
-      setIsLoading(false);
+    } catch {
+      console.log();
     }
   };
 
   const confirmDeleteSkill = async () => {
-    setIsLoading(true);
     try {
       setNotification("Skill deleted successfully.");
-    } finally {
-      setIsLoading(false);
+    } catch {
+      console.log();
     }
   };
   const navigate = useNavigate();
 
   const handleNavigate = async (skillId, examId) => {
+    onLoadingChange(true); // Bắt đầu loading khi fetch categories
+
     try {
       const response = await axios.get(
         `${apiURLConfig.baseURL}/CourseSkills/DescriptionBySkill/${skillId}`,
@@ -133,26 +142,25 @@ const CourseSkillCard = ({
       const updatedCategories = [response.data.description];
       setCategories(updatedCategories);
 
-      // Navigate with updated categories
+      // Điều hướng với categories đã cập nhật
       navigate(`/testDetail/${examId}`, {
         state: { categories: updatedCategories },
       });
     } catch (error) {
       console.error("Error fetching categories:", error);
       toast.error("Failed to load categories");
+    } finally {
+      onLoadingChange(false); // Kết thúc loading sau khi fetch xong
     }
   };
 
-  {
-    isLoading && (
-      <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-        <div className="w-16 h-16 border-4 border-t-transparent border-blue-500 rounded-full animate-spin"></div>
-      </div>
-    );
-  }
   if (!skills) {
     return <p>Loading </p>;
   }
+
+  const handleLoadingState = (loading) => {
+    onLoadingChange(loading);
+  };
 
   return (
     <div>
@@ -226,9 +234,13 @@ const CourseSkillCard = ({
                   isMentor={isMentor}
                   isDelete={isDelete}
                   courseSkillId={skill.id}
+                  onLoadingChange={handleLoadingState}
                 />
 
                 <div className="px-10 bg-gray-50 py-6  rounded-lg shadow-md">
+                  <h3 className="font-extrabold text-2xl text-green-700 py-3 mb-5 border-b-2 border-green-200">
+                    Practice Test
+                  </h3>
                   {(isEnrolled || mentorAndList || isMentor) && (
                     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mt-4">
                       {testExams[skill.id]?.map(

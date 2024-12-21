@@ -5,19 +5,11 @@ import MentorSidebar from "../../components/Mentor/MentorSideBar";
 import MainLayout from "../../layout/MainLayout";
 import ClassCard from "../Class/components/ClassCard";
 import CourseSkillCard from "../Mentor/component/CourseSkillCard";
-import { FaFlag } from "react-icons/fa";
+import Comment from "../../components/common/Comment";
+import RatingTeacher from "../../components/common/RatingTeacher";
 import Report from "../../components/common/Report";
 import useAuthToken from "../../hooks/useAuthToken";
 import apiURLConfig from "../../redux/common/apiURLConfig";
-import {
-  CheckUserEnrollment,
-  enrollUser,
-} from "../../redux/Enrollment/EnrollmentSlice";
-import { fetchClasses } from "../../redux/classes/ClassSlice";
-import {
-  fetchSkills,
-  fetchSkillDescription,
-} from "../../redux/courses/CourseSkillSlice";
 import Rating from "../../components/common/Rating";
 import Confirm from "../../components/common/Confirm";
 import axios from "axios";
@@ -32,19 +24,28 @@ import {
   FaRegStickyNote,
   FaRegPlayCircle,
 } from "react-icons/fa";
+import {
+  fetchSkills,
+  fetchSkillDescription,
+} from "../../redux/courses/CourseSkillSlice";
+import {
+  CheckUserEnrollment,
+  enrollUser,
+} from "../../redux/Enrollment/EnrollmentSlice";
 import { toast, ToastContainer } from "react-toastify";
 import { getUser } from "../../service/GetUser";
 import { LecturerOfCourse } from "../../redux/courses/CourseSlice";
 import { GetCourseById } from "../../redux/courses/CourseSlice";
 import { checkIfRatedTeacher } from "../../redux/courses/CourseSlice";
 import { CheckBanlance, GiveMeMyMoney } from "../../components/common/PayOS";
-import Comment from "../../components/common/Comment";
-import RatingTeacher from "../../components/common/RatingTeacher";
+import { FaFlag } from "react-icons/fa";
+import { fetchClasses } from "../../redux/classes/ClassSlice";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faChalkboardTeacher } from "@fortawesome/free-solid-svg-icons";
+import { ClipLoader } from "react-spinners";
 const CourseDetail = () => {
   const navigate = useNavigate();
-  const { className, courseId } = useParams();
+  const { courseId } = useParams();
   const location = useLocation();
   const [skillCount, setSkillCount] = useState(0);
   const [userId, setUserId] = useState(null);
@@ -285,19 +286,27 @@ const CourseDetail = () => {
       setIsLoading(false);
     }
   };
-  {
-    isLoading && (
-      <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-        <div className="w-16 h-16 border-4 border-t-transparent border-blue-500 rounded-full animate-spin"></div>
-      </div>
-    );
-  }
+
+  const handleLoadingState = (loading) => {
+    setIsLoading(loading);
+  };
+  const handleLoadingStateSkill = (loading) => {
+    setIsLoading(loading);
+  };
+  const handleLoadingStateComment = (loading) => {
+    setIsLoading(loading);
+  };
   return (
     <MainLayout>
       <div className="flex flex-col w-screen">
         <div className="flex w-full">
           <MentorSidebar isEnrolled={isEnrolled} isMentor={isMentor} />
           <div className="flex-1 p-4 overflow-y-auto">
+            {isLoading && (
+              <div className="absolute inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+                <ClipLoader color="#000000" size={50} />
+              </div>
+            )}
             <div className="mx-auto bg-houseGreen text-white  rounded-lg shadow-lg flex flex-between  p-8 space-y-8 lg:space-y-0 lg:space-x-8 py-7">
               <div className="flex flex-col flex-1 gap-6  w-5/12 ">
                 <h1 className="text-3xl font-bold mb-4">
@@ -314,7 +323,7 @@ const CourseDetail = () => {
                       Rate Course
                     </button>
                   )}
-                  {!isMentor && isEnrolled && (
+                  {!isMentor && isEnrolled && !hasRatedTeacher && (
                     <button
                       className="py-2 px-3 text-sm font-medium rounded-lg border bg-white text-gray-800 shadow-sm hover:bg-gray-300"
                       onClick={() => handleOpenTeacherRating(course?.userId)}
@@ -339,10 +348,11 @@ const CourseDetail = () => {
                         Enroll now
                       </button>
                     )}
-
-                    <h2 className="text-3xl font-extrabold text-gray-800 tracking-tight sm:text-4xl lg:text-5xl bg-green-700 text-transparent bg-clip-text">
-                      {formatCurrency(course?.price)}
-                    </h2>
+                    {isEnrolled && (
+                      <h2 className="text-3xl font-extrabold text-gray-800 tracking-tight sm:text-4xl lg:text-5xl bg-green-700 text-transparent bg-clip-text">
+                        {formatCurrency(course?.price)}
+                      </h2>
+                    )}
                   </div>
 
                   {isEnrolled && (
@@ -393,16 +403,8 @@ const CourseDetail = () => {
                       <span>1 overall test</span>
                     </li>
                     <li className="flex items-center space-x-2">
-                      <FaRegListAlt className="text-houseGreen" />
-                      <span>81 progress tests</span>
-                    </li>
-                    <li className="flex items-center space-x-2">
                       <FaRegStickyNote className="text-houseGreen" />
                       <span>{skillCount} Skills</span>
-                    </li>
-                    <li className="flex items-center space-x-2">
-                      <FaRegPlayCircle className="text-houseGreen" />
-                      <span>25 lessons</span>
                     </li>
                   </div>
                 </div>
@@ -429,6 +431,7 @@ const CourseDetail = () => {
                           switchState={switchStates[classItem.id] || false}
                           onSelect={() => setSelectedClassId(classItem.id)}
                           isActive={selectedClassId === classItem.id}
+                          onLoadingChange={handleLoadingState}
                         />
                       ))}
                     </div>
@@ -462,8 +465,12 @@ const CourseDetail = () => {
                 onCreateTestClick={handleCreateTestClick}
                 onSkillCountUpdate={setSkillCount}
                 isMentor={isMentor}
+                onLoadingChange={handleLoadingStateSkill}
               />
-              <Comment courseId={courseId} />
+              <Comment
+                courseId={courseId}
+                onLoadingChange={handleLoadingStateComment}
+              />
             </div>
           </div>
         </div>

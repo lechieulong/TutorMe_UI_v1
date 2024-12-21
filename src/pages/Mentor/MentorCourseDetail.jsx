@@ -1,23 +1,22 @@
 import React, { useState, useEffect, useCallback } from "react";
-import { useParams, useLocation, Link, useNavigate } from "react-router-dom";
+import { useParams, useLocation, Link } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import MentorSidebar from "../../components/Mentor/MentorSideBar";
 import MainLayout from "../../layout/MainLayout";
 import ClassCard from "../Class/components/ClassCard";
 import CourseSkillCard from "./component/CourseSkillCard";
-import useAuthToken from "../../hooks/useAuthToken";
 import { fetchClasses } from "../../redux/classes/ClassSlice";
 import CreateClass from "../Class/CreateClass";
 import Notification from "../../components/common/Notification";
-import Confirm from "../../components/common/Confirm";
 import axios from "axios";
 import { formatCurrency } from "../../utils/Validator";
 import { getUser } from "../../service/GetUser";
 import { LecturerOfCourse } from "../../redux/courses/CourseSlice";
 import { GetCourseById } from "../../redux/courses/CourseSlice";
-import { CheckBanlance, GiveMeMyMoney } from "../../components/common/PayOS";
 import Comment from "../../components/common/Comment";
 import apiURLConfig from "../../redux/common/apiURLConfig";
+import { toast, ToastContainer } from "react-toastify";
+import { ClipLoader } from "react-spinners";
 import {
   fetchSkills,
   fetchSkillDescription,
@@ -37,80 +36,39 @@ import {
   enrollUser,
 } from "../../redux/Enrollment/EnrollmentSlice";
 const MentorCourseDetail = () => {
-  const navigate = useNavigate();
+  const [isLoading, setIsLoading] = useState(false);
   const { className, courseId } = useParams();
   const location = useLocation();
   const [skillCount, setSkillCount] = useState(0);
   const [userId, setUserId] = useState(null);
-  const [userName, setUsername] = useState(null);
   const [currentSlide, setCurrentSlide] = useState(0);
   const [selectedClassId, setSelectedClassId] = useState(null);
   const [isCreateClassOpen, setIsCreateClassOpen] = useState(false);
   const [notification, setNotification] = useState("");
-  const [isConfirmOpen, setIsConfirmOpen] = useState(false);
-  const [confirmMessage, setConfirmMessage] = useState("");
-  const [confirmStatus, setConfirmStatus] = useState("");
-  const [confirmAction, setConfirmAction] = useState(() => {});
   const [isMentor, setIsMentor] = useState(false);
   const [course, setCourse] = useState(null);
   const [notificationUpdated, setNotificationUpdated] = useState(false);
   const dispatch = useDispatch();
-
+  const switchStates = useSelector((state) => state.classes.switchStates || {});
   const { classes } = useSelector((state) => ({
     classes: state.classes.classes[courseId] || [], // Lấy danh sách lớp học theo courseId
   }));
-  const switchStates = useSelector((state) => state.classes.switchStates || {});
   const isEnrolled = useSelector(
     (state) => state.enrollment.isEnrolled || false
   );
+  const handleOpenCreateClass = () => setIsCreateClassOpen(true);
+  const handleCloseCreateClass = () => setIsCreateClassOpen(false);
   const isDelete = course?.enrollmentCount > 0 ? false : true;
-
   const { fromMentorCourseList = false } = location.state || {};
   const mentorAndList = isMentor && fromMentorCourseList;
-  const authToken = useAuthToken();
   const initializeUser = useCallback(() => {
     const userFromToken = getUser();
     setUserId(userFromToken?.sub);
-    setUsername(userFromToken?.name);
   }, []);
-  useEffect(() => {
-    const fetchCourseDetail = async () => {
-      try {
-        const courseDetail = await dispatch(GetCourseById(courseId)).unwrap(); // Truyền courseId vào action
-        setCourse(courseDetail); // Kết quả trả về là thông tin chi tiết của khóa học
-      } catch (error) {
-        console.error("Failed to fetch course details:", error);
-      }
-    };
 
-    if (courseId) {
-      fetchCourseDetail();
-    }
-  }, [dispatch, courseId]);
-  console.log(userId);
-
-  useEffect(() => {
-    initializeUser();
-    if (courseId) {
-      dispatch(fetchClasses(courseId));
-      dispatch(fetchSkills(courseId));
-    }
-  }, [initializeUser, dispatch, courseId]);
-
-  useEffect(() => {
-    if (userId && courseId) {
-      dispatch(CheckUserEnrollment({ userId, courseId }));
-    }
-  }, [dispatch, userId, courseId]);
-
-  const handleDeleteClassSuccess = () => {
-    dispatch(fetchClasses(courseId));
-  };
-  const updateClassSuccessfull = () => {
-    dispatch(fetchClasses(courseId));
-  };
   useEffect(() => {
     const checkIfMentor = async () => {
+      setIsLoading(true); // Bắt đầu trạng thái loading
       try {
         const { data } = await axios.get(
           `${apiURLConfig.baseURL}/Courses/check-lecturer?courseId=${courseId}&userId=${userId}`
@@ -118,10 +76,123 @@ const MentorCourseDetail = () => {
         setIsMentor(!!data.result);
       } catch {
         setIsMentor(false);
+      } finally {
+        setIsLoading(false); // Kết thúc trạng thái loading
       }
     };
-    checkIfMentor();
+    if (userId && courseId) {
+      checkIfMentor();
+    }
   }, [userId, courseId]);
+
+  useEffect(() => {
+    const fetchCourseDetail = async () => {
+      setIsLoading(true); // Bắt đầu trạng thái loading
+      try {
+        const courseDetail = await dispatch(GetCourseById(courseId)).unwrap(); // Truyền courseId vào action
+        setCourse(courseDetail); // Lưu thông tin chi tiết của khóa học
+      } catch (error) {
+        console.error("Failed to fetch course details:", error);
+        toast.error("Failed to fetch course details!");
+      } finally {
+        setIsLoading(false); // Kết thúc trạng thái loading
+      }
+    };
+    if (courseId) {
+      fetchCourseDetail();
+    }
+  }, [dispatch, courseId]);
+
+  useEffect(() => {
+    setIsLoading(true); // Bắt đầu trạng thái loading
+
+    initializeUser();
+    if (courseId) {
+      dispatch(fetchClasses(courseId));
+      dispatch(fetchSkills(courseId));
+    }
+
+    setIsLoading(false); // Kết thúc trạng thái loading
+  }, [initializeUser, dispatch, courseId]);
+
+  useEffect(() => {
+    if (userId && courseId) {
+      setIsLoading(true); // Bắt đầu trạng thái loading
+      dispatch(CheckUserEnrollment({ userId, courseId })).finally(() => {
+        setIsLoading(false); // Kết thúc trạng thái loading
+      });
+    }
+  }, [dispatch, userId, courseId]);
+
+  const handleDeleteClassSuccess = async () => {
+    setIsLoading(true); // Bắt đầu trạng thái loading
+    try {
+      await dispatch(fetchClasses(courseId));
+      toast.success("Class deleted successfully!");
+    } catch (error) {
+      toast.error("Failed to delete class!");
+    } finally {
+      setIsLoading(false); // Kết thúc trạng thái loading
+    }
+  };
+
+  const updateClassSuccessfull = async () => {
+    setIsLoading(true); // Bắt đầu trạng thái loading
+    try {
+      await dispatch(fetchClasses(courseId));
+      toast.success("Class updated successfully!");
+    } catch (error) {
+      toast.error("Failed to update class!");
+    } finally {
+      setIsLoading(false); // Kết thúc trạng thái loading
+    }
+  };
+
+  const handlePrev = () => setCurrentSlide((prev) => Math.max(prev - 1, 0));
+  const handleNext = () =>
+    setCurrentSlide((prev) =>
+      Math.min(prev + 1, Math.ceil(classes.length / 4) - 1)
+    );
+
+  const handleCreateTestClick = (skillId) => {
+    setIsLoading(true); // Bắt đầu trạng thái loading
+    dispatch(fetchSkillDescription(skillId))
+      .unwrap()
+      .catch(() => {
+        toast.error("Failed to fetch skill description!");
+      })
+      .finally(() => {
+        setIsLoading(false); // Kết thúc trạng thái loading
+      });
+  };
+  useEffect(() => {
+    const fetchData = async () => {
+      setIsLoading(true); // Bắt đầu trạng thái loading
+
+      try {
+        if (userId) {
+          await dispatch(CheckUserEnrollment({ userId, courseId })).unwrap();
+        }
+        await dispatch(LecturerOfCourse(courseId)).unwrap();
+        await dispatch(GetCourseById(courseId)).unwrap();
+      } catch (error) {
+        console.error("Failed to fetch data:", error);
+        toast.error("Failed to fetch data!");
+      } finally {
+        setIsLoading(false); // Kết thúc trạng thái loading
+      }
+    };
+    fetchData();
+  }, [dispatch, userId, courseId]);
+
+  useEffect(() => {
+    if ((mentorAndList || isMentor) && !notificationUpdated) {
+      setIsLoading(true); // Bắt đầu trạng thái loading
+      setNotification("This is your course!");
+      setNotificationUpdated(true);
+      setIsLoading(false); // Kết thúc trạng thái loading
+    }
+  }, [mentorAndList, isMentor, notificationUpdated]);
 
   const renderStars = (rating) => {
     const fullStars = Math.floor(rating);
@@ -145,87 +216,15 @@ const MentorCourseDetail = () => {
     );
   };
 
-  const handleEnroll = async () => {
-    if (authToken == null) {
-      navigate("/login");
-    }
-    if (!selectedClassId) {
-      setNotification("Bạn chưa chọn lớp.");
-      return;
-    }
-
-    const price = course?.price;
-
-    const hasSufficientBalance = await CheckBanlance(price);
-    if (!hasSufficientBalance) {
-      const userChoice = window.confirm(
-        "Số dư không đủ. Bạn có muốn nạp tiền không?"
-      );
-      if (userChoice) {
-        window.location.href = "/Payment";
-      } else {
-        setNotification("Đăng ký thất bại! Bạn không có đủ tiền.");
-      }
-      return;
-    }
-
-    setConfirmMessage("Are you sure you want to enroll this course?");
-    setConfirmStatus("Enroll");
-    setConfirmAction(() => async () => {
-      try {
-        await GiveMeMyMoney(
-          userId,
-          price * -1,
-          `Enroll in course ${course?.name}`
-        );
-        await GiveMeMyMoney(
-          course?.userId,
-          price,
-          `Your course has been enrolled by ${userName}`
-        );
-
-        await dispatch(
-          enrollUser({ courseId, userId, classId: selectedClassId })
-        ).unwrap();
-
-        setNotification("Đăng ký thành công!");
-        dispatch(CheckUserEnrollment({ userId, courseId }));
-      } catch (error) {
-        setNotification("Đăng ký thất bại! Vui lòng thử lại.");
-      }
-      setIsConfirmOpen(false);
-    });
-
-    setIsConfirmOpen(true);
+  const handleLoadingState = (loading) => {
+    setIsLoading(loading);
   };
-  const handlePrev = () => setCurrentSlide((prev) => Math.max(prev - 1, 0));
-  const handleNext = () =>
-    setCurrentSlide((prev) =>
-      Math.min(prev + 1, Math.ceil(classes.length / 4) - 1)
-    );
-
-  const handleOpenCreateClass = () => setIsCreateClassOpen(true);
-  const handleCloseCreateClass = () => setIsCreateClassOpen(false);
-
-  const handleCreateTestClick = (skillId) => {
-    dispatch(fetchSkillDescription(skillId))
-      .unwrap()
-      .catch(() => {});
+  const handleLoadingStateSkill = (loading) => {
+    setIsLoading(loading);
   };
-  useEffect(() => {
-    if (userId) {
-      dispatch(CheckUserEnrollment({ userId, courseId }));
-    }
-    dispatch(LecturerOfCourse(courseId));
-    dispatch(GetCourseById(courseId));
-  }, [dispatch, userId, courseId]);
-
-  useEffect(() => {
-    if ((mentorAndList || isMentor) && !notificationUpdated) {
-      setNotification("This is your course!");
-      setNotificationUpdated(true);
-    }
-  }, [mentorAndList, isMentor, notificationUpdated]);
+  const handleLoadingStateComment = (loading) => {
+    setIsLoading(loading);
+  };
   return (
     <MainLayout>
       <div className="flex flex-col w-screen">
@@ -235,16 +234,15 @@ const MentorCourseDetail = () => {
             onClose={() => setNotification("")}
           />
         )}
-        <Confirm
-          isOpen={isConfirmOpen}
-          onClose={() => setIsConfirmOpen(false)}
-          onConfirm={confirmAction}
-          message={confirmMessage}
-          status={confirmStatus}
-        />
-        <div className="flex w-full">
+        <div className="flex w-full relative">
           <MentorSidebar mentorAndList={true} isMentor={true} />
-          <div className="flex-1 p-4 overflow-y-auto">
+          <div className="flex-1 p-4 overflow-y-auto relative">
+            {/* Loader hiển thị trong khu vực nội dung chính */}
+            {isLoading && (
+              <div className="absolute inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+                <ClipLoader color="#000000" size={50} />
+              </div>
+            )}
             <div className="mx-auto bg-houseGreen text-white rounded-lg shadow-lg flex flex-col lg:flex-row p-8 space-y-8 lg:space-y-0 lg:space-x-8 ">
               <div className="flex flex-col lg:w-2/3">
                 <h1 className="text-3xl font-bold mb-4">
@@ -304,14 +302,6 @@ const MentorCourseDetail = () => {
                     <span>25 lessons</span>
                   </li>
                 </ul>
-                {!mentorAndList && !isEnrolled && !isMentor && (
-                  <button
-                    onClick={handleEnroll}
-                    className="bg-accentGreen hover:bg-accentGreen-dark text-white py-2 px-4 rounded-lg w-full flex items-center justify-center transition duration-300"
-                  >
-                    Enroll now
-                  </button>
-                )}
               </div>
             </div>
             <section className="mb-4 mt-4">
@@ -346,6 +336,7 @@ const MentorCourseDetail = () => {
                           handleDeleteClassSuccess={handleDeleteClassSuccess}
                           updateClassSuccessfull={updateClassSuccessfull}
                           isDelete={isDelete}
+                          onLoadingChange={handleLoadingState}
                         />
                       ))}
                     </div>
@@ -380,12 +371,17 @@ const MentorCourseDetail = () => {
                 onSkillCountUpdate={setSkillCount}
                 isMentor={isMentor}
                 isDelete={isDelete}
+                onLoadingChange={handleLoadingStateSkill}
               />
-              <Comment courseId={courseId} />
+              <Comment
+                courseId={courseId}
+                onLoadingChange={handleLoadingStateComment}
+              />
             </div>
           </div>
         </div>
       </div>
+
       {isCreateClassOpen && (
         <CreateClass
           courseId={courseId}
@@ -393,6 +389,7 @@ const MentorCourseDetail = () => {
           onCreateSuccess={() => dispatch(fetchClasses(courseId))}
         />
       )}
+      <ToastContainer autoClose={3000} newestOnTop closeOnClick />
     </MainLayout>
   );
 };

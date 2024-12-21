@@ -1,16 +1,16 @@
 /* eslint-disable react/prop-types */
 import { useState, useEffect } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
-import axios from "axios";
 import { styled, alpha } from "@mui/material/styles";
-import Switch from "@mui/material/Switch";
 import { updateEnabledStatus } from "../../../redux/classes/ClassSlice";
 import { useDispatch } from "react-redux";
-import useAuthToken from "../../../hooks/useAuthToken";
-import UpdateClass from "../UpdateClass";
 import { faMultiply } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import apiURLConfig from "../../../redux/common/apiURLConfig";
+import useAuthToken from "../../../hooks/useAuthToken";
+import UpdateClass from "../UpdateClass";
+import Switch from "@mui/material/Switch";
+import axios from "axios";
 const GreenSwitch = styled(Switch)(({ theme }) => ({
   "& .MuiSwitch-switchBase.Mui-checked": {
     color: "#007549",
@@ -31,15 +31,17 @@ const ClassCard = ({
   isActive,
   handleDeleteClassSuccess,
   updateClassSuccessfull, // Passed down function to trigger reload in ClassList
+  onLoadingChange,
 }) => {
   const author = useAuthToken();
   const location = useLocation();
   const navigate = useNavigate();
-  const [isSwitchOn, setIsSwitchOn] = useState(false);
   const dispatch = useDispatch();
+  const [isSwitchOn, setIsSwitchOn] = useState(false);
   const [isUpdateOpen, setIsUpdateOpen] = useState(false);
 
   useEffect(() => {
+    onLoadingChange(true); // Bắt đầu loading
     const fetchEnabledStatus = async () => {
       try {
         const response = await axios.get(
@@ -52,6 +54,8 @@ const ClassCard = ({
         }
       } catch (error) {
         console.error("Failed to fetch enabled status of the class", error);
+      } finally {
+        onLoadingChange(false); // Kết thúc loading
       }
     };
 
@@ -64,31 +68,47 @@ const ClassCard = ({
 
   const handleUpdateClassSuccess = () => {
     updateClassSuccessfull();
-    console.log("Class has been updated successfully!");
   };
 
   const handleSwitchChange = () => {
+    // Invert the current switch state
     const newStatus = !isSwitchOn;
+
+    // Create confirmation message based on new status
     const confirmationMessage = newStatus
       ? "Are you sure you want to enable this class?"
       : "Are you sure you want to disable this class?";
 
+    // Show confirmation dialog to the user
     if (window.confirm(confirmationMessage)) {
-      // Dispatch Redux action to update status
+      // Set loading state to true while the request is in progress
+      onLoadingChange(true);
+
+      // Dispatch Redux action to update the class status in the backend
       dispatch(
         updateEnabledStatus({ classId: classItem.id, isEnabled: newStatus })
       )
         .then(() => {
-          setIsSwitchOn(newStatus); // Update status in component
+          // Update the switch status in the component
+          setIsSwitchOn(newStatus);
+
+          // Show success message to user
           alert(
             `Class has been ${newStatus ? "enabled" : "disabled"} successfully.`
           );
-          // Call callback to handle list update if necessary
-          onSwitchChange && onSwitchChange(classItem.id, newStatus);
+
+          if (onSwitchChange) {
+            onSwitchChange(classItem.id, newStatus);
+          }
         })
         .catch((error) => {
+          // Handle error if something goes wrong
           console.error("Failed to update class status", error);
           alert("An error occurred while updating class status.");
+        })
+        .finally(() => {
+          // Set loading state to false once the request is complete
+          onLoadingChange(false);
         });
     }
   };
@@ -119,11 +139,17 @@ const ClassCard = ({
 
     const confirmationMessage =
       "Are you sure you want to delete this class? This action cannot be undone.";
+
+    // Show confirmation dialog to the user
     if (window.confirm(confirmationMessage)) {
+      // Set loading state to true while the request is in progress
+      onLoadingChange(true);
+
       try {
         const response = await axios.delete(
           `${apiURLConfig.baseURL}/class/${classItem.id}`
         );
+
         if (response.status === 200) {
           alert("Class has been deleted successfully.");
           handleDeleteClassSuccess(); // Trigger reload in ClassList component
@@ -132,6 +158,10 @@ const ClassCard = ({
         }
       } catch (error) {
         console.error("Failed to delete class", error);
+        alert("An error occurred while deleting the class.");
+      } finally {
+        // Set loading state to false once the request is complete
+        onLoadingChange(false);
       }
     }
   };

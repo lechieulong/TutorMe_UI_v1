@@ -39,21 +39,23 @@ function PaymentMethod() {
 
   const handleCheckOut = async (e) => {
     if (status !== 0) {
-      toast.error("This time is not available now. Please choose another time!");
+      toast.error(
+        "This time is not available now. Please choose another time!"
+      );
     } else if (await CheckBanlance(price)) {
-      setIsLoading(true);  // Bắt đầu trạng thái loading
+      setIsLoading(true); // Bắt đầu trạng thái loading
 
       await GiveMeMyMoney(
         user.id,
         price * -1,
         `Book schedule with teacher ${teacherName}`,
-        'Schedule'
+        "Schedule"
       );
       await GiveMeMyMoney(
         teacherId,
         price,
         `Your schedule has been booked by ${user.name}`,
-        'Schedule'
+        "Schedule"
       );
 
       try {
@@ -71,10 +73,12 @@ function PaymentMethod() {
       } catch (error) {
         toast.error("Failed to book the session. Please try again.");
       } finally {
-        setIsLoading(false);  // Kết thúc trạng thái loading
+        setIsLoading(false); // Kết thúc trạng thái loading
       }
     } else {
-      const userChoice = window.confirm("Your balance is insufficient. Do you want to top-up?");
+      const userChoice = window.confirm(
+        "Your balance is insufficient. Do you want to top-up?"
+      );
       if (userChoice) {
         window.location.href = "/Payment";
       } else {
@@ -89,21 +93,25 @@ function PaymentMethod() {
       <div className="flex flex-col items-center justify-center min-h-screen bg-gray-100">
         <div className="w-full max-w-2xl bg-white shadow-md rounded-md">
           <div className="bg-gray-800 text-white py-4 rounded-t-md">
-            <h2 className="text-lg font-semibold text-center">CHECK INFORMATION</h2>
+            <h2 className="text-lg font-semibold text-center">
+              CHECK INFORMATION
+            </h2>
           </div>
           <div className="p-6 space-y-6">
             <div className="flex justify-center mb-4">
               <label className="flex items-center space-x-2">
                 <p className="font-mono text-center text-red-500 text-xs mt-1">
-                  This transaction will be kept 15 minutes for you. Please keep the screen on and process checkout.
+                  This transaction will be kept 15 minutes for you. Please keep
+                  the screen on and process checkout.
                 </p>
               </label>
             </div>
-            {status === 1 || (status === 2 && (
-              <p className="font-mono text-red-500 text-xs mt-1">
-                This schedule is not available now.
-              </p>
-            ))}
+            {status === 1 ||
+              (status === 2 && (
+                <p className="font-mono text-red-500 text-xs mt-1">
+                  This schedule is not available now.
+                </p>
+              ))}
             <div className="border border-gray-300 p-4 rounded-md space-y-4">
               <div className="flex justify-between">
                 <span className="font-semibold text-gray-700">
@@ -112,9 +120,7 @@ function PaymentMethod() {
                 <span>{teacherName || "N/A"}</span>
               </div>
               <div className="flex justify-between">
-                <span className="font-semibold text-gray-700">
-                  Content:
-                </span>
+                <span className="font-semibold text-gray-700">Content:</span>
                 <span>{content || "N/A"}</span>
               </div>
               <div className="flex justify-between">
@@ -123,7 +129,9 @@ function PaymentMethod() {
               </div>
               <div className="flex justify-between">
                 <span className="font-semibold text-gray-700">Time:</span>
-                <span>{startTime || "N/A"} - {endTime || "N/A"}</span>
+                <span>
+                  {startTime || "N/A"} - {endTime || "N/A"}
+                </span>
               </div>
               <div className="flex justify-between">
                 <span className="font-semibold text-gray-700">Total:</span>

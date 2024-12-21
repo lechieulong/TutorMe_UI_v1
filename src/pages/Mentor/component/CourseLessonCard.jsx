@@ -235,27 +235,37 @@ const CourseLessonCard = ({
                               key={courseLesson.id}
                             />
                             <div className="bg-green-50 p-6 rounded-lg shadow-lg">
-                              <h3 className="font-extrabold text-2xl text-green-700 py-3 mb-5 border-b-2 border-green-200">
-                                Practice Test
-                              </h3>
-                              {testExams
-                                .filter(
-                                  (exam) => exam.lessonId === courseLesson.id
-                                )
-                                .map((exam, index) => (
-                                  <div
-                                    key={exam.id}
-                                    className="mb-4 bg-white p-4 rounded-lg shadow-md border border-gray-100"
-                                  >
-                                    <p className="text-gray-600 text-sm font-semibold">
-                                      Test No. {index + 1}
-                                    </p>
-                                    <Link
-                                      to={`/testDetail/${exam.id}`}
-                                      className="inline-block mt-2 py-2 px-4 text-sm font-medium rounded-lg border border-green-300 bg-green-100 text-green-700 shadow-sm hover:bg-green-200 focus:outline-none focus:ring-2 focus:ring-green-300"
-                                    >
-                                      {exam.testName}
-                                    </Link>
+                              {testExams.filter(
+                                (exam) => exam.lessonId === courseLesson.id
+                              ).length > 0 && // Kiểm tra nếu có ít nhất một bài kiểm tra
+                                ((
+                                  <h3 className="font-extrabold text-2xl text-green-700 py-3 mb-5 border-b-2 border-green-200">
+                                    Practice Test
+                                  </h3>
+                                ),
+                                (
+                                  <div>
+                                    {testExams
+                                      .filter(
+                                        (exam) =>
+                                          exam.lessonId === courseLesson.id
+                                      )
+                                      .map((exam, index) => (
+                                        <div
+                                          key={exam.id}
+                                          className="mb-4 bg-white p-4 rounded-lg shadow-md border border-gray-100"
+                                        >
+                                          <p className="text-gray-600 text-sm font-semibold">
+                                            Test No. {index + 1}
+                                          </p>
+                                          <Link
+                                            to={`/testDetail/${exam.id}`}
+                                            className="inline-block mt-2 py-2 px-4 text-sm font-medium rounded-lg border border-green-300 bg-green-100 text-green-700 shadow-sm hover:bg-green-200 focus:outline-none focus:ring-2 focus:ring-green-300"
+                                          >
+                                            {exam.testName}
+                                          </Link>
+                                        </div>
+                                      ))}
                                   </div>
                                 ))}
 

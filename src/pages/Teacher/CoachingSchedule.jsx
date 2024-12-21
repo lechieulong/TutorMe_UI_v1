@@ -330,7 +330,6 @@ const CoachingSchedule = () => {
                     )}
                 </div>
             </div>
-            <ToastContainer autoClose={3000} newestOnTop closeOnClick />
         </MainLayout>
     );
 };

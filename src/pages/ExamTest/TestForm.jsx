@@ -9,7 +9,7 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 import { createTest } from "../../redux/testExam/TestSlice";
 import { useDispatch } from "react-redux";
-import { toast, ToastContainer } from "react-toastify";
+import { toast } from "react-toastify";
 import CreateTest from "./CreateTest";
 import TestInfoCard from "./general/TestInfoCard";
 import { getUser } from "../../service/GetUser";
@@ -52,14 +52,16 @@ const TestForm = ({
       testType: selectedTestType,
     };
 
-    try {
-      const result = await dispatch(createTest(payload)).unwrap(); // Use `.unwrap()` to get the payload directly
-      toast.success("Create test successfully.");
-      setTestInfo(result); // Set the test info on success
-    } catch (error) {
-      toast.error(error.message || "Failed to create test. Please try again.");
-      setIsSubmitted(false); // Reset submission state on failure
-    }
+    dispatch(createTest(payload)).then((result) => {
+      if (result.type == "test/createTest/fulfilled") {
+        toast.success("Create test success ");
+        setTestInfo(result);
+      } else {
+        setIsSubmitted(false);
+
+        toast.error("Failed to create test");
+      }
+    });
   };
 
   useEffect(() => {

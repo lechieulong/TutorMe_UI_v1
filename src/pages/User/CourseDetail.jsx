@@ -32,7 +32,7 @@ import {
   CheckUserEnrollment,
   enrollUser,
 } from "../../redux/Enrollment/EnrollmentSlice";
-import { toast, ToastContainer } from "react-toastify";
+import { toast } from "react-toastify";
 import { getUser } from "../../service/GetUser";
 import { LecturerOfCourse } from "../../redux/courses/CourseSlice";
 import { GetCourseById } from "../../redux/courses/CourseSlice";
@@ -499,7 +499,6 @@ const CourseDetail = () => {
           onClose={handleCloseReport} // Truyền hàm đóng qua props
         />
       )}
-      <ToastContainer autoClose={3000} newestOnTop closeOnClick />
       <Confirm
         isOpen={isConfirmOpen}
         onClose={() => setIsConfirmOpen(false)}

@@ -16,7 +16,7 @@ import { STATUS } from "../../constant/SliceName";
 import { getUser } from "../../service/GetUser";
 import CreateCourse from "../Course/components/CreateCourse";
 import { GetCreatedCourses } from "../../redux/courses/CourseSlice";
-import { toast, ToastContainer } from "react-toastify";
+import { toast } from "react-toastify";
 import apiURLConfig from "../../redux/common/apiURLConfig";
 import { ClipLoader } from "react-spinners";
 
@@ -226,7 +226,6 @@ const MentorCourseList = () => {
             </div>
           </div>
         )}
-        <ToastContainer autoClose={3000} newestOnTop closeOnClick />
       </div>
     </MainLayout>
   );

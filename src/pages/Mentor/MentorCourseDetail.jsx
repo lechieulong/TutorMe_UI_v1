@@ -15,7 +15,7 @@ import { LecturerOfCourse } from "../../redux/courses/CourseSlice";
 import { GetCourseById } from "../../redux/courses/CourseSlice";
 import Comment from "../../components/common/Comment";
 import apiURLConfig from "../../redux/common/apiURLConfig";
-import { toast, ToastContainer } from "react-toastify";
+import { toast } from "react-toastify";
 import { ClipLoader } from "react-spinners";
 import {
   fetchSkills,
@@ -389,7 +389,6 @@ const MentorCourseDetail = () => {
           onCreateSuccess={() => dispatch(fetchClasses(courseId))}
         />
       )}
-      <ToastContainer autoClose={3000} newestOnTop closeOnClick />
     </MainLayout>
   );
 };

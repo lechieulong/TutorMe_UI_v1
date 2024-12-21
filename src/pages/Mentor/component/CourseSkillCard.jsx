@@ -8,7 +8,7 @@ import Notification from "../../../components/common/Notification";
 import TestForm from "../../ExamTest/TestForm";
 import Cookies from "js-cookie";
 import { useNavigate } from "react-router-dom";
-import { toast, ToastContainer } from "react-toastify";
+import { toast } from "react-toastify";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faClipboard } from "@fortawesome/free-solid-svg-icons";
 import apiURLConfig from "../../../redux/common/apiURLConfig";
@@ -289,7 +289,6 @@ const CourseSkillCard = ({
               </div>
             ))}
           </div>
-          <ToastContainer autoClose={3000} newestOnTop closeOnClick />
         </div>
       ) : (
         <TestForm

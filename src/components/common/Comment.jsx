@@ -17,25 +17,22 @@ const StarRating = ({ rating }) => {
 
 const Comment = ({ courseId, onLoadingChange }) => {
   const [ratings, setRatings] = useState([]);
-  const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
     const fetchRatings = async () => {
-      setIsLoading(true);
-      onLoadingChange?.(true); // Notify parent that loading has started
+      onLoadingChange(true); // Notify parent that loading has started
       try {
         const response = await axios.get(
           `${apiURLConfig.baseURL}/CourseRating/${courseId}`
         );
         setRatings(response.data);
       } finally {
-        setIsLoading(false);
-        onLoadingChange?.(false); // Notify parent that loading has ended
+        onLoadingChange(false); // Notify parent that loading has ended
       }
     };
 
     fetchRatings();
-  }, [courseId, onLoadingChange]);
+  }, [courseId]);
 
   return (
     <div>

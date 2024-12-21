@@ -1,7 +1,7 @@
 import { useState } from "react";
 import axios from "axios";
 import Confirm from "../../../components/common/Confirm";
-import { toast, ToastContainer } from "react-toastify";
+import { toast } from "react-toastify";
 import apiURLConfig from "../../../redux/common/apiURLConfig";
 const CreateCoursePart = ({ courseSkillId, onClose, onCreated }) => {
   const [coursePart, setCoursePart] = useState({
@@ -88,7 +88,6 @@ const CreateCoursePart = ({ courseSkillId, onClose, onCreated }) => {
         shoud="yes"
         message="Are you sure you want to create this Course Part?"
       />
-      <ToastContainer autoClose={3000} newestOnTop closeOnClick />
     </div>
   );
 };

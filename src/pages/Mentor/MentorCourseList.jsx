@@ -16,15 +16,13 @@ import { STATUS } from "../../constant/SliceName";
 import { getUser } from "../../service/GetUser";
 import CreateCourse from "../Course/components/CreateCourse";
 import { GetCreatedCourses } from "../../redux/courses/CourseSlice";
-import { toast, ToastContainer } from "react-toastify";
+import { toast } from "react-toastify";
 import apiURLConfig from "../../redux/common/apiURLConfig";
+import { ClipLoader } from "react-spinners";
+
 const MentorCourseList = () => {
   const dispatch = useDispatch();
-  const {
-    createdCourses = [],
-    status,
-    error,
-  } = useSelector((state) => state.courses);
+  const { createdCourses = [], status } = useSelector((state) => state.courses);
   const [selectedSkill, setSelectedSkill] = useState("All");
   const [currentPage, setCurrentPage] = useState(1);
   const [searchTerm, setSearchTerm] = useState("");
@@ -123,8 +121,6 @@ const MentorCourseList = () => {
     handleCloseCreateCourse();
   };
 
-  if (status === STATUS.PENDING) return <p>Loading...</p>;
-
   return (
     <MainLayout>
       <div className="px-4 py-6">
@@ -175,31 +171,31 @@ const MentorCourseList = () => {
 
         {paginatedCourses.length > 0 ? (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mt-6">
-            {paginatedCourses.map((course) => (
-              <CourseCard
-                key={course.id}
-                courseName={course.courseName}
-                content={course.content}
-                title={course.title}
-                description={course.description}
-                Skill={course.categories}
-                icon={getIcon(course.categories)}
-                teacher={course.teacherName}
-                courseId={course.id}
-                onDelete={handleDelete}
-                isEnabled={course.isEnabled}
-                price={course.price}
-                imageUrl={course.imageUrl}
-              />
-            ))}
+            {status === STATUS.PENDING ? (
+              <div className="col-span-full flex justify-center items-center">
+                <ClipLoader color="#000000" size={50} />
+              </div>
+            ) : (
+              paginatedCourses.map((course) => (
+                <CourseCard
+                  key={course.id}
+                  courseName={course.courseName}
+                  content={course.content}
+                  title={course.title}
+                  description={course.description}
+                  Skill={course.categories}
+                  icon={getIcon(course.categories)}
+                  teacher={course.teacherName}
+                  courseId={course.id}
+                  onDelete={handleDelete}
+                  isEnabled={course.isEnabled}
+                  price={course.price}
+                  imageUrl={course.imageUrl}
+                />
+              ))
+            )}
           </div>
-        ) : (
-          <div className="flex justify-center items-center h-32">
-            <p className="text-red-500 text-lg font-semibold text-center">
-              Bạn chưa có khoá học nào
-            </p>
-          </div>
-        )}
+        ) : null}
 
         {totalPages > 1 && (
           <div className="flex justify-center items-center mt-4 fixed bottom-4 left-0 right-0">
@@ -230,7 +226,6 @@ const MentorCourseList = () => {
             </div>
           </div>
         )}
-        <ToastContainer autoClose={3000} newestOnTop closeOnClick />
       </div>
     </MainLayout>
   );

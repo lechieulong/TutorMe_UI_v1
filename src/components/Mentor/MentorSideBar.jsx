@@ -17,7 +17,6 @@ const MentorSidebar = ({ mentorAndList, setSelectedComponent, isMentor }) => {
     const userFromToken = getUser();
     setUserId(userFromToken?.sub);
   }, []);
-  console.log(mentorAndList);
 
   useEffect(() => {
     initializeUser();

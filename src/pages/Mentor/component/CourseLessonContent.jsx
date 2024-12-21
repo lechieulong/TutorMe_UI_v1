@@ -6,8 +6,6 @@ import apiURLConfig from "../../../redux/common/apiURLConfig";
 
 const CourseLessonContent = ({ courseLessontId }) => {
   const [courseLessonContents, setCourseLessonContents] = useState([]);
-  const [error, setError] = useState(null);
-  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const fetchCourseLessonContents = async () => {
@@ -17,10 +15,8 @@ const CourseLessonContent = ({ courseLessontId }) => {
         );
         const sortedContents = response.data.sort((a, b) => a.order - b.order);
         setCourseLessonContents(sortedContents);
-        setLoading(false);
       } catch (err) {
-        setError("Failed to fetch course lesson contents");
-        setLoading(false);
+        console.log();
       }
     };
 
@@ -28,14 +24,6 @@ const CourseLessonContent = ({ courseLessontId }) => {
       fetchCourseLessonContents();
     }
   }, [courseLessontId]);
-
-  if (loading) {
-    return <p>Loading contents...</p>;
-  }
-
-  if (error) {
-    return <p>{error}</p>;
-  }
 
   // Group contents by order
   const groupedContents = courseLessonContents.reduce((acc, content) => {

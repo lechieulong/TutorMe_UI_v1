@@ -12,7 +12,7 @@ import {
   faArrowLeft,
   faChevronCircleLeft,
 } from "@fortawesome/free-solid-svg-icons";
-import { toast, ToastContainer } from "react-toastify";
+import { toast } from "react-toastify";
 import { useEffect, useState } from "react";
 import { getTest, getSkills } from "../../redux/testExam/TestSlice";
 import { useDispatch } from "react-redux";
@@ -108,7 +108,6 @@ const SkillPart = () => {
 
   return (
     <>
-      <ToastContainer autoClose={2000} newestOnTop closeOnClick />
       {takeFullTest ? (
         <TestLayout fullTestId={testId} />
       ) : (

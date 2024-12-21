@@ -1,7 +1,7 @@
 export const getWelcomeMessage = (partNumber) => {
   switch (partNumber) {
     case 1:
-      return "abc";
+      return "abcd";
     // return `Hello, and welcome to the IELTS Speaking test. My name is Hydra, and I will be your examiner today. This test is recorded for assessment purposes.
     // The Speaking test is divided into three parts. I will explain each part as we go along, and I will ask you to speak on a variety of topics
     // In Part 1, I will ask you some general questions ;

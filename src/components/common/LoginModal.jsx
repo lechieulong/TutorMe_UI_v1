@@ -8,9 +8,12 @@ import "react-toastify/dist/ReactToastify.css";
 import { useDispatch, useSelector } from "react-redux";
 import InputField from "../../pages/Authentication/components/InputField";
 import { GoogleOAuthProvider } from "@react-oauth/google";
+import { jwtDecode } from "jwt-decode";
+import { Roles } from "../../utils/config";
 
 const LoginModal = ({ isOpen, onClose }) => {
   const dispatch = useDispatch();
+  const navigate = useNavigate();
   const { loginStatus, error } = useSelector((state) => state.auth);
 
   const [formData, setFormData] = useState({
@@ -57,6 +60,14 @@ const LoginModal = ({ isOpen, onClose }) => {
         const response = await dispatch(LoginApi(userData)).unwrap();
         if (response.isSuccess) {
           Cookies.set("authToken", response.result.token, { expires: 7 });
+
+          const readToken = jwtDecode(response.result.token);
+          console.log("readToken: ", readToken);
+          if (readToken.role?.includes(Roles.ADMIN)) {
+            navigate("/admin/app"); // Chuyển hướng đến trang admin
+            return;
+          }
+
           onClose(); // Close the modal on successful login
           window.location.reload();
         } else {
@@ -77,6 +88,12 @@ const LoginModal = ({ isOpen, onClose }) => {
       const response = await dispatch(loginWithGoogleApi({ token })).unwrap();
       if (response.isSuccess) {
         Cookies.set("authToken", response.result.token, { expires: 7 });
+        const readToken = jwtDecode(response.result.token);
+        console.log("readToken: ", readToken);
+        if (readToken.role?.includes(Roles.ADMIN)) {
+          navigate("/admin/app"); // Chuyển hướng đến trang admin
+          return;
+        }
         onClose(); // Close the modal on successful login
         window.location.reload();
       } else {
@@ -148,11 +165,10 @@ const LoginModal = ({ isOpen, onClose }) => {
           />
           <div className="login-btn mb-6">
             <button
-              className={`w-full px-4 py-2 font-bold text-white rounded-full focus:outline-none focus:shadow-outline ${
-                formData.username && formData.password
+              className={`w-full px-4 py-2 font-bold text-white rounded-full focus:outline-none focus:shadow-outline ${formData.username && formData.password
                   ? "bg-blue-500 hover:bg-blue-600"
                   : "bg-gray-400 cursor-not-allowed"
-              }`}
+                }`}
               type="submit"
               disabled={!(formData.username && formData.password)}
             >
@@ -168,7 +184,6 @@ const LoginModal = ({ isOpen, onClose }) => {
                 {error}
               </p>
             )}
-            <ToastContainer autoClose={3000} newestOnTop closeOnClick />
           </div>
         </form>
         <div className="space-y-4 text-gray-600 text-center">

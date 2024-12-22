@@ -7,7 +7,7 @@ import React from "react";
 import { getUser } from "../../service/GetUser";
 import axios from "axios";
 import GiftList from "./Gift";
-import { ZIM } from 'zego-zim-web';
+import { ZIM } from "zego-zim-web";
 import GiftNotification from "./ShowGift";
 import { isHaveTicket } from "./Ticket";
 import CreateTicketButton from "./Ticket";
@@ -48,86 +48,84 @@ const fetchStreamSessions = async () => {
 };
 
 // Tạo Phiên Live
-export const createStreamSession= async (LiveStreamId,Name,Type,Status)=>{
-  const fomdata={
-    name:Name,
-    Status:Status,
-    Type:Type,
-    LiveStreamId:LiveStreamId
-  }
-  try{
+export const createStreamSession = async (LiveStreamId, Name, Type, Status) => {
+  const fomdata = {
+    name: Name,
+    Status: Status,
+    Type: Type,
+    LiveStreamId: LiveStreamId,
+  };
+  try {
     const respone = await axios.post(`${url}/StreamSession`, fomdata, {
       headers: {
-        'Content-Type': 'application/json',
+        "Content-Type": "application/json",
       },
     });
-    console.log("Create StreamSession: "+respone);
-  }catch(err){
+    console.log("Create StreamSession: " + respone);
+  } catch (err) {
     console.error(err);
   }
-}
+};
 // cập nhật Phiên Live
-export const UpdateStreamSession= async (LiveStreamId,type)=>{
-  const StreamSession= await getStreamSession(LiveStreamId);
-  if(StreamSession==null){
+export const UpdateStreamSession = async (LiveStreamId, type) => {
+  const StreamSession = await getStreamSession(LiveStreamId);
+  if (StreamSession == null) {
     return;
   }
-  const fomdata={
-    Id:StreamSession.id,
-    Name:StreamSession.name,
-    Status:1,
-    StartTime:StreamSession.startTime,
-    EndTime:new Date().toISOString(),
-    Type:type,
-    LiveStreamId:StreamSession.liveStreamId
-  }
-  try{
+  const fomdata = {
+    Id: StreamSession.id,
+    Name: StreamSession.name,
+    Status: 1,
+    StartTime: StreamSession.startTime,
+    EndTime: new Date().toISOString(),
+    Type: type,
+    LiveStreamId: StreamSession.liveStreamId,
+  };
+  try {
     const respone = await axios.put(`${url}/StreamSession`, fomdata, {
       headers: {
-        'Content-Type': 'application/json',
+        "Content-Type": "application/json",
       },
     });
-    console.log("End StreamSession: "+respone);
-  }catch(err){
+    console.log("End StreamSession: " + respone);
+  } catch (err) {
     console.error(err);
   }
-}
-
-
+};
 
 // Kết Thúc Phiên Live
-export const EndStreamSession= async (LiveStreamId)=>{
-  const StreamSession= await getStreamSession(LiveStreamId);
-  if(StreamSession==null){
+export const EndStreamSession = async (LiveStreamId) => {
+  const StreamSession = await getStreamSession(LiveStreamId);
+  if (StreamSession == null) {
     return;
   }
-  const fomdata={
-    Id:StreamSession.id,
-    Name:StreamSession.name,
-    Status:0,
-    StartTime:StreamSession.startTime,
-    EndTime:new Date().toISOString(),
-    Type:StreamSession.type,
-    LiveStreamId:StreamSession.liveStreamId
-  }
-  try{
+  const fomdata = {
+    Id: StreamSession.id,
+    Name: StreamSession.name,
+    Status: 0,
+    StartTime: StreamSession.startTime,
+    EndTime: new Date().toISOString(),
+    Type: StreamSession.type,
+    LiveStreamId: StreamSession.liveStreamId,
+  };
+  try {
     const respone = await axios.put(`${url}/StreamSession`, fomdata, {
       headers: {
-        'Content-Type': 'application/json',
+        "Content-Type": "application/json",
       },
     });
-    console.log("End StreamSession: "+respone);
-  }catch(err){
+    console.log("End StreamSession: " + respone);
+  } catch (err) {
     console.error(err);
   }
-}
+};
 // Tìm Kiếm phiên live theo LiveStreamID
 export const getStreamSession = async (liveId) => {
   try {
     const response = await axios.get(`${url}/StreamSession/${liveId}`);
     return response.data;
   } catch (error) {
-    console.error('Error fetching stream sessions:', error);
+    console.error("Error fetching stream sessions:", error);
     return null;
   }
 };
@@ -188,10 +186,10 @@ export async function GetListIdIsLiveStream() {
 
     const baseURL = `https://rtc-api.zego.im/?Action=DescribeUserNum`;
     const sessions = await fetchStreamSessions();
-    if(sessions.length==0){
+    if (sessions.length == 0) {
       return null;
     }
-    const roomIds = sessions.map(session => session.liveStreamId);
+    const roomIds = sessions.map((session) => session.liveStreamId);
 
     const roomIdParams = roomIds.map((id) => `RoomId[]=${id}`).join("&");
     const generatedUrl = `${baseURL}&${roomIdParams}&AppId=${appID}&SignatureNonce=${signatureNonce}&Timestamp=${timestamp}&Signature=${encodeURIComponent(
@@ -228,14 +226,19 @@ export async function GetListIdIsLiveStream() {
   return await fetchRoomData();
 }
 const stopCameraAndMic = async (role) => {
-  if(role==="Host"){
+  if (role === "Host") {
     if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
       try {
-        const stream = await navigator.mediaDevices.getUserMedia({ video: true, audio: true });
+        const stream = await navigator.mediaDevices.getUserMedia({
+          video: true,
+          audio: true,
+        });
         const tracks = stream.getTracks();
-  
-        const isCameraOrMicActive = tracks.some((track) => track.readyState === 'live');
-  
+
+        const isCameraOrMicActive = tracks.some(
+          (track) => track.readyState === "live"
+        );
+
         if (isCameraOrMicActive) {
           tracks.forEach((track) => track.stop());
           console.log("Camera và mic đã được tắt.");
@@ -249,14 +252,13 @@ const stopCameraAndMic = async (role) => {
       console.error("Trình duyệt không hỗ trợ navigator.mediaDevices.");
     }
   }
-  
 };
 
 // Component khung phát sóng trực tiếp
 const LiveStreamFrame = ({ width, height, className }) => {
   const [roomID, setRoomID] = useState(null);
   const [loading, setLoading] = useState(true);
-  const [privacy, setPrivacy] = useState('Public'); // Default to 'Public'
+  const [privacy, setPrivacy] = useState("Public"); // Default to 'Public'
   const [giftNotifications, setGiftNotifications] = useState([]); // Mảng thông báo quà tặng
   const [Access, setAccess] = useState(null);
   const user = getUser();
@@ -268,15 +270,14 @@ const LiveStreamFrame = ({ width, height, className }) => {
     const fetchRoomData = async () => {
       try {
         const Listid = await GetListIdIsLiveStream();
-        const roomIdFromUrl = getUrlParams().get('roomID');
+        const roomIdFromUrl = getUrlParams().get("roomID");
         if (roomIdFromUrl) {
-          if(await getStreamSession(roomIdFromUrl)){
+          if (await getStreamSession(roomIdFromUrl)) {
             setRoomID(roomIdFromUrl);
           }
-        } else if (Listid!=null) {
+        } else if (Listid != null) {
           setRoomID(Listid[0].RoomId);
-        }    
-
+        }
       } catch (error) {
         console.error("Error fetching room data:", error);
       } finally {
@@ -286,28 +287,35 @@ const LiveStreamFrame = ({ width, height, className }) => {
 
     fetchRoomData();
     return () => {
-      if(zp){
+      if (zp) {
         zp.destroy();
         stopCameraAndMic(role_str);
       }
     };
   }, []);
-  
+
   useEffect(() => {
     const checkAccess = async () => {
-        const StreamSession = await getStreamSession(roomID);
-        setPrivacy(StreamSession.type==1?'Private':'Public');
-        const isPublic=!StreamSession.type==1;
-        const isHaveTikcet=await isHaveTicket(roomID,convert32BytesToUUID(UserId));
-        if(isPublic||!isPublic&&isHaveTikcet||!isPublic&&role_str==="Host"||!isPublic&&user?.role?.includes("ADMIN")){
-           setAccess(true);
-        }else{
-          setAccess(false);
-        }
+      const StreamSession = await getStreamSession(roomID);
+      setPrivacy(StreamSession.type == 1 ? "Private" : "Public");
+      const isPublic = !StreamSession.type == 1;
+      const isHaveTikcet = await isHaveTicket(
+        roomID,
+        convert32BytesToUUID(UserId)
+      );
+      if (
+        isPublic ||
+        (!isPublic && isHaveTikcet) ||
+        (!isPublic && role_str === "Host") ||
+        (!isPublic && user?.role?.includes("ADMIN"))
+      ) {
+        setAccess(true);
+      } else {
+        setAccess(false);
+      }
     };
     if (roomID) checkAccess();
-  }, [roomID,privacy]);
-  
+  }, [roomID, privacy]);
 
   useEffect(() => {
     const metting = async () => {
@@ -335,54 +343,56 @@ const LiveStreamFrame = ({ width, height, className }) => {
       3000
     );
   };
-  if (loading){
-    return <div
-    className={`relative border-4 border-blue-500 rounded-lg overflow-hidden ${className}`}
-    style={{ width, height }}
-  >
-    {/* Background */}
-    <div
-      className="absolute inset-0 bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500"
-    ></div>
-  
-    {/* Overlay */}
-    <div
-      className="absolute inset-0 bg-black/50 flex items-center justify-center"
-    >
-      <span className="text-white text-lg font-semibold animate-pulse">
-        Loading
-      </span>
-    </div>
-  </div>
-  }
-
-  if (!roomID) {
-    return <div className={`relative border-4 border-blue-500 rounded-lg overflow-hidden ${className}`} style={{ width, height }}>
-    {/* Background */}
-    <div className="absolute inset-0 bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500"></div>
-  
-    {/* Overlay */}
-    <div
-      className="absolute inset-0 bg-black/50 flex items-center justify-center"
-    >
-      <span className="text-white text-lg font-semibold animate-pulse">
-      No Room Exists 
-      </span>
-    </div>
-  </div>
-    
-  }
-
-
-  if(!Access){
+  if (loading) {
     return (
       <div
         className={`relative border-4 border-blue-500 rounded-lg overflow-hidden ${className}`}
         style={{ width, height }}
-      > 
+      >
         {/* Background */}
         <div className="absolute inset-0 bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500"></div>
-    
+
+        {/* Overlay */}
+        <div className="absolute inset-0 bg-black/50 flex items-center justify-center">
+          <span className="text-white text-lg font-semibold animate-pulse">
+            Loading
+          </span>
+        </div>
+      </div>
+    );
+  }
+
+  if (!roomID) {
+    return (
+      <div
+        className={`relative border-4 border-blue-500 rounded-lg overflow-hidden ${className}`}
+        style={{ width, height }}
+      >
+        {/* Background */}
+        <div className="absolute inset-0 bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500"></div>
+
+        {/* Overlay */}
+        <div className="absolute inset-0 bg-black/50 flex items-center justify-center">
+          <span className="text-white text-lg font-semibold animate-pulse">
+            No Room Exists
+          </span>
+        </div>
+      </div>
+    );
+  }
+
+  if (Access != null && !Access) {
+    if (zp) {
+      zp.destroy();
+    }
+    return (
+      <div
+        className={`relative border-4 border-blue-500 rounded-lg overflow-hidden ${className}`}
+        style={{ width, height }}
+      >
+        {/* Background */}
+        <div className="absolute inset-0 bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500"></div>
+
         {/* Overlay */}
         <div className="absolute inset-0 bg-black/50 flex flex-col items-center justify-center space-y-4">
           <span className="text-white text-lg font-semibold animate-pulse text-center">
@@ -400,8 +410,8 @@ const LiveStreamFrame = ({ width, height, className }) => {
       </div>
     );
   }
-   // Information about the user from backend
-  const UserName = user?user.name:"guest";
+  // Information about the user from backend
+  const UserName = user ? user.name : "guest";
   const role =
     role_str === "Host"
       ? ZegoUIKitPrebuilt.Host
@@ -432,29 +442,32 @@ const LiveStreamFrame = ({ width, height, className }) => {
     zp = ZegoUIKitPrebuilt.create(kitToken);
     zp.addPlugins({ ZIM });
     setTimeout(() => {
-      zp.hasJoinedRoom=false;
+      zp.hasJoinedRoom = false;
       zp.joinRoom({
         onJoinRoom: () => {
           console.log("user join");
           // Get the roomID
           let roomID = zp.getRoomID();
           // Store it in sessionStorage
-          sessionStorage.setItem('roomID', roomID);
+          sessionStorage.setItem("roomID", roomID);
         },
-        onLiveEnd:(usere)=>{
-         EndStreamSession(roomID);
-          
+        onLiveEnd: (usere) => {
+          EndStreamSession(roomID);
         },
-        onLeaveRoom: () =>{
+        onLeaveRoom: () => {
           console.log("user leave");
-          sessionStorage.removeItem('roomID');
+          sessionStorage.removeItem("roomID");
         },
-        onUserAvatarSetter:(userList)=>{
-          userList.forEach(u => {
-            dispatch(GetUserByID(convert32BytesToUUID(u.userID))).then((userInfo) => {
-              u.setUserAvatar(userInfo.payload.imageURL);
+        onUserAvatarSetter: (userList) => {
+          userList.forEach((u) => {
+            if (u.userName != "guest") {
+              dispatch(GetUserByID(convert32BytesToUUID(u.userID))).then(
+                (userInfo) => {
+                  u.setUserAvatar(userInfo.payload.imageURL);
+                }
+              );
+            }
           });
-        })
         },
         startLiveButtonText: "Start Live",
         container: element,
@@ -465,24 +478,32 @@ const LiveStreamFrame = ({ width, height, className }) => {
           },
         },
         sharedLinks,
-        showTextChat: role_str === "Host"||window.location.pathname.includes("/live-stream")?true:false,
-        showPreJoinView:false,
-        showRoomDetailsButton: role_str === "Host"||window.location.pathname.includes("/live-stream")?true:false,
+        showTextChat:
+          role_str === "Host" ||
+          window.location.pathname.includes("/live-stream")
+            ? true
+            : false,
+        showPreJoinView: false,
+        showRoomDetailsButton:
+          role_str === "Host" ||
+          window.location.pathname.includes("/live-stream")
+            ? true
+            : false,
         showLeavingView: false,
-        showRemoveUserButton: role_str === "Host"?true:false,
+        showRemoveUserButton: role_str === "Host" ? true : false,
         onInRoomCustomCommandReceived(messages) {
-          if(messages[0].command.Type=="Gift"){
-             const { UserName, GiftURL } = messages[0].command;
+          if (messages[0].command.Type == "Gift") {
+            const { UserName, GiftURL } = messages[0].command;
             addGiftNotification(UserName, GiftURL);
-          }else if(messages[0].command.Type=="Privacy"){
-            const Privacy=messages[0].command;
+          } else if (messages[0].command.Type == "Privacy") {
+            const Privacy = messages[0].command;
+            console.log(Privacy);
             setPrivacy(Privacy);
-          }else if(messages[0].command.Type=="Test"){
-           console.log("hello");
+          } else if (messages[0].command.Type == "Test") {
+            console.log("hello");
           }
-          ;
         },
-      }); 
+      });
     }, 3000);
   };
   // Hàm gửi thông báo quà tặng
@@ -506,10 +527,12 @@ const LiveStreamFrame = ({ width, height, className }) => {
 
   // Hàm gửi thông báo thay doi
   const handleUpdateCommand = (Privacy) => {
-    if (zp&&zp.hasJoinedRoom) {
+    console.log(Privacy);
+    if (zp && zp.hasJoinedRoom) {
       return zp
         .sendInRoomCustomCommand({ Type: "Privacy", Privacy })
         .then(() => {
+          console.log(Privacy + "success");
           return true;
         })
         .catch((err) => {
@@ -523,17 +546,48 @@ const LiveStreamFrame = ({ width, height, className }) => {
   };
 
   return (
-    <div className={`relative border-4 border-blue-500 rounded-lg overflow-hidden  inset-0 bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 ${className}`}>
-    {user!=null&&window.location.pathname.includes("/live-stream")&&(user?.role.includes("TEACHER")||user?.role.includes("ADMIN"))&&<CreateTicketButton roomID={roomID} role={role_str} privacy={privacy} setPrivacy={setPrivacy} handleUpdateCommand={handleUpdateCommand}/>} 
-    <div  className={`relative border-blue-500 rounded-lg overflow-hidden ${className}`} style={{ width, height }}>      
-     <div className="absolute inset-0 bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500" style={{ position: "relative" }}>
-        <div id="meetingContainer" className={`bg-black ${className}`} style={{ width, height }}></div>
-     </div>
+    <div
+      className={`relative border-4 border-blue-500 rounded-lg overflow-hidden  inset-0 bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 ${className}`}
+    >
+      {user != null &&
+        window.location.pathname.includes("/live-stream") &&
+        (user?.role.includes("TEACHER") || user?.role.includes("ADMIN")) && (
+          <CreateTicketButton
+            roomID={roomID}
+            role={role_str}
+            privacy={privacy}
+            setPrivacy={setPrivacy}
+            handleUpdateCommand={handleUpdateCommand}
+          />
+        )}
+      <div
+        className={`relative border-blue-500 rounded-lg overflow-hidden ${className}`}
+        style={{ width, height }}
+      >
+        <div
+          className="absolute inset-0 bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500"
+          style={{ position: "relative" }}
+        >
+          <div
+            id="meetingContainer"
+            className={`bg-black ${className}`}
+            style={{ width, height }}
+          ></div>
+        </div>
+      </div>
+      {role_str != "Host" &&
+        user != null &&
+        window.location.pathname.includes("/live-stream") && (
+          <GiftList
+            userId={UserId}
+            roomID={roomID}
+            UserName={UserName}
+            handleSendCommand={handleSendCommand}
+          />
+        )}
+      <GiftNotification notifications={giftNotifications} />{" "}
+      {/* Sử dụng component thông báo */}
     </div>
-    {role_str != "Host"&&user!=null&&window.location.pathname.includes("/live-stream")&&<GiftList userId={UserId} roomID={roomID} UserName={UserName} handleSendCommand={handleSendCommand} />}
-    <GiftNotification notifications={giftNotifications} /> {/* Sử dụng component thông báo */}
-    </div>
-    
   );
 };
 

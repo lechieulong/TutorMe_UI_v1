@@ -19,7 +19,7 @@ import {
   faMicrophone,
 } from "@fortawesome/free-solid-svg-icons";
 
-const TestExplain = ({ totalPartsSubmit, skillResultIds, testId, skillId }) => {
+const TestExplain = ({ skillResultIds, testId, userIdTaken }) => {
   const [currentSkillIndex, setCurrentSkillIndex] = useState(0); // Track the current skill index
   const [testData, setTestData] = useState({}); // Initialize as an empty object
   const [loading, setLoading] = useState(true);
@@ -89,7 +89,7 @@ const TestExplain = ({ totalPartsSubmit, skillResultIds, testId, skillId }) => {
       const result = await dispatch(
         getExplainTest({
           testId,
-          userId: user.id,
+          userId: userIdTaken ?? user.id,
           skillResultIds,
         })
       );

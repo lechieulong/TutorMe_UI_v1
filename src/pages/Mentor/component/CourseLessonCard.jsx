@@ -12,6 +12,8 @@ import { Link, useParams } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faClipboard } from "@fortawesome/free-solid-svg-icons";
 import apiURLConfig from "../../../redux/common/apiURLConfig";
+import { toast } from "react-toastify";
+
 const CourseLessonCard = ({
   mentorAndList,
   coursePartId,
@@ -35,6 +37,12 @@ const CourseLessonCard = ({
   const token = Cookies.get("authToken");
 
   const { courseId } = useParams();
+
+  useEffect(() => {
+    if (isCreateTest) {
+      fetchTestExams(lessonId);
+    }
+  }, [isCreateTest, lessonId]);
 
   const toggleCollapse = (lessonId) => {
     setCollapsedLessons((prev) => ({
@@ -95,20 +103,18 @@ const CourseLessonCard = ({
       ...prevForms,
       { id: Date.now(), lessonId: lessonId },
     ]);
-    setNotification("Dynamic form added successfully.");
+    toast.succes("Added content")
   };
 
   const removeDynamicForm = (formId) => {
     setDynamicForms((prevForms) =>
       prevForms.filter((form) => form.id !== formId)
     );
-    setNotification("Dynamic form removed successfully.");
   };
 
   const refreshCourseLessons = () => {
     setLoading(true);
     fetchCourseLessons();
-    setNotification("Course lessons refreshed successfully.");
   };
 
   const handleCreateTest = async (lessonId) => {
@@ -129,28 +135,30 @@ const CourseLessonCard = ({
     }
   };
 
-  const fetchTestExams = async (lessonId) => {
-    onLoadingChange(true);
-  
-    try {
-      const response = await axios.get(
-        `${apiURLConfig.baseURL}/CourseLessons/GetTestExamByLessonId/${lessonId}`
-      );
-      if (Array.isArray(response.data) && response.data.length > 0) {
-        setTestExams((prev) => {
-          const updated = [...prev, ...response.data]; // Thêm mới các bài test
-          console.log("Updated testExams:", updated);
-          return updated;
-        });
-      } else {
-        console.log("No exams for lesson:", lessonId);
+
+
+    const fetchTestExams = async (lessonId) => {
+      onLoadingChange(true);
+    
+      try {
+        const response = await axios.get(
+          `${apiURLConfig.baseURL}/CourseLessons/GetTestExamByLessonId/${lessonId}`
+        );
+        if (Array.isArray(response.data) && response.data.length > 0) {
+          setTestExams((prev) => {
+            const updated = [...prev, ...response.data]; // Thêm mới các bài test
+            console.log("Updated testExams:", updated);
+            return updated;
+          });
+        } else {
+          console.log("No exams for lesson:", lessonId);
+        }
+      } catch (err) {
+        console.error("Error fetching test exams:", err);
+      } finally {
+        onLoadingChange(false);
       }
-    } catch (err) {
-      console.error("Error fetching test exams:", err);
-    } finally {
-      onLoadingChange(false);
-    }
-  };
+    };
   
   const confirmActionHandler = async () => {
     try {

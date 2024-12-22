@@ -44,7 +44,6 @@ const ClassDetail = () => {
   };
   const location = useLocation();
   const { mentorAndList } = location.state || {}; // Lấy mentorAndList từ state
-  console.log("mentorAndList:", mentorAndList);
   const getFileIcon = (filePath) => {
     const extension = filePath.split(".").pop().toLowerCase();
     switch (extension) {
@@ -78,7 +77,6 @@ const ClassDetail = () => {
       setClassFiles([]);
     }
   };
-  console.log(mentorAndList);
   const handleCreateTest = async () => {
     try {
       const response = await axios.get(
@@ -118,7 +116,6 @@ const ClassDetail = () => {
       const response = await axios.get(
         `${apiURLConfig.baseURL}/class/GetTestExamsByClassId/${classId}`
       );
-      console.log(response);
 
       if (Array.isArray(response.data) && response.data.length > 0) {
         setTestExams(response.data); // Lưu danh sách bài kiểm tra vào state
@@ -143,7 +140,6 @@ const ClassDetail = () => {
   if (error) {
     return <div>{error}</div>;
   }
-  console.log(mentorAndList);
 
   return (
     <MainLayout>

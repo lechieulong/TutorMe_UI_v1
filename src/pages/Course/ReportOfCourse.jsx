@@ -5,12 +5,13 @@ import MainLayout from "../../layout/MainLayout";
 import MentorSidebar from "../../components/Mentor/MentorSideBar";
 import LineChart from "../ADMIN/Chart/LineChart";
 import apiURLConfig from "../../redux/common/apiURLConfig";
+import { getUser } from "../../service/GetUser";
 const ReportOfCourse = () => {
   const { courseId } = useParams(); // Lấy courseId từ URL
   const [enrollments, setEnrollments] = useState([]); // Lưu trữ dữ liệu enrollments
   const [monthlyData, setMonthlyData] = useState([]); // Dữ liệu số lượng enrollment theo tháng
-  const [loading, setLoading] = useState(true); // Trạng thái loading
-  const [error, setError] = useState(null); // Trạng thái lỗi
+  const [isMentor, setIsMentor] = useState(false)
+  const user = getUser();
 
   useEffect(() => {
     const fetchEnrollments = async () => {
@@ -56,11 +57,27 @@ const ReportOfCourse = () => {
     }
   }, [courseId]);
 
+  useEffect(() => {
+    const checkIfMentor = async () => {
+      try {
+        const { data } = await axios.get(
+          `${apiURLConfig.baseURL}/Courses/check-lecturer?courseId=${courseId}&userId=${user?.sub}`
+        );
+        setIsMentor(data.result);
+        } catch {
+        setIsMentor(false);
+      } 
+    };
+    if (user?.sub && courseId) {
+      checkIfMentor();
+    }
+  }, [user?.sub, courseId]);
+
   return (
     <MainLayout>
       <div className="flex flex-col w-screen">
         <div className="flex w-full">
-          <MentorSidebar showReport = {true}/>
+          <MentorSidebar showReport = {true} isMentor={isMentor}/>
           <div className="flex flex-box"></div>
           <div className="bg-white w-full">
             <div className="p-5">

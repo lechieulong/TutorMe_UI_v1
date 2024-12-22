@@ -76,7 +76,9 @@ const CourseLessonContent = ({ courseLessontId }) => {
                           key={content.id}
                           dangerouslySetInnerHTML={{
                             __html: content.contentText,
+                            
                           }}
+                          className="text-left"
                         />
                       );
                   }
@@ -126,7 +128,7 @@ const CourseLessonContent = ({ courseLessontId }) => {
                           download
                           className="text-blue-600 hover:underline"
                         >
-                          Tải file
+                          Download
                         </a>
                       );
 

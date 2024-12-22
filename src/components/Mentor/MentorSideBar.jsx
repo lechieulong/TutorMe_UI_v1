@@ -18,6 +18,7 @@ const MentorSidebar = ({
   const [userId, setUserId] = useState(null);
   const navigate = useNavigate(); // Hook để điều hướng
 
+
   const initializeUser = useCallback(() => {
     const userFromToken = getUser();
     setUserId(userFromToken?.sub);
@@ -44,7 +45,6 @@ const MentorSidebar = ({
 
   // Function to check if we're on the exact page
   const isCurrentPage = (path) => pathname === path;
-console.log(showReport);
 
   return (
     <div>
@@ -143,7 +143,7 @@ console.log(showReport);
                 <button
                 onClick={() => {
                   handleNavigate(`/manageTest/${courseId}`, {
-                    state: { showReport }
+                    showReport
                   });
                 }}
                   className={`py-4 px-1 inline-flex items-center gap-x-2 text-sm whitespace-nowrap text-gray-500 hover:text-blue-600 focus:outline-none focus:text-blue-600 ${
@@ -169,42 +169,6 @@ console.log(showReport);
                     <path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 1 1 3-3h7z" />
                   </svg>
                   Test
-                </button>
-              )}
-
-              {showReport && (
-                <button
-                  onClick={() => {
-                    handleNavigate(
-                      `/mentorCourseDetail/${courseId}/reportOfCourse`,
-                      { courseId }
-                    );
-                  }}
-                  className={`py-4 px-1 inline-flex items-center gap-x-2 text-sm whitespace-nowrap text-gray-500 hover:text-blue-600 focus:outline-none focus:text-blue-600 ${
-                    isCurrentPage(
-                      `/mentorCourseDetail/${courseId}/reportOfCourse`
-                    )
-                      ? "font-semibold border-blue-600 text-blue-600"
-                      : "border-transparent"
-                  }`}
-                  role="tab"
-                >
-                  <svg
-                    className="size-4"
-                    xmlns="http://www.w3.org/2000/svg"
-                    width="24"
-                    height="24"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    strokeWidth="2"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                  >
-                    <path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z" />
-                    <path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 1 1 3-3h7z" />
-                  </svg>
-                  Report
                 </button>
               )}
             </nav>

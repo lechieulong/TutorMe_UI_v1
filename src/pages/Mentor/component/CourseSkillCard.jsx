@@ -1,5 +1,6 @@
 /* eslint-disable react/prop-types */
 import React, { useEffect, useState } from "react";
+import { useDispatch  } from "react-redux";
 import axios from "axios";
 import CoursePartCard from "../../Course/components/CoursePartCard";
 import CreateCoursePart from "./CreateCoursePart";
@@ -32,14 +33,14 @@ const CourseSkillCard = ({
   const [skillId, setSkillId] = useState(null);
   const [testExams, setTestExams] = useState({}); // Store tests for each skill
   const token = Cookies.get("authToken");
+  const [createCoursePart, setCreateCoursePart] = useState(false)
+  const dispatch = useDispatch();
   useEffect(() => {
     fetchSkills();
   }, [courseId]);
 
   // Fetch skills and associated test exams
   const fetchSkills = async () => {
-    if (!courseId) return;
-
     onLoadingChange(true); // Set loading state to true
 
     try {
@@ -112,14 +113,15 @@ const CourseSkillCard = ({
     setShowCreateForm(false);
   };
 
-  const handlePartCreated = () => {
+  const handlePartCreated = async () => {
     try {
-      fetchSkills();
       closeCreateForm();
-    } catch {
-      console.log();
+      setCreateCoursePart(true);
+    } catch (error) {
+      console.log("Error:", error);
     }
   };
+  
 
   const confirmDeleteSkill = async () => {
     try {
@@ -235,6 +237,7 @@ const CourseSkillCard = ({
                   isDelete={isDelete}
                   courseSkillId={skill.id}
                   onLoadingChange={handleLoadingState}
+                  createCoursePart = {createCoursePart}
                 />
 
                 <div className="px-10 bg-gray-50 py-6  rounded-lg shadow-md">

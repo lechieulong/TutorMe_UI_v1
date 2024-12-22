@@ -17,6 +17,7 @@ const CoursePartCard = ({
   isDelete,
   courseSkillId,
   onLoadingChange,
+  createCoursePart,
 }) => {
   const [isLoading, setIsLoading] = useState(false);
   const dispatch = useDispatch();
@@ -53,7 +54,7 @@ const CoursePartCard = ({
     } finally {
       onLoadingChange(false); // Gọi callback khi hoàn thành
     }
-  }, [skillId]);
+  }, [skillId, createCoursePart]);
 
   useEffect(() => {
     onLoadingChange(true); // Gọi callback để thay đổi trạng thái loading ở ngoài component

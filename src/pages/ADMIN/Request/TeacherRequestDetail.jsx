@@ -107,7 +107,7 @@ const MainContent = ({ request }) => (
         <div className="bg-white p-4 rounded-lg shadow mb-4">
             <div className="flex justify-between items-center mb-4">
                 <button className="text-blue-500">IELTS Certification</button>
-                <button className="text-gray-500">Test result</button>
+                {/* <button className="text-gray-500">Test result</button> */}
             </div>
             {request?.user?.userEducationDto?.degreeURL && (
                 <img src={request.user.userEducationDto.degreeURL} alt="IELTS cert" className="mx-auto" />

@@ -147,7 +147,10 @@ const Header = () => {
                   <Link to={`/user/${user?.userName}`}>
                     <img
                       className="inline-block w-[38px] h-[38px] rounded-full transition-transform duration-300 transform hover:scale-110 hover:bg-gray-50 focus:outline-none focus:bg-gray-50"
-                      src={user?.imageURL || "https://hydra13.blob.core.windows.net/2aa17120-4bef-478a-8ea9-cb0788def29e/default-avatar.jpg"}
+                      src={
+                        user?.imageURL ||
+                        "https://hydra13.blob.core.windows.net/2aa17120-4bef-478a-8ea9-cb0788def29e/default-avatar.jpg"
+                      }
                       alt="Avatar"
                     />
                   </Link>
@@ -162,10 +165,7 @@ const Header = () => {
               </button>
             )}
           </div>
-          <div
-            id="hs-navbar-alignment"
-            className="hs-collapse hidden overflow-hidden transition-all duration-300 basis-full grow sm:grow-0 sm:basis-auto sm:block sm:order-2"
-          >
+          <div className="hidden overflow-hidden transition-all duration-300 basis-full grow sm:grow-0 sm:basis-auto sm:block sm:order-2">
             <div className="flex text-[15px] flex-col gap-5 mt-5 ml-4 sm:flex-row sm:items-center sm:mt-0 sm:ps-5">
               <a
                 className="font-medium text-white focus:outline-none"

@@ -22,6 +22,7 @@ import {
   FaBookOpen,
 } from "react-icons/fa";
 import { BackgroundColor } from "devextreme-react/cjs/chart";
+import Cookies from "js-cookie";
 
 const Sidebar = () => {
   const [isPagesOpen, setIsPagesOpen] = useState(false);
@@ -40,6 +41,13 @@ const Sidebar = () => {
     setIsDocsOpen((prevState) => !prevState); // Toggle the Documentation dropdown
   };
 
+  const handleLogout = () => {
+    Cookies.remove("authToken");
+    localStorage.clear();
+    sessionStorage.clear();
+    window.location.reload();
+  };
+
   return (
     <aside className="w-64 bg-white shadow-lg h-screen">
       <div className="flex items-center p-4">
@@ -56,8 +64,7 @@ const Sidebar = () => {
             <NavLink
               to="dashboard"
               className={({ isActive }) =>
-                `flex items-center p-3 text-gray-700 hover:bg-gray-200 transition duration-200 ease-in-out ${
-                  isActive ? "bg-lightGreen" : ""
+                `flex items-center p-3 text-gray-700 hover:bg-gray-200 transition duration-200 ease-in-out ${isActive ? "bg-lightGreen" : ""
                 }`
               }
             >
@@ -69,8 +76,7 @@ const Sidebar = () => {
             <NavLink
               to="users"
               className={({ isActive }) =>
-                `flex items-center p-3 text-gray-700 hover:bg-gray-200 transition duration-200 ease-in-out ${
-                  isActive ? "bg-lightGreen" : ""
+                `flex items-center p-3 text-gray-700 hover:bg-gray-200 transition duration-200 ease-in-out ${isActive ? "bg-lightGreen" : ""
                 }`
               }
             >
@@ -82,8 +88,7 @@ const Sidebar = () => {
             <NavLink
               to="transactions"
               className={({ isActive }) =>
-                `flex items-center p-3 text-gray-700 hover:bg-gray-200 transition duration-200 ease-in-out ${
-                  isActive ? "bg-lightGreen" : ""
+                `flex items-center p-3 text-gray-700 hover:bg-gray-200 transition duration-200 ease-in-out ${isActive ? "bg-lightGreen" : ""
                 }`
               }
             >
@@ -95,8 +100,7 @@ const Sidebar = () => {
             <NavLink
               to="liveStreams"
               className={({ isActive }) =>
-                `flex items-center p-3 text-gray-700 hover:bg-gray-200 transition duration-200 ease-in-out ${
-                  isActive ? "bg-lightGreen" : ""
+                `flex items-center p-3 text-gray-700 hover:bg-gray-200 transition duration-200 ease-in-out ${isActive ? "bg-lightGreen" : ""
                 }`
               }
             >
@@ -108,8 +112,7 @@ const Sidebar = () => {
             <NavLink
               to="gifts"
               className={({ isActive }) =>
-                `flex items-center p-3 text-gray-700 hover:bg-gray-200 transition duration-200 ease-in-out ${
-                  isActive ? "bg-lightGreen" : ""
+                `flex items-center p-3 text-gray-700 hover:bg-gray-200 transition duration-200 ease-in-out ${isActive ? "bg-lightGreen" : ""
                 }`
               }
             >
@@ -121,8 +124,7 @@ const Sidebar = () => {
             <NavLink
               to="test"
               className={({ isActive }) =>
-                `flex items-center p-3 text-gray-700 hover:bg-gray-200 transition duration-200 ease-in-out ${
-                  isActive ? "bg-lightGreen" : ""
+                `flex items-center p-3 text-gray-700 hover:bg-gray-200 transition duration-200 ease-in-out ${isActive ? "bg-lightGreen" : ""
                 }`
               }
             >
@@ -139,9 +141,8 @@ const Sidebar = () => {
               <span className="ml-3">Document & Request</span>
             </div>
             <FaAngleDown
-              className={`transform transition-transform ${
-                isDocsOpen ? "rotate-180" : ""
-              }`}
+              className={`transform transition-transform ${isDocsOpen ? "rotate-180" : ""
+                }`}
             />
           </li>
           {isDocsOpen && (
@@ -150,8 +151,7 @@ const Sidebar = () => {
                 <NavLink
                   to="docs/importuser"
                   className={({ isActive }) =>
-                    `flex items-center p-3 text-gray-700 hover:bg-gray-200 transition duration-200 ease-in-out ${
-                      isActive ? "bg-gray-200" : ""
+                    `flex items-center p-3 text-gray-700 hover:bg-gray-200 transition duration-200 ease-in-out ${isActive ? "bg-gray-200" : ""
                     }`
                   }
                 >
@@ -162,8 +162,7 @@ const Sidebar = () => {
                 <NavLink
                   to="docs/teacherrequest"
                   className={({ isActive }) =>
-                    `flex items-center p-3 text-gray-700 hover:bg-gray-200 transition duration-200 ease-in-out ${
-                      isActive ? "bg-gray-200" : ""
+                    `flex items-center p-3 text-gray-700 hover:bg-gray-200 transition duration-200 ease-in-out ${isActive ? "bg-gray-200" : ""
                     }`
                   }
                 >
@@ -182,9 +181,8 @@ const Sidebar = () => {
               <span className="ml-3">Report & Complaint</span>
             </div>
             <FaAngleDown
-              className={`transform transition-transform ${
-                isReportsOpen ? "rotate-180" : ""
-              }`}
+              className={`transform transition-transform ${isReportsOpen ? "rotate-180" : ""
+                }`}
             />
           </li>
           {isReportsOpen && (
@@ -193,8 +191,7 @@ const Sidebar = () => {
                 <NavLink
                   to="courseReport"
                   className={({ isActive }) =>
-                    `flex items-center p-3 text-gray-700 hover:bg-gray-200 transition duration-200 ease-in-out ${
-                      isActive ? "bg-lightGreen" : ""
+                    `flex items-center p-3 text-gray-700 hover:bg-gray-200 transition duration-200 ease-in-out ${isActive ? "bg-lightGreen" : ""
                     }`
                   }
                 >
@@ -206,8 +203,7 @@ const Sidebar = () => {
                 <NavLink
                   to="register"
                   className={({ isActive }) =>
-                    `flex items-center p-3 text-gray-700 hover:bg-gray-200 transition duration-200 ease-in-out ${
-                      isActive ? "bg-lightGreen" : ""
+                    `flex items-center p-3 text-gray-700 hover:bg-gray-200 transition duration-200 ease-in-out ${isActive ? "bg-lightGreen" : ""
                     }`
                   }
                 >
@@ -215,25 +211,23 @@ const Sidebar = () => {
                   <span className="ml-3">Livestream report</span>
                 </NavLink>
               </li>
-              <li>
+              {/* <li>
                 <NavLink
                   to="forgot-password"
                   className={({ isActive }) =>
-                    `flex items-center p-3 text-gray-700 hover:bg-gray-200 transition duration-200 ease-in-out ${
-                      isActive ? "bg-lightGreen" : ""
+                    `flex items-center p-3 text-gray-700 hover:bg-gray-200 transition duration-200 ease-in-out ${isActive ? "bg-lightGreen" : ""
                     }`
                   }
                 >
                   <FaUnlockAlt />
                   <span className="ml-3">User Complaint</span>
                 </NavLink>
-              </li>
-              <li>
+              </li> */}
+              {/* <li>
                 <NavLink
                   to="blank-page"
                   className={({ isActive }) =>
-                    `flex items-center p-3 text-gray-700 hover:bg-gray-200 transition duration-200 ease-in-out ${
-                      isActive ? "bg-lightGreen" : ""
+                    `flex items-center p-3 text-gray-700 hover:bg-gray-200 transition duration-200 ease-in-out ${isActive ? "bg-lightGreen" : ""
                     }`
                   }
                 >
@@ -245,42 +239,22 @@ const Sidebar = () => {
                 <NavLink
                   to="404"
                   className={({ isActive }) =>
-                    `flex items-center p-3 text-gray-700 hover:bg-gray-200 transition duration-200 ease-in-out ${
-                      isActive ? "bg-lightGreen" : ""
+                    `flex items-center p-3 text-gray-700 hover:bg-gray-200 transition duration-200 ease-in-out ${isActive ? "bg-lightGreen" : ""
                     }`
                   }
                 >
                   <FaExclamationTriangle />
                   <span className="ml-3">404</span>
                 </NavLink>
-              </li>
+              </li> */}
             </ul>
           )}
-          <li>
-            <NavLink
-              to="settings"
-              className={({ isActive }) =>
-                `flex items-center p-3 text-gray-700 hover:bg-gray-200 transition duration-200 ease-in-out ${
-                  isActive ? "bg-lightGreen" : ""
-                }`
-              }
-            >
-              <FaCog />
-              <span className="ml-3">Settings</span>
-            </NavLink>
-          </li>
-          <li>
-            <NavLink
-              to="/"
-              className={({ isActive }) =>
-                `flex items-center p-3 text-gray-700 hover:bg-gray-200 transition duration-200 ease-in-out ${
-                  isActive ? "bg-lightGreen" : ""
-                }`
-              }
-            >
-              <FaExchangeAlt />
-              <span className="ml-3">Back to user page</span>
-            </NavLink>
+          <li
+            className="flex items-center p-3 text-gray-700 hover:bg-gray-200 cursor-pointer transition duration-200 ease-in-out"
+            onClick={handleLogout}
+          >
+            <FaCog />
+            <span className="ml-3">Logout</span>
           </li>
         </ul>
       </nav>

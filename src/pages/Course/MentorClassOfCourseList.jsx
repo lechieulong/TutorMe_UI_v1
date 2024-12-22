@@ -12,6 +12,7 @@ import { useLocation } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faChalkboard } from "@fortawesome/free-solid-svg-icons";
 import { toast } from "react-toastify";
+
 const MentorClassOfCourseList = () => {
   const location = useLocation();
   const { mentorAndList, isMentor } = location.state || {};
@@ -19,7 +20,6 @@ const MentorClassOfCourseList = () => {
   const dispatch = useDispatch();
 
   const [userId, setUserId] = useState(null);
-  console.log(mentorAndList);
 
   const { classes, status, switchStates } = useSelector((state) => ({
     classes: state.classes.classes[courseId] || [], // Lấy danh sách lớp học theo courseId
@@ -62,7 +62,7 @@ const MentorClassOfCourseList = () => {
     <MainLayout>
       <div className="flex flex-col w-screen min-h-screen bg-gray-50">
         <div className="flex flex-1 w-full">
-          <MentorSidebar showReport={true} />
+          <MentorSidebar showReport={true} isMentor = {isMentor}/>
           <div className="flex-1 p-6 bg-white rounded-lg shadow-md mx-4">
             <div className="flex items-center justify-between mb-6">
               <h2 className="text-2xl font-bold text-gray-700">

@@ -39,12 +39,9 @@ const CreateCourse = ({ onClose, onCreateSuccess }) => {
           },
         }
       );
-console.log(response);
 
       const fileName = response.data.fileName || file.name;
 
-      console.log(fileName);
-      
       const fileEndpoint = `https://thientvhde160268.blob.core.windows.net/course/${course.courseId}/${fileName}`;
       
       return { fileUrl: fileEndpoint };

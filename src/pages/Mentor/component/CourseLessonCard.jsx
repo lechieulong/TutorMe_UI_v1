@@ -38,6 +38,12 @@ const CourseLessonCard = ({
 
   const { courseId } = useParams();
 
+  useEffect(() => {
+    if (isCreateTest) {
+      fetchTestExams(lessonId);
+    }
+  }, [isCreateTest, lessonId]);
+
   const toggleCollapse = (lessonId) => {
     setCollapsedLessons((prev) => ({
       ...prev,
@@ -129,28 +135,30 @@ const CourseLessonCard = ({
     }
   };
 
-  const fetchTestExams = async (lessonId) => {
-    onLoadingChange(true);
-  
-    try {
-      const response = await axios.get(
-        `${apiURLConfig.baseURL}/CourseLessons/GetTestExamByLessonId/${lessonId}`
-      );
-      if (Array.isArray(response.data) && response.data.length > 0) {
-        setTestExams((prev) => {
-          const updated = [...prev, ...response.data]; // Thêm mới các bài test
-          console.log("Updated testExams:", updated);
-          return updated;
-        });
-      } else {
-        console.log("No exams for lesson:", lessonId);
+
+
+    const fetchTestExams = async (lessonId) => {
+      onLoadingChange(true);
+    
+      try {
+        const response = await axios.get(
+          `${apiURLConfig.baseURL}/CourseLessons/GetTestExamByLessonId/${lessonId}`
+        );
+        if (Array.isArray(response.data) && response.data.length > 0) {
+          setTestExams((prev) => {
+            const updated = [...prev, ...response.data]; // Thêm mới các bài test
+            console.log("Updated testExams:", updated);
+            return updated;
+          });
+        } else {
+          console.log("No exams for lesson:", lessonId);
+        }
+      } catch (err) {
+        console.error("Error fetching test exams:", err);
+      } finally {
+        onLoadingChange(false);
       }
-    } catch (err) {
-      console.error("Error fetching test exams:", err);
-    } finally {
-      onLoadingChange(false);
-    }
-  };
+    };
   
   const confirmActionHandler = async () => {
     try {

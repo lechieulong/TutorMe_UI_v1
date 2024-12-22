@@ -193,7 +193,7 @@ const MentorCourseDetail = () => {
   useEffect(() => {
     if ((mentorAndList || isMentor) && !notificationUpdated) {
       setIsLoading(true); // Bắt đầu trạng thái loading
-      setNotification("This is your course!");
+      toast.success("This is your course!");
       setNotificationUpdated(true);
       setIsLoading(false); // Kết thúc trạng thái loading
     }
@@ -240,7 +240,7 @@ const MentorCourseDetail = () => {
           />
         )}
         <div className="flex w-full relative">
-          <MentorSidebar showReport = {true}/>
+          <MentorSidebar showReport = {true} isMentor={isMentor}/>
           <div className="flex-1 p-4 overflow-y-auto relative">
             {/* Loader hiển thị trong khu vực nội dung chính */}
             {isLoading && (
@@ -297,16 +297,8 @@ const MentorCourseDetail = () => {
                       <span>1 overall test</span>
                     </li>
                     <li className="flex items-center space-x-2">
-                      <FaRegListAlt className="text-houseGreen" />
-                      <span>81 progress tests</span>
-                    </li>
-                    <li className="flex items-center space-x-2">
                       <FaRegStickyNote className="text-houseGreen" />
                       <span>{skillCount} Skills</span>
-                    </li>
-                    <li className="flex items-center space-x-2">
-                      <FaRegPlayCircle className="text-houseGreen" />
-                      <span>25 lessons</span>
                     </li>
                   </ul>
                 </div>

@@ -211,7 +211,7 @@ const Sidebar = () => {
                   <span className="ml-3">Livestream report</span>
                 </NavLink>
               </li>
-              <li>
+              {/* <li>
                 <NavLink
                   to="forgot-password"
                   className={({ isActive }) =>
@@ -222,8 +222,8 @@ const Sidebar = () => {
                   <FaUnlockAlt />
                   <span className="ml-3">User Complaint</span>
                 </NavLink>
-              </li>
-              <li>
+              </li> */}
+              {/* <li>
                 <NavLink
                   to="blank-page"
                   className={({ isActive }) =>
@@ -246,7 +246,7 @@ const Sidebar = () => {
                   <FaExclamationTriangle />
                   <span className="ml-3">404</span>
                 </NavLink>
-              </li>
+              </li> */}
             </ul>
           )}
           <li

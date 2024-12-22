@@ -423,7 +423,7 @@ const EducationSection = () => {
                               type="submit"
                               className="px-4 py-2 bg-green-500 text-white rounded hover:bg-green-400"
                             >
-                              Next
+                              Submit
                             </button>
                           )}
                           {teacherRequest?.status === 0 && (
@@ -434,17 +434,18 @@ const EducationSection = () => {
                               </p>
                               {getUserEducationStatus === "success" ? (
                                 <button
-                                  onClick={handleTestSkills} // Gọi hàm xử lý khi nhấn nút
-                                  className="px-4 py-2 bg-green-500 text-white rounded hover:bg-green-400"
+                                  disabled = {true}
+                                  // onClick={handleTestSkills} // Gọi hàm xử lý khi nhấn nút
+                                  className="px-4 py-2 bg-green-500 text-white rounded hover:bg-green-400 disabled:cursor-not-allowed"
                                 >
-                                  Take Test
+                                  Pending
                                 </button>
                               ) : (
                                 <button
                                   type="submit"
                                   className="px-4 py-2 bg-green-500 text-white rounded hover:bg-green-400"
                                 >
-                                  Next
+                                  Submit
                                 </button>
                               )}
                             </>

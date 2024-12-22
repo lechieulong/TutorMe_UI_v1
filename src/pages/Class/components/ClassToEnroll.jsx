@@ -21,7 +21,6 @@ const ClassToEnroll = ({ courseId, userId, onClose, onEnrollSuccess }) => {
     (state) => state.classes.unenrolledClassesByCourse[courseId] || []
   );
   const [selectedClassId, setSelectedClassId] = useState(null);
-  console.log(userId);
 
   useEffect(() => {
     if (courseId && userId) {
@@ -53,11 +52,6 @@ const ClassToEnroll = ({ courseId, userId, onClose, onEnrollSuccess }) => {
     }
 
     const { price, teacherID, className } = selectedClass;
-    console.log(selectedClass);
-    console.log(userId);
-    console.log(price);
-
-    console.log(teacherID);
 
     const hasSufficientBalance = await CheckBanlance(price);
     if (!hasSufficientBalance) {

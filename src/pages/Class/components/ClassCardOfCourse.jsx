@@ -40,7 +40,7 @@ const ClassCardOfCourse = ({
             : "hover:shadow-lg cursor-pointer"
         } transition-transform duration-200 ${
           isActive && !isDisabled ? "border-green-400" : "border-gray-200"
-        } p-4`}
+        } p-2 h-40 flex flex-col justify-between`}
       >
         <h5 className="text-lg font-semibold text-gray-800">
           {classItem.className}
@@ -48,8 +48,8 @@ const ClassCardOfCourse = ({
         <p className="text-sm text-gray-500 mt-1">
           Người ghi danh: {classItem.enrollmentCount}
         </p>
-        <p className="text-sm text-gray-500 mt-1">
-          Ngày bắt đầu: {classItem.startDate}
+        <p className="text-sm text-gray-500 mt-1 line-clamp-3">
+          {classItem.classDescription}
         </p>
       </div>
     </div>

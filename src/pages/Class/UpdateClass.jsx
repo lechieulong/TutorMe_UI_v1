@@ -42,7 +42,6 @@ const UpdateClass = ({ classItem, courseId, onClose, onCreateSuccess }) => {
       courseId,
       isEnabled,
     };
-    console.log(updatedClass);
 
     try {
       // Gửi PUT request đến API để cập nhật lớp học

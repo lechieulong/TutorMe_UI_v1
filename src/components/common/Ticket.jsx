@@ -70,13 +70,14 @@ const GetTicket = async (RoomId) => {
 
 const CreateTicketButton = ({ roomID, role,privacy,setPrivacy,handleUpdateCommand}) => {
   const [isPopupOpen, setIsPopupOpen] = useState(false);
+  const[access,setAccess]=useState(false);
   const [formData, setFormData] = useState({
-    id:"",
-    subjectName: "",
+    id:'',
+    subjectName: '',
     liveStreamId: roomID,
-    price: "",
-    startTime: "",
-    endTime: "",
+    price: '',
+    startTime: '',
+    endTime: '',
   });
   const [ticketInfo, setTicketInfo] = useState({
     id:'',
@@ -90,14 +91,26 @@ const CreateTicketButton = ({ roomID, role,privacy,setPrivacy,handleUpdateComman
   const openPopup =() => {
     setIsPopupOpen(true);
   };
-  useEffect(()=>{
+
+  useEffect(()=>{ 
+    const CheckTiket= async()=>{
+      await handleTicket();
+      setIsPopupOpen(true);
+    }  
+    const checkaccess=async()=>{
+     const aa=await isHaveTicket(roomID,user.sub);
+     setAccess(aa);
+    }
 if(privacy=="Private"&&role=="Host"){
-  setIsPopupOpen(true);
+  CheckTiket();
+}else{
+  checkaccess();
 }
 },[privacy])
 
   const closePopup = async() => {
     var ticker= await GetTicket(roomID);
+    console.log(ticker);
     if(ticker===""){
     await handlePrivacyChange("Public");
     }
@@ -110,6 +123,9 @@ if(privacy=="Private"&&role=="Host"){
   };
 
   const handleSubmit = async (e) => {
+    if(formData.id==""){
+      formData.id=formData.liveStreamId;
+    }
     e.preventDefault();
     try {
       const response = await axios.post(`${url}/Ticket`, formData, {
@@ -118,6 +134,7 @@ if(privacy=="Private"&&role=="Host"){
         },
       });
       console.log('Form submitted successfully:', response.data);
+      setPrivacy("Private");
       closePopup();
     } catch (error) {
       console.error('Error submitting form:', error);
@@ -125,8 +142,8 @@ if(privacy=="Private"&&role=="Host"){
   };
 
   const handlePrivacyChange = async(value) => {
-    handleUpdateCommand(value);
     await UpdateStreamSession(roomID,value==='Private'?1:0);
+    handleUpdateCommand(value);
     privacy=value;
     setPrivacy(value);
   };
@@ -175,7 +192,7 @@ if(privacy=="Private"&&role=="Host"){
         <select
           value={privacy}
           onChange={(e) => {
-            handlePrivacyChange(e.target.value);
+             handlePrivacyChange(e.target.value);
             if (e.target.value === 'Private') {
               handleTicket();
             }
@@ -266,7 +283,7 @@ if(privacy=="Private"&&role=="Host"){
     </>
   ) : (role!=undefined&&roomID!=undefined&&
     <div>
-      {privacy==="Private"&&<button className="bg-green-500 text-white py-2 px-4 rounded" onClick={handleBuyTicket}>
+      {privacy==="Private"&&!access&&<button className="bg-green-500 text-white py-2 px-4 rounded" onClick={handleBuyTicket}>
         Buy Ticket
       </button>}
       

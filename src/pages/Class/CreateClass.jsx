@@ -27,7 +27,7 @@ const CreateClass = ({ courseId, onClose, onCreateSuccess }) => {
     const newClass = {
       className,
       classDescription,
-      count,
+      count: 100,
       courseId,
       isEnabled,
     };
@@ -87,25 +87,7 @@ const CreateClass = ({ courseId, onClose, onCreateSuccess }) => {
             ></textarea>
           </div>
 
-          <div className="mb-4">
-            <label className="block text-sm font-semibold mb-2">
-              Student Count
-            </label>
-            <input
-              type="number"
-              value={count}
-              onChange={(e) => {
-                setCount(e.target.value);
-                setInputErrors((prev) => ({ ...prev, count: false }));
-              }}
-              required
-              className={`w-full border p-2 rounded focus:outline-none focus:border-blue-500 ${
-                inputErrors.count ? "border-red-500" : "border-gray-300"
-              }`}
-            />
-          </div>
-
-          <div className="mb-4 grid grid-cols-2 gap-4"></div>
+            <div className="mb-4 grid grid-cols-2 gap-4"></div>
           <div className="mb-4">
             <label className="inline-flex items-center">
               <input

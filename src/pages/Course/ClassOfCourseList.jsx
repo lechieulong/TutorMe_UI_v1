@@ -20,7 +20,6 @@ const ClassOfCourseList = () => {
   const dispatch = useDispatch();
 
   const [userId, setUserId] = useState(null);
-  console.log(mentorAndList);
 
   const { classes, status, switchStates } = useSelector((state) => ({
     classes: state.classes.classes[courseId] || [], // Lấy danh sách lớp học theo courseId

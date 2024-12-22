@@ -1,9 +1,8 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import QuestionBank from "./questionBank/QuestionBank";
 import MentorSidebar from "../../components/Mentor/MentorSideBar";
 import Header from "../../components/common/Header";
 import TestSubmitted from "./TestSubmitted";
-import ResultList from "./ResultList";
 import ContributionAttempt from "./general/ContributionAttempt";
 import TestHistory from "./general/TestHistory";
 import { getUser } from "../../service/GetUser";
@@ -13,18 +12,14 @@ import { useSelector } from "react-redux";
 const TestFormLayout = () => {
   const user = getUser();
   const [isViewExplain, setIsViewExplain] = useState(false);
-
   const initActiveTab =
     user?.role?.includes(Roles.ADMIN) || user?.role?.includes(Roles.TEACHER)
       ? "QuestionBanks"
       : "Settings";
-
   const [activeTab, setActiveTab] = useState(initActiveTab);
-
   const isEnrolled = useSelector((state) => state.enrollment.isEnrolled);
-  console.log(isEnrolled);
-  
   const { showReport } = location.state || {};
+
   const renderComponent = () => {
     switch (activeTab) {
       case "QuestionBanks":
@@ -53,14 +48,12 @@ const TestFormLayout = () => {
         return null;
     }
   };
-  console.log(showReport);
-  
   return (
     <div>
       {!isViewExplain && <Header />}
       <div className="flex w-screen  ">
         {!isViewExplain && (
-          <MentorSidebar isEnrolled={isEnrolled} showReport = {showReport}/>
+          <MentorSidebar isEnrolled={isEnrolled} showReport={showReport}/>
         )}
 
         <div

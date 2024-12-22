@@ -79,7 +79,6 @@ const UpdateCourse = ({ onClose, onCreateSuccess }) => {
       createdAt: today,
       updatedAt: today,
     };
-    console.log(courseWithTimestamps);
 
     setConfirmMessage("Are you sure you want to create new course?");
     setConfirmAction(() => async () => {

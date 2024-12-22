@@ -8,7 +8,7 @@ import {
 } from "../../redux/ADMIN/TestExamSlice";
 import { useDispatch, useSelector } from "react-redux";
 import { formatDOB } from "../../utils/Validator";
-import { ToastContainer, toast } from "react-toastify";
+import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
 const ExamCard = ({

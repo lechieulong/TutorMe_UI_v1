@@ -7,7 +7,7 @@ import apiURLConfig from "../common/apiURLConfig";
 
 // const API_BASE_URL = "https://localhost:7030/api";
 
-const API_BASE_URL = "https://aiilapi.azurewebsites.net/api";
+const API_BASE_URL = "https://aiilv1.azurewebsites.net/api";
 export const fetchTests = createAsyncThunk(
   `${SLICE_NAMES.TEST}/${ACTIONS.FETCH_TESTS}`,
   async ({ pageNumber = 1, pageSize = 10 }, { rejectWithValue }) => {

@@ -235,7 +235,7 @@ const MentorCourseDetail = () => {
           />
         )}
         <div className="flex w-full relative">
-          <MentorSidebar mentorAndList={true} isMentor={true} />
+          <MentorSidebar mentorAndList={true} isMentor={true} showReport={true}/>
           <div className="flex-1 p-4 overflow-y-auto relative">
             {/* Loader hiển thị trong khu vực nội dung chính */}
             {isLoading && (

@@ -68,6 +68,14 @@ const SignIn = () => {
         const response = await dispatch(LoginApi(userData)).unwrap();
         if (response.isSuccess) {
           Cookies.set("authToken", response.result.token, { expires: 7 });
+
+          const readToken = jwtDecode(response.result.token);
+          console.log("readToken: ", readToken);
+          if (readToken.role?.includes(Roles.ADMIN)) {
+            navigate("/admin/app"); // Chuyển hướng đến trang admin
+            return;
+          }
+
           const redirectUrl = sessionStorage.getItem("redirectUrl");
           if (redirectUrl) {
             sessionStorage.removeItem("redirectUrl"); // Xóa URL sau khi sử dụng
@@ -97,6 +105,14 @@ const SignIn = () => {
       const response = await dispatch(loginWithGoogleApi({ token })).unwrap();
       if (response.isSuccess) {
         Cookies.set("authToken", response.result.token, { expires: 7 });
+
+        const readToken = jwtDecode(response.result.token);
+        console.log("readToken: ", readToken);
+        if (readToken.role?.includes(Roles.ADMIN)) {
+          navigate("/admin/app"); // Chuyển hướng đến trang admin
+          return;
+        }
+
         const redirectUrl = sessionStorage.getItem("redirectUrl");
         if (redirectUrl) {
           sessionStorage.removeItem("redirectUrl"); // Xóa URL sau khi sử dụng
@@ -171,7 +187,6 @@ const SignIn = () => {
             {loginStatus === "failed" && (
               <p className="font-mono text-xs text-red-500 text-center mt-2">{error}</p>
             )}
-            <ToastContainer autoClose={3000} newestOnTop closeOnClick />
           </div>
         </form>
         <div className="space-y-4 text-gray-600 text-center">

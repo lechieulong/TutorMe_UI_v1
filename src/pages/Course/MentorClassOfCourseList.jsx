@@ -13,7 +13,7 @@ import { useLocation } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faChalkboard } from "@fortawesome/free-solid-svg-icons";
 import { toast } from "react-toastify";
-const ClassOfCourseList = () => {
+const MentorClassOfCourseList = () => {
   const location = useLocation();
   const { mentorAndList, isMentor } = location.state || {};
   const { courseId } = useParams();
@@ -31,15 +31,16 @@ const ClassOfCourseList = () => {
   const isEmpty = !Array.isArray(classes) || classes.length === 0;
 
   const { classIds } = useSelector((state) => state.enrollment);
-  const [isPopupOpen, setIsPopupOpen] = useState(false);
+  const [showCreateClassModal, setShowCreateClassModal] = useState(false);
+
   const initializeUser = useCallback(() => {
     const userFromToken = getUser();
     setUserId(userFromToken?.sub);
   }, []);
 
-  const handleEnrollSuccess = () => {
-    setIsPopupOpen(false);
-    toast.success("Enrolled successfully.");
+  const handleCreateClassSuccess = () => {
+    setShowCreateClassModal(false);
+    toast.success("Class created successfully.");
     dispatch(fetchClasses(courseId));
     dispatch(fetchClassIds({ courseId, userId }));
   };
@@ -58,14 +59,6 @@ const ClassOfCourseList = () => {
     );
   }
 
-  const handleOpenPopup = () => {
-    setIsPopupOpen(true);
-  };
-
-  const handleClosePopup = () => {
-    setIsPopupOpen(false);
-  };
-
   return (
     <MainLayout>
       <div className="flex flex-col w-screen min-h-screen bg-gray-50">
@@ -82,12 +75,13 @@ const ClassOfCourseList = () => {
               </h2>
               {!isMentor && (
                 <>
-                  {!mentorAndList && (
+                  {mentorAndList && (
                     <button
-                      onClick={handleOpenPopup}
+                      type="button"
                       className="py-2 px-3 inline-flex items-center gap-x-2 text-sm font-medium rounded-lg border border-gray-200 bg-white text-gray-800 shadow-sm hover:bg-gray-50 focus:outline-none focus:bg-gray-50"
+                      onClick={() => setShowCreateClassModal(true)}
                     >
-                      Enroll
+                      Create Class
                     </button>
                   )}
                 </>
@@ -117,16 +111,17 @@ const ClassOfCourseList = () => {
           </div>
         </div>
       </div>
-      {isPopupOpen && (
-        <ClassToEnroll
+
+      {showCreateClassModal && (
+        <CreateClass
           courseId={courseId}
-          userId={userId}
-          onClose={handleClosePopup} // Đóng popup sau khi đăng ký
-          onEnrollSuccess={handleEnrollSuccess} // Chỉ xử lý enroll
+          onClose={() => setShowCreateClassModal(false)}
+          onCreateSuccess={handleCreateClassSuccess} // Chỉ xử lý tạo lớp
         />
       )}
+
     </MainLayout>
   );
 };
 
-export default ClassOfCourseList;
+export default MentorClassOfCourseList;

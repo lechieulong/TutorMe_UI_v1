@@ -136,7 +136,7 @@ const QuestionBank = () => {
     setLoading(true);
     try {
       const fileUrl =
-        "https://thientvhde160268.blob.core.windows.net/questionbank/IELTS_Speaking_Formatted_Final.txt";
+        "https://thientvhde160268.blob.core.windows.net/questionbank/Resources.xlsx";
       const link = document.createElement("a");
       link.href = fileUrl;
       link.download = "Resources.xlsx";

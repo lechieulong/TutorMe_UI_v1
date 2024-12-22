@@ -543,6 +543,7 @@ const AnswerView = ({
           <AudioPlayer
             src={partData.audio}
             submitting={submitting}
+            currentSkillKey={currentSkillKey}
             practiceTestData={practiceTestData}
           />
         </div>

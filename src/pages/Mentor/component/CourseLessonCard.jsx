@@ -12,6 +12,8 @@ import { Link, useParams } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faClipboard } from "@fortawesome/free-solid-svg-icons";
 import apiURLConfig from "../../../redux/common/apiURLConfig";
+import { toast } from "react-toastify";
+
 const CourseLessonCard = ({
   mentorAndList,
   coursePartId,
@@ -95,20 +97,18 @@ const CourseLessonCard = ({
       ...prevForms,
       { id: Date.now(), lessonId: lessonId },
     ]);
-    setNotification("Dynamic form added successfully.");
+    toast.succes("Added content")
   };
 
   const removeDynamicForm = (formId) => {
     setDynamicForms((prevForms) =>
       prevForms.filter((form) => form.id !== formId)
     );
-    setNotification("Dynamic form removed successfully.");
   };
 
   const refreshCourseLessons = () => {
     setLoading(true);
     fetchCourseLessons();
-    setNotification("Course lessons refreshed successfully.");
   };
 
   const handleCreateTest = async (lessonId) => {

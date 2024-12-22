@@ -102,76 +102,55 @@ console.log(response);
     });
   };
 
+
   const handleSubmit = async (e) => {
     e.preventDefault();
 
     if (course.hours < 0 || course.days < 0 || course.price < 0) {
-      setNotification("Số giờ, số ngày và giá không được phép âm.");
-      return;
+        setNotification("Số giờ, số ngày và giá không được phép âm.");
+        return;
     }
 
     try {
-      // Upload ảnh lên Azure nếu đã chọn ảnh
-      if (course.selectedImage) {
-        const uploadResult = await uploadCourseFile(
-          course,
-          course.selectedImage
-        );
-        setCourse((prevCourse) => ({
-          ...prevCourse,
-          imageUrl: uploadResult.fileUrl, // Cập nhật imageUrl với đường dẫn từ Azure
-        }));
-        console.log(uploadResult.fileUrl);
-        
-      }
+        let updatedImageUrl = course.imageUrl;
 
-      // Định dạng ngày hiện tại thành dd/mm/yyyy
-      const formatDate = (date) => {
-        const day = String(date.getDate()).padStart(2, "0");
-        const month = String(date.getMonth() + 1).padStart(2, "0");
-        const year = date.getFullYear();
-        return `${day}/${month}/${year}`;
-      };
-
-      const today = formatDate(new Date());
-
-      // Thêm createdAt và updatedAt vào dữ liệu
-      console.log(course);
-      
-      const courseWithTimestamps = {
-        ...course,
-        createdAt: today,
-        updatedAt: today,
-      };
-      console.log(courseWithTimestamps);
-      
-
-      setConfirmMessage("Are you sure you want to create new course?");
-      setConfirmAction(() => async () => {
-        try {
-          await axios.post(
-            `${apiURLConfig.baseURL}/Courses`,
-            courseWithTimestamps
-          );
-          setNotification("Create new course success!");
-          onCreateSuccess();
-          onClose();
-        } catch (error) {
-          console.error("Fail to create new course!", error.response?.data);
-          setNotification(
-            "Fail to create new course!" +
-              (error.response?.data.message || error.message)
-          );
-        } finally {
-          setIsConfirmOpen(false);
+        // Nếu có ảnh, upload lên Azure trước
+        if (course.selectedImage) {
+            const uploadResult = await uploadCourseFile(course, course.selectedImage);
+            updatedImageUrl = uploadResult.fileUrl; // Lấy đường dẫn từ Azure
         }
-      });
-      setIsConfirmOpen(true);
+
+        const formatDate = (date) => {
+            const day = String(date.getDate()).padStart(2, "0");
+            const month = String(date.getMonth() + 1).padStart(2, "0");
+            const year = date.getFullYear();
+            return `${day}/${month}/${year}`;
+        };
+
+        const today = formatDate(new Date());
+
+        const courseWithTimestamps = {
+            ...course,
+            imageUrl: updatedImageUrl, // Sử dụng path từ Azure
+            createdAt: today,
+            updatedAt: today,
+        };
+
+        // Gửi API sau khi chắc chắn imageUrl là path từ Azure
+        await axios.post(`${apiURLConfig.baseURL}/Courses`, courseWithTimestamps);
+
+        setNotification("Create new course success!");
+        onCreateSuccess();
+        onClose();
     } catch (error) {
-      console.error("Upload image failed:", error);
-      setNotification("Failed to upload image. Please try again.");
+        console.error("Fail to create new course!", error.response?.data);
+        setNotification(
+            "Fail to create new course!" +
+            (error.response?.data.message || error.message)
+        );
     }
-  };
+};
+
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">

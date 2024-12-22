@@ -32,19 +32,10 @@ const ClassOfCourseList = () => {
 
   const { classIds } = useSelector((state) => state.enrollment);
   const [isPopupOpen, setIsPopupOpen] = useState(false);
-  const [showCreateClassModal, setShowCreateClassModal] = useState(false);
-
   const initializeUser = useCallback(() => {
     const userFromToken = getUser();
     setUserId(userFromToken?.sub);
   }, []);
-
-  const handleCreateClassSuccess = () => {
-    setShowCreateClassModal(false);
-    toast.success("Class created successfully.");
-    dispatch(fetchClasses(courseId));
-    dispatch(fetchClassIds({ courseId, userId }));
-  };
 
   const handleEnrollSuccess = () => {
     setIsPopupOpen(false);
@@ -99,15 +90,6 @@ const ClassOfCourseList = () => {
                       Enroll
                     </button>
                   )}
-                  {mentorAndList && (
-                    <button
-                      type="button"
-                      className="py-2 px-3 inline-flex items-center gap-x-2 text-sm font-medium rounded-lg border border-gray-200 bg-white text-gray-800 shadow-sm hover:bg-gray-50 focus:outline-none focus:bg-gray-50"
-                      onClick={() => setShowCreateClassModal(true)}
-                    >
-                      Create Class
-                    </button>
-                  )}
                 </>
               )}
             </div>
@@ -135,15 +117,6 @@ const ClassOfCourseList = () => {
           </div>
         </div>
       </div>
-
-      {showCreateClassModal && (
-        <CreateClass
-          courseId={courseId}
-          onClose={() => setShowCreateClassModal(false)}
-          onCreateSuccess={handleCreateClassSuccess} // Chỉ xử lý tạo lớp
-        />
-      )}
-
       {isPopupOpen && (
         <ClassToEnroll
           courseId={courseId}

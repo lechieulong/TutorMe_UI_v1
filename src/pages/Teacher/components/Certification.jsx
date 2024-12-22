@@ -38,7 +38,7 @@ const Certification = () => {
                     </div>
                 </div>
 
-                <div className="bg-white p-4 rounded shadow">
+                {/* <div className="bg-white p-4 rounded shadow">
                     <div className="flex items-center space-x-2 mb-2">
                         <img 
                             src={userEducation?.imageURL || "https://placehold.co/40x40" }
@@ -64,7 +64,7 @@ const Certification = () => {
                             <span>Audio</span>
                         </button>
                     </div>
-                </div>
+                </div> */}
             </div>
 
             <aside className="w-1/3">

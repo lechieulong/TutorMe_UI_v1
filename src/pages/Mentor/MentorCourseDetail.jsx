@@ -215,7 +215,7 @@ const MentorCourseDetail = () => {
         {Array(emptyStars)
           .fill(0)
           .map((_, index) => (
-            <FaRegStar key={`empty-${index}`} className="text-gray-300" />
+            <FaRegStar key={`empty-${index}`} className="text-yellow-500" />
           ))}
       </>
     );
@@ -248,35 +248,33 @@ const MentorCourseDetail = () => {
                 <ClipLoader color="#000000" size={50} />
               </div>
             )}
-              <div className="mx-auto bg-houseGreen text-white rounded-lg shadow-lg flex flex-col lg:flex-row p-8 space-y-8 lg:space-y-0 lg:space-x-8 ">
-                <div className="flex flex-col lg:w-2/3">
-                  <h1 className="text-3xl font-bold mb-4">
-                    {course?.courseName}
-                  </h1>
-                  <div className="mb-4 flex justify-between items-center">
-                    <h1 className="text-4xl font-bold text-black">
-                      {className}
-                    </h1>
-                  </div>
-                  <p className="mb-4 leading-relaxed">{course?.content}</p>
-                  <div className="flex items-center text-sm space-x-4 mb-4">
-                    <span>
-                      Lecturer:{" "}
-                      <Link
-                        to={`/coachingschedule/${course?.username}`}
-                        className="text-blue-300 underline"
-                      >
-                        {course?.teacherName}
-                      </Link>
-                    </span>
-                    <span className="flex items-center">
-                      {course?.enrollmentCount !== undefined
-                        ? `${course.enrollmentCount} students`
-                        : "No students"}
-                    </span>
+            <div className="mx-auto bg-houseGreen text-white rounded-lg shadow-lg flex flex-col lg:flex-row p-8 space-y-8 lg:space-y-0 lg:space-x-8 ">
+              <div className="flex flex-col lg:w-2/3">
+                <h1 className="text-3xl font-bold mb-4">
+                  {course?.courseName}
+                </h1>
+                <div className="mb-4 flex justify-between items-center">
+                  <h1 className="text-4xl font-bold text-black">{className}</h1>
+                </div>
+                <p className="mb-4 leading-relaxed">{course?.content}</p>
+                <div className="flex items-center text-sm space-x-4 mb-4">
+                  <span>
+                    Created by{" "}
+                    <Link
+                      to={`/coachingschedule/${course?.username}`}
+                      className="text-blue-300 underline"
+                    >
+                      {course?.teacherName}
+                    </Link>
+                  </span>
+                  <span className="flex items-center">
+                    {course?.enrollmentCount
+                      ? `${course.enrollmentCount} students`
+                      : "No students"}
+                  </span>
 
                     <div className="flex items-center">
-                      <span className="ml-2">
+                      <span className="mx-2">
                         {course?.averageRating?.toFixed(1)}
                       </span>
                       {renderStars(course?.averageRating || 0)}

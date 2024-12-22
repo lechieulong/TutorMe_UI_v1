@@ -246,15 +246,6 @@ const CourseSkillCard = ({
                       {testExams[skill.id]?.map(
                         (exam) => (
                           (
-                            <h3 className="text-2xl font-extrabold text-green-700 flex items-center mb-5">
-                              Final Test{" "}
-                              <FontAwesomeIcon
-                                icon={faClipboard}
-                                className="ml-2 text-green-600"
-                              />
-                            </h3>
-                          ),
-                          (
                             <div
                               key={exam.id}
                               className="bg-white p-4 rounded-lg shadow-sm border border-gray-200 hover:shadow-md transition duration-300"

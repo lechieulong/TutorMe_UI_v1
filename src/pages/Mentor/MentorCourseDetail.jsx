@@ -32,8 +32,7 @@ import {
   FaRegPlayCircle,
 } from "react-icons/fa";
 import {
-  CheckUserEnrollment,
-  enrollUser,
+  CheckUserEnrollment
 } from "../../redux/Enrollment/EnrollmentSlice";
 const MentorCourseDetail = () => {
   const [isLoading, setIsLoading] = useState(false);
@@ -241,7 +240,7 @@ const MentorCourseDetail = () => {
           />
         )}
         <div className="flex w-full relative">
-          <MentorSidebar mentorAndList={true} isMentor={true} />
+          <MentorSidebar showReport = {true}/>
           <div className="flex-1 p-4 overflow-y-auto relative">
             {/* Loader hiển thị trong khu vực nội dung chính */}
             {isLoading && (
@@ -249,7 +248,6 @@ const MentorCourseDetail = () => {
                 <ClipLoader color="#000000" size={50} />
               </div>
             )}
-            {!isLoading && (
               <div className="mx-auto bg-houseGreen text-white rounded-lg shadow-lg flex flex-col lg:flex-row p-8 space-y-8 lg:space-y-0 lg:space-x-8 ">
                 <div className="flex flex-col lg:w-2/3">
                   <h1 className="text-3xl font-bold mb-4">
@@ -313,8 +311,6 @@ const MentorCourseDetail = () => {
                   </ul>
                 </div>
               </div>
-            )}
-            {!isLoading && (
               <section className="mb-4 mt-4">
                 {(mentorAndList || !isEnrolled) && (
                   <>
@@ -373,8 +369,6 @@ const MentorCourseDetail = () => {
                   </>
                 )}
               </section>
-            )}
-            {!isLoading && (
               <div className="mt-4">
                 <CourseSkillCard
                   courseId={courseId}
@@ -391,7 +385,6 @@ const MentorCourseDetail = () => {
                   onLoadingChange={handleLoadingStateComment}
                 />
               </div>
-            )}
           </div>
         </div>
       </div>

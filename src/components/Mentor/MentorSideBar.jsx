@@ -5,7 +5,12 @@ import { getUser } from "../../service/GetUser";
 import useAuthToken from "../../hooks/useAuthToken"; // Import useAuthToken
 import { useParams } from "react-router-dom";
 
-const MentorSidebar = ({ mentorAndList, setSelectedComponent, isMentor }) => {
+const MentorSidebar = ({
+  mentorAndList,
+  setSelectedComponent,
+  isMentor,
+  showReport,
+}) => {
   const [user, setUser] = useState(null);
   const authToken = useAuthToken(); // Get token from cookie
   const { courseId } = useParams();
@@ -39,6 +44,7 @@ const MentorSidebar = ({ mentorAndList, setSelectedComponent, isMentor }) => {
 
   // Function to check if we're on the exact page
   const isCurrentPage = (path) => pathname === path;
+console.log(showReport);
 
   return (
     <div>
@@ -62,7 +68,7 @@ const MentorSidebar = ({ mentorAndList, setSelectedComponent, isMentor }) => {
             >
               <button
                 onClick={() => {
-                  if (mentorAndList) {
+                  if (showReport) {
                     handleNavigate(`/mentorCourseDetail/${courseId}`, {
                       state: { userId, mentorAndList },
                     });
@@ -89,10 +95,23 @@ const MentorSidebar = ({ mentorAndList, setSelectedComponent, isMentor }) => {
               {userId && (
                 <button
                   onClick={() => {
-                    handleNavigate(`/courseDetail/${courseId}/classOfCourse`, {
-                      isMentor,
-                      mentorAndList,
-                    });
+                    if (showReport) {
+                      handleNavigate(
+                        `/courseDetail/${courseId}/mentorClassOfCourse`,
+                        {
+                          isMentor,
+                          mentorAndList,
+                        }
+                      );
+                    } else {
+                      handleNavigate(
+                        `/courseDetail/${courseId}/classOfCourse`,
+                        {
+                          isMentor,
+                          mentorAndList,
+                        }
+                      );
+                    }
                   }}
                   className={`py-4 px-1 inline-flex items-center gap-x-2 text-sm whitespace-nowrap text-gray-500 hover:text-blue-600 focus:outline-none focus:text-blue-600 ${
                     isCurrentPage(`/courseDetail/${courseId}/classOfCourse`)
@@ -122,12 +141,11 @@ const MentorSidebar = ({ mentorAndList, setSelectedComponent, isMentor }) => {
 
               {userId && (
                 <button
-                  onClick={() => {
-                    handleNavigate(`/manageTest/${courseId}`, {
-                      userId,
-                      mentorAndList,
-                    });
-                  }}
+                onClick={() => {
+                  handleNavigate(`/manageTest/${courseId}`, {
+                    state: { showReport }
+                  });
+                }}
                   className={`py-4 px-1 inline-flex items-center gap-x-2 text-sm whitespace-nowrap text-gray-500 hover:text-blue-600 focus:outline-none focus:text-blue-600 ${
                     isCurrentPage(`/manageTest/${courseId}`)
                       ? "font-semibold border-blue-600 text-blue-600"
@@ -154,7 +172,7 @@ const MentorSidebar = ({ mentorAndList, setSelectedComponent, isMentor }) => {
                 </button>
               )}
 
-              {(mentorAndList || isMentor) && (
+              {showReport && (
                 <button
                   onClick={() => {
                     handleNavigate(

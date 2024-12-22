@@ -21,10 +21,10 @@ const TestFormLayout = () => {
 
   const [activeTab, setActiveTab] = useState(initActiveTab);
 
-  console.log(activeTab, "ngoc");
-
   const isEnrolled = useSelector((state) => state.enrollment.isEnrolled);
-
+  console.log(isEnrolled);
+  
+  const { showReport } = location.state || {};
   const renderComponent = () => {
     switch (activeTab) {
       case "QuestionBanks":
@@ -53,12 +53,14 @@ const TestFormLayout = () => {
         return null;
     }
   };
+  console.log(showReport);
+  
   return (
     <div>
       {!isViewExplain && <Header />}
       <div className="flex w-screen  ">
         {!isViewExplain && (
-          <MentorSidebar isEnrolled={isEnrolled} isMentor={true} />
+          <MentorSidebar isEnrolled={isEnrolled} showReport = {showReport}/>
         )}
 
         <div

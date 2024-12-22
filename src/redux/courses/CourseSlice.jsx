@@ -218,7 +218,7 @@ export const checkIfRatedTeacher = createAsyncThunk(
 
     try {
       const response = await axios.get(
-        `${apiURLConfig}/TeacherRatings/CheckIfRated`,
+        `${apiURLConfig.baseURL}/TeacherRatings/CheckIfRated`,
         {
           params: { userId, learnerId },
         }

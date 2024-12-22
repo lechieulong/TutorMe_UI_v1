@@ -39,8 +39,12 @@ const CreateCourse = ({ onClose, onCreateSuccess }) => {
           },
         }
       );
+console.log(response);
 
       const fileName = response.data.fileName || file.name;
+
+      console.log(fileName);
+      
       const fileEndpoint = `https://thientvhde160268.blob.core.windows.net/course/${course.courseId}/${fileName}`;
       
       return { fileUrl: fileEndpoint };
@@ -132,11 +136,15 @@ const CreateCourse = ({ onClose, onCreateSuccess }) => {
       const today = formatDate(new Date());
 
       // Thêm createdAt và updatedAt vào dữ liệu
+      console.log(course);
+      
       const courseWithTimestamps = {
         ...course,
         createdAt: today,
         updatedAt: today,
       };
+      console.log(courseWithTimestamps);
+      
 
       setConfirmMessage("Are you sure you want to create new course?");
       setConfirmAction(() => async () => {

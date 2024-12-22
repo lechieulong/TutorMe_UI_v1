@@ -18,6 +18,7 @@ const CourseLessonCard = ({
   isEnrolled,
   isMentor,
   isDelete,
+  onLoadingChange,
 }) => {
   const [collapsedLessons, setCollapsedLessons] = useState({});
   const [courseLessons, setCourseLessons] = useState([]);
@@ -43,6 +44,7 @@ const CourseLessonCard = ({
   };
 
   const fetchCourseLessons = async () => {
+    onLoadingChange(true);
     try {
       const response = await axios.get(
         `${apiURLConfig.baseURL}/CourseLessons/CoursePart/${coursePartId}`,
@@ -71,12 +73,20 @@ const CourseLessonCard = ({
     } catch (err) {
       setLoading(false);
       setError("Don't have any course's lesson");
+    } finally {
+    onLoadingChange(false);
+
     }
   };
 
   useEffect(() => {
+    try {
+    onLoadingChange(true);
     if (coursePartId) {
       fetchCourseLessons();
+    }
+    } finally { 
+    onLoadingChange(false);
     }
   }, [coursePartId]);
 
@@ -102,6 +112,7 @@ const CourseLessonCard = ({
   };
 
   const handleCreateTest = async (lessonId) => {
+    onLoadingChange(true);
     try {
       const response = await axios.get(
         `${apiURLConfig.baseURL}/CourseSkills/DescriptionByCourseLesson/${lessonId}`,
@@ -112,30 +123,41 @@ const CourseLessonCard = ({
       setLessonId(lessonId);
     } catch (error) {
       console.error("Failed to fetch data from API", error);
+    } finally {
+    onLoadingChange(false);
+
     }
   };
 
   const fetchTestExams = async (lessonId) => {
+    onLoadingChange(true);
+  
     try {
       const response = await axios.get(
         `${apiURLConfig.baseURL}/CourseLessons/GetTestExamByLessonId/${lessonId}`
       );
       if (Array.isArray(response.data) && response.data.length > 0) {
-        setTestExams(response.data);
+        setTestExams((prev) => {
+          const updated = [...prev, ...response.data]; // Thêm mới các bài test
+          console.log("Updated testExams:", updated);
+          return updated;
+        });
       } else {
-        console.log();
+        console.log("No exams for lesson:", lessonId);
       }
     } catch (err) {
       console.error("Error fetching test exams:", err);
+    } finally {
+      onLoadingChange(false);
     }
   };
-
+  
   const confirmActionHandler = async () => {
     try {
       await confirmAction();
       setNotification("Action completed successfully.");
     } catch (error) {
-      console.error("Error executing confirm action:", error);
+      console.error("Erro r executing confirm action:", error);
       setNotification("Action failed.");
     } finally {
       setConfirmOpen(false);
@@ -246,10 +268,9 @@ const CourseLessonCard = ({
                                 (
                                   <div>
                                     {testExams
-                                      .filter(
-                                        (exam) =>
-                                          exam.lessonId === courseLesson.id
-                                      )
+                                      .filter((exam) => {
+                                        return exam.lessonId === courseLesson.id; // Lọc theo điều kiện
+                                      })
                                       .map((exam, index) => (
                                         <div
                                           key={exam.id}

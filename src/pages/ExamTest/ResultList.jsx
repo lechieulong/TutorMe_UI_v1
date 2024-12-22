@@ -13,6 +13,7 @@ const ResultList = ({ testId, setIsViewExplain, activeTab, setActiveTab }) => {
   const [totalPartsSubmit, setTotalPartsSubmit] = useState([]);
   const [skillResultIds, setSkillResultIds] = useState([]);
   const [testIdExplain, setTestIdExplain] = useState(null);
+  const [userIdTaken, setUserId] = useState(null);
   const [viewExplain, setViewExplain] = useState(false);
 
   const dispatch = useDispatch();
@@ -38,7 +39,14 @@ const ResultList = ({ testId, setIsViewExplain, activeTab, setActiveTab }) => {
 
   const handleViewExplain = (result) => {
     setTotalPartsSubmit(result.totalParts);
-    setSkillResultIds([result.id]);
+    setSkillResultIds([
+      {
+        id: result.id,
+        skillId: result.skillId, // Đảm bảo `result` có trường skillId
+        totalParts: result.totalParts, // Đưa totalParts vào mảng
+      },
+    ]);
+    setUserId(result.userId);
     setTestIdExplain(result.testId);
     setViewExplain(true);
     setIsViewExplain(true);
@@ -130,7 +138,11 @@ const ResultList = ({ testId, setIsViewExplain, activeTab, setActiveTab }) => {
           )}
         </div>
       ) : (
-        <TestExplain skillResultIds={skillResultIds} testId={testId} />
+        <TestExplain
+          skillResultIds={skillResultIds}
+          testId={testId}
+          userIdTaken={userIdTaken}
+        />
       )}
     </>
   );

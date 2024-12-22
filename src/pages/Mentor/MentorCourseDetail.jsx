@@ -274,7 +274,7 @@ const MentorCourseDetail = () => {
                   </span>
 
                     <div className="flex items-center">
-                      <span className="ml-2">
+                      <span className="mx-2">
                         {course?.averageRating?.toFixed(1)}
                       </span>
                       {renderStars(course?.averageRating || 0)}

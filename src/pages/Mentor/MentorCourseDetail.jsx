@@ -210,7 +210,7 @@ const MentorCourseDetail = () => {
         {Array(emptyStars)
           .fill(0)
           .map((_, index) => (
-            <FaRegStar key={`empty-${index}`} className="text-gray-300" />
+            <FaRegStar key={`empty-${index}`} className="text-yellow-500" />
           ))}
       </>
     );
@@ -235,7 +235,7 @@ const MentorCourseDetail = () => {
           />
         )}
         <div className="flex w-full relative">
-          <MentorSidebar mentorAndList={true} isMentor={true} showReport={true}/>
+          <MentorSidebar mentorAndList={true} isMentor={true} showReport={true} />
           <div className="flex-1 p-4 overflow-y-auto relative">
             {/* Loader hiển thị trong khu vực nội dung chính */}
             {isLoading && (
@@ -254,7 +254,7 @@ const MentorCourseDetail = () => {
                 <p className="mb-4 leading-relaxed">{course?.content}</p>
                 <div className="flex items-center text-sm space-x-4 mb-4">
                   <span>
-                    Lecturer:{" "}
+                    Created by{" "}
                     <Link
                       to={`/coachingschedule/${course?.username}`}
                       className="text-blue-300 underline"
@@ -263,13 +263,13 @@ const MentorCourseDetail = () => {
                     </Link>
                   </span>
                   <span className="flex items-center">
-                    {course?.enrollmentCount !== undefined
+                    {course?.enrollmentCount
                       ? `${course.enrollmentCount} students`
                       : "No students"}
                   </span>
 
                   <div className="flex items-center">
-                    <span className="ml-2">
+                    <span className="mx-2 ">
                       {course?.averageRating?.toFixed(1)}
                     </span>
                     {renderStars(course?.averageRating || 0)}

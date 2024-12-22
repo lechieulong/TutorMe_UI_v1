@@ -184,7 +184,7 @@ const CourseDetail = () => {
         {Array(emptyStars)
           .fill(0)
           .map((_, index) => (
-            <FaRegStar key={`empty-${index}`} className="text-gray-300" />
+            <FaRegStar key={`empty-${index}`} className="text-yellow-500" />
           ))}
       </>
     );
@@ -348,8 +348,8 @@ const CourseDetail = () => {
                         Enroll now
                       </button>
                     )}
-                    {isEnrolled && (
-                      <h2 className="text-3xl font-extrabold text-gray-800 tracking-tight sm:text-4xl lg:text-5xl bg-green-700 text-transparent bg-clip-text">
+                    {!isEnrolled && (
+                      <h2 className="text-xl font-extrabold text-gray-800 tracking-tight sm:text-4xl lg:text-5xl bg-green-700 text-transparent bg-clip-text">
                         {formatCurrency(course?.price)}
                       </h2>
                     )}
@@ -367,11 +367,11 @@ const CourseDetail = () => {
 
                 <div className="flex justify-center w-full gap-36 text-sm text-black mb-6">
                   <div className="flex flex-col gap-6 justify-center text-sm space-x-4 ">
-                    <div className="flex gap-4 items-center">
-                      <span className=" font-bold">Lecturer: </span>
+                    <div className="flex gap-4 pt-2 items-center">
+                      <span className="text-lg">Created by</span>
                       <Link
                         to={`/coachingschedule/${course?.username}`}
-                        className="text-green-800 underline text-xl"
+                        className="text-blue-500 underline text-lg"
                       >
                         {course?.teacherName}
                       </Link>
@@ -379,12 +379,12 @@ const CourseDetail = () => {
 
                     <div className="  ">
                       <div className=" ">
-                        {course?.enrollmentCount !== undefined
+                        {course?.enrollmentCount
                           ? `${course.enrollmentCount} students`
                           : "No students"}
                       </div>
 
-                      <div className="flex justify-center  mt-4 items-center">
+                      <div className="flex justify-center mt-2 items-center">
                         <span className="mr-4">
                           {course?.averageRating?.toFixed(1)}
                         </span>

@@ -135,7 +135,9 @@ const CoursePartCard = ({
       </div>
     );
   }
-
+  const handleLoadingStateLesson = (loading) => {
+    setIsLoading(loading);
+  };
   const handleUpdateCoursePart = async (coursePartId) => {
     if (newTitle[coursePartId]) {
       const coursePartDto = {
@@ -265,6 +267,7 @@ const CoursePartCard = ({
               isEnrolled={isEnrolled}
               isMentor={isMentor}
               isDelete={isDelete}
+              onLoadingChange = {handleLoadingStateLesson}
             />
           </div>
         </div>

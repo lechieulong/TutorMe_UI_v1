@@ -9,30 +9,53 @@ import {
   faVolumeDown,
 } from "@fortawesome/free-solid-svg-icons";
 
-const AudioPlayer = ({ src, submitting, practiceTestData }) => {
+const AudioPlayer = ({
+  src,
+  submitting,
+  practiceTestData,
+  currentSkillKey,
+}) => {
   const audioRef = useRef(null);
   const [isPlaying, setIsPlaying] = useState(false);
   const [currentTime, setCurrentTime] = useState(0);
   const [duration, setDuration] = useState(0);
   const [volume, setVolume] = useState(1);
   const [isSeeking, setIsSeeking] = useState(false); // Track if user is dragging
-  const [wasPlayingBeforeSeek, setWasPlayingBeforeSeek] = useState(false); // Track if audio was playing before seeking
 
   useEffect(() => {
     const audio = audioRef.current;
 
-    if (!submitting && audio) {
-      // Start playing when "test listening"
-      audio
-        .play()
-        .then(() => setIsPlaying(true))
-        .catch(console.error);
-    } else if (submitting && audio) {
-      // Pause when "submit"
-      audio.pause();
+    const handleCanPlay = () => {
+      // Only play if the conditions are met
+      if (currentSkillKey === "listening" && !submitting) {
+        audio
+          .play()
+          .then(() => setIsPlaying(true))
+          .catch((err) => {
+            console.error("Autoplay blocked or error occurred:", err);
+          });
+      }
+    };
+
+    const stopAudio = () => {
+      if (submitting || currentSkillKey == "listening") {
+        audio.pause();
+        setIsPlaying(false);
+      }
+    };
+
+    // Attach listener for canplay
+    audio.addEventListener("canplay", handleCanPlay);
+
+    // Check conditions immediately on mount or dependency change
+    stopAudio();
+
+    return () => {
+      audio.removeEventListener("canplay", handleCanPlay);
+      audio.pause(); // Cleanup: stop audio when unmounting
       setIsPlaying(false);
-    }
-  }, [submitting]);
+    };
+  }, [currentSkillKey, submitting]); // Dependencies include the states you're watching
 
   const togglePlay = async () => {
     const audio = audioRef.current;

@@ -29,6 +29,7 @@ import SkillPart from "./pages/TestExam/SkillPart";
 import LiveStream from "./pages/LiveStream";
 import MetorInfor from "./pages/Mentor/MentorInforTest";
 import CourseList from "./pages/Course/CourseList";
+import MentorClassOfCourseList from "./pages/Course/MentorClassOfCourseList";
 import ClassOfCourse from "./pages/Course/ClassOfCourseList";
 import MentorClassOfCourseList from "./pages/Course/MentorClassOfCourseList";
 import TestList from "./pages/User/TestList";

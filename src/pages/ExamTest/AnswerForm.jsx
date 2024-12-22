@@ -141,7 +141,7 @@ const AnswerForm = ({
                     />
                   )}
 
-                  {sectionType == 1 && (
+                  {(sectionType == 8 || sectionType == 1) && (
                     <Controller
                       name={`skills.${skill}.parts.${partIndex}.sections.${sectionIndex}.questions.${questionIndex}.answers.${index}.isCorrect`}
                       control={control}

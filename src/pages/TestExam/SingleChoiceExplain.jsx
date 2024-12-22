@@ -10,7 +10,11 @@ const SingleChoiceExplain = ({ question, renderLetter }) => (
             type="radio"
             name={`question-${question.id}`} // ensures only one option is selected per question
             value={answer.answerText}
-            checked={question.userAnswers[0].answerText == answer.answerText}
+            checked={
+              question.userAnswers &&
+              question.userAnswers[0] &&
+              question.userAnswers[0].answerText === answer.answerText
+            }
             className="h-4 w-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
           />
           <span className="text-gray-800">{answer.answerText}</span>

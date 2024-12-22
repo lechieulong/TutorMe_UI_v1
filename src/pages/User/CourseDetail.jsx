@@ -349,7 +349,7 @@ const CourseDetail = () => {
                       </button>
                     )}
                     {!isEnrolled && (
-                      <h2 className="text-xl font-extrabold text-gray-800 tracking-tight sm:text-4xl lg:text-5xl bg-green-700 text-transparent bg-clip-text">
+                      <h2 className="text-3xl font-extrabold text-gray-800 tracking-tight sm:text-4xl lg:text-5xl bg-green-700 text-transparent bg-clip-text">
                         {formatCurrency(course?.price)}
                       </h2>
                     )}

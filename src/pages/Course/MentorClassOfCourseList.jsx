@@ -8,7 +8,6 @@ import CreateClass from "../Class/CreateClass";
 import { fetchClasses } from "../../redux/classes/ClassSlice";
 import { fetchClassIds } from "../../redux/Enrollment/EnrollmentSlice";
 import { getUser } from "../../service/GetUser";
-import ClassToEnroll from "../Class/components/ClassToEnroll";
 import { useLocation } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faChalkboard } from "@fortawesome/free-solid-svg-icons";
@@ -63,7 +62,7 @@ const MentorClassOfCourseList = () => {
     <MainLayout>
       <div className="flex flex-col w-screen min-h-screen bg-gray-50">
         <div className="flex flex-1 w-full">
-          <MentorSidebar mentorAndList={true} />
+          <MentorSidebar showReport={true} />
           <div className="flex-1 p-6 bg-white rounded-lg shadow-md mx-4">
             <div className="flex items-center justify-between mb-6">
               <h2 className="text-2xl font-bold text-gray-700">
@@ -73,9 +72,7 @@ const MentorClassOfCourseList = () => {
                   className="text-gray-500 ml-4"
                 />
               </h2>
-              {!isMentor && (
-                <>
-                  {mentorAndList && (
+
                     <button
                       type="button"
                       className="py-2 px-3 inline-flex items-center gap-x-2 text-sm font-medium rounded-lg border border-gray-200 bg-white text-gray-800 shadow-sm hover:bg-gray-50 focus:outline-none focus:bg-gray-50"
@@ -83,10 +80,7 @@ const MentorClassOfCourseList = () => {
                     >
                       Create Class
                     </button>
-                  )}
-                </>
-              )}
-            </div>
+                </div>
 
             {isEmpty ? (
               <div className="flex justify-center items-center h-full">
@@ -98,7 +92,7 @@ const MentorClassOfCourseList = () => {
               <div className="grid grid-cols-4 gap-4 justify-between">
                 {classes.map((classItem) => (
                   <ClassCardOfCourse
-                    mentorAndList={mentorAndList}
+                    mentorAndList={true}
                     isMentor={isMentor}
                     key={classItem.id}
                     classItem={classItem}
@@ -119,7 +113,6 @@ const MentorClassOfCourseList = () => {
           onCreateSuccess={handleCreateClassSuccess} // Chỉ xử lý tạo lớp
         />
       )}
-
     </MainLayout>
   );
 };

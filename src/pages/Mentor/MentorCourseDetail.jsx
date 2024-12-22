@@ -32,8 +32,7 @@ import {
   FaRegPlayCircle,
 } from "react-icons/fa";
 import {
-  CheckUserEnrollment,
-  enrollUser,
+  CheckUserEnrollment
 } from "../../redux/Enrollment/EnrollmentSlice";
 const MentorCourseDetail = () => {
   const [isLoading, setIsLoading] = useState(false);
@@ -56,11 +55,17 @@ const MentorCourseDetail = () => {
   const isEnrolled = useSelector(
     (state) => state.enrollment.isEnrolled || false
   );
+  const { pathname } = useLocation();
   const handleOpenCreateClass = () => setIsCreateClassOpen(true);
   const handleCloseCreateClass = () => setIsCreateClassOpen(false);
   const isDelete = course?.enrollmentCount > 0 ? false : true;
   const { fromMentorCourseList = false } = location.state || {};
-  const mentorAndList = isMentor && fromMentorCourseList;
+  let mentorAndList = isMentor && fromMentorCourseList; // Dùng let thay vì const
+  const isRelevantPage = pathname.includes(`/mentorCourseDetail/${courseId}`);
+  if (isRelevantPage) {
+    mentorAndList = true; // Cập nhật giá trị khi điều kiện thỏa mãn
+  }
+
   const initializeUser = useCallback(() => {
     const userFromToken = getUser();
     setUserId(userFromToken?.sub);
@@ -235,7 +240,7 @@ const MentorCourseDetail = () => {
           />
         )}
         <div className="flex w-full relative">
-          <MentorSidebar mentorAndList={true} isMentor={true} showReport={true} />
+          <MentorSidebar showReport = {true}/>
           <div className="flex-1 p-4 overflow-y-auto relative">
             {/* Loader hiển thị trong khu vực nội dung chính */}
             {isLoading && (
@@ -268,116 +273,116 @@ const MentorCourseDetail = () => {
                       : "No students"}
                   </span>
 
-                  <div className="flex items-center">
-                    <span className="mx-2 ">
-                      {course?.averageRating?.toFixed(1)}
-                    </span>
-                    {renderStars(course?.averageRating || 0)}
-                  </div>
-                </div>
-              </div>
-              <div className="bg-lightGreen p-4 rounded-lg w-full lg:w-1/3 flex flex-col items-center text-center shadow-md relative h-auto lg:h-[200px]">
-                <h2 className="text-2xl text-black font-bold mb-4">
-                  {formatCurrency(course?.price)}
-                </h2>
-                <ul className="flex flex-wrap justify-center items-center gap-4 text-sm text-black mb-6">
-                  <li className="flex items-center space-x-2">
-                    <FaStopwatch className="text-houseGreen" />
-                    <span>{course?.hours} hours</span>
-                  </li>
-                  <li className="flex items-center space-x-2">
-                    <FaRegLightbulb className="text-houseGreen" />
-                    <span>1 overall test</span>
-                  </li>
-                  <li className="flex items-center space-x-2">
-                    <FaRegListAlt className="text-houseGreen" />
-                    <span>81 progress tests</span>
-                  </li>
-                  <li className="flex items-center space-x-2">
-                    <FaRegStickyNote className="text-houseGreen" />
-                    <span>{skillCount} Skills</span>
-                  </li>
-                  <li className="flex items-center space-x-2">
-                    <FaRegPlayCircle className="text-houseGreen" />
-                    <span>25 lessons</span>
-                  </li>
-                </ul>
-              </div>
-            </div>
-            <section className="mb-4 mt-4">
-              {(mentorAndList || !isEnrolled) && (
-                <>
-                  <div className="flex justify-between items-center">
-                    <p className="text-xl font-bold">Classes</p>
-                    {mentorAndList && (
-                      <button
-                        className="py-2 px-3 text-sm font-medium rounded-lg border bg-white text-gray-800 shadow-sm hover:bg-gray-50"
-                        onClick={handleOpenCreateClass}
-                      >
-                        Create Class
-                      </button>
-                    )}
-                  </div>
-                  <div className="overflow-hidden">
-                    <div
-                      className="flex transition-transform"
-                      style={{
-                        transform: `translateX(-${currentSlide * 100}%)`,
-                      }}
-                    >
-                      {classes.map((classItem) => (
-                        <ClassCard
-                          key={classItem.id}
-                          classItem={classItem}
-                          switchState={switchStates[classItem.id] || false}
-                          onSelect={() => setSelectedClassId(classItem.id)}
-                          isActive={selectedClassId === classItem.id}
-                          mentorAndList={mentorAndList}
-                          handleDeleteClassSuccess={handleDeleteClassSuccess}
-                          updateClassSuccessfull={updateClassSuccessfull}
-                          isDelete={isDelete}
-                          onLoadingChange={handleLoadingState}
-                        />
-                      ))}
+                    <div className="flex items-center">
+                      <span className="ml-2">
+                        {course?.averageRating?.toFixed(1)}
+                      </span>
+                      {renderStars(course?.averageRating || 0)}
                     </div>
                   </div>
-                  <div className="flex justify-between mt-2">
-                    <button
-                      onClick={handlePrev}
-                      disabled={currentSlide === 0}
-                      className="py-2 px-3 bg-gray-200 rounded-lg shadow-sm hover:bg-gray-300"
-                    >
-                      Prev
-                    </button>
-                    <button
-                      onClick={handleNext}
-                      disabled={
-                        currentSlide >= Math.ceil(classes.length / 4) - 1
-                      }
-                      className="py-2 px-3 bg-gray-200 rounded-lg shadow-sm hover:bg-gray-300"
-                    >
-                      Next
-                    </button>
-                  </div>
-                </>
-              )}
-            </section>
-            <div className="mt-4">
-              <CourseSkillCard
-                courseId={courseId}
-                isEnrolled={isEnrolled}
-                mentorAndList={mentorAndList}
-                onCreateTestClick={handleCreateTestClick}
-                onSkillCountUpdate={setSkillCount}
-                isMentor={isMentor}
-                isDelete={isDelete}
-                onLoadingChange={handleLoadingStateSkill}
-              />
-              <Comment
-                courseId={courseId}
-                onLoadingChange={handleLoadingStateComment}
-              />
-            </div>
+                </div>
+                <div className="bg-lightGreen p-4 rounded-lg w-full lg:w-1/3 flex flex-col items-center text-center shadow-md relative h-auto lg:h-[200px]">
+                  <h2 className="text-2xl text-black font-bold mb-4">
+                    {formatCurrency(course?.price)}
+                  </h2>
+                  <ul className="flex flex-wrap justify-center items-center gap-4 text-sm text-black mb-6">
+                    <li className="flex items-center space-x-2">
+                      <FaStopwatch className="text-houseGreen" />
+                      <span>{course?.hours} hours</span>
+                    </li>
+                    <li className="flex items-center space-x-2">
+                      <FaRegLightbulb className="text-houseGreen" />
+                      <span>1 overall test</span>
+                    </li>
+                    <li className="flex items-center space-x-2">
+                      <FaRegListAlt className="text-houseGreen" />
+                      <span>81 progress tests</span>
+                    </li>
+                    <li className="flex items-center space-x-2">
+                      <FaRegStickyNote className="text-houseGreen" />
+                      <span>{skillCount} Skills</span>
+                    </li>
+                    <li className="flex items-center space-x-2">
+                      <FaRegPlayCircle className="text-houseGreen" />
+                      <span>25 lessons</span>
+                    </li>
+                  </ul>
+                </div>
+              </div>
+              <section className="mb-4 mt-4">
+                {(mentorAndList || !isEnrolled) && (
+                  <>
+                    <div className="flex justify-between items-center">
+                      <p className="text-xl font-bold">Classes</p>
+                      {mentorAndList && (
+                        <button
+                          className="py-2 px-3 text-sm font-medium rounded-lg border bg-white text-gray-800 shadow-sm hover:bg-gray-50"
+                          onClick={handleOpenCreateClass}
+                        >
+                          Create Class
+                        </button>
+                      )}
+                    </div>
+                    <div className="overflow-hidden">
+                      <div
+                        className="flex transition-transform"
+                        style={{
+                          transform: `translateX(-${currentSlide * 100}%)`,
+                        }}
+                      >
+                        {classes.map((classItem) => (
+                          <ClassCard
+                            key={classItem.id}
+                            classItem={classItem}
+                            switchState={switchStates[classItem.id] || false}
+                            onSelect={() => setSelectedClassId(classItem.id)}
+                            isActive={selectedClassId === classItem.id}
+                            mentorAndList={mentorAndList}
+                            handleDeleteClassSuccess={handleDeleteClassSuccess}
+                            updateClassSuccessfull={updateClassSuccessfull}
+                            isDelete={isDelete}
+                            onLoadingChange={handleLoadingState}
+                          />
+                        ))}
+                      </div>
+                    </div>
+                    <div className="flex justify-between mt-2">
+                      <button
+                        onClick={handlePrev}
+                        disabled={currentSlide === 0}
+                        className="py-2 px-3 bg-gray-200 rounded-lg shadow-sm hover:bg-gray-300"
+                      >
+                        Prev
+                      </button>
+                      <button
+                        onClick={handleNext}
+                        disabled={
+                          currentSlide >= Math.ceil(classes.length / 4) - 1
+                        }
+                        className="py-2 px-3 bg-gray-200 rounded-lg shadow-sm hover:bg-gray-300"
+                      >
+                        Next
+                      </button>
+                    </div>
+                  </>
+                )}
+              </section>
+              <div className="mt-4">
+                <CourseSkillCard
+                  courseId={courseId}
+                  isEnrolled={isEnrolled}
+                  mentorAndList={mentorAndList}
+                  onCreateTestClick={handleCreateTestClick}
+                  onSkillCountUpdate={setSkillCount}
+                  isMentor={isMentor}
+                  isDelete={isDelete}
+                  onLoadingChange={handleLoadingStateSkill}
+                />
+                <Comment
+                  courseId={courseId}
+                  onLoadingChange={handleLoadingStateComment}
+                />
+              </div>
           </div>
         </div>
       </div>

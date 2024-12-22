@@ -239,38 +239,23 @@ const CourseSkillCard = ({
 
                 <div className="px-10 bg-gray-50 py-6  rounded-lg shadow-md">
                   <h3 className="font-extrabold text-2xl text-green-700 py-3 mb-5 border-b-2 border-green-200">
-                    Practice Test
+                    Final Test
                   </h3>
                   {(isEnrolled || mentorAndList || isMentor) && (
                     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mt-4">
-                      {testExams[skill.id]?.map(
-                        (exam) => (
-                          (
-                            <h3 className="text-2xl font-extrabold text-green-700 flex items-center mb-5">
-                              Final Test{" "}
-                              <FontAwesomeIcon
-                                icon={faClipboard}
-                                className="ml-2 text-green-600"
-                              />
-                            </h3>
-                          ),
-                          (
-                            <div
-                              key={exam.id}
-                              className="bg-white p-4 rounded-lg shadow-sm border border-gray-200 hover:shadow-md transition duration-300"
-                            >
-                              <button
-                                onClick={() =>
-                                  handleNavigate(skill.id, exam.id)
-                                }
-                                className="block w-full py-2 px-4 text-sm font-semibold text-green-700 bg-green-100 rounded-lg hover:bg-green-200 hover:text-green-800 transition duration-300"
-                              >
-                                Final Test: {exam.testName}
-                              </button>
-                            </div>
-                          )
-                        )
-                      )}
+                      {testExams[skill.id]?.map((exam) => (
+                        <div
+                          key={exam.id}
+                          className="bg-white p-4 rounded-lg shadow-sm border border-gray-200 hover:shadow-md transition duration-300"
+                        >
+                          <button
+                            onClick={() => handleNavigate(skill.id, exam.id)}
+                            className="block w-full py-2 px-4 text-sm font-semibold text-green-700 bg-green-100 rounded-lg hover:bg-green-200 hover:text-green-800 transition duration-300"
+                          >
+                            Final Test: {exam.testName}
+                          </button>
+                        </div>
+                      ))}
                     </div>
                   )}
                   {mentorAndList && (

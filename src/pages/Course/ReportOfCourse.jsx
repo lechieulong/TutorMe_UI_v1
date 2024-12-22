@@ -60,7 +60,7 @@ const ReportOfCourse = () => {
     <MainLayout>
       <div className="flex flex-col w-screen">
         <div className="flex w-full">
-          <MentorSidebar mentorAndList={true} />
+          <MentorSidebar showReport = {true}/>
           <div className="flex flex-box"></div>
           <div className="bg-white w-full">
             <div className="p-5">

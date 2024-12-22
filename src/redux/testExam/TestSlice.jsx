@@ -742,11 +742,9 @@ const TestSlice = createSlice({
       })
       .addCase(createTest.fulfilled, (state, action) => {
         state.status = STATUS.SUCCESS;
-        state.tests.push(action.payload); // Add the new test to the list
       })
       .addCase(createTest.rejected, (state, action) => {
         state.status = STATUS.FAILED;
-        state.error = action.payload || action.error.message;
       })
 
       // Update a test

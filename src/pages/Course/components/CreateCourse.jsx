@@ -27,7 +27,6 @@ const CreateCourse = ({ onClose, onCreateSuccess }) => {
 
   const uploadCourseFile = async (course, file) => {
     try {
-      const { courseId } = course; // Trích xuất courseId từ course
       const formData = new FormData();
       formData.append("file", file);
 
@@ -40,11 +39,16 @@ const CreateCourse = ({ onClose, onCreateSuccess }) => {
           },
         }
       );
+console.log(response);
 
       const fileName = response.data.fileName || file.name;
-      const fileEndpoint = `https://thientvhde160268.blob.core.windows.net/course/${courseId}/${fileName}`;
 
+      console.log(fileName);
+      
+      const fileEndpoint = `https://thientvhde160268.blob.core.windows.net/course/${course.courseId}/${fileName}`;
+      
       return { fileUrl: fileEndpoint };
+      
     } catch (error) {
       throw new Error(
         error.response?.data || "Failed to upload file. Please try again."
@@ -97,6 +101,7 @@ const CreateCourse = ({ onClose, onCreateSuccess }) => {
       return { ...prevCourse, categories: newCategories };
     });
   };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
 
@@ -116,6 +121,8 @@ const CreateCourse = ({ onClose, onCreateSuccess }) => {
           ...prevCourse,
           imageUrl: uploadResult.fileUrl, // Cập nhật imageUrl với đường dẫn từ Azure
         }));
+        console.log(uploadResult.fileUrl);
+        
       }
 
       // Định dạng ngày hiện tại thành dd/mm/yyyy
@@ -129,11 +136,15 @@ const CreateCourse = ({ onClose, onCreateSuccess }) => {
       const today = formatDate(new Date());
 
       // Thêm createdAt và updatedAt vào dữ liệu
+      console.log(course);
+      
       const courseWithTimestamps = {
         ...course,
         createdAt: today,
         updatedAt: today,
       };
+      console.log(courseWithTimestamps);
+      
 
       setConfirmMessage("Are you sure you want to create new course?");
       setConfirmAction(() => async () => {

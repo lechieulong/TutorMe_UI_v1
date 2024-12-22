@@ -55,7 +55,7 @@ const TestForm = ({
     dispatch(createTest(payload)).then((result) => {
       if (result.type == "test/createTest/fulfilled") {
         toast.success("Create test success ");
-        setTestInfo(result);
+        setTestInfo(result.payload);
       } else {
         setIsSubmitted(false);
 
